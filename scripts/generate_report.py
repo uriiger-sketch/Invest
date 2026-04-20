@@ -321,12 +321,35 @@ def _columns_md() -> str:
     return "\n".join(lines) + "\n"
 
 
+def _heartbeat_md() -> str:
+    """Plain-text version of the freshness badge for Markdown output."""
+    try:
+        with session_scope() as s:
+            row = (
+                s.query(RunLog.finished_at)
+                .filter(RunLog.status == "ok", RunLog.finished_at.isnot(None))
+                .order_by(RunLog.finished_at.desc())
+                .first()
+            )
+    except Exception:
+        row = None
+    if not row or not row[0]:
+        return "⚪ no crawl run recorded"
+    finished = row[0]
+    mins = int((datetime.utcnow() - finished).total_seconds() / 60)
+    icon = "🟢" if mins < 30 else "🟡" if mins < 120 else "🔴"
+    label = f"{mins} min ago" if mins < 120 else f"{mins / 60:.1f} h ago"
+    return f"{icon} last successful crawl: {label} (at {finished.isoformat(timespec='seconds')}Z)"
+
+
 def _build_markdown(as_of: date, n: int) -> str:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     parts: list[str] = [
         "# Invest — Top 20 report",
         "",
         f"_Generated: **{generated}** · Scores as of: **{as_of.isoformat()}**_",
+        "",
+        _heartbeat_md(),
         "",
         "> Not investment advice. Ranks publicly available analyst consensus, price-target "
         "upside, rating momentum, institutional 13F flow, insider activity, price momentum, "
@@ -478,8 +501,42 @@ def _html_columns() -> str:
     return f"<dl class='columns'>{items}</dl>"
 
 
+def _heartbeat_badge() -> str:
+    """Return an HTML badge showing how long since the most recent successful run.
+    Colour-coded so you can tell at a glance if the crawler is alive."""
+    try:
+        with session_scope() as s:
+            row = (
+                s.query(RunLog.finished_at)
+                .filter(RunLog.status == "ok", RunLog.finished_at.isnot(None))
+                .order_by(RunLog.finished_at.desc())
+                .first()
+            )
+    except Exception:
+        row = None
+    if not row or not row[0]:
+        return (
+            "<span class='badge red' title='No successful run recorded yet'>"
+            "no runs yet</span>"
+        )
+    finished = row[0]
+    age = datetime.utcnow() - finished
+    mins = int(age.total_seconds() / 60)
+    if mins < 30:
+        cls, label = "green", f"{mins} min ago"
+    elif mins < 120:
+        cls, label = "amber", f"{mins} min ago"
+    else:
+        hours = mins / 60
+        cls, label = "red", f"{hours:.1f} h ago"
+    iso = finished.isoformat(timespec="seconds")
+    title = f"Last successful pipeline run at {iso}Z"
+    return f"<span class='badge {cls}' title='{title}'>last crawl: {label}</span>"
+
+
 def _build_html(as_of: date, n: int) -> str:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    heartbeat = _heartbeat_badge()
     sections: list[str] = []
     for h in HORIZONS:
         sections.append(
@@ -525,10 +582,15 @@ def _build_html(as_of: date, n: int) -> str:
   tr.err td {{ color: #b00; }}
   footer {{ margin-top: 3rem; color: #777; font-size: 0.85rem; }}
   details > summary {{ cursor: pointer; font-weight: 600; }}
+  .badge {{ display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
+            font-size: 0.82rem; font-weight: 600; color: #fff; margin-left: 0.5rem; }}
+  .badge.green {{ background: #2f855a; }}
+  .badge.amber {{ background: #b7791f; }}
+  .badge.red   {{ background: #c53030; }}
 </style>
 </head>
 <body>
-<h1>Invest — Top 20</h1>
+<h1>Invest — Top 20 {heartbeat}</h1>
 <p class="meta">Generated: <strong>{generated}</strong> · Scores as of: <strong>{as_of.isoformat()}</strong>
  · page auto-refreshes every 5 min · pipeline runs every 20 min via GitHub Actions.</p>
 <blockquote>

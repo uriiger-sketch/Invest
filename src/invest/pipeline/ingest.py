@@ -113,11 +113,15 @@ def ingest_prices_only(tickers: list[str] | None = None) -> int:
 
 
 def ingest_fast(tickers: list[str] | None = None) -> int:
-    """Fast path for the every-20-min loop.
+    """Fast path for the every-20-min loop — PRICES ONLY.
 
-    Runs yfinance prices + consensus, then uses stooq to backfill any tickers
-    yfinance missed. Skips fundamentals (slow .info calls), Finnhub, and EDGAR
-    so the cycle comfortably fits in 20 minutes.
+    yfinance batched prices + stooq backfill for anything yfinance missed.
+    No fundamentals, no per-ticker consensus calls (those run on the daily
+    deep crawl via `ingest-all`). This keeps each fast run under ~3 minutes
+    so the 20-min cron cadence is actually hit.
+
+    Analyst consensus + price targets change on a daily scale, so being
+    up to 24 h stale between deep crawls is fine for ranking.
     """
     tickers = tickers or current_universe()
     from ..sources.yfinance_src import YFinanceSource
@@ -127,10 +131,6 @@ def ingest_fast(tickers: list[str] | None = None) -> int:
     with log_run("yfinance.prices_fast") as c:
         c["rows"] = src.ingest_prices(tickers)
         total += c["rows"]
-    with log_run("yfinance.consensus_fast") as c:
-        c["rows"] = src.ingest_consensus(tickers)
-        total += c["rows"]
-    # stooq backfill for anything yfinance missed.
     try:
         total += _run_stooq_backfill(tickers)
     except Exception:  # noqa: BLE001

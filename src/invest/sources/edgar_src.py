@@ -22,29 +22,57 @@ from .base import BaseSource, TransientSourceError, log_run, with_retries
 logger = logging.getLogger(__name__)
 
 
-# Representative list of large institutional filers with their CIKs (zero-padded).
-# These are the filers we actively track for 13F signal.
+# Curated list of large institutional 13F filers. CIKs are zero-padded to 10 digits.
+# Any CIK that 404s at SEC is silently skipped by the pipeline, so unverified ones
+# simply do not contribute signal.
 TOP_FILERS: tuple[tuple[str, str], ...] = (
+    # Mega index / asset managers
     ("Berkshire Hathaway", "0001067983"),
     ("BlackRock Inc.", "0001364742"),
     ("Vanguard Group", "0000102909"),
     ("State Street Corp", "0000093751"),
+    ("FMR LLC (Fidelity)", "0000315066"),
+    ("T. Rowe Price", "0000080255"),
+    ("Wellington Management", "0000902219"),
+    ("Invesco Ltd.", "0000914208"),
+    ("Franklin Resources", "0000038777"),
+    ("Northern Trust", "0000073124"),
+    ("Dodge & Cox", "0000200217"),
+    ("Capital World Investors", "0000921669"),
+    ("Legal & General Investment", "0001645148"),
+    ("Geode Capital Management", "0001330073"),
+    ("Janus Henderson Group", "0001274173"),
+    # Hedge funds / multi-strat
     ("Bridgewater Associates", "0001350694"),
     ("Renaissance Technologies", "0001037389"),
     ("Citadel Advisors", "0001423053"),
     ("Point72 Asset Management", "0001603466"),
-    ("Tiger Global Management", "0001167483"),
-    ("Ark Investment Management", "0001697748"),
-    ("Coatue Management", "0001135730"),
+    ("Millennium Management", "0001273087"),
     ("D.E. Shaw & Co.", "0001009207"),
     ("Two Sigma Investments", "0001179392"),
-    ("Millennium Management", "0001273087"),
+    ("Two Sigma Advisers", "0001274473"),
+    ("AQR Capital Management", "0001167557"),
+    ("Balyasny Asset Management", "0001509928"),
+    ("Man Group", "0001039162"),
+    # Long/short equity / activist
+    ("Tiger Global Management", "0001167483"),
+    ("Coatue Management", "0001135730"),
     ("Viking Global Investors", "0001103804"),
     ("Baupost Group", "0001061165"),
     ("Pershing Square Capital", "0001336528"),
     ("Third Point", "0001040273"),
     ("Lone Pine Capital", "0001061768"),
     ("Soros Fund Management", "0001029160"),
+    ("Greenlight Capital", "0001079114"),
+    ("Appaloosa Management", "0001656456"),
+    ("Maverick Capital", "0000887993"),
+    ("Whale Rock Capital", "0001510104"),
+    ("Duquesne Family Office (Druckenmiller)", "0001536411"),
+    ("Glenview Capital", "0001316819"),
+    # Thematic / specialist
+    ("Ark Investment Management", "0001697748"),
+    ("Paulson & Co.", "0001035674"),
+    ("Oaktree Capital", "0001403528"),
 )
 
 
@@ -149,10 +177,7 @@ class EdgarSource(BaseSource):
             ns["n"] = root.tag.split("}")[0].lstrip("{")
 
         def _local(el, tag: str) -> str | None:
-            if ns:
-                found = el.find(f"n:{tag}", ns)
-            else:
-                found = el.find(tag)
+            found = el.find(f"n:{tag}", ns) if ns else el.find(tag)
             return found.text if found is not None else None
 
         info_tag = "infoTable" if not ns else "n:infoTable"
@@ -174,22 +199,67 @@ class EdgarSource(BaseSource):
             except ValueError:
                 value_usd = None
             name = _local(el, "nameOfIssuer")
-            ticker_guess = (name or "").split()[0][:16].upper() if name else None
             out.append(
                 {
                     "cusip": cusip,
                     "name_of_issuer": name,
-                    "ticker": ticker_guess,  # best-effort; a CUSIP→ticker map would be better
                     "shares": shares,
                     "value_usd": value_usd,
                 }
             )
         return out
 
+    # Tokens we strip before fuzzy-matching "Apple Inc" -> "Apple" -> AAPL.
+    _CORP_SUFFIXES = (
+        " inc", " incorporated", " corp", " corporation", " co", " company",
+        " ltd", " limited", " plc", " holdings", " holding", " group",
+        " class a", " class b", " class c", ".com",
+    )
+
+    @classmethod
+    def _normalise_name(cls, name: str) -> str:
+        n = name.lower().strip().replace(",", "").replace(".", "")
+        # Strip repeated corporate suffixes.
+        changed = True
+        while changed:
+            changed = False
+            for suf in cls._CORP_SUFFIXES:
+                if n.endswith(suf):
+                    n = n[: -len(suf)].strip()
+                    changed = True
+        return n
+
+    def _build_name_to_ticker(self, tickers: list[str]) -> dict[str, str]:
+        """Build a {normalised_name: ticker} lookup from the stocks table."""
+        from ..models import Stock
+
+        with session_scope() as s:
+            rows = s.query(Stock.ticker, Stock.name).filter(Stock.ticker.in_(tickers)).all()
+        out: dict[str, str] = {}
+        for t, name in rows:
+            if not name:
+                continue
+            out[self._normalise_name(name)] = t
+        return out
+
+    def _issuer_to_ticker(self, issuer_name: str, lookup: dict[str, str]) -> str | None:
+        if not issuer_name:
+            return None
+        key = self._normalise_name(issuer_name)
+        if key in lookup:
+            return lookup[key]
+        # Fallback: match on the first token if unique.
+        first = key.split(" ", 1)[0] if key else ""
+        if first and len(first) >= 3:
+            matches = [v for k, v in lookup.items() if k.startswith(first + " ") or k == first]
+            if len(matches) == 1:
+                return matches[0]
+        return None
+
     def ingest_13f(self, tickers: list[str]) -> int:
-        """Pull latest 13F-HR for each tracked filer. Only rows whose ticker guess
-        intersects our universe are persisted (best-effort match)."""
-        universe = {t.upper() for t in tickers}
+        """Pull latest 13F-HR for each tracked filer. Holdings are matched to our
+        universe via issuer-name fuzzy match against Stock.name."""
+        lookup = self._build_name_to_ticker(tickers)
         written = 0
         for name, cik in TOP_FILERS:
             try:
@@ -204,8 +274,8 @@ class EdgarSource(BaseSource):
                 quarter = self._quarter_label(filing_date)
                 with session_scope() as s:
                     for r in rows:
-                        t = (r.get("ticker") or "").upper()
-                        if not t or t not in universe:
+                        t = self._issuer_to_ticker(r.get("name_of_issuer") or "", lookup)
+                        if not t:
                             continue
                         s.merge(
                             Holding13F(

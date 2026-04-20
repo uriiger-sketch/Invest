@@ -6,18 +6,97 @@ that GitHub Pages serves without needing any runtime fetch.
 """
 from __future__ import annotations
 
-from datetime import date, datetime
+import hashlib
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from sqlalchemy import desc, select
 
 from invest.config import HORIZONS, get_settings
 from invest.db import session_scope
-from invest.models import RunLog, Score, Stock
+from invest.models import AnalystAction, Consensus, Holding13F, Price, RunLog, Score, Stock
 
 HERE = Path(__file__).resolve().parent.parent
 REPORT_MD = HERE / "REPORT.md"
 REPORT_HTML = HERE / "docs" / "index.html"
+
+
+# Per-horizon plain-English explainer shown in the report header.
+HORIZON_BLURB: dict[str, str] = {
+    "days": (
+        "5-day holding. Weights analyst rating momentum and short-term price "
+        "momentum most; less weight on long-run price-target upside."
+    ),
+    "weeks": (
+        "20-day (~1 month) holding. Balanced mix of consensus, price-target "
+        "upside, rating momentum and price trend."
+    ),
+    "months": (
+        "90-day holding. Leans on analyst consensus, price-target upside, and "
+        "institutional (13F) flow; actively de-weights short-term price chase."
+    ),
+}
+
+
+# Column definitions. Order matches the tables.
+COLUMN_DOCS: list[tuple[str, str]] = [
+    ("#", "Rank (1 = highest blended score in this horizon)."),
+    ("Ticker", "Stock symbol as used on US exchanges."),
+    ("Name", "Company name from Yahoo Finance."),
+    ("Sector", "GICS sector classification."),
+    (
+        "Blended",
+        "Final score = 0.6 · z(composite) + 0.4 · z(ml). Z-scored across the "
+        "universe for this horizon, so 0 is average. +1 ≈ 1 std-dev above the "
+        "pack. Higher = more attractive.",
+    ),
+    (
+        "Composite",
+        "Rule-based score from the weighted sum of nine transparent features "
+        "(analyst consensus, price-target upside, rating momentum 7 d & 30 d, "
+        "target revision 30 d, 13F institutional flow, insider net buy 90 d, "
+        "21-day price momentum, realised-volatility risk penalty).",
+    ),
+    (
+        "ML",
+        "LightGBM regressor's predicted forward return for this horizon. "
+        "Cold-start fallback = composite until ≥ 60 daily snapshots exist.",
+    ),
+    (
+        "Pctile",
+        "Percentile of the blended score inside this horizon (100 % = top).",
+    ),
+    (
+        "Upside",
+        "Analyst consensus price target / last close − 1. Positive = analysts "
+        "think there is room above the current price.",
+    ),
+    (
+        "Buy / Hold / Sell",
+        "Aggregated analyst rating counts (most recent consensus snapshot). "
+        "Strong Buy + Buy are combined into 'Buy'; Strong Sell + Sell into 'Sell'.",
+    ),
+    (
+        "Firms",
+        "Count of distinct analyst firms that have issued an action (upgrade "
+        "/ downgrade / reiterate) on this ticker in the last 90 days.",
+    ),
+    (
+        "Insts",
+        "Count of tracked institutional 13F filers (Berkshire, BlackRock, "
+        "Bridgewater, Renaissance, Citadel, Tiger, ARK …) currently holding "
+        "the stock in their most recent 13F-HR.",
+    ),
+]
+
+
+# Stable sector → colour palette (deterministic by hash, so order-insensitive).
+def _sector_colour(sector: str) -> str:
+    if not sector:
+        return "#9aa0a6"
+    h = int(hashlib.md5(sector.encode("utf-8")).hexdigest(), 16)
+    hue = h % 360
+    return f"hsl({hue}, 55%, 55%)"
 
 
 def _latest_as_of() -> date | None:
@@ -27,13 +106,6 @@ def _latest_as_of() -> date | None:
         return row[0] if row else None
     except Exception:
         return None
-
-
-def _recent_runs_safe(limit: int = 20) -> list[dict]:
-    try:
-        return _recent_runs(limit)
-    except Exception:
-        return []
 
 
 def _top_rows(horizon: str, as_of: date, n: int) -> list[dict]:
@@ -54,6 +126,8 @@ def _top_rows(horizon: str, as_of: date, n: int) -> list[dict]:
             .limit(n)
             .all()
         )
+    tickers = [r.ticker for r in rows]
+    extras = _enrichment_for(tickers)
     return [
         {
             "rank": i + 1,
@@ -64,9 +138,96 @@ def _top_rows(horizon: str, as_of: date, n: int) -> list[dict]:
             "composite": r.composite_score,
             "ml": r.ml_score,
             "percentile": r.percentile,
+            **extras.get(r.ticker, {}),
         }
         for i, r in enumerate(rows)
     ]
+
+
+def _enrichment_for(tickers: list[str]) -> dict[str, dict]:
+    """Per-ticker extras for the top-20: last close, consensus bar, firm count,
+    institutional holder count, list of recent analyst actions."""
+    if not tickers:
+        return {}
+    out: dict[str, dict] = {t: {} for t in tickers}
+    today = date.today()
+    cutoff_90 = today - timedelta(days=90)
+
+    with session_scope() as s:
+        # Last close per ticker.
+        for t in tickers:
+            row = (
+                s.query(Price.close, Price.date)
+                .filter(Price.ticker == t)
+                .order_by(Price.date.desc())
+                .first()
+            )
+            if row:
+                out[t]["last_close"] = row.close
+
+        # Latest consensus per ticker (prefer finnhub over yfinance).
+        for t in tickers:
+            c = (
+                s.query(Consensus)
+                .filter(Consensus.ticker == t)
+                .order_by(Consensus.as_of_date.desc())
+                .first()
+            )
+            if c:
+                buy = (c.strong_buy or 0) + (c.buy or 0)
+                hold = c.hold or 0
+                sell = (c.sell or 0) + (c.strong_sell or 0)
+                out[t]["buy"] = buy
+                out[t]["hold"] = hold
+                out[t]["sell"] = sell
+                out[t]["mean_target"] = c.mean_target
+                last = out[t].get("last_close")
+                if c.mean_target and last:
+                    out[t]["upside_pct"] = c.mean_target / last - 1
+
+        # Distinct analyst firms (last 90 d) + the ~6 most recent actions for the drawer.
+        for t in tickers:
+            firms_q = (
+                s.query(AnalystAction.firm)
+                .filter(
+                    AnalystAction.ticker == t,
+                    AnalystAction.date >= cutoff_90,
+                    AnalystAction.firm.isnot(None),
+                )
+                .distinct()
+                .all()
+            )
+            out[t]["firm_count"] = len(firms_q)
+            recent = (
+                s.query(AnalystAction)
+                .filter(AnalystAction.ticker == t)
+                .order_by(AnalystAction.date.desc())
+                .limit(6)
+                .all()
+            )
+            out[t]["recent_actions"] = [
+                {
+                    "date": a.date,
+                    "firm": a.firm,
+                    "action": a.action,
+                    "from": a.from_grade,
+                    "to": a.to_grade,
+                    "target": a.target_price,
+                    "source": a.source,
+                }
+                for a in recent
+            ]
+
+        # Distinct 13F filer count (latest quarter in data).
+        for t in tickers:
+            holders_q = (
+                s.query(Holding13F.filer_cik)
+                .filter(Holding13F.ticker == t)
+                .distinct()
+                .all()
+            )
+            out[t]["inst_count"] = len(holders_q)
+    return out
 
 
 def _recent_runs(limit: int = 20) -> list[dict]:
@@ -90,25 +251,46 @@ def _recent_runs(limit: int = 20) -> list[dict]:
     ]
 
 
+def _recent_runs_safe(limit: int = 20) -> list[dict]:
+    try:
+        return _recent_runs(limit)
+    except Exception:
+        return []
+
+
+# ------------------------------- Markdown --------------------------------
+
+
 def _md_table(rows: list[dict]) -> str:
     if not rows:
         return "_(no data)_\n"
-    headers = ["#", "Ticker", "Name", "Sector", "Blended", "Composite", "ML", "Pctile"]
+    headers = [
+        "#", "Ticker", "Name", "Sector",
+        "Blended", "Composite", "ML", "Pctile",
+        "Upside", "Buy", "Hold", "Sell", "Firms", "Insts",
+    ]
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
     for r in rows:
         pct = f"{(r['percentile'] or 0) * 100:.1f}%"
+        upside = f"{(r.get('upside_pct') or 0) * 100:+.1f}%" if r.get("upside_pct") is not None else "—"
         lines.append(
             "| "
             + " | ".join(
                 [
                     str(r["rank"]),
                     f"**{r['ticker']}**",
-                    r["name"][:40],
-                    r["sector"][:20],
+                    (r["name"] or "")[:40],
+                    (r["sector"] or "")[:20],
                     f"{r['blended']:.3f}",
                     f"{r['composite']:.3f}",
                     f"{r['ml']:.3f}",
                     pct,
+                    upside,
+                    str(r.get("buy") or 0),
+                    str(r.get("hold") or 0),
+                    str(r.get("sell") or 0),
+                    str(r.get("firm_count") or 0),
+                    str(r.get("inst_count") or 0),
                 ]
             )
             + " |"
@@ -132,6 +314,13 @@ def _runs_md_table(rows: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _columns_md() -> str:
+    lines = ["| Column | What it means |", "|---|---|"]
+    for name, doc in COLUMN_DOCS:
+        lines.append(f"| **{name}** | {doc} |")
+    return "\n".join(lines) + "\n"
+
+
 def _build_markdown(as_of: date, n: int) -> str:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     parts: list[str] = [
@@ -139,13 +328,18 @@ def _build_markdown(as_of: date, n: int) -> str:
         "",
         f"_Generated: **{generated}** · Scores as of: **{as_of.isoformat()}**_",
         "",
-        "> Not investment advice. Ranks publicly available analyst consensus, price-target upside, "
-        "rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a "
-        "blended composite + ML score per horizon. See `README.md` for methodology.",
+        "> Not investment advice. Ranks publicly available analyst consensus, price-target "
+        "upside, rating momentum, institutional 13F flow, insider activity, price momentum, "
+        "and risk into a blended composite + ML score per horizon.",
         "",
+        "## How to read this",
+        "",
+        _columns_md(),
     ]
     for h in HORIZONS:
         parts.append(f"## {h.capitalize()} horizon")
+        parts.append("")
+        parts.append(f"_{HORIZON_BLURB[h]}_")
         parts.append("")
         parts.append(_md_table(_top_rows(h, as_of, n)))
         parts.append("")
@@ -174,25 +368,83 @@ def _html_top_table(rows: list[dict]) -> str:
     head = (
         "<thead><tr>"
         "<th>#</th><th>Ticker</th><th>Name</th><th>Sector</th>"
-        "<th>Blended</th><th>Composite</th><th>ML</th><th>Percentile</th>"
+        "<th title='Final score, z-scored across the universe.'>Blended</th>"
+        "<th title='Rule-based score from nine weighted features.'>Composite</th>"
+        "<th title='LightGBM predicted forward return (cold-start = composite).'>ML</th>"
+        "<th title='Percentile of blended score in this horizon.'>Pctile</th>"
+        "<th title='Consensus price target / last close − 1.'>Upside</th>"
+        "<th title='Strong Buy + Buy count.'>Buy</th>"
+        "<th>Hold</th>"
+        "<th title='Sell + Strong Sell count.'>Sell</th>"
+        "<th title='Distinct analyst firms with actions in the last 90 d.'>Firms</th>"
+        "<th title='Tracked 13F filers holding the stock.'>Insts</th>"
         "</tr></thead>"
     )
     body_rows = []
-    for r in rows:
+    for i, r in enumerate(rows):
         pct = f"{(r['percentile'] or 0) * 100:.1f}%"
-        body_rows.append(
+        upside = (
+            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
+            if r.get("upside_pct") is not None
+            else "—"
+        )
+        sector = r["sector"] or ""
+        sector_html = (
+            f"<span class='sector' style='background:{_sector_colour(sector)}'>"
+            f"{_html_escape(sector[:22])}</span>"
+            if sector
+            else ""
+        )
+        # Analyst firms drawer.
+        actions = r.get("recent_actions", [])
+        drawer_rows = "".join(
             "<tr>"
+            f"<td>{a['date'].isoformat() if a.get('date') else ''}</td>"
+            f"<td>{_html_escape(a.get('firm') or '')}</td>"
+            f"<td>{_html_escape((a.get('action') or '').title())}</td>"
+            f"<td>{_html_escape((a.get('from') or '') + ' → ' + (a.get('to') or ''))}</td>"
+            f"<td class='num'>{a.get('target') or ''}</td>"
+            f"<td class='src'>{_html_escape(a.get('source') or '')}</td>"
+            "</tr>"
+            for a in actions
+        )
+        drawer_html = (
+            f"<tr class='drawer' id='drawer-{r['ticker']}-{i}' style='display:none'>"
+            "<td colspan='13'>"
+            "<strong>Recent analyst actions</strong>"
+            "<table class='inner'><thead><tr><th>Date</th><th>Firm</th>"
+            "<th>Action</th><th>From → To</th><th>Target</th><th>Source</th></tr></thead>"
+            f"<tbody>{drawer_rows}</tbody></table>"
+            "</td></tr>"
+            if drawer_rows
+            else ""
+        )
+        toggle = (
+            f" onclick=\"var d=document.getElementById('drawer-{r['ticker']}-{i}');"
+            "if(d){d.style.display=d.style.display==='none'?'table-row':'none'}\""
+            if drawer_rows
+            else ""
+        )
+        body_rows.append(
+            f"<tr class='row-main' {toggle} style='cursor:pointer'>"
             f"<td>{r['rank']}</td>"
             f"<td><strong>{_html_escape(r['ticker'])}</strong></td>"
-            f"<td>{_html_escape(r['name'][:60])}</td>"
-            f"<td>{_html_escape(r['sector'][:30])}</td>"
+            f"<td>{_html_escape((r['name'] or '')[:60])}</td>"
+            f"<td>{sector_html}</td>"
             f"<td class='num'>{r['blended']:.3f}</td>"
             f"<td class='num'>{r['composite']:.3f}</td>"
             f"<td class='num'>{r['ml']:.3f}</td>"
             f"<td class='num'>{pct}</td>"
+            f"<td class='num'>{upside}</td>"
+            f"<td class='num ok'>{r.get('buy') or 0}</td>"
+            f"<td class='num'>{r.get('hold') or 0}</td>"
+            f"<td class='num err'>{r.get('sell') or 0}</td>"
+            f"<td class='num'>{r.get('firm_count') or 0}</td>"
+            f"<td class='num'>{r.get('inst_count') or 0}</td>"
             "</tr>"
+            + drawer_html
         )
-    return f"<table>{head}<tbody>{''.join(body_rows)}</tbody></table>"
+    return f"<table class='top'>{head}<tbody>{''.join(body_rows)}</tbody></table>"
 
 
 def _html_runs_table(rows: list[dict]) -> str:
@@ -218,15 +470,27 @@ def _html_runs_table(rows: list[dict]) -> str:
     return f"<table>{head}<tbody>{''.join(body_rows)}</tbody></table>"
 
 
+def _html_columns() -> str:
+    items = "".join(
+        f"<dt>{_html_escape(name)}</dt><dd>{_html_escape(doc)}</dd>"
+        for name, doc in COLUMN_DOCS
+    )
+    return f"<dl class='columns'>{items}</dl>"
+
+
 def _build_html(as_of: date, n: int) -> str:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     sections: list[str] = []
     for h in HORIZONS:
         sections.append(
-            f"<section><h2>{h.capitalize()} horizon</h2>"
-            f"{_html_top_table(_top_rows(h, as_of, n))}</section>"
+            f"<section>"
+            f"<h2>{h.capitalize()} horizon</h2>"
+            f"<p class='blurb'>{_html_escape(HORIZON_BLURB[h])}</p>"
+            f"{_html_top_table(_top_rows(h, as_of, n))}"
+            "</section>"
         )
     runs_html = _html_runs_table(_recent_runs_safe())
+    columns_html = _html_columns()
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -235,36 +499,57 @@ def _build_html(as_of: date, n: int) -> str:
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="300">
 <style>
-  :root {{ color-scheme: light dark; }}
+  :root {{ color-scheme: light dark; --accent: #2b6cb0; }}
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
-         max-width: 1150px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }}
+         max-width: 1280px; margin: 2rem auto; padding: 0 1rem; line-height: 1.5; }}
   h1 {{ margin-bottom: 0.25rem; }}
-  h2 {{ border-bottom: 1px solid rgba(127,127,127,0.25); padding-bottom: 0.25rem; margin-top: 2rem; }}
+  h2 {{ border-bottom: 1px solid rgba(127,127,127,0.25); padding-bottom: 0.25rem; margin-top: 2.5rem; }}
   .meta {{ color: #666; font-size: 0.9rem; }}
-  blockquote {{ border-left: 3px solid #999; margin: 1rem 0; padding: 0.5rem 1rem; color: #555; }}
-  table {{ border-collapse: collapse; width: 100%; font-size: 0.95rem; margin-top: 0.5rem; }}
-  th, td {{ padding: 0.4rem 0.6rem; border-bottom: 1px solid rgba(127,127,127,0.2); text-align: left; }}
-  th {{ background: rgba(127,127,127,0.08); }}
+  .blurb {{ color: #555; font-style: italic; margin-top: 0.25rem; }}
+  blockquote {{ border-left: 3px solid var(--accent); margin: 1rem 0; padding: 0.5rem 1rem; color: #444; }}
+  table {{ border-collapse: collapse; width: 100%; font-size: 0.92rem; margin-top: 0.5rem; }}
+  th, td {{ padding: 0.45rem 0.55rem; border-bottom: 1px solid rgba(127,127,127,0.18);
+            text-align: left; vertical-align: top; }}
+  th {{ background: rgba(127,127,127,0.08); font-weight: 600; }}
   td.num {{ text-align: right; font-variant-numeric: tabular-nums; }}
+  td.ok {{ color: #28823a; }}
+  td.err {{ color: #b00; }}
+  tr.drawer td {{ background: rgba(43,108,176,0.04); padding: 0.6rem 0.8rem; }}
+  table.inner {{ margin-top: 0.4rem; font-size: 0.85rem; }}
+  table.inner th {{ background: transparent; }}
+  .src {{ color: #777; font-size: 0.8rem; }}
+  .sector {{ display: inline-block; padding: 0.1rem 0.45rem; border-radius: 4px; color: #fff; font-size: 0.8rem; }}
+  dl.columns {{ display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; margin: 0.5rem 0; }}
+  dl.columns dt {{ font-weight: 600; color: var(--accent); }}
+  dl.columns dd {{ margin: 0; color: #444; }}
   tr.err td {{ color: #b00; }}
-  tr.ok td:nth-child(2) {{ color: #28823a; }}
   footer {{ margin-top: 3rem; color: #777; font-size: 0.85rem; }}
+  details > summary {{ cursor: pointer; font-weight: 600; }}
 </style>
 </head>
 <body>
 <h1>Invest — Top 20</h1>
 <p class="meta">Generated: <strong>{generated}</strong> · Scores as of: <strong>{as_of.isoformat()}</strong>
- · auto-refreshes every 5 min.</p>
+ · page auto-refreshes every 5 min · pipeline runs every 20 min via GitHub Actions.</p>
 <blockquote>
-  Not investment advice. Ranks publicly available analyst consensus, price-target upside,
-  rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a
-  blended composite + ML score per horizon.
+  <strong>Not investment advice.</strong> Ranks publicly available analyst consensus, price-target upside,
+  rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a blended
+  composite + ML score per horizon. Click any row to see the most recent analyst actions for that ticker.
 </blockquote>
+
+<details open>
+  <summary>How to read this report</summary>
+  {columns_html}
+</details>
+
 {"".join(sections)}
+
 <section><h2>Recent pipeline runs</h2>{runs_html}</section>
+
 <footer>
-  Source: <a href="https://github.com/uriiger-sketch/invest">uriiger-sketch/invest</a> ·
-  Pipeline runs every 20 min via GitHub Actions.
+  Data: yfinance (prices, consensus, price targets, rating actions), stooq (price backfill),
+  SEC EDGAR (13F-HR holdings from ~40 top institutional filers, Form 4 insider activity),
+  Finnhub (optional, when an API key is configured).
 </footer>
 </body>
 </html>

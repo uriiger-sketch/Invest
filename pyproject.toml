@@ -1,0 +1,59 @@
+[project]
+name = "invest"
+version = "0.1.0"
+description = "Autonomous stock ranking crawler — ingests analyst consensus, price targets, 13F flows, and prices, then ranks a top-20 per horizon."
+requires-python = ">=3.11"
+dependencies = [
+    "yfinance>=0.2.50",
+    "finnhub-python>=2.4.20",
+    "requests>=2.32",
+    "lxml>=5.3",
+    "beautifulsoup4>=4.12",
+    "sqlalchemy>=2.0.30",
+    "alembic>=1.13",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "tenacity>=9.0",
+    "apscheduler>=3.10",
+    "pandas>=2.2",
+    "numpy>=1.26",
+    "scikit-learn>=1.5",
+    "scipy>=1.13",
+    "lightgbm>=4.5",
+    "streamlit>=1.38",
+    "plotly>=5.24",
+    "typer>=0.12",
+    "rich>=13.7",
+    "python-dateutil>=2.9",
+    "pytz>=2024.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-mock>=3.14",
+    "vcrpy>=6.0",
+    "ruff>=0.6",
+    "mypy>=1.11",
+]
+
+[project.scripts]
+invest = "invest.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/invest"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

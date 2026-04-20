@@ -7,15 +7,19 @@ name: crawl
 
 on:
   schedule:
+    # Fast refresh every 20 min (prices + consensus + stooq backfill).
     - cron: "*/20 * * * *"
+    # Deep refresh once a day at 23:30 UTC (fundamentals + EDGAR 13F + Form 4).
+    # yfinance `.info` for every ticker + 40 institutional filers takes ~8-12 min.
+    - cron: "30 23 * * *"
   workflow_dispatch:
     inputs:
       universe_max:
         description: "Universe cap for this run (0 = no cap)"
         required: false
-        default: "80"
+        default: "120"
       deep:
-        description: "Full ingest (Finnhub + EDGAR, slower)"
+        description: "Full ingest (fundamentals + Finnhub + EDGAR, slower)"
         type: boolean
         default: false
   push:
@@ -40,14 +44,19 @@ jobs:
   crawl:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 25
     env:
       INVEST_DB_URL: sqlite:///data/invest.db
-      UNIVERSE_MAX: ${{ inputs.universe_max || '80' }}
+      UNIVERSE_MAX: ${{ inputs.universe_max || '120' }}
       FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
       SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || 'Invest Research Client <you@example.com>' }}
       RUN_SCHEDULER: "false"
       PIP_DISABLE_PIP_VERSION_CHECK: "1"
+      # `true` when this run should do the deep ingest (daily cron or manual dispatch).
+      DEEP_RUN: >-
+        ${{ inputs.deep == true
+           || github.event.schedule == '30 23 * * *'
+           && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -78,12 +87,13 @@ jobs:
           alembic upgrade head
 
       - name: Ingest (fast)
-        if: ${{ !inputs.deep }}
+        if: ${{ env.DEEP_RUN == 'false' }}
         run: python -m invest.cli ingest-fast
         continue-on-error: true
 
-      - name: Ingest (deep)
-        if: ${{ inputs.deep }}
+      - name: Ingest (deep — fundamentals + Finnhub + EDGAR 13F + Form 4)
+        if: ${{ env.DEEP_RUN == 'true' }}
+        timeout-minutes: 15
         run: python -m invest.cli ingest
         continue-on-error: true
 

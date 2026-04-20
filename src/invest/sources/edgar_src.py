@@ -258,7 +258,18 @@ class EdgarSource(BaseSource):
 
     def ingest_13f(self, tickers: list[str]) -> int:
         """Pull latest 13F-HR for each tracked filer. Holdings are matched to our
-        universe via issuer-name fuzzy match against Stock.name."""
+        universe via issuer-name fuzzy match against Stock.name.
+
+        We defensively (re)seed the stocks table from the static universe before
+        building the lookup, so the match works even if yfinance fundamentals
+        haven't been ingested yet.
+        """
+        from ..universe import seed_stocks_table
+
+        try:
+            seed_stocks_table()
+        except Exception as e:  # noqa: BLE001
+            logger.warning("seed_stocks_table failed: %s", e)
         lookup = self._build_name_to_ticker(tickers)
         written = 0
         for name, cik in TOP_FILERS:

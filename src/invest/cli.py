@@ -23,14 +23,17 @@ logging.basicConfig(
 
 
 def _ensure_schema() -> None:
-    """Create tables on first run if they don't exist yet (dev convenience)."""
+    """Create tables on first run if they don't exist yet, then seed Stock
+    rows from the static universe so 13F ticker matching works on first run."""
     from sqlalchemy import inspect
 
     from .db import get_engine, init_db
+    from .universe import seed_stocks_table
 
     insp = inspect(get_engine())
     if "stocks" not in insp.get_table_names():
         init_db()
+    seed_stocks_table()
 
 
 @app.command()

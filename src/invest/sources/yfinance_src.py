@@ -339,9 +339,7 @@ def _recs_summary_to_counts(df: pd.DataFrame | None) -> dict[str, int] | None:
     if "To Grade" in df.columns:
         counts = {"strongBuy": 0, "buy": 0, "hold": 0, "sell": 0, "strongSell": 0}
         for g in df["To Grade"].dropna().astype(str).str.lower():
-            if "strong buy" in g or "outperform" in g or "overweight" in g:
-                counts["buy"] += 1
-            elif "buy" in g:
+            if "strong buy" in g or "outperform" in g or "overweight" in g or "buy" in g:
                 counts["buy"] += 1
             elif "hold" in g or "neutral" in g or "equal" in g or "market perform" in g:
                 counts["hold"] += 1

@@ -114,11 +114,6 @@ class EdgarSource(BaseSource):
 
     def _download_13f_infotable(self, cik: str, accession_no_dash: str) -> bytes | None:
         """Fetch the informationTable.xml inside the filing."""
-        idx_url = (
-            f"https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK={cik}"
-            f"&type=13F-HR&dateb=&owner=include&count=10"
-        )
-        # We instead use the direct path derived from the accession number.
         acc = accession_no_dash
         # Folder path: /Archives/edgar/data/<cik_int>/<acc>/<acc>-index.json
         cik_int = str(int(cik))

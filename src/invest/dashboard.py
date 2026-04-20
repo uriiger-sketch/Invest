@@ -1,7 +1,7 @@
 """Streamlit dashboard. Four pages: Top 20, Drill-down, Sources & freshness, Methodology."""
 from __future__ import annotations
 
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 import pandas as pd
 import plotly.express as px

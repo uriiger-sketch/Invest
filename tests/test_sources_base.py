@@ -30,9 +30,8 @@ def test_log_run_writes_ok_row():
 
 
 def test_log_run_captures_error():
-    with pytest.raises(ValueError):
-        with log_run("test.err"):
-            raise ValueError("boom")
+    with pytest.raises(ValueError), log_run("test.err"):
+        raise ValueError("boom")
     with session_scope() as s:
         row = s.execute(select(RunLog).where(RunLog.job == "test.err")).scalar_one()
     assert row.status == "error"

@@ -6,7 +6,7 @@ pulls the current S&P 500 and NASDAQ-100 membership from Wikipedia when online.
 from __future__ import annotations
 
 import logging
-from typing import Iterable
+from collections.abc import Iterable
 
 import pandas as pd
 

@@ -1,0 +1,91 @@
+name: crawl
+
+# Runs the pipeline on a schedule and on-demand, then commits REPORT.md back.
+# Results are viewable directly in the repo — no local setup required.
+
+on:
+  schedule:
+    # 22:00 UTC on weekdays = after US market close.
+    - cron: "0 22 * * 1-5"
+  workflow_dispatch:
+    inputs:
+      universe_max:
+        description: "Cap the universe size for this run (0 = no cap)"
+        required: false
+        default: "80"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: crawl-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      INVEST_DB_URL: sqlite:///data/invest.db
+      UNIVERSE_MAX: ${{ inputs.universe_max || '80' }}
+      FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
+      SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || 'Invest Research Client <you@example.com>' }}
+      RUN_SCHEDULER: "false"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install (prefer wheels)
+        run: |
+          pip install --only-binary=:all: multitasking || true
+          pip install -e ".[dev]"
+
+      - name: Restore SQLite cache
+        uses: actions/cache@v4
+        with:
+          path: data/invest.db
+          key: invest-db-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            invest-db-${{ runner.os }}-
+
+      - name: Migrate
+        run: |
+          mkdir -p data
+          alembic upgrade head
+
+      - name: Ingest
+        run: python -m invest.cli ingest
+        continue-on-error: true
+
+      - name: Rank
+        run: python -m invest.cli rank
+
+      - name: Generate report
+        run: python scripts/generate_report.py
+
+      - name: Commit report back
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add REPORT.md docs/index.html
+          if git diff --cached --quiet; then
+            echo "no report changes"
+          else
+            git commit -m "Automated top-20 report ($(date -u +%Y-%m-%dT%H:%MZ))"
+            git push
+          fi
+
+      - name: Upload SQLite as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: invest-db-${{ github.run_id }}
+          path: data/invest.db
+          retention-days: 14

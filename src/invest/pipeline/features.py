@@ -18,7 +18,6 @@ from ..models import (
     Holding13F,
     InsiderTrade,
     Price,
-    Stock,
 )
 
 logger = logging.getLogger(__name__)

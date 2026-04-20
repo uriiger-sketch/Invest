@@ -5,9 +5,9 @@ import logging
 import threading
 import time
 from abc import ABC, abstractmethod
+from collections.abc import Iterator
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Iterator
 
 from tenacity import (
     retry,

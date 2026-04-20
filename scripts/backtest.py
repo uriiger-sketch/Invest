@@ -8,7 +8,7 @@ a sanity check on the weight matrix before trusting the live ranker.
 from __future__ import annotations
 
 import logging
-from datetime import date, timedelta
+from datetime import date
 
 import numpy as np
 import pandas as pd
@@ -35,8 +35,8 @@ def _close_frame(tickers: list[str]) -> pd.DataFrame:
 
 def run(as_of: date | None = None) -> None:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(message)s")
+    _ = as_of  # reserved for historical replay; the current implementation uses today's closes
     tickers = current_universe()
-    today = as_of or date.today()
 
     features = build_features(tickers)
     comp = composite_scores(features)

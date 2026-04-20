@@ -1,21 +1,36 @@
 name: crawl
 
-# Runs the pipeline on a schedule and on-demand, then commits REPORT.md back.
-# Results are viewable directly in the repo — no local setup required.
+# Runs the pipeline every 20 min (plus on-demand and on push) and:
+#   1. commits the refreshed REPORT.md + docs/index.html back to the branch
+#   2. publishes docs/ to GitHub Pages so the top-20 is viewable in a browser
+# Auto-commit messages end with "[skip ci]" so the workflow does not re-trigger itself.
 
 on:
   schedule:
-    # 22:00 UTC on weekdays = after US market close.
-    - cron: "0 22 * * 1-5"
+    - cron: "*/20 * * * *"
   workflow_dispatch:
     inputs:
       universe_max:
-        description: "Cap the universe size for this run (0 = no cap)"
+        description: "Universe cap for this run (0 = no cap)"
         required: false
         default: "80"
+      deep:
+        description: "Full ingest (Finnhub + EDGAR, slower)"
+        type: boolean
+        default: false
+  push:
+    branches:
+      - "claude/**"
+      - main
+    paths-ignore:
+      - "REPORT.md"
+      - "docs/**"
+      - "**.md"
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 concurrency:
   group: crawl-${{ github.ref }}
@@ -23,8 +38,9 @@ concurrency:
 
 jobs:
   crawl:
+    if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 18
     env:
       INVEST_DB_URL: sqlite:///data/invest.db
       UNIVERSE_MAX: ${{ inputs.universe_max || '80' }}
@@ -36,6 +52,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/setup-python@v5
         with:
@@ -57,10 +74,16 @@ jobs:
 
       - name: Migrate
         run: |
-          mkdir -p data
+          mkdir -p data docs
           alembic upgrade head
 
-      - name: Ingest
+      - name: Ingest (fast)
+        if: ${{ !inputs.deep }}
+        run: python -m invest.cli ingest-fast
+        continue-on-error: true
+
+      - name: Ingest (deep)
+        if: ${{ inputs.deep }}
         run: python -m invest.cli ingest
         continue-on-error: true
 
@@ -78,14 +101,34 @@ jobs:
           if git diff --cached --quiet; then
             echo "no report changes"
           else
-            git commit -m "Automated top-20 report ($(date -u +%Y-%m-%dT%H:%MZ))"
+            git commit -m "chore(report): refresh $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
             git push
           fi
 
-      - name: Upload SQLite as artifact
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+      - name: Upload SQLite artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: invest-db-${{ github.run_id }}
           path: data/invest.db
-          retention-days: 14
+          retention-days: 7
+
+  deploy-pages:
+    needs: crawl
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        continue-on-error: true

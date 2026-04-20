@@ -65,3 +65,23 @@ def ingest_prices_only(tickers: list[str] | None = None) -> int:
     with log_run("yfinance.prices_intraday") as c:
         c["rows"] = src.ingest_prices(tickers)
         return c["rows"]
+
+
+def ingest_fast(tickers: list[str] | None = None) -> int:
+    """Fast path for the every-20-min loop: yfinance prices + consensus.
+
+    Skips fundamentals (slow per-ticker .info calls), Finnhub, and EDGAR so
+    the whole cycle comfortably fits under the 20-minute budget.
+    """
+    tickers = tickers or current_universe()
+    from ..sources.yfinance_src import YFinanceSource
+
+    src = YFinanceSource()
+    total = 0
+    with log_run("yfinance.prices_fast") as c:
+        c["rows"] = src.ingest_prices(tickers)
+        total += c["rows"]
+    with log_run("yfinance.consensus_fast") as c:
+        c["rows"] = src.ingest_consensus(tickers)
+        total += c["rows"]
+    return total

@@ -43,6 +43,16 @@ def ingest() -> None:
     console.print(f"[green]ingest done[/] — {total} rows written")
 
 
+@app.command("ingest-fast")
+def ingest_fast() -> None:
+    """Quick refresh: yfinance prices + consensus only. Used by the 20-min loop."""
+    _ensure_schema()
+    from .pipeline.ingest import ingest_fast as _ingest_fast
+
+    total = _ingest_fast()
+    console.print(f"[green]fast ingest done[/] — {total} rows written")
+
+
 @app.command()
 def rank(n: int = typer.Option(20, help="Top-N per horizon")) -> None:
     """Compute features, score, blend, and print top-N per horizon."""

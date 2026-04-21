@@ -200,6 +200,27 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("OPEN", "Opendoor Technologies", "Real Estate", "US-S"),
     ("SGFY", "Signify Health", "Health Care", "US-S"),
     ("HIMS", "Hims & Hers Health", "Health Care", "US-S"),
+    # --- AI & Quantum specialists -------------------------------------------
+    # Pure-play quantum computing — small/micro cap, highly volatile.
+    ("IONQ", "IonQ Inc.", "Technology", "US-S"),
+    ("RGTI", "Rigetti Computing", "Technology", "US-S"),
+    ("QBTS", "D-Wave Quantum", "Technology", "US-S"),
+    ("QUBT", "Quantum Computing Inc.", "Technology", "US-S"),
+    # AI pure-plays + AI infrastructure
+    ("ANET", "Arista Networks", "Technology", "US-L"),
+    ("ARM", "Arm Holdings", "Technology", "US-L"),
+    ("CRDO", "Credo Technology", "Technology", "US-S"),
+    ("TEM", "Tempus AI", "Health Care", "US-S"),
+    ("RXRX", "Recursion Pharmaceuticals", "Health Care", "US-S"),
+    ("AI", "C3.ai Inc.", "Technology", "US-S"),
+    ("BBAI", "BigBear.ai Holdings", "Technology", "US-S"),
+    ("SOUN", "SoundHound AI", "Technology", "US-S"),
+    ("VRT", "Vertiv Holdings", "Industrials", "US-L"),
+    ("CLS", "Celestica Inc.", "Technology", "US-S"),
+    ("DELL", "Dell Technologies", "Technology", "US-L"),
+    ("TSM", "Taiwan Semiconductor", "Technology", "US-L"),
+    ("MRVL", "Marvell Technology", "Technology", "US-L"),
+    ("ASTS", "AST SpaceMobile", "Communication Services", "US-S"),
     # --- Israel (mostly US-listed) -------------------------------------------
     ("TEVA", "Teva Pharmaceutical Industries", "Health Care", "IL"),
     ("CHKP", "Check Point Software Technologies", "Technology", "IL"),

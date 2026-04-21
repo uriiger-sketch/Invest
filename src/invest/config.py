@@ -29,7 +29,7 @@ class Settings(BaseSettings):
     liquidity_min_dollar_volume: float = 5_000_000.0
     blend_composite_weight: float = 0.6
     blend_ml_weight: float = 0.4
-    top_n: int = 20
+    top_n: int = 15
 
 
 # Weight matrix per horizon. Rows must sum to ~1 (negative entries allowed).

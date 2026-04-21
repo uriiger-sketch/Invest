@@ -41,6 +41,11 @@ HORIZON_BLURB: dict[str, str] = {
 # Column definitions. Order matches the tables.
 COLUMN_DOCS: list[tuple[str, str]] = [
     ("#", "Rank (1 = highest blended score in this horizon)."),
+    (
+        "★★ / ★★★",
+        "Cross-horizon highlight. ★★ = this ticker ranks in two of the three "
+        "top-15 lists; ★★★ (rare) = it's in all three. High-conviction names.",
+    ),
     ("Ticker", "Stock symbol as used on US exchanges."),
     ("Name", "Company name from Yahoo Finance."),
     ("Sector", "GICS sector classification."),
@@ -78,8 +83,13 @@ COLUMN_DOCS: list[tuple[str, str]] = [
     ),
     (
         "Firms",
-        "Count of distinct analyst firms that have issued an action (upgrade "
-        "/ downgrade / reiterate) on this ticker in the last 90 days.",
+        "Count of distinct sell-side analyst firms that have publicly issued "
+        "an action (upgrade / downgrade / reiterate) on this ticker in the "
+        "last 90 days — sourced from yfinance's upgrades/downgrades feed and "
+        "Finnhub's upgrade-downgrade endpoint when a key is configured. The "
+        "Buy / Hold / Sell columns aggregate the ratings of every firm that "
+        "publicly covers the stock (typically 10–30 firms for US large caps, "
+        "5–15 for small caps, fewer for non-US).",
     ),
     (
         "Insts",
@@ -265,7 +275,7 @@ def _md_table(rows: list[dict]) -> str:
     if not rows:
         return "_(no data)_\n"
     headers = [
-        "#", "Ticker", "Name", "Sector",
+        "#", "★", "Ticker", "Name", "Sector",
         "Blended", "Composite", "ML", "Pctile",
         "Upside", "Buy", "Hold", "Sell", "Firms", "Insts",
     ]
@@ -273,11 +283,14 @@ def _md_table(rows: list[dict]) -> str:
     for r in rows:
         pct = f"{(r['percentile'] or 0) * 100:.1f}%"
         upside = f"{(r.get('upside_pct') or 0) * 100:+.1f}%" if r.get("upside_pct") is not None else "—"
+        hc = r.get("horizon_count") or 1
+        stars = "★" * hc if hc >= 2 else ""
         lines.append(
             "| "
             + " | ".join(
                 [
                     str(r["rank"]),
+                    stars,
                     f"**{r['ticker']}**",
                     (r["name"] or "")[:40],
                     (r["sector"] or "")[:20],
@@ -342,10 +355,36 @@ def _heartbeat_md() -> str:
     return f"{icon} last successful crawl: {label} (at {finished.isoformat(timespec='seconds')}Z)"
 
 
+def _collect_top_by_horizon(as_of: date, n: int) -> dict[str, list[dict]]:
+    """Pull top-N rows once per horizon, then annotate every row with the count
+    of horizons in which that ticker also appears (so we can render a ★ / ★★
+    cross-horizon highlight)."""
+    by_h = {h: _top_rows(h, as_of, n) for h in HORIZONS}
+    # Count how many lists each ticker shows up in.
+    counts: dict[str, int] = {}
+    for rows in by_h.values():
+        for r in rows:
+            counts[r["ticker"]] = counts.get(r["ticker"], 0) + 1
+    for rows in by_h.values():
+        for r in rows:
+            r["horizon_count"] = counts.get(r["ticker"], 1)
+    return by_h
+
+
 def _build_markdown(as_of: date, n: int) -> str:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    by_h = _collect_top_by_horizon(as_of, n)
+    starred = sorted(
+        {r["ticker"] for rows in by_h.values() for r in rows if r["horizon_count"] >= 2}
+    )
+    starred_line = (
+        "**High-conviction cross-horizon picks:** "
+        + ", ".join(f"**{t}**" for t in starred)
+        if starred
+        else "_No ticker currently appears in more than one horizon's top list._"
+    )
     parts: list[str] = [
-        "# Invest — Top 20 report",
+        f"# Invest — Top {n} report",
         "",
         f"_Generated: **{generated}** · Scores as of: **{as_of.isoformat()}**_",
         "",
@@ -355,16 +394,18 @@ def _build_markdown(as_of: date, n: int) -> str:
         "upside, rating momentum, institutional 13F flow, insider activity, price momentum, "
         "and risk into a blended composite + ML score per horizon.",
         "",
+        starred_line,
+        "",
         "## How to read this",
         "",
         _columns_md(),
     ]
     for h in HORIZONS:
-        parts.append(f"## {h.capitalize()} horizon")
+        parts.append(f"## {h.capitalize()} horizon — top {n}")
         parts.append("")
         parts.append(f"_{HORIZON_BLURB[h]}_")
         parts.append("")
-        parts.append(_md_table(_top_rows(h, as_of, n)))
+        parts.append(_md_table(by_h[h]))
         parts.append("")
 
     parts.append("## Recent pipeline runs")
@@ -390,7 +431,9 @@ def _html_top_table(rows: list[dict]) -> str:
         return "<p><em>(no data)</em></p>"
     head = (
         "<thead><tr>"
-        "<th>#</th><th>Ticker</th><th>Name</th><th>Sector</th>"
+        "<th>#</th>"
+        "<th title='High-conviction star: ★★ = ranks in two horizons; ★★★ = all three.'>★</th>"
+        "<th>Ticker</th><th>Name</th><th>Sector</th>"
         "<th title='Final score, z-scored across the universe.'>Blended</th>"
         "<th title='Rule-based score from nine weighted features.'>Composite</th>"
         "<th title='LightGBM predicted forward return (cold-start = composite).'>ML</th>"
@@ -433,7 +476,7 @@ def _html_top_table(rows: list[dict]) -> str:
         )
         drawer_html = (
             f"<tr class='drawer' id='drawer-{r['ticker']}-{i}' style='display:none'>"
-            "<td colspan='13'>"
+            "<td colspan='14'>"
             "<strong>Recent analyst actions</strong>"
             "<table class='inner'><thead><tr><th>Date</th><th>Firm</th>"
             "<th>Action</th><th>From → To</th><th>Target</th><th>Source</th></tr></thead>"
@@ -448,9 +491,13 @@ def _html_top_table(rows: list[dict]) -> str:
             if drawer_rows
             else ""
         )
+        hcount = r.get("horizon_count") or 1
+        stars = "★" * hcount if hcount >= 2 else ""
+        row_cls = "row-main star" if hcount >= 2 else "row-main"
         body_rows.append(
-            f"<tr class='row-main' {toggle} style='cursor:pointer'>"
+            f"<tr class='{row_cls}' {toggle} style='cursor:pointer'>"
             f"<td>{r['rank']}</td>"
+            f"<td class='star'>{stars}</td>"
             f"<td><strong>{_html_escape(r['ticker'])}</strong></td>"
             f"<td>{_html_escape((r['name'] or '')[:60])}</td>"
             f"<td>{sector_html}</td>"
@@ -537,13 +584,24 @@ def _heartbeat_badge() -> str:
 def _build_html(as_of: date, n: int) -> str:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     heartbeat = _heartbeat_badge()
+    by_h = _collect_top_by_horizon(as_of, n)
+    starred = sorted(
+        {r["ticker"] for rows in by_h.values() for r in rows if r["horizon_count"] >= 2}
+    )
+    starred_html = (
+        "<p class='starred'><strong>High-conviction cross-horizon picks:</strong> "
+        + ", ".join(f"<strong>{_html_escape(t)}</strong>" for t in starred)
+        + "</p>"
+        if starred
+        else "<p class='starred muted'>No ticker currently appears in more than one horizon's top list.</p>"
+    )
     sections: list[str] = []
     for h in HORIZONS:
         sections.append(
             f"<section>"
-            f"<h2>{h.capitalize()} horizon</h2>"
+            f"<h2>{h.capitalize()} horizon — top {n}</h2>"
             f"<p class='blurb'>{_html_escape(HORIZON_BLURB[h])}</p>"
-            f"{_html_top_table(_top_rows(h, as_of, n))}"
+            f"{_html_top_table(by_h[h])}"
             "</section>"
         )
     runs_html = _html_runs_table(_recent_runs_safe())
@@ -552,7 +610,7 @@ def _build_html(as_of: date, n: int) -> str:
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Invest — Top 20</title>
+<title>Invest — Top {n}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="300">
 <style>
@@ -587,10 +645,16 @@ def _build_html(as_of: date, n: int) -> str:
   .badge.green {{ background: #2f855a; }}
   .badge.amber {{ background: #b7791f; }}
   .badge.red   {{ background: #c53030; }}
+  td.star {{ color: #d69e2e; font-weight: 700; text-align: center; }}
+  tr.row-main.star {{ background: rgba(214,158,46,0.08); }}
+  tr.row-main.star:hover {{ background: rgba(214,158,46,0.16); }}
+  .starred {{ background: rgba(214,158,46,0.1); border-left: 3px solid #d69e2e;
+              padding: 0.6rem 1rem; margin: 1rem 0; border-radius: 4px; }}
+  .starred.muted {{ background: rgba(127,127,127,0.08); border-left-color: #aaa; color: #666; }}
 </style>
 </head>
 <body>
-<h1>Invest — Top 20 {heartbeat}</h1>
+<h1>Invest — Top {n} {heartbeat}</h1>
 <p class="meta">Generated: <strong>{generated}</strong> · Scores as of: <strong>{as_of.isoformat()}</strong>
  · page auto-refreshes every 5 min · pipeline runs every 20 min via GitHub Actions.</p>
 <blockquote>
@@ -598,6 +662,8 @@ def _build_html(as_of: date, n: int) -> str:
   rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a blended
   composite + ML score per horizon. Click any row to see the most recent analyst actions for that ticker.
 </blockquote>
+
+{starred_html}
 
 <details open>
   <summary>How to read this report</summary>
@@ -621,12 +687,12 @@ def _build_html(as_of: date, n: int) -> str:
 def _placeholder() -> tuple[str, str]:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     md = (
-        "# Invest — Top 20 report\n\n"
+        "# Invest — Top 15 report\n\n"
         f"_Generated: **{generated}**_\n\n"
         "The pipeline has not yet produced any scores. The GitHub Actions workflow is "
         "scheduled to run every 20 minutes — the first successful run will populate this file.\n"
     )
-    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — Top 20</title>
+    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — Top 15</title>
 <meta http-equiv="refresh" content="60"></head>
 <body style="font-family: -apple-system, Helvetica, sans-serif; max-width: 800px; margin: 3rem auto;">
 <h1>Invest — awaiting first crawl</h1>

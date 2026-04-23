@@ -1,12 +1,12 @@
 # Invest — Top 15 report
 
-_Generated: **2026-04-23 11:59 UTC** · Scores as of: **2026-04-23**_
+_Generated: **2026-04-23 14:05 UTC** · Scores as of: **2026-04-23**_
 
-🟢 last successful crawl: 0 min ago (at 2026-04-23T11:59:22Z)
+🟢 last successful crawl: 0 min ago (at 2026-04-23T14:05:13Z)
 
 > Not investment advice. Ranks publicly available analyst consensus, price-target upside, rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a blended composite + ML score per horizon.
 
-**High-conviction cross-horizon picks:** **AAPL**, **BUD**, **CHWY**, **CI**, **CRDO**, **CRH**, **CRWD**, **CVX**, **DASH**, **DDOG**, **DHR**, **DIS**, **DKNG**, **FROG**
+**High-conviction cross-horizon picks:** **AAPL**, **BUD**, **CHWY**, **CRDO**, **CRH**, **CRM**, **CRWD**, **CVX**, **DASH**, **DDOG**, **DHR**, **DIS**, **DKNG**, **FROG**
 
 ## How to read this
 
@@ -32,21 +32,21 @@ _5-day holding. Weights analyst rating momentum and short-term price momentum mo
 
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile | Upside | Buy | Hold | Sell | Firms | Insts |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | ★★ | **AAPL** | Apple Inc. | Technology | 3.889 | 1.601 | 1.601 | 100.0% | +9.0% | 31 | 14 | 2 | 12 | 0 |
-| 2 | ★★ | **CVX** | Chevron Corporation | Energy | 3.283 | 1.351 | 1.351 | 98.7% | +13.5% | 18 | 6 | 1 | 10 | 0 |
-| 3 | ★★ | **CRDO** | Credo Technology Group Holding Ltd | Technology | 2.093 | 0.859 | 0.859 | 97.4% | +10.5% | 16 | 1 | 0 | 7 | 0 |
-| 4 | ★★ | **CRWD** | CrowdStrike Holdings, Inc. | Technology | 1.868 | 0.766 | 0.766 | 96.2% | +5.0% | 41 | 12 | 0 | 27 | 0 |
-| 5 |  | **AMD** | Advanced Micro Devices, Inc. | Technology | 1.114 | 0.454 | 0.454 | 94.9% | -3.6% | 36 | 13 | 0 | 16 | 0 |
-| 6 |  | **AFRM** | Affirm Holdings, Inc. | Financial Services | 1.089 | 0.444 | 0.444 | 93.6% | +17.5% | 23 | 8 | 0 | 12 | 0 |
-| 7 |  | **ARM** | Arm Holdings plc | Technology | 1.064 | 0.434 | 0.434 | 92.3% | -13.7% | 27 | 10 | 2 | 18 | 0 |
-| 8 |  | **ABNB** | Airbnb, Inc. | Consumer Cyclical | 0.956 | 0.389 | 0.389 | 91.0% | +1.1% | 20 | 21 | 2 | 14 | 0 |
-| 9 |  | **ANET** | Arista Networks, Inc. | Technology | 0.954 | 0.388 | 0.388 | 89.7% | -0.2% | 27 | 3 | 0 | 11 | 0 |
-| 10 | ★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.930 | 0.378 | 0.378 | 88.5% | +22.4% | 27 | 3 | 1 | 7 | 0 |
-| 11 |  | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.807 | 0.328 | 0.328 | 87.2% | +10.7% | 63 | 5 | 0 | 27 | 0 |
-| 12 | ★★★ | **CRH** | CRH plc | Basic Materials | 0.792 | 0.321 | 0.321 | 85.9% | +23.0% | 20 | 2 | 0 | 3 | 0 |
-| 13 |  | **CLS** | Celestica Inc. | Technology | 0.756 | 0.306 | 0.306 | 84.6% | -1.5% | 18 | 2 | 0 | 6 | 0 |
-| 14 |  | **ADI** | Analog Devices, Inc. | Technology | 0.711 | 0.288 | 0.288 | 83.3% | +3.0% | 29 | 6 | 0 | 16 | 0 |
-| 15 |  | **BAC** | Bank of America Corporation | Financial Services | 0.579 | 0.233 | 0.233 | 82.1% | +17.9% | 21 | 3 | 0 | 9 | 0 |
+| 1 | ★★ | **AAPL** | Apple Inc. | Technology | 3.898 | 1.609 | 1.609 | 100.0% | +8.7% | 31 | 14 | 2 | 12 | 0 |
+| 2 | ★★ | **CVX** | Chevron Corporation | Energy | 3.288 | 1.356 | 1.356 | 98.7% | +13.2% | 18 | 6 | 1 | 10 | 0 |
+| 3 | ★★ | **CRDO** | Credo Technology Group Holding Ltd | Technology | 2.194 | 0.903 | 0.903 | 97.4% | +11.8% | 16 | 1 | 0 | 7 | 0 |
+| 4 | ★★ | **CRWD** | CrowdStrike Holdings, Inc. | Technology | 1.901 | 0.781 | 0.781 | 96.2% | +10.2% | 41 | 12 | 0 | 27 | 0 |
+| 5 |  | **ARM** | Arm Holdings plc | Technology | 1.191 | 0.487 | 0.487 | 94.9% | -14.9% | 27 | 10 | 2 | 18 | 0 |
+| 6 |  | **ANET** | Arista Networks, Inc. | Technology | 1.079 | 0.441 | 0.441 | 93.6% | +1.0% | 27 | 3 | 0 | 11 | 0 |
+| 7 |  | **AMD** | Advanced Micro Devices, Inc. | Technology | 0.991 | 0.404 | 0.404 | 92.3% | -3.6% | 36 | 13 | 0 | 16 | 0 |
+| 8 |  | **ABNB** | Airbnb, Inc. | Consumer Cyclical | 0.976 | 0.398 | 0.398 | 91.0% | +3.2% | 20 | 21 | 2 | 14 | 0 |
+| 9 | ★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.972 | 0.397 | 0.397 | 89.7% | +23.1% | 27 | 3 | 1 | 7 | 0 |
+| 10 |  | **AFRM** | Affirm Holdings, Inc. | Financial Services | 0.961 | 0.392 | 0.392 | 88.5% | +23.2% | 23 | 8 | 0 | 12 | 0 |
+| 11 |  | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.864 | 0.352 | 0.352 | 87.2% | +10.8% | 63 | 5 | 0 | 27 | 0 |
+| 12 |  | **ADI** | Analog Devices, Inc. | Technology | 0.758 | 0.308 | 0.308 | 85.9% | -2.4% | 29 | 6 | 0 | 16 | 0 |
+| 13 | ★★★ | **CRH** | CRH plc | Basic Materials | 0.700 | 0.284 | 0.284 | 84.6% | +22.9% | 20 | 2 | 0 | 3 | 0 |
+| 14 |  | **CLS** | Celestica Inc. | Technology | 0.526 | 0.212 | 0.212 | 83.3% | -2.4% | 18 | 2 | 0 | 6 | 0 |
+| 15 |  | **BAC** | Bank of America Corporation | Financial Services | 0.522 | 0.210 | 0.210 | 82.1% | +17.7% | 21 | 3 | 0 | 9 | 0 |
 
 
 ## Weeks horizon — top 15
@@ -55,21 +55,21 @@ _20-day (~1 month) holding. Balanced mix of consensus, price-target upside, rati
 
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile | Upside | Buy | Hold | Sell | Firms | Insts |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | ★★ | **CVX** | Chevron Corporation | Energy | 2.248 | 0.877 | 0.877 | 100.0% | +13.5% | 18 | 6 | 1 | 10 | 0 |
-| 2 | ★★ | **AAPL** | Apple Inc. | Technology | 2.246 | 0.876 | 0.876 | 98.7% | +9.0% | 31 | 14 | 2 | 12 | 0 |
-| 3 | ★★★ | **DIS** | The Walt Disney Company | Communication Servic | 1.655 | 0.644 | 0.644 | 97.4% | +22.4% | 27 | 3 | 1 | 7 | 0 |
-| 4 | ★★ | **FROG** | JFrog Ltd. | Technology | 1.541 | 0.599 | 0.599 | 96.2% | +47.7% | 20 | 1 | 0 | 9 | 0 |
-| 5 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 1.484 | 0.577 | 0.577 | 94.9% | +50.9% | 21 | 5 | 0 | 12 | 0 |
-| 6 | ★★ | **CRWD** | CrowdStrike Holdings, Inc. | Technology | 1.350 | 0.524 | 0.524 | 93.6% | +5.0% | 41 | 12 | 0 | 27 | 0 |
-| 7 | ★★★ | **CRH** | CRH plc | Basic Materials | 1.334 | 0.518 | 0.518 | 92.3% | +23.0% | 20 | 2 | 0 | 3 | 0 |
-| 8 | ★★ | **DDOG** | Datadog, Inc. | Technology | 1.182 | 0.458 | 0.458 | 91.0% | +35.0% | 44 | 3 | 1 | 19 | 0 |
-| 9 | ★★ | **DKNG** | DraftKings Inc. | Consumer Cyclical | 1.084 | 0.420 | 0.420 | 89.7% | +56.7% | 28 | 7 | 0 | 22 | 0 |
-| 10 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.061 | 0.411 | 0.411 | 88.5% | +39.1% | 22 | 2 | 0 | 9 | 0 |
-| 11 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.936 | 0.361 | 0.361 | 87.2% | +21.5% | 10 | 1 | 0 | 2 | 0 |
-| 12 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 0.913 | 0.353 | 0.353 | 85.9% | +38.0% | 35 | 10 | 0 | 20 | 0 |
-| 13 |  | **DE** | Deere & Company | Industrials | 0.891 | 0.344 | 0.344 | 84.6% | +14.7% | 13 | 11 | 0 | 13 | 0 |
-| 14 | ★★ | **CRDO** | Credo Technology Group Holding Ltd | Technology | 0.873 | 0.337 | 0.337 | 83.3% | +10.5% | 16 | 1 | 0 | 7 | 0 |
-| 15 | ★★ | **CI** | The Cigna Group | Healthcare | 0.829 | 0.319 | 0.319 | 82.1% | +23.1% | 22 | 2 | 0 | 8 | 0 |
+| 1 | ★★ | **AAPL** | Apple Inc. | Technology | 2.290 | 0.870 | 0.870 | 100.0% | +8.7% | 31 | 14 | 2 | 12 | 0 |
+| 2 | ★★ | **CVX** | Chevron Corporation | Energy | 2.274 | 0.863 | 0.863 | 98.7% | +13.2% | 18 | 6 | 1 | 10 | 0 |
+| 3 | ★★★ | **DIS** | The Walt Disney Company | Communication Servic | 1.673 | 0.634 | 0.634 | 97.4% | +23.1% | 27 | 3 | 1 | 7 | 0 |
+| 4 | ★★ | **FROG** | JFrog Ltd. | Technology | 1.533 | 0.580 | 0.580 | 96.2% | +56.2% | 20 | 1 | 0 | 9 | 0 |
+| 5 | ★★ | **CRWD** | CrowdStrike Holdings, Inc. | Technology | 1.528 | 0.578 | 0.578 | 94.9% | +10.2% | 41 | 12 | 0 | 27 | 0 |
+| 6 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 1.444 | 0.546 | 0.546 | 93.6% | +57.6% | 21 | 5 | 0 | 12 | 0 |
+| 7 | ★★ | **DDOG** | Datadog, Inc. | Technology | 1.301 | 0.492 | 0.492 | 92.3% | +42.9% | 44 | 3 | 1 | 19 | 0 |
+| 8 | ★★★ | **CRH** | CRH plc | Basic Materials | 1.260 | 0.476 | 0.476 | 91.0% | +22.9% | 20 | 2 | 0 | 3 | 0 |
+| 9 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.047 | 0.394 | 0.394 | 89.7% | +45.1% | 22 | 2 | 0 | 9 | 0 |
+| 10 | ★★ | **DKNG** | DraftKings Inc. | Consumer Cyclical | 0.972 | 0.366 | 0.366 | 88.5% | +57.3% | 28 | 7 | 0 | 22 | 0 |
+| 11 | ★★ | **CRDO** | Credo Technology Group Holding Ltd | Technology | 0.955 | 0.359 | 0.359 | 87.2% | +11.8% | 16 | 1 | 0 | 7 | 0 |
+| 12 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 0.933 | 0.351 | 0.351 | 85.9% | +43.1% | 35 | 10 | 0 | 20 | 0 |
+| 13 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.918 | 0.345 | 0.345 | 84.6% | +21.9% | 10 | 1 | 0 | 2 | 0 |
+| 14 | ★★ | **CRM** | Salesforce, Inc. | Technology | 0.891 | 0.335 | 0.335 | 83.3% | +55.3% | 35 | 10 | 1 | 24 | 0 |
+| 15 |  | **DE** | Deere & Company | Industrials | 0.827 | 0.310 | 0.310 | 82.1% | +13.6% | 13 | 11 | 0 | 13 | 0 |
 
 
 ## Months horizon — top 15
@@ -78,27 +78,29 @@ _90-day holding. Leans on analyst consensus, price-target upside, and institutio
 
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile | Upside | Buy | Hold | Sell | Firms | Insts |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 |  | **BSX** | Boston Scientific Corporation | Healthcare | 1.801 | 0.799 | 0.799 | 100.0% | +47.6% | 32 | 1 | 0 | 19 | 0 |
-| 2 | ★★ | **DKNG** | DraftKings Inc. | Consumer Cyclical | 1.748 | 0.775 | 0.775 | 98.7% | +56.7% | 28 | 7 | 0 | 22 | 0 |
-| 3 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 1.675 | 0.742 | 0.742 | 97.4% | +50.9% | 21 | 5 | 0 | 12 | 0 |
-| 4 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.610 | 0.713 | 0.713 | 96.2% | +39.1% | 22 | 2 | 0 | 9 | 0 |
-| 5 | ★★ | **FROG** | JFrog Ltd. | Technology | 1.514 | 0.670 | 0.670 | 94.9% | +47.7% | 20 | 1 | 0 | 9 | 0 |
-| 6 |  | **ABT** | Abbott Laboratories | Healthcare | 1.309 | 0.579 | 0.579 | 93.6% | +30.3% | 22 | 6 | 0 | 13 | 0 |
-| 7 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.287 | 0.569 | 0.569 | 92.3% | +21.5% | 10 | 1 | 0 | 2 | 0 |
-| 8 | ★★ | **DDOG** | Datadog, Inc. | Technology | 1.239 | 0.547 | 0.547 | 91.0% | +35.0% | 44 | 3 | 1 | 19 | 0 |
-| 9 | ★★★ | **DIS** | The Walt Disney Company | Communication Servic | 1.215 | 0.536 | 0.536 | 89.7% | +22.4% | 27 | 3 | 1 | 7 | 0 |
-| 10 |  | **CRM** | Salesforce, Inc. | Technology | 1.200 | 0.529 | 0.529 | 88.5% | +41.7% | 35 | 10 | 1 | 24 | 0 |
-| 11 | ★★ | **CI** | The Cigna Group | Healthcare | 1.155 | 0.509 | 0.509 | 87.2% | +23.1% | 22 | 2 | 0 | 8 | 0 |
-| 12 | ★★★ | **CRH** | CRH plc | Basic Materials | 1.082 | 0.477 | 0.477 | 85.9% | +23.0% | 20 | 2 | 0 | 3 | 0 |
-| 13 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.021 | 0.449 | 0.449 | 84.6% | +38.0% | 35 | 10 | 0 | 20 | 0 |
-| 14 |  | **ABBV** | AbbVie Inc. | Healthcare | 0.964 | 0.424 | 0.424 | 83.3% | +24.4% | 23 | 9 | 0 | 11 | 0 |
-| 15 |  | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | 0.884 | 0.388 | 0.388 | 82.1% | +29.3% | 31 | 7 | 0 | 22 | 0 |
+| 1 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 1.754 | 0.752 | 0.752 | 100.0% | +57.6% | 21 | 5 | 0 | 12 | 0 |
+| 2 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.706 | 0.731 | 0.731 | 98.7% | +45.1% | 22 | 2 | 0 | 9 | 0 |
+| 3 | ★★ | **FROG** | JFrog Ltd. | Technology | 1.671 | 0.715 | 0.715 | 97.4% | +56.2% | 20 | 1 | 0 | 9 | 0 |
+| 4 |  | **BSX** | Boston Scientific Corporation | Healthcare | 1.572 | 0.673 | 0.673 | 96.2% | +45.5% | 32 | 1 | 0 | 19 | 0 |
+| 5 | ★★ | **DKNG** | DraftKings Inc. | Consumer Cyclical | 1.569 | 0.672 | 0.672 | 94.9% | +57.3% | 28 | 7 | 0 | 22 | 0 |
+| 6 | ★★ | **CRM** | Salesforce, Inc. | Technology | 1.468 | 0.628 | 0.628 | 93.6% | +55.3% | 35 | 10 | 1 | 24 | 0 |
+| 7 | ★★ | **DDOG** | Datadog, Inc. | Technology | 1.376 | 0.588 | 0.588 | 92.3% | +42.9% | 44 | 3 | 1 | 19 | 0 |
+| 8 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.259 | 0.537 | 0.537 | 91.0% | +21.9% | 10 | 1 | 0 | 2 | 0 |
+| 9 |  | **ABT** | Abbott Laboratories | Healthcare | 1.210 | 0.516 | 0.516 | 89.7% | +29.9% | 22 | 6 | 0 | 13 | 0 |
+| 10 | ★★★ | **DIS** | The Walt Disney Company | Communication Servic | 1.189 | 0.507 | 0.507 | 88.5% | +23.1% | 27 | 3 | 1 | 7 | 0 |
+| 11 |  | **CI** | The Cigna Group | Healthcare | 1.092 | 0.465 | 0.465 | 87.2% | +22.1% | 22 | 2 | 0 | 8 | 0 |
+| 12 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.056 | 0.449 | 0.449 | 85.9% | +43.1% | 35 | 10 | 0 | 20 | 0 |
+| 13 | ★★★ | **CRH** | CRH plc | Basic Materials | 1.046 | 0.445 | 0.445 | 84.6% | +22.9% | 20 | 2 | 0 | 3 | 0 |
+| 14 |  | **ACN** | Accenture plc | Technology | 0.975 | 0.415 | 0.415 | 83.3% | +42.1% | 18 | 10 | 0 | 12 | 0 |
+| 15 |  | **ABBV** | AbbVie Inc. | Healthcare | 0.874 | 0.371 | 0.371 | 82.1% | +23.6% | 23 | 9 | 0 | 11 | 0 |
 
 
 ## Recent pipeline runs
 
 | Job | Status | Rows | Started | Error |
 |---|---|---:|---|---|
+| stooq.prices | ok | 0 | 2026-04-23 14:05:12Z |  |
+| yfinance.prices_fast | ok | 7110 | 2026-04-23 14:05:06Z |  |
 | stooq.prices | ok | 0 | 2026-04-23 11:59:22Z |  |
 | yfinance.prices_fast | ok | 7110 | 2026-04-23 11:59:16Z |  |
 | stooq.prices | ok | 0 | 2026-04-23 10:51:02Z |  |
@@ -117,5 +119,3 @@ _90-day holding. Leans on analyst consensus, price-target upside, and institutio
 | yfinance.consensus | ok | 79 | 2026-04-23 00:12:02Z |  |
 | yfinance.fundamentals | ok | 80 | 2026-04-23 00:11:42Z |  |
 | yfinance.prices | ok | 7110 | 2026-04-23 00:11:33Z |  |
-| stooq.prices | ok | 0 | 2026-04-22 23:45:04Z |  |
-| yfinance.prices_fast | ok | 7110 | 2026-04-22 23:44:55Z |  |

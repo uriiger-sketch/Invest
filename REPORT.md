@@ -1,8 +1,8 @@
 # Invest — Top 15 report
 
-_Generated: **2026-04-26 17:23 UTC** · Scores as of: **2026-04-26**_
+_Generated: **2026-04-26 18:26 UTC** · Scores as of: **2026-04-26**_
 
-🟢 last successful crawl: 0 min ago (at 2026-04-26T17:23:34Z)
+🟢 last successful crawl: 0 min ago (at 2026-04-26T18:26:44Z)
 
 > Not investment advice. Ranks publicly available analyst consensus, price-target upside, rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a blended composite + ML score per horizon.
 
@@ -99,6 +99,8 @@ _90-day holding. Leans on analyst consensus, price-target upside, and institutio
 
 | Job | Status | Rows | Started | Error |
 |---|---|---:|---|---|
+| stooq.prices | ok | 0 | 2026-04-26 18:26:43Z |  |
+| yfinance.prices_fast | ok | 7110 | 2026-04-26 18:26:37Z |  |
 | stooq.prices | ok | 0 | 2026-04-26 17:23:34Z |  |
 | yfinance.prices_fast | ok | 7110 | 2026-04-26 17:23:29Z |  |
 | stooq.prices | ok | 0 | 2026-04-26 16:23:39Z |  |
@@ -117,5 +119,3 @@ _90-day holding. Leans on analyst consensus, price-target upside, and institutio
 | yfinance.prices_fast | ok | 7110 | 2026-04-26 10:10:12Z |  |
 | stooq.prices | ok | 0 | 2026-04-26 09:03:13Z |  |
 | yfinance.prices_fast | ok | 7110 | 2026-04-26 09:03:08Z |  |
-| stooq.prices | ok | 0 | 2026-04-26 07:56:54Z |  |
-| yfinance.prices_fast | ok | 7110 | 2026-04-26 07:56:47Z |  |

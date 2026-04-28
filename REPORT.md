@@ -1,8 +1,8 @@
 # Invest — Top 15 report
 
-_Generated: **2026-04-27 23:14 UTC** · Scores as of: **2026-04-27**_
+_Generated: **2026-04-28 00:09 UTC** · Scores as of: **2026-04-28**_
 
-🟢 last successful crawl: 0 min ago (at 2026-04-27T23:13:58Z)
+🟢 last successful crawl: 0 min ago (at 2026-04-28T00:09:43Z)
 
 > Not investment advice. Ranks publicly available analyst consensus, price-target upside, rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a blended composite + ML score per horizon.
 
@@ -59,7 +59,7 @@ _20-day (~1 month) holding. Balanced mix of consensus, price-target upside, rati
 | 2 | ★★★ | **DIS** | The Walt Disney Company | Communication Servic | 1.692 | 0.632 | 0.632 | 98.7% | +25.3% | 27 | 3 | 1 | 7 | 0 |
 | 3 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 1.459 | 0.544 | 0.544 | 97.4% | +61.8% | 21 | 5 | 0 | 12 | 0 |
 | 4 | ★★★ | **CRH** | CRH plc | Basic Materials | 1.407 | 0.524 | 0.524 | 96.2% | +22.5% | 19 | 2 | 0 | 3 | 0 |
-| 5 | ★★ | **DDOG** | Datadog, Inc. | Technology | 1.331 | 0.495 | 0.495 | 94.9% | +33.4% | 45 | 3 | 1 | 20 | 0 |
+| 5 | ★★ | **DDOG** | Datadog, Inc. | Technology | 1.331 | 0.495 | 0.495 | 94.9% | +33.4% | 45 | 3 | 1 | 19 | 0 |
 | 6 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.099 | 0.408 | 0.408 | 93.6% | +44.5% | 35 | 10 | 0 | 20 | 0 |
 | 7 | ★★ | **ABNB** | Airbnb, Inc. | Consumer Cyclical | 1.036 | 0.385 | 0.385 | 92.3% | +4.4% | 21 | 20 | 2 | 14 | 0 |
 | 8 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.026 | 0.381 | 0.381 | 91.0% | +38.5% | 22 | 2 | 0 | 10 | 0 |
@@ -87,11 +87,11 @@ _90-day holding. Leans on analyst consensus, price-target upside, and institutio
 | 7 | ★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.224 | 0.520 | 0.520 | 92.3% | +19.9% | 10 | 1 | 0 | 2 | 0 |
 | 8 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.194 | 0.507 | 0.507 | 91.0% | +44.5% | 35 | 10 | 0 | 20 | 0 |
 | 9 |  | **DKNG** | DraftKings Inc. | Consumer Cyclical | 1.193 | 0.507 | 0.507 | 89.7% | +48.4% | 28 | 7 | 0 | 23 | 0 |
-| 10 | ★★ | **DDOG** | Datadog, Inc. | Technology | 1.164 | 0.494 | 0.494 | 88.5% | +33.4% | 45 | 3 | 1 | 20 | 0 |
+| 10 | ★★ | **DDOG** | Datadog, Inc. | Technology | 1.164 | 0.494 | 0.494 | 88.5% | +33.4% | 45 | 3 | 1 | 19 | 0 |
 | 11 |  | **ABT** | Abbott Laboratories | Healthcare | 1.065 | 0.451 | 0.451 | 87.2% | +27.8% | 21 | 7 | 0 | 12 | 0 |
 | 12 |  | **CI** | The Cigna Group | Healthcare | 1.048 | 0.444 | 0.444 | 85.9% | +19.7% | 22 | 2 | 0 | 8 | 0 |
 | 13 |  | **ACN** | Accenture plc | Technology | 1.044 | 0.442 | 0.442 | 84.6% | +41.6% | 18 | 10 | 0 | 12 | 0 |
-| 14 |  | **ABBV** | AbbVie Inc. | Healthcare | 1.036 | 0.439 | 0.439 | 83.3% | +26.3% | 23 | 9 | 0 | 11 | 0 |
+| 14 |  | **ABBV** | AbbVie Inc. | Healthcare | 1.036 | 0.439 | 0.439 | 83.3% | +26.3% | 23 | 9 | 0 | 10 | 0 |
 | 15 | ★★★ | **CRH** | CRH plc | Basic Materials | 1.005 | 0.425 | 0.425 | 82.1% | +22.5% | 19 | 2 | 0 | 3 | 0 |
 
 
@@ -99,6 +99,8 @@ _90-day holding. Leans on analyst consensus, price-target upside, and institutio
 
 | Job | Status | Rows | Started | Error |
 |---|---|---:|---|---|
+| stooq.prices | ok | 0 | 2026-04-28 00:09:42Z |  |
+| yfinance.prices_fast | ok | 7110 | 2026-04-28 00:09:36Z |  |
 | stooq.prices | ok | 0 | 2026-04-27 23:13:55Z |  |
 | yfinance.prices_fast | ok | 7110 | 2026-04-27 23:13:50Z |  |
 | stooq.prices | ok | 0 | 2026-04-27 22:11:43Z |  |
@@ -117,5 +119,3 @@ _90-day holding. Leans on analyst consensus, price-target upside, and institutio
 | yfinance.prices_fast | ok | 7110 | 2026-04-27 13:51:23Z |  |
 | stooq.prices | ok | 0 | 2026-04-27 11:52:11Z |  |
 | yfinance.prices_fast | ok | 7110 | 2026-04-27 11:52:02Z |  |
-| stooq.prices | ok | 0 | 2026-04-27 09:59:13Z |  |
-| yfinance.prices_fast | ok | 7110 | 2026-04-27 09:59:07Z |  |

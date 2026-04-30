@@ -9,27 +9,28 @@ from sqlalchemy.orm import Session, sessionmaker
 
 from .config import get_settings
 
-_engine: Engine | None = None
-_SessionFactory: sessionmaker[Session] | None = None
+_engines: dict[str, Engine] = {}
+_session_factories: dict[str, sessionmaker[Session]] = {}
 
 
 def get_engine() -> Engine:
-    global _engine
-    if _engine is None:
-        settings = get_settings()
-        _engine = create_engine(
-            settings.db_url,
+    url = get_settings().db_url
+    if url not in _engines:
+        _engines[url] = create_engine(
+            url,
             future=True,
-            connect_args={"check_same_thread": False} if settings.db_url.startswith("sqlite") else {},
+            connect_args={"check_same_thread": False} if url.startswith("sqlite") else {},
         )
-    return _engine
+    return _engines[url]
 
 
 def get_session_factory() -> sessionmaker[Session]:
-    global _SessionFactory
-    if _SessionFactory is None:
-        _SessionFactory = sessionmaker(bind=get_engine(), expire_on_commit=False, future=True)
-    return _SessionFactory
+    url = get_settings().db_url
+    if url not in _session_factories:
+        _session_factories[url] = sessionmaker(
+            bind=get_engine(), expire_on_commit=False, future=True
+        )
+    return _session_factories[url]
 
 
 @contextmanager

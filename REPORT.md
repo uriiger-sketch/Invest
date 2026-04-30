@@ -1,8 +1,8 @@
 # Invest — Top 15 report
 
-_Generated: **2026-04-30 01:18 UTC** · Scores as of: **2026-04-30**_
+_Generated: **2026-04-30 04:07 UTC** · Scores as of: **2026-04-30**_
 
-🟢 last successful crawl: 0 min ago (at 2026-04-30T01:18:07Z)
+🟢 last successful crawl: 0 min ago (at 2026-04-30T04:07:46Z)
 
 > Not investment advice. Ranks publicly available analyst consensus, price-target upside, rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a blended composite + ML score per horizon.
 
@@ -43,7 +43,7 @@ _5-day holding. Weights analyst rating momentum and short-term price momentum mo
 | 9 |  | **AFRM** | Affirm Holdings, Inc. | Financial Services | 0.997 | 0.406 | 0.406 | 89.7% | +24.6% | 23 | 8 | 0 | 12 | 0 |
 | 10 | ★★★ | **CRH** | CRH plc | Basic Materials | 0.889 | 0.361 | 0.361 | 88.5% | +26.0% | 19 | 2 | 0 | 3 | 0 |
 | 11 |  | **APH** | Amphenol Corporation | Technology | 0.840 | 0.341 | 0.341 | 87.2% | +14.4% | 14 | 3 | 1 | 3 | 0 |
-| 12 | ★★ | **AAPL** | Apple Inc. | Technology | 0.798 | 0.324 | 0.324 | 85.9% | +10.3% | 31 | 14 | 2 | 13 | 0 |
+| 12 | ★★ | **AAPL** | Apple Inc. | Technology | 0.797 | 0.324 | 0.324 | 85.9% | +10.3% | 31 | 14 | 2 | 13 | 0 |
 | 13 |  | **ADI** | Analog Devices, Inc. | Technology | 0.784 | 0.318 | 0.318 | 84.6% | +1.0% | 29 | 5 | 1 | 16 | 0 |
 | 14 |  | **CI** | The Cigna Group | Healthcare | 0.629 | 0.255 | 0.255 | 83.3% | +15.7% | 22 | 2 | 0 | 8 | 0 |
 | 15 |  | **AVGO** | Broadcom Inc. | Technology | 0.626 | 0.254 | 0.254 | 82.1% | +17.3% | 44 | 3 | 0 | 16 | 0 |
@@ -78,27 +78,29 @@ _90-day holding. Leans on analyst consensus, price-target upside, and institutio
 
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile | Upside | Buy | Hold | Sell | Firms | Insts |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 1.937 | 0.848 | 0.848 | 100.0% | +57.2% | 21 | 5 | 0 | 12 | 0 |
+| 1 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 1.936 | 0.848 | 0.848 | 100.0% | +57.2% | 21 | 5 | 0 | 12 | 0 |
 | 2 | ★★ | **BSX** | Boston Scientific Corporation | Healthcare | 1.870 | 0.819 | 0.819 | 98.7% | +49.1% | 31 | 2 | 0 | 19 | 0 |
 | 3 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.534 | 0.670 | 0.670 | 97.4% | +39.9% | 22 | 2 | 0 | 8 | 0 |
-| 4 | ★★ | **CRM** | Salesforce, Inc. | Technology | 1.348 | 0.587 | 0.587 | 96.2% | +48.6% | 35 | 10 | 1 | 24 | 0 |
+| 4 | ★★ | **CRM** | Salesforce, Inc. | Technology | 1.347 | 0.587 | 0.587 | 96.2% | +48.6% | 35 | 10 | 1 | 24 | 0 |
 | 5 | ★★★ | **DIS** | The Walt Disney Company | Communication Servic | 1.340 | 0.584 | 0.584 | 94.9% | +26.6% | 27 | 3 | 1 | 7 | 0 |
 | 6 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.332 | 0.580 | 0.580 | 93.6% | +48.2% | 36 | 10 | 0 | 21 | 0 |
 | 7 | ★★ | **FROG** | JFrog Ltd. | Technology | 1.280 | 0.557 | 0.557 | 92.3% | +46.5% | 20 | 1 | 0 | 9 | 0 |
-| 8 |  | **DKNG** | DraftKings Inc. | Consumer Cyclical | 1.271 | 0.553 | 0.553 | 91.0% | +50.7% | 28 | 7 | 0 | 22 | 0 |
+| 8 |  | **DKNG** | DraftKings Inc. | Consumer Cyclical | 1.270 | 0.553 | 0.553 | 91.0% | +50.7% | 28 | 7 | 0 | 22 | 0 |
 | 9 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.228 | 0.534 | 0.534 | 89.7% | +20.7% | 10 | 1 | 0 | 2 | 0 |
 | 10 | ★★★ | **CRH** | CRH plc | Basic Materials | 1.129 | 0.491 | 0.491 | 88.5% | +26.0% | 19 | 2 | 0 | 3 | 0 |
 | 11 |  | **ABT** | Abbott Laboratories | Healthcare | 1.111 | 0.483 | 0.483 | 87.2% | +29.9% | 21 | 7 | 0 | 11 | 0 |
 | 12 | ★★ | **DDOG** | Datadog, Inc. | Technology | 1.070 | 0.464 | 0.464 | 85.9% | +32.1% | 45 | 3 | 1 | 19 | 0 |
 | 13 |  | **AZN** | AstraZeneca PLC | Healthcare | 1.018 | 0.441 | 0.441 | 84.6% | +20.9% | 9 | 1 | 0 | 0 | 0 |
 | 14 |  | **ACN** | Accenture plc | Technology | 0.951 | 0.412 | 0.412 | 83.3% | +39.0% | 18 | 10 | 0 | 12 | 0 |
-| 15 |  | **APP** | AppLovin Corporation | Communication Servic | 0.903 | 0.390 | 0.390 | 82.1% | +44.2% | 26 | 4 | 0 | 13 | 0 |
+| 15 |  | **APP** | AppLovin Corporation | Communication Servic | 0.902 | 0.390 | 0.390 | 82.1% | +44.2% | 26 | 4 | 0 | 13 | 0 |
 
 
 ## Recent pipeline runs
 
 | Job | Status | Rows | Started | Error |
 |---|---|---:|---|---|
+| stooq.prices | ok | 0 | 2026-04-30 04:07:45Z |  |
+| yfinance.prices_fast | ok | 7110 | 2026-04-30 04:07:41Z |  |
 | edgar.13f | error | 0 | 2026-04-30 01:18:07Z | IntegrityError: (raised as a result of Query-invoked autoflush; consider using a session.no_autoflush block if this flus |
 | stooq.prices | ok | 0 | 2026-04-30 01:18:07Z |  |
 | yfinance.actions | ok | 1071 | 2026-04-30 01:17:53Z |  |
@@ -117,5 +119,3 @@ _90-day holding. Leans on analyst consensus, price-target upside, and institutio
 | yfinance.prices_fast | ok | 7110 | 2026-04-29 19:56:30Z |  |
 | stooq.prices | ok | 0 | 2026-04-29 18:14:51Z |  |
 | yfinance.prices_fast | ok | 7110 | 2026-04-29 18:14:45Z |  |
-| stooq.prices | ok | 0 | 2026-04-29 16:57:35Z |  |
-| yfinance.prices_fast | ok | 7110 | 2026-04-29 16:57:30Z |  |

@@ -6,10 +6,22 @@ from typing import Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-Horizon = Literal["days", "weeks", "months"]
-HORIZONS: tuple[Horizon, ...] = ("days", "weeks", "months")
+# Four horizons.
+#   hours   — "next few hours": fastest signal, heavy on price + rating momentum.
+#             Approximated with a 1-day forward window since the free price feeds
+#             are daily.
+#   daily   — 5 trading days (~ a week of holding).
+#   weekly  — 20 trading days (~ a month of holding).
+#   monthly — 90 trading days (~ a quarter; "month and above" investments).
+Horizon = Literal["hours", "daily", "weekly", "monthly"]
+HORIZONS: tuple[Horizon, ...] = ("hours", "daily", "weekly", "monthly")
 
-FORWARD_WINDOW_DAYS: dict[Horizon, int] = {"days": 5, "weeks": 20, "months": 90}
+FORWARD_WINDOW_DAYS: dict[Horizon, int] = {
+    "hours": 1,
+    "daily": 5,
+    "weekly": 20,
+    "monthly": 90,
+}
 
 
 class Settings(BaseSettings):
@@ -29,12 +41,29 @@ class Settings(BaseSettings):
     liquidity_min_dollar_volume: float = 5_000_000.0
     blend_composite_weight: float = 0.6
     blend_ml_weight: float = 0.4
-    top_n: int = 15
+    top_n: int = 10
 
 
 # Weight matrix per horizon. Rows must sum to ~1 (negative entries allowed).
 WEIGHTS: dict[Horizon, dict[str, float]] = {
-    "days": {
+    "hours": {
+        # Fastest horizon — lean almost entirely on short-term momentum signals
+        # and very-recent rating changes. Consensus & price-target upside have
+        # almost no predictive value on hours-to-days; risk gets the biggest
+        # penalty because intraday noise dominates.
+        "consensus_z": 0.05,
+        "upside_z": 0.00,
+        "rating_mom_7d": 0.30,
+        "rating_mom_30d": 0.05,
+        "target_revision_30d": 0.05,
+        "inst_flow_13f": 0.00,
+        "insider_net_buy_90d": 0.05,
+        "price_mom_21d": 0.30,
+        "risk_penalty": 0.20,
+    },
+    "daily": {
+        # ~5 trading days. Same flavour as "hours" but with a bit more weight on
+        # the consensus snapshot and 30-day rating momentum.
         "consensus_z": 0.10,
         "upside_z": 0.05,
         "rating_mom_7d": 0.25,
@@ -45,7 +74,7 @@ WEIGHTS: dict[Horizon, dict[str, float]] = {
         "price_mom_21d": 0.25,
         "risk_penalty": 0.15,
     },
-    "weeks": {
+    "weekly": {
         "consensus_z": 0.20,
         "upside_z": 0.20,
         "rating_mom_7d": 0.10,
@@ -56,7 +85,7 @@ WEIGHTS: dict[Horizon, dict[str, float]] = {
         "price_mom_21d": 0.10,
         "risk_penalty": 0.10,
     },
-    "months": {
+    "monthly": {
         "consensus_z": 0.30,
         "upside_z": 0.25,
         "rating_mom_7d": 0.00,
@@ -69,7 +98,7 @@ WEIGHTS: dict[Horizon, dict[str, float]] = {
     },
 }
 
-FEATURE_NAMES: tuple[str, ...] = tuple(WEIGHTS["days"].keys())
+FEATURE_NAMES: tuple[str, ...] = tuple(WEIGHTS["daily"].keys())
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 

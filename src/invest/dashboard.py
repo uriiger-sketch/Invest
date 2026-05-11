@@ -1,4 +1,4 @@
-"""Streamlit dashboard. Four pages: Top 20, Drill-down, Sources & freshness, Methodology."""
+"""Streamlit dashboard. Four pages: Top 10, Drill-down, Sources & freshness, Methodology."""
 from __future__ import annotations
 
 from datetime import date, timedelta
@@ -21,7 +21,19 @@ from invest.models import (
     Stock,
 )
 
-st.set_page_config(page_title="Invest — Top 20", layout="wide")
+st.set_page_config(page_title="Invest — Top 10", layout="wide")
+
+
+_HORIZON_LABELS: dict[str, str] = {
+    "hours": "Next few hours",
+    "daily": "Daily (~5 d)",
+    "weekly": "Weekly (~1 mo)",
+    "monthly": "Month and above (~90 d)",
+}
+
+
+def _horizon_label(h: str) -> str:
+    return _HORIZON_LABELS.get(h, h)
 
 
 @st.cache_data(ttl=60)
@@ -207,7 +219,7 @@ def _13f_flow(ticker: str) -> pd.DataFrame:
 st.sidebar.title("Invest")
 page = st.sidebar.radio(
     "Page",
-    ("Top 20", "Ticker drill-down", "Sources & freshness", "Methodology"),
+    ("Top 10", "Ticker drill-down", "Sources & freshness", "Methodology"),
 )
 settings = get_settings()
 as_of = _latest_score_as_of()
@@ -219,11 +231,11 @@ else:
 
 # ---------------------------- Page 1 ----------------------------
 
-if page == "Top 20":
-    st.title("Top 20 stocks to invest in")
+if page == "Top 10":
+    st.title("Top 10 stocks to invest in")
     if as_of is None:
         st.stop()
-    tabs = st.tabs([f"{h} horizon" for h in HORIZONS])
+    tabs = st.tabs([_horizon_label(h) for h in HORIZONS])
     for tab, h in zip(tabs, HORIZONS):
         with tab:
             df = _top_n(h, settings.top_n, as_of)

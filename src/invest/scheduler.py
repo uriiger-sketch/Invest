@@ -65,9 +65,10 @@ def start_scheduler() -> BackgroundScheduler:
     sch = BackgroundScheduler(timezone=ET)
 
     # Intraday prices: every 30 min during RTH, Mon–Fri.
+    # Prices every 2 hours, 24/7 (cheap enough; non-RTH ticks are no-ops).
     sch.add_job(
         _job_ingest_prices,
-        CronTrigger(day_of_week="mon-fri", hour="9-16", minute="*/30", timezone=ET),
+        IntervalTrigger(hours=2),
         id="ingest_prices",
         max_instances=1,
         coalesce=True,

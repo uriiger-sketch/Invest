@@ -21,19 +21,34 @@ REPORT_MD = HERE / "REPORT.md"
 REPORT_HTML = HERE / "docs" / "index.html"
 
 
+# Pretty display names per horizon (the keys are short for storage / config).
+HORIZON_TITLE: dict[str, str] = {
+    "hours": "Next few hours",
+    "daily": "Daily (~5 trading days)",
+    "weekly": "Weekly (~1 month)",
+    "monthly": "Month and above (~90 days)",
+}
+
+
 # Per-horizon plain-English explainer shown in the report header.
 HORIZON_BLURB: dict[str, str] = {
-    "days": (
-        "5-day holding. Weights analyst rating momentum and short-term price "
-        "momentum most; less weight on long-run price-target upside."
+    "hours": (
+        "Next few hours / next session. Fastest signal — leans almost entirely "
+        "on short-term price momentum and very-recent rating changes. Heaviest "
+        "risk penalty (intraday noise is large)."
     ),
-    "weeks": (
-        "20-day (~1 month) holding. Balanced mix of consensus, price-target "
-        "upside, rating momentum and price trend."
+    "daily": (
+        "About a week of holding (5 trading days). Same flavour as 'hours' but "
+        "with more weight on 30-day rating momentum and the consensus snapshot."
     ),
-    "months": (
-        "90-day holding. Leans on analyst consensus, price-target upside, and "
-        "institutional (13F) flow; actively de-weights short-term price chase."
+    "weekly": (
+        "About a month of holding (20 trading days). Balanced mix of consensus, "
+        "price-target upside, rating momentum and price trend."
+    ),
+    "monthly": (
+        "A quarter or more (90+ trading days). Leans on analyst consensus, "
+        "price-target upside, and institutional (13F) flow; actively de-weights "
+        "short-term price chase."
     ),
 }
 
@@ -42,9 +57,10 @@ HORIZON_BLURB: dict[str, str] = {
 COLUMN_DOCS: list[tuple[str, str]] = [
     ("#", "Rank (1 = highest blended score in this horizon)."),
     (
-        "★★ / ★★★",
-        "Cross-horizon highlight. ★★ = this ticker ranks in two of the three "
-        "top-15 lists; ★★★ (rare) = it's in all three. High-conviction names.",
+        "★★ / ★★★ / ★★★★",
+        "Cross-horizon highlight. ★★ = this ticker ranks in two of the four "
+        "top-10 lists; ★★★ = three of four; ★★★★ (very rare) = all four "
+        "horizons agree. High-conviction names.",
     ),
     ("Ticker", "Stock symbol as used on US exchanges."),
     ("Name", "Company name from Yahoo Finance."),
@@ -401,9 +417,9 @@ def _build_markdown(as_of: date, n: int) -> str:
         _columns_md(),
     ]
     for h in HORIZONS:
-        parts.append(f"## {h.capitalize()} horizon — top {n}")
+        parts.append(f"## {HORIZON_TITLE.get(h, h)} — top {n}")
         parts.append("")
-        parts.append(f"_{HORIZON_BLURB[h]}_")
+        parts.append(f"_{HORIZON_BLURB.get(h, '')}_")
         parts.append("")
         parts.append(_md_table(by_h[h]))
         parts.append("")
@@ -432,7 +448,7 @@ def _html_top_table(rows: list[dict]) -> str:
     head = (
         "<thead><tr>"
         "<th>#</th>"
-        "<th title='High-conviction star: ★★ = ranks in two horizons; ★★★ = all three.'>★</th>"
+        "<th title='Cross-horizon highlight. ★★ = two horizons; ★★★ = three; ★★★★ = all four.'>★</th>"
         "<th>Ticker</th><th>Name</th><th>Sector</th>"
         "<th title='Final score, z-scored across the universe.'>Blended</th>"
         "<th title='Rule-based score from nine weighted features.'>Composite</th>"
@@ -599,8 +615,8 @@ def _build_html(as_of: date, n: int) -> str:
     for h in HORIZONS:
         sections.append(
             f"<section>"
-            f"<h2>{h.capitalize()} horizon — top {n}</h2>"
-            f"<p class='blurb'>{_html_escape(HORIZON_BLURB[h])}</p>"
+            f"<h2>{_html_escape(HORIZON_TITLE.get(h, h))} — top {n}</h2>"
+            f"<p class='blurb'>{_html_escape(HORIZON_BLURB.get(h, ''))}</p>"
             f"{_html_top_table(by_h[h])}"
             "</section>"
         )
@@ -656,7 +672,7 @@ def _build_html(as_of: date, n: int) -> str:
 <body>
 <h1>Invest — Top {n} {heartbeat}</h1>
 <p class="meta">Generated: <strong>{generated}</strong> · Scores as of: <strong>{as_of.isoformat()}</strong>
- · page auto-refreshes every 5 min · pipeline runs every 20 min via GitHub Actions.</p>
+ · page auto-refreshes every 5 min · pipeline runs every 2 hours via GitHub Actions.</p>
 <blockquote>
   <strong>Not investment advice.</strong> Ranks publicly available analyst consensus, price-target upside,
   rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a blended
@@ -687,17 +703,17 @@ def _build_html(as_of: date, n: int) -> str:
 def _placeholder() -> tuple[str, str]:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     md = (
-        "# Invest — Top 15 report\n\n"
+        "# Invest — Top 10 report\n\n"
         f"_Generated: **{generated}**_\n\n"
         "The pipeline has not yet produced any scores. The GitHub Actions workflow is "
-        "scheduled to run every 20 minutes — the first successful run will populate this file.\n"
+        "scheduled to run every 2 hours — the first successful run will populate this file.\n"
     )
-    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — Top 15</title>
+    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — Top 10</title>
 <meta http-equiv="refresh" content="60"></head>
 <body style="font-family: -apple-system, Helvetica, sans-serif; max-width: 800px; margin: 3rem auto;">
 <h1>Invest — awaiting first crawl</h1>
 <p>Generated: <strong>{generated}</strong>. The pipeline has not yet produced any scores.
-The GitHub Actions workflow runs every 20 minutes — refresh this page in a few minutes.</p>
+The GitHub Actions workflow runs every 2 hours — refresh this page later.</p>
 </body></html>
 """
     return md, html

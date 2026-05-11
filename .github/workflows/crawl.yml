@@ -15,8 +15,8 @@ name: crawl
 
 on:
   schedule:
-    # Fast refresh every 20 min (prices + consensus + stooq backfill).
-    - cron: "*/20 * * * *"
+    # Fast refresh every 2 hours (prices + stooq backfill).
+    - cron: "0 */2 * * *"
     # Deep refresh once a day at 23:30 UTC (fundamentals + EDGAR 13F + Form 4).
     - cron: "30 23 * * *"
   workflow_dispatch:

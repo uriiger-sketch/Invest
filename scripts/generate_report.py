@@ -388,46 +388,21 @@ def _collect_top_by_horizon(as_of: date, n: int) -> dict[str, list[dict]]:
 
 
 def _build_markdown(as_of: date, n: int) -> str:
-    generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    """Concise Markdown: just the four top-N tables, nothing else.
+
+    Per-row star indicators (★★ to ★★★★) flag tickers that appear in more
+    than one horizon. The HTML page carries the rich version (heartbeat,
+    disclaimer, how-to-read, recent runs); this Markdown view is intentionally
+    minimal so it scans in two seconds.
+    """
     by_h = _collect_top_by_horizon(as_of, n)
-    starred = sorted(
-        {r["ticker"] for rows in by_h.values() for r in rows if r["horizon_count"] >= 2}
-    )
-    starred_line = (
-        "**High-conviction cross-horizon picks:** "
-        + ", ".join(f"**{t}**" for t in starred)
-        if starred
-        else "_No ticker currently appears in more than one horizon's top list._"
-    )
-    parts: list[str] = [
-        f"# Invest — Top {n} report",
-        "",
-        f"_Generated: **{generated}** · Scores as of: **{as_of.isoformat()}**_",
-        "",
-        _heartbeat_md(),
-        "",
-        "> Not investment advice. Ranks publicly available analyst consensus, price-target "
-        "upside, rating momentum, institutional 13F flow, insider activity, price momentum, "
-        "and risk into a blended composite + ML score per horizon.",
-        "",
-        starred_line,
-        "",
-        "## How to read this",
-        "",
-        _columns_md(),
-    ]
+    parts: list[str] = []
     for h in HORIZONS:
         parts.append(f"## {HORIZON_TITLE.get(h, h)} — top {n}")
         parts.append("")
-        parts.append(f"_{HORIZON_BLURB.get(h, '')}_")
-        parts.append("")
         parts.append(_md_table(by_h[h]))
         parts.append("")
-
-    parts.append("## Recent pipeline runs")
-    parts.append("")
-    parts.append(_runs_md_table(_recent_runs_safe()))
-    return "\n".join(parts)
+    return "\n".join(parts).rstrip() + "\n"
 
 
 # ---------------------------------- HTML ----------------------------------
@@ -702,12 +677,8 @@ def _build_html(as_of: date, n: int) -> str:
 
 def _placeholder() -> tuple[str, str]:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
-    md = (
-        "# Invest — Top 10 report\n\n"
-        f"_Generated: **{generated}**_\n\n"
-        "The pipeline has not yet produced any scores. The GitHub Actions workflow is "
-        "scheduled to run every 2 hours — the first successful run will populate this file.\n"
-    )
+    md = "_(awaiting first crawl)_\n"
+    _ = generated  # used only in the HTML placeholder below
     html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — Top 10</title>
 <meta http-equiv="refresh" content="60"></head>
 <body style="font-family: -apple-system, Helvetica, sans-serif; max-width: 800px; margin: 3rem auto;">

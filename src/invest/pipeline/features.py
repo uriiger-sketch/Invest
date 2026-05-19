@@ -201,6 +201,28 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
     rating_mom_7d = _net(acts_7).rename("rating_mom_7d").reset_index()
     rating_mom_30d = _net(acts_30).rename("rating_mom_30d").reset_index()
 
+    # Distinct firm count over the last 90 d — used by the outlook gate to
+    # exclude thinly-covered names (where consensus is unreliable).
+    cutoff_90 = date.today() - timedelta(days=90)
+    with session_scope() as s:
+        firm_rows = s.execute(
+            select(AnalystAction.ticker, AnalystAction.firm).where(
+                AnalystAction.ticker.in_(tickers),
+                AnalystAction.date >= cutoff_90,
+                AnalystAction.firm.isnot(None),
+            )
+        ).all()
+    if firm_rows:
+        firms_df = pd.DataFrame(firm_rows, columns=["ticker", "firm"])
+        firm_count_90d = (
+            firms_df.drop_duplicates()
+            .groupby("ticker", as_index=False)["firm"]
+            .count()
+            .rename(columns={"firm": "firm_count_90d"})
+        )
+    else:
+        firm_count_90d = pd.DataFrame(columns=["ticker", "firm_count_90d"])
+
     ins = _insider_window(tickers)
     if not ins.empty:
         signed = np.where(ins["action"].str.startswith("buy") | ins["action"].str.startswith("p"), 1, -1)
@@ -215,9 +237,12 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
 
     # Merge all
     out = pd.DataFrame({"ticker": tickers})
-    for d in (price_df, cons, rating_mom_7d, rating_mom_30d, insider, inst):
+    for d in (price_df, cons, rating_mom_7d, rating_mom_30d, insider, inst, firm_count_90d):
         if d is not None and not d.empty:
             out = out.merge(d, on="ticker", how="left")
+    if "firm_count_90d" not in out.columns:
+        out["firm_count_90d"] = 0
+    out["firm_count_90d"] = pd.to_numeric(out["firm_count_90d"], errors="coerce").fillna(0)
 
     # Fill missing feature columns with 0 so the scoring stage doesn't drop rows.
     for col in FEATURE_NAMES:

@@ -7,6 +7,8 @@ that GitHub Pages serves without needing any runtime fetch.
 from __future__ import annotations
 
 import hashlib
+import json
+from collections import defaultdict
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -19,6 +21,7 @@ from invest.models import AnalystAction, Consensus, Holding13F, Price, RunLog, S
 HERE = Path(__file__).resolve().parent.parent
 REPORT_MD = HERE / "REPORT.md"
 REPORT_HTML = HERE / "docs" / "index.html"
+HISTORY_PATH = HERE / "docs" / "history.jsonl"
 
 
 # Pretty display names per horizon (the keys are short for storage / config).
@@ -387,21 +390,209 @@ def _collect_top_by_horizon(as_of: date, n: int) -> dict[str, list[dict]]:
     return by_h
 
 
+# ------------------------- history persistence -------------------------
+
+
+def _append_history(by_h: dict[str, list[dict]], generated_at: datetime) -> None:
+    """Append one JSON line per ranked row to docs/history.jsonl.
+
+    The file is small (~20 lines per run × 12 runs/day ≈ 240 lines/day,
+    well under a MB per year) and is committed alongside REPORT.md so the
+    history survives even if the GitHub Actions SQLite cache is evicted.
+    """
+    HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
+    iso = generated_at.replace(microsecond=0).isoformat()
+    lines: list[str] = []
+    for h, rows in by_h.items():
+        for r in rows:
+            lines.append(
+                json.dumps(
+                    {
+                        "ts": iso,
+                        "h": h,
+                        "rank": r["rank"],
+                        "ticker": r["ticker"],
+                        "score": round(float(r.get("blended", r.get("blended_score") or 0)), 4),
+                        "hc": int(r.get("horizon_count") or 1),
+                    },
+                    separators=(",", ":"),
+                )
+            )
+    if lines:
+        with HISTORY_PATH.open("a") as f:
+            f.write("\n".join(lines) + "\n")
+
+
+def _load_history(days: int) -> list[dict]:
+    """Read recent history rows from docs/history.jsonl."""
+    if not HISTORY_PATH.exists():
+        return []
+    cutoff = datetime.utcnow() - timedelta(days=days)
+    out: list[dict] = []
+    with HISTORY_PATH.open() as f:
+        for raw in f:
+            raw = raw.strip()
+            if not raw:
+                continue
+            try:
+                rec = json.loads(raw)
+                ts = datetime.fromisoformat(rec["ts"])
+            except (json.JSONDecodeError, KeyError, ValueError):
+                continue
+            if ts < cutoff:
+                continue
+            rec["_ts"] = ts
+            out.append(rec)
+    return out
+
+
+def _sustained_picks(history: list[dict]) -> list[dict]:
+    """Top 3 names that appeared on ≥60 % of runs in the last `sustained_days`
+    AND carried ≥2 stars (horizon_count ≥ 2) on at least half of those
+    appearances. Ranked by mean blended_score."""
+    settings = get_settings()
+    if not history:
+        return []
+    # Distinct run timestamps in the window.
+    run_ts = sorted({r["_ts"] for r in history})
+    if len(run_ts) < 2:
+        return []
+    n_runs = len(run_ts)
+
+    # Aggregate per ticker (collapse across horizons — best blended_score per run).
+    per_ticker: dict[str, list[dict]] = defaultdict(list)
+    for r in history:
+        per_ticker[r["ticker"]].append(r)
+
+    candidates: list[dict] = []
+    for ticker, rows in per_ticker.items():
+        present_runs = {r["_ts"] for r in rows}
+        appearances = len(present_runs)
+        if appearances / n_runs < settings.sustained_min_runs_pct:
+            continue
+        starred_runs = sum(1 for r in rows if int(r.get("hc") or 1) >= settings.sustained_min_stars)
+        if starred_runs / max(1, len(rows)) < 0.5:
+            continue
+        mean_score = sum(float(r.get("score") or 0) for r in rows) / len(rows)
+        max_stars = max(int(r.get("hc") or 1) for r in rows)
+        # The horizons on which it actually appeared.
+        horizons = sorted({r["h"] for r in rows})
+        candidates.append(
+            {
+                "ticker": ticker,
+                "mean_score": mean_score,
+                "appearances": appearances,
+                "n_runs": n_runs,
+                "max_stars": max_stars,
+                "horizons": horizons,
+            }
+        )
+    candidates.sort(key=lambda c: c["mean_score"], reverse=True)
+    return candidates[:3]
+
+
+def _history_top3_by_date(history: list[dict]) -> dict[str, dict[str, list[dict]]]:
+    """Group last-N days' history into {date_iso: {horizon: [{rank, ticker, score}]}},
+    keeping only the most recent run per date / horizon and only ranks 1-3."""
+    by_date: dict[str, dict[str, dict[int, dict]]] = defaultdict(lambda: defaultdict(dict))
+    # Iterate newest-first; first hit wins (most recent run of the day).
+    for r in sorted(history, key=lambda x: x["_ts"], reverse=True):
+        if r["rank"] > 3:
+            continue
+        d = r["_ts"].date().isoformat()
+        slot = by_date[d][r["h"]]
+        if r["rank"] not in slot:
+            slot[r["rank"]] = r
+    # Flatten back to lists.
+    out: dict[str, dict[str, list[dict]]] = {}
+    for d, by_h in by_date.items():
+        out[d] = {
+            h: [v for _, v in sorted(rows.items())]  # rank 1, 2, 3
+            for h, rows in by_h.items()
+        }
+    return dict(sorted(out.items(), reverse=True))
+
+
+def _sustained_md(picks: list[dict]) -> str:
+    if not picks:
+        return "_(no sustained picks yet — needs at least a week of history)_\n"
+    settings = get_settings()
+    lines = [
+        f"| Ticker | Avg blended score | Appearances | Max stars | Horizons | Of {settings.sustained_days} d |",
+        "|---|---:|---:|---:|---|---:|",
+    ]
+    for p in picks:
+        hz = ", ".join(p["horizons"])
+        lines.append(
+            f"| **{p['ticker']}** | {p['mean_score']:.3f} | "
+            f"{p['appearances']} | {'★' * p['max_stars']} | {hz} | {p['n_runs']} runs |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def _history_md(by_date: dict[str, dict[str, list[dict]]]) -> str:
+    if not by_date:
+        return "_(no historical reports stored yet)_\n"
+    horizon_short = {"hours": "Hours", "daily": "Daily", "weekly": "Weekly", "monthly": "Monthly"}
+    lines = [
+        "| Date | " + " | ".join(horizon_short.get(h, h) for h in HORIZONS) + " |",
+        "|---|" + "|".join(["---"] * len(HORIZONS)) + "|",
+    ]
+    for d, by_h in by_date.items():
+        cells = []
+        for h in HORIZONS:
+            picks = by_h.get(h, [])
+            if not picks:
+                cells.append("—")
+            else:
+                cells.append(", ".join(f"**{p['ticker']}**" for p in picks))
+        lines.append(f"| {d} | " + " | ".join(cells) + " |")
+    return "\n".join(lines) + "\n"
+
+
+# ------------------------------ Markdown ------------------------------
+
+
 def _build_markdown(as_of: date, n: int) -> str:
-    """Concise Markdown: just the four top-N tables, nothing else.
+    """Concise Markdown: four top-N tables, plus two small history sections
+    at the bottom (sustained picks + per-date top-3).
 
     Per-row star indicators (★★ to ★★★★) flag tickers that appear in more
-    than one horizon. The HTML page carries the rich version (heartbeat,
-    disclaimer, how-to-read, recent runs); this Markdown view is intentionally
-    minimal so it scans in two seconds.
+    than one horizon's top list. The HTML page carries the rich version
+    (heartbeat, disclaimer, how-to-read, recent runs); this Markdown view
+    stays minimal so it scans in two seconds.
     """
+    settings = get_settings()
     by_h = _collect_top_by_horizon(as_of, n)
+    # Persist this run's top-N into the history file BEFORE reading it back so
+    # the sustained-picks calculation sees the current snapshot too.
+    _append_history(by_h, datetime.utcnow())
+
     parts: list[str] = []
     for h in HORIZONS:
         parts.append(f"## {HORIZON_TITLE.get(h, h)} — top {n}")
         parts.append("")
         parts.append(_md_table(by_h[h]))
         parts.append("")
+
+    # --- Sustained picks (≥1 week on the list, ≥2 stars mostly) ---
+    history_sustained = _load_history(settings.sustained_days)
+    parts.append(f"## Sustained picks — top 3 over the last {settings.sustained_days} d")
+    parts.append("")
+    parts.append(
+        "_Tickers that have been on a top list for ≥"
+        f"{int(settings.sustained_min_runs_pct * 100)} % of runs in the window "
+        f"and carried ≥{settings.sustained_min_stars} stars on a majority of those._"
+    )
+    parts.append("")
+    parts.append(_sustained_md(_sustained_picks(history_sustained)))
+    parts.append("")
+
+    # --- Per-date top-3 by horizon (last `history_show_days` days) ---
+    history_show = _load_history(settings.history_show_days)
+    parts.append(f"## Top 3 by date — last {settings.history_show_days} d")
+    parts.append("")
+    parts.append(_history_md(_history_top3_by_date(history_show)))
     return "\n".join(parts).rstrip() + "\n"
 
 

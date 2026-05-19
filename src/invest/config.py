@@ -39,9 +39,23 @@ class Settings(BaseSettings):
     run_scheduler: bool = Field(default=True, alias="RUN_SCHEDULER")
 
     liquidity_min_dollar_volume: float = 5_000_000.0
+    # Quality gates: a stock is excluded from the top-N if its analyst outlook
+    # is meaningfully negative on any of these axes. Tunable here so users can
+    # be stricter or looser without code changes.
+    min_consensus_z: float = -0.10   # net consensus (-1..+1); -0.1 keeps slightly mixed names
+    min_upside: float = -0.05        # consensus mean target / last close - 1
+    min_firms: int = 3               # require at least 3 covering firms IF the ticker has any consensus
+
     blend_composite_weight: float = 0.6
     blend_ml_weight: float = 0.4
     top_n: int = 10
+
+    # Sustained-picks + history (used by the report generator).
+    history_path: str = "docs/history.jsonl"
+    sustained_days: int = 7          # how many days back to look
+    sustained_min_runs_pct: float = 0.6   # must appear on ≥60 % of those runs
+    sustained_min_stars: int = 2     # require horizon_count ≥ 2 on a majority of runs
+    history_show_days: int = 14      # render the last N days in the by-date section
 
 
 # Weight matrix per horizon. Rows must sum to ~1 (negative entries allowed).

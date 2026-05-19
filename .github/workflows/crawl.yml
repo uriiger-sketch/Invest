@@ -122,7 +122,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # Always rebase to account for other runs that may have committed.
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-          git add REPORT.md docs/index.html
+          git add REPORT.md docs/index.html docs/history.jsonl
           if git diff --cached --quiet; then
             echo "no report changes"
           else

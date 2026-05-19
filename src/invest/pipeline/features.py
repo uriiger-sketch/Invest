@@ -179,6 +179,9 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
         cons["consensus_z"] = (
             2 * cons["strong_buy"] + cons["buy"] - cons["sell"] - 2 * cons["strong_sell"]
         ) / total
+        # num_analysts = sum of every rating bucket. By construction this
+        # equals Buy + Hold + Sell in the report, so the columns tie out.
+        cons["num_analysts"] = total.fillna(0).astype(int)
         cons = cons.merge(price_df[["ticker", "last_close"]], on="ticker", how="left")
         cons["upside_z"] = cons["mean_target"] / cons["last_close"] - 1
         cons = cons.merge(cons_prev, on="ticker", how="left")

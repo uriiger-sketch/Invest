@@ -44,14 +44,16 @@ def outlook_mask(features: pd.DataFrame) -> pd.Series:
     if "upside_z" in features.columns:
         up = pd.to_numeric(features["upside_z"], errors="coerce").fillna(0.0)
         mask &= up >= settings.min_upside
-    if "firm_count_90d" in features.columns:
-        fc = pd.to_numeric(features["firm_count_90d"], errors="coerce").fillna(0.0)
-        # Only enforce min-firms when the ticker has ANY consensus data; this
-        # avoids excluding small/foreign names purely for thin sell-side coverage.
+    if "num_analysts" in features.columns:
+        # Total firms currently covering the stock (Strong Buy + Buy + Hold +
+        # Sell + Strong Sell). Only enforce min-firms when the ticker has ANY
+        # consensus data so small / foreign names with no coverage aren't
+        # excluded just for being uncovered.
+        na = pd.to_numeric(features["num_analysts"], errors="coerce").fillna(0.0)
         has_consensus = (
             pd.to_numeric(features.get("consensus_z", 0), errors="coerce").fillna(0.0) != 0
         )
-        mask &= (~has_consensus) | (fc >= settings.min_firms)
+        mask &= (~has_consensus) | (na >= settings.min_firms)
     return mask
 
 

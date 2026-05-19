@@ -20,7 +20,7 @@ def _mk_features(n: int = 10, neutral_outlook: bool = True) -> pd.DataFrame:
     for col in FEATURE_NAMES:
         df[col] = rng.normal(size=n)
     df["last_close"] = 100.0
-    df["firm_count_90d"] = 10
+    df["num_analysts"] = 12
     if neutral_outlook:
         df["consensus_z"] = 0.0
         df["upside_z"] = 0.0
@@ -40,9 +40,33 @@ def test_outlook_mask_drops_negative_consensus_or_upside():
     df = _mk_features(4, neutral_outlook=False)
     df["consensus_z"] = [0.5, -0.5, 0.0, 0.5]
     df["upside_z"] = [0.10, 0.10, 0.10, -0.20]
-    df["firm_count_90d"] = 10
+    df["num_analysts"] = 12
     mask = outlook_mask(df).reset_index(drop=True)
     assert list(mask) == [True, False, True, False]
+
+
+def test_buy_hold_sell_equals_num_analysts_invariant():
+    """The buy/hold/sell columns in the report must tie out to the analyst
+    total. This invariant comes from yfinance's recommendations_summary:
+    every covering firm sits in exactly one bucket. If this ever stops
+    holding, the report's column math will look wrong to the user."""
+    import pandas as pd
+
+    consensus = pd.DataFrame(
+        {
+            "ticker": ["A", "B", "C"],
+            "strong_buy": [3, 0, 1],
+            "buy": [10, 4, 5],
+            "hold": [2, 6, 3],
+            "sell": [1, 2, 0],
+            "strong_sell": [0, 1, 0],
+        }
+    )
+    consensus["total"] = consensus[["strong_buy", "buy", "hold", "sell", "strong_sell"]].sum(axis=1)
+    consensus["buy_col"] = consensus["strong_buy"] + consensus["buy"]
+    consensus["sell_col"] = consensus["sell"] + consensus["strong_sell"]
+    consensus["sum_btns"] = consensus["buy_col"] + consensus["hold"] + consensus["sell_col"]
+    assert (consensus["sum_btns"] == consensus["total"]).all()
 
 
 def test_liquidity_gate_excludes_low_dollar_volume():

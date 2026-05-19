@@ -101,14 +101,14 @@ COLUMN_DOCS: list[tuple[str, str]] = [
         "Strong Buy + Buy are combined into 'Buy'; Strong Sell + Sell into 'Sell'.",
     ),
     (
-        "Firms",
-        "Count of distinct sell-side analyst firms that have publicly issued "
-        "an action (upgrade / downgrade / reiterate) on this ticker in the "
-        "last 90 days — sourced from yfinance's upgrades/downgrades feed and "
-        "Finnhub's upgrade-downgrade endpoint when a key is configured. The "
-        "Buy / Hold / Sell columns aggregate the ratings of every firm that "
-        "publicly covers the stock (typically 10–30 firms for US large caps, "
-        "5–15 for small caps, fewer for non-US).",
+        "Analysts",
+        "Total number of sell-side analyst firms currently covering the "
+        "stock — sourced from yfinance's recommendations_summary (with "
+        "Finnhub /stock/recommendation as a secondary source when an API key "
+        "is configured). By construction this equals Strong Buy + Buy + "
+        "Hold + Sell + Strong Sell, so Buy + Hold + Sell in the table ties "
+        "out to this number exactly. Typically 10–30 firms for US large "
+        "caps, 5–15 for small caps, fewer for non-US.",
     ),
     (
         "Insts",
@@ -179,8 +179,6 @@ def _enrichment_for(tickers: list[str]) -> dict[str, dict]:
     if not tickers:
         return {}
     out: dict[str, dict] = {t: {} for t in tickers}
-    today = date.today()
-    cutoff_90 = today - timedelta(days=90)
 
     with session_scope() as s:
         # Last close per ticker.
@@ -206,27 +204,26 @@ def _enrichment_for(tickers: list[str]) -> dict[str, dict]:
                 buy = (c.strong_buy or 0) + (c.buy or 0)
                 hold = c.hold or 0
                 sell = (c.sell or 0) + (c.strong_sell or 0)
+                # Total analysts = sum of every rating bucket = num_analysts.
+                # By construction `analysts == buy + hold + sell` so the row
+                # numbers tie out for the user — no more "more buy+hold+sell
+                # than firms" confusion.
                 out[t]["buy"] = buy
                 out[t]["hold"] = hold
                 out[t]["sell"] = sell
+                out[t]["strong_buy"] = c.strong_buy or 0
+                out[t]["strong_sell"] = c.strong_sell or 0
+                out[t]["analysts"] = buy + hold + sell
                 out[t]["mean_target"] = c.mean_target
                 last = out[t].get("last_close")
                 if c.mean_target and last:
                     out[t]["upside_pct"] = c.mean_target / last - 1
 
-        # Distinct analyst firms (last 90 d) + the ~6 most recent actions for the drawer.
+        # Recent analyst-firm activity (last 90 d) for the per-row drawer.
+        # NOTE: this is intentionally separate from `analysts` above — it
+        # measures how many distinct firms have CHANGED their rating
+        # recently, not total coverage.
         for t in tickers:
-            firms_q = (
-                s.query(AnalystAction.firm)
-                .filter(
-                    AnalystAction.ticker == t,
-                    AnalystAction.date >= cutoff_90,
-                    AnalystAction.firm.isnot(None),
-                )
-                .distinct()
-                .all()
-            )
-            out[t]["firm_count"] = len(firms_q)
             recent = (
                 s.query(AnalystAction)
                 .filter(AnalystAction.ticker == t)
@@ -296,7 +293,7 @@ def _md_table(rows: list[dict]) -> str:
     headers = [
         "#", "★", "Ticker", "Name", "Sector",
         "Blended", "Composite", "ML", "Pctile",
-        "Upside", "Buy", "Hold", "Sell", "Firms", "Insts",
+        "Upside", "Buy", "Hold", "Sell", "Analysts", "Insts",
     ]
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
     for r in rows:
@@ -321,7 +318,7 @@ def _md_table(rows: list[dict]) -> str:
                     str(r.get("buy") or 0),
                     str(r.get("hold") or 0),
                     str(r.get("sell") or 0),
-                    str(r.get("firm_count") or 0),
+                    str(r.get("analysts") or 0),
                     str(r.get("inst_count") or 0),
                 ]
             )
@@ -624,7 +621,7 @@ def _html_top_table(rows: list[dict]) -> str:
         "<th title='Strong Buy + Buy count.'>Buy</th>"
         "<th>Hold</th>"
         "<th title='Sell + Strong Sell count.'>Sell</th>"
-        "<th title='Distinct analyst firms with actions in the last 90 d.'>Firms</th>"
+        "<th title='Total analyst firms currently covering the stock — equals Buy + Hold + Sell.'>Analysts</th>"
         "<th title='Tracked 13F filers holding the stock.'>Insts</th>"
         "</tr></thead>"
     )
@@ -691,7 +688,7 @@ def _html_top_table(rows: list[dict]) -> str:
             f"<td class='num ok'>{r.get('buy') or 0}</td>"
             f"<td class='num'>{r.get('hold') or 0}</td>"
             f"<td class='num err'>{r.get('sell') or 0}</td>"
-            f"<td class='num'>{r.get('firm_count') or 0}</td>"
+            f"<td class='num'>{r.get('analysts') or 0}</td>"
             f"<td class='num'>{r.get('inst_count') or 0}</td>"
             "</tr>"
             + drawer_html

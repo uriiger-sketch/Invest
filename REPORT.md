@@ -68,9 +68,9 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **CHWY** | 3.094 | 44 | ★★ | monthly, weekly | 44 runs |
-| **CSCO** | 2.788 | 44 | ★★★ | daily, hours, weekly | 44 runs |
-| **ADP** | 2.641 | 44 | ★★ | daily, hours | 44 runs |
+| **CHWY** | 3.090 | 45 | ★★ | monthly, weekly | 45 runs |
+| **CSCO** | 2.753 | 45 | ★★★ | daily, hours, weekly | 45 runs |
+| **ADP** | 2.660 | 45 | ★★ | daily, hours | 45 runs |
 
 
 ## Top 3 by date — last 14 d

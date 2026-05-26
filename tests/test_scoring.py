@@ -7,12 +7,11 @@ from invest.config import FEATURE_NAMES, HORIZONS
 from invest.pipeline.score import composite_scores, liquidity_mask, outlook_mask
 
 
-def _mk_features(n: int = 10, neutral_outlook: bool = True) -> pd.DataFrame:
+def _mk_features(n: int = 10, bullish_outlook: bool = True) -> pd.DataFrame:
     """Build a feature frame.
 
-    When `neutral_outlook=True` (default) all outlook-gate inputs are set to 0
-    so every ticker passes the quality gate — useful for tests that only care
-    about scoring shape / liquidity.
+    When ``bullish_outlook=True`` (default) every ticker has positive
+    consensus + ≥ 4 % upside and 12 analysts, so all pass the quality gate.
     """
     rng = np.random.default_rng(42)
     tickers = [f"T{i:02d}" for i in range(n)]
@@ -21,9 +20,9 @@ def _mk_features(n: int = 10, neutral_outlook: bool = True) -> pd.DataFrame:
         df[col] = rng.normal(size=n)
     df["last_close"] = 100.0
     df["num_analysts"] = 12
-    if neutral_outlook:
-        df["consensus_z"] = 0.0
-        df["upside_z"] = 0.0
+    if bullish_outlook:
+        df["consensus_z"] = 0.5
+        df["upside_z"] = 0.10
     return df
 
 
@@ -36,13 +35,35 @@ def test_composite_scores_return_row_per_ticker_per_horizon():
     assert set(out["horizon"].unique()) == set(HORIZONS)
 
 
-def test_outlook_mask_drops_negative_consensus_or_upside():
-    df = _mk_features(4, neutral_outlook=False)
+def test_outlook_mask_strictly_positive_consensus():
+    """Strict net-bullish: consensus_z must be > 0, not just non-negative."""
+    df = _mk_features(4, bullish_outlook=False)
     df["consensus_z"] = [0.5, -0.5, 0.0, 0.5]
     df["upside_z"] = [0.10, 0.10, 0.10, -0.20]
     df["num_analysts"] = 12
     mask = outlook_mask(df).reset_index(drop=True)
-    assert list(mask) == [True, False, True, False]
+    # Row 0: bullish + 10% upside → True
+    # Row 1: bearish consensus     → False
+    # Row 2: consensus exactly 0   → False (strictly positive required)
+    # Row 3: bullish but -20% upside → False
+    assert list(mask) == [True, False, False, False]
+
+
+def test_positive_upside_4pct_threshold():
+    """Only ≥ 4 % upside passes; 3.9 % is out."""
+    df = _mk_features(4, bullish_outlook=False)
+    df["consensus_z"] = 0.5
+    df["upside_z"] = [0.05, 0.04, 0.039, 0.00]
+    df["num_analysts"] = 12
+    mask = outlook_mask(df).reset_index(drop=True)
+    assert list(mask) == [True, True, False, False]
+
+
+def test_min_firms_excludes_thinly_covered():
+    df = _mk_features(3, bullish_outlook=True)
+    df["num_analysts"] = [10, 4, 0]   # min_firms = 5
+    mask = outlook_mask(df).reset_index(drop=True)
+    assert list(mask) == [True, False, False]
 
 
 def test_buy_hold_sell_equals_num_analysts_invariant():
@@ -81,8 +102,13 @@ def test_zero_variance_column_contributes_zero():
     df = _mk_features(6)
     for col in FEATURE_NAMES:
         df[col] = 0.0
+    # Keep stocks past the strict outlook gate so composite_scores returns
+    # rows; the constants below are identical across tickers so each
+    # column's z-score is zero and the composite still collapses to 0.
+    df["consensus_z"] = 0.5
+    df["upside_z"] = 0.10
     out = composite_scores(df)
-    # All z-scores are zero, so every composite score should be zero.
+    assert not out.empty
     assert np.allclose(out["composite_score"], 0.0)
 
 

@@ -39,9 +39,20 @@ def _load_prices(tickers: list[str], window_days: int = 180) -> pd.DataFrame:
 
 
 def _latest_consensus(tickers: list[str]) -> pd.DataFrame:
+    """Latest *non-stale* consensus snapshot per ticker.
+
+    Rows older than ``settings.consensus_max_age_days`` are ignored so a
+    six-month-old Yahoo snapshot can't keep driving the ranker.
+    """
+    from ..config import get_settings
+
+    cutoff = date.today() - timedelta(days=get_settings().consensus_max_age_days)
     with session_scope() as s:
         rows = s.execute(
-            select(Consensus).where(Consensus.ticker.in_(tickers))
+            select(Consensus).where(
+                Consensus.ticker.in_(tickers),
+                Consensus.as_of_date >= cutoff,
+            )
         ).scalars().all()
     if not rows:
         return pd.DataFrame()
@@ -94,8 +105,10 @@ def _actions_window(tickers: list[str], days: int) -> pd.DataFrame:
             )
         ).scalars().all()
     if not rows:
-        return pd.DataFrame(columns=["ticker", "action"])
-    return pd.DataFrame([{"ticker": r.ticker, "action": r.action} for r in rows])
+        return pd.DataFrame(columns=["ticker", "action", "firm"])
+    return pd.DataFrame(
+        [{"ticker": r.ticker, "action": r.action, "firm": r.firm} for r in rows]
+    )
 
 
 def _insider_window(tickers: list[str], days: int = 90) -> pd.DataFrame:
@@ -195,11 +208,23 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
     acts_30 = _actions_window(tickers, 30)
 
     def _net(df: pd.DataFrame) -> pd.Series:
+        """Tier-weighted net rating-momentum per ticker.
+
+        Each action is signed (+1 upgrade, −1 downgrade, 0 reiterate/etc.) and
+        multiplied by the firm's tier weight (tier-1 = 1.0, tier-2 = 0.5,
+        tier-3 / unknown = 0.25). A handful of Goldman / Morgan Stanley
+        upgrades count for more than a dozen unknown-shop reiterations.
+        """
         if df.empty:
             return pd.Series(dtype=float)
-        s = df["action"].str.lower().fillna("")
-        signed = np.where(s.str.contains("up"), 1, np.where(s.str.contains("down"), -1, 0))
-        return pd.DataFrame({"ticker": df["ticker"], "n": signed}).groupby("ticker")["n"].sum()
+        from ..firms import firm_weight
+
+        s = df["action"].astype(str).str.lower().fillna("")
+        sign = np.where(s.str.contains("up"), 1.0, np.where(s.str.contains("down"), -1.0, 0.0))
+        firms = df["firm"] if "firm" in df.columns else pd.Series([None] * len(df))
+        tier_w = np.array([firm_weight(name) for name in firms.fillna("")], dtype=float)
+        weighted = sign * tier_w
+        return pd.DataFrame({"ticker": df["ticker"], "n": weighted}).groupby("ticker")["n"].sum()
 
     rating_mom_7d = _net(acts_7).rename("rating_mom_7d").reset_index()
     rating_mom_30d = _net(acts_30).rename("rating_mom_30d").reset_index()

@@ -57,13 +57,13 @@ HORIZON_BLURB: dict[str, str] = {
 
 
 # Column definitions. Order matches the tables.
-COLUMN_DOCS: list[tuple[str, str]] = [
+HORIZON_COLUMN_DOCS: list[tuple[str, str]] = [
     ("#", "Rank (1 = highest blended score in this horizon)."),
     (
         "★★ / ★★★ / ★★★★",
         "Cross-horizon highlight. ★★ = this ticker ranks in two of the four "
-        "top-10 lists; ★★★ = three of four; ★★★★ (very rare) = all four "
-        "horizons agree. High-conviction names.",
+        "top lists; ★★★ = three of four; ★★★★ = all four horizons agree. "
+        "High-conviction names.",
     ),
     ("Ticker", "Stock symbol as used on US exchanges."),
     ("Name", "Company name from Yahoo Finance."),
@@ -77,9 +77,9 @@ COLUMN_DOCS: list[tuple[str, str]] = [
     (
         "Composite",
         "Rule-based score from the weighted sum of nine transparent features "
-        "(analyst consensus, price-target upside, rating momentum 7 d & 30 d, "
-        "target revision 30 d, 13F institutional flow, insider net buy 90 d, "
-        "21-day price momentum, realised-volatility risk penalty).",
+        "(analyst consensus, price-target upside, tier-weighted rating "
+        "momentum, target revision, 13F institutional flow, insider net buy, "
+        "price momentum, realised-volatility risk penalty).",
     ),
     (
         "ML",
@@ -90,25 +90,35 @@ COLUMN_DOCS: list[tuple[str, str]] = [
         "Pctile",
         "Percentile of the blended score inside this horizon (100 % = top).",
     ),
+]
+
+
+SNAPSHOT_COLUMN_DOCS: list[tuple[str, str]] = [
+    ("Ticker / Sector", "Stock symbol + GICS sector."),
     (
         "Upside",
-        "Analyst consensus price target / last close − 1. Positive = analysts "
-        "think there is room above the current price.",
+        "Analyst consensus mean target / last close − 1. Only stocks with "
+        "≥ 4 % upside survive the quality gate, so every row here is bullish.",
     ),
     (
         "Buy / Hold / Sell",
         "Aggregated analyst rating counts (most recent consensus snapshot). "
-        "Strong Buy + Buy are combined into 'Buy'; Strong Sell + Sell into 'Sell'.",
+        "Strong Buy + Buy → 'Buy'; Strong Sell + Sell → 'Sell'. By "
+        "construction Buy + Hold + Sell == Analysts.",
     ),
     (
         "Analysts",
-        "Total number of sell-side analyst firms currently covering the "
-        "stock — sourced from yfinance's recommendations_summary (with "
-        "Finnhub /stock/recommendation as a secondary source when an API key "
-        "is configured). By construction this equals Strong Buy + Buy + "
-        "Hold + Sell + Strong Sell, so Buy + Hold + Sell in the table ties "
-        "out to this number exactly. Typically 10–30 firms for US large "
-        "caps, 5–15 for small caps, fewer for non-US.",
+        "Total number of sell-side analyst firms covering the stock — "
+        "sourced from yfinance's recommendations_summary plus Finnhub / FMP "
+        "when API keys are configured.",
+    ),
+    (
+        "Tier-1 firms",
+        "Distinct count of tier-1 firms (Goldman, Morgan Stanley, JPM, BofA, "
+        "Citi, Barclays, UBS, Jefferies, Evercore, Wells Fargo, RBC, BMO, "
+        "Cowen, Wedbush, Stifel, Truist, Mizuho, …) that have issued an "
+        "action on this ticker in the last 90 days. Higher = better-pedigree "
+        "coverage.",
     ),
     (
         "Insts",
@@ -116,7 +126,16 @@ COLUMN_DOCS: list[tuple[str, str]] = [
         "Bridgewater, Renaissance, Citadel, Tiger, ARK …) currently holding "
         "the stock in their most recent 13F-HR.",
     ),
+    (
+        "Horizons",
+        "Which of {hours, daily, weekly, monthly} top-8 lists the ticker "
+        "appears in.",
+    ),
 ]
+
+
+# Kept for backwards-compatibility with the HTML <details> dl block.
+COLUMN_DOCS: list[tuple[str, str]] = HORIZON_COLUMN_DOCS
 
 
 # Stable sector → colour palette (deterministic by hash, so order-insensitive).
@@ -288,17 +307,18 @@ def _recent_runs_safe(limit: int = 20) -> list[dict]:
 
 
 def _md_table(rows: list[dict]) -> str:
+    """Slim horizon table: only horizon-specific columns. Stock-level facts
+    (Buy/Hold/Sell/Upside/Analysts/Insts) live in the Stock coverage
+    snapshot section, so they don't get repeated four times."""
     if not rows:
         return "_(no data)_\n"
     headers = [
         "#", "★", "Ticker", "Name", "Sector",
         "Blended", "Composite", "ML", "Pctile",
-        "Upside", "Buy", "Hold", "Sell", "Analysts", "Insts",
     ]
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
     for r in rows:
         pct = f"{(r['percentile'] or 0) * 100:.1f}%"
-        upside = f"{(r.get('upside_pct') or 0) * 100:+.1f}%" if r.get("upside_pct") is not None else "—"
         hc = r.get("horizon_count") or 1
         stars = "★" * hc if hc >= 2 else ""
         lines.append(
@@ -314,12 +334,6 @@ def _md_table(rows: list[dict]) -> str:
                     f"{r['composite']:.3f}",
                     f"{r['ml']:.3f}",
                     pct,
-                    upside,
-                    str(r.get("buy") or 0),
-                    str(r.get("hold") or 0),
-                    str(r.get("sell") or 0),
-                    str(r.get("analysts") or 0),
-                    str(r.get("inst_count") or 0),
                 ]
             )
             + " |"
@@ -373,18 +387,149 @@ def _heartbeat_md() -> str:
 
 def _collect_top_by_horizon(as_of: date, n: int) -> dict[str, list[dict]]:
     """Pull top-N rows once per horizon, then annotate every row with the count
-    of horizons in which that ticker also appears (so we can render a ★ / ★★
-    cross-horizon highlight)."""
+    AND labels of horizons in which that ticker also appears."""
     by_h = {h: _top_rows(h, as_of, n) for h in HORIZONS}
-    # Count how many lists each ticker shows up in.
-    counts: dict[str, int] = {}
+    # Map ticker -> ordered horizon labels it appears in.
+    horizons_for: dict[str, list[str]] = {}
+    for h in HORIZONS:
+        for r in by_h[h]:
+            horizons_for.setdefault(r["ticker"], []).append(h)
     for rows in by_h.values():
         for r in rows:
-            counts[r["ticker"]] = counts.get(r["ticker"], 0) + 1
-    for rows in by_h.values():
-        for r in rows:
-            r["horizon_count"] = counts.get(r["ticker"], 1)
+            r["horizon_count"] = len(horizons_for.get(r["ticker"], []))
+            r["horizons"] = horizons_for.get(r["ticker"], [])
     return by_h
+
+
+def _tier1_count_per_ticker(tickers: list[str], lookback_days: int = 90) -> dict[str, int]:
+    """Distinct tier-1 firms with an action on the ticker in the lookback window."""
+    if not tickers:
+        return {}
+    from invest.firms import firm_tier
+
+    cutoff = date.today() - timedelta(days=lookback_days)
+    out: dict[str, int] = dict.fromkeys(tickers, 0)
+    with session_scope() as s:
+        rows = s.execute(
+            select(AnalystAction.ticker, AnalystAction.firm)
+            .where(
+                AnalystAction.ticker.in_(tickers),
+                AnalystAction.date >= cutoff,
+                AnalystAction.firm.isnot(None),
+            )
+            .distinct()
+        ).all()
+    for t, firm in rows:
+        if firm_tier(firm) == 1:
+            out[t] = out.get(t, 0) + 1
+    return out
+
+
+def _coverage_snapshot_rows(by_h: dict[str, list[dict]]) -> list[dict]:
+    """One row per unique ticker that appears in any horizon's top list."""
+    seen: dict[str, dict] = {}
+    for h in HORIZONS:
+        for r in by_h.get(h, []):
+            t = r["ticker"]
+            if t not in seen:
+                seen[t] = {
+                    "ticker": t,
+                    "name": r.get("name") or "",
+                    "sector": r.get("sector") or "",
+                    "upside_pct": r.get("upside_pct"),
+                    "buy": r.get("buy") or 0,
+                    "hold": r.get("hold") or 0,
+                    "sell": r.get("sell") or 0,
+                    "analysts": r.get("analysts") or 0,
+                    "inst_count": r.get("inst_count") or 0,
+                    "horizons": r.get("horizons") or [],
+                }
+    tier1 = _tier1_count_per_ticker(list(seen.keys()))
+    for t, row in seen.items():
+        row["tier1_firms"] = tier1.get(t, 0)
+    rows = list(seen.values())
+    rows.sort(key=lambda r: (-(r.get("upside_pct") or 0), -(r.get("analysts") or 0)))
+    return rows
+
+
+def _coverage_snapshot_md(rows: list[dict]) -> str:
+    if not rows:
+        return "_(no tickers passed the quality gate this run)_\n"
+    headers = [
+        "Ticker", "Sector", "Upside", "Buy", "Hold", "Sell",
+        "Analysts", "Tier-1 firms", "Insts", "Horizons",
+    ]
+    lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
+    for r in rows:
+        upside = (
+            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
+            if r.get("upside_pct") is not None
+            else "—"
+        )
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    f"**{r['ticker']}**",
+                    (r["sector"] or "")[:24],
+                    upside,
+                    str(r["buy"]),
+                    str(r["hold"]),
+                    str(r["sell"]),
+                    str(r["analysts"]),
+                    str(r["tier1_firms"]),
+                    str(r["inst_count"]),
+                    ", ".join(r["horizons"]) or "—",
+                ]
+            )
+            + " |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def _coverage_snapshot_html(rows: list[dict]) -> str:
+    if not rows:
+        return "<p><em>(no tickers passed the quality gate this run)</em></p>"
+    head = (
+        "<thead><tr>"
+        "<th>Ticker</th><th>Sector</th>"
+        "<th title='Consensus mean target / last close − 1.'>Upside</th>"
+        "<th>Buy</th><th>Hold</th><th>Sell</th>"
+        "<th title='Total firms covering. Equals Buy + Hold + Sell.'>Analysts</th>"
+        "<th title='Distinct tier-1 firms (Goldman, MS, JPM, BofA, …) with an action in the last 90 d.'>Tier-1</th>"
+        "<th title='Tracked 13F filers holding the stock.'>Insts</th>"
+        "<th>Horizons</th>"
+        "</tr></thead>"
+    )
+    body_rows = []
+    for r in rows:
+        upside = (
+            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
+            if r.get("upside_pct") is not None
+            else "—"
+        )
+        sector = r["sector"] or ""
+        sector_html = (
+            f"<span class='sector' style='background:{_sector_colour(sector)}'>"
+            f"{_html_escape(sector[:24])}</span>"
+            if sector
+            else ""
+        )
+        body_rows.append(
+            "<tr>"
+            f"<td><strong>{_html_escape(r['ticker'])}</strong></td>"
+            f"<td>{sector_html}</td>"
+            f"<td class='num'>{upside}</td>"
+            f"<td class='num ok'>{r['buy']}</td>"
+            f"<td class='num'>{r['hold']}</td>"
+            f"<td class='num err'>{r['sell']}</td>"
+            f"<td class='num'>{r['analysts']}</td>"
+            f"<td class='num'>{r['tier1_firms']}</td>"
+            f"<td class='num'>{r['inst_count']}</td>"
+            f"<td>{', '.join(r['horizons']) or '—'}</td>"
+            "</tr>"
+        )
+    return f"<table class='snapshot'>{head}<tbody>{''.join(body_rows)}</tbody></table>"
 
 
 # ------------------------- history persistence -------------------------
@@ -572,6 +717,18 @@ def _build_markdown(as_of: date, n: int) -> str:
         parts.append(_md_table(by_h[h]))
         parts.append("")
 
+    # --- Stock coverage snapshot (one row per unique top ticker) ---
+    parts.append("## Stock coverage snapshot")
+    parts.append("")
+    parts.append(
+        "_One row per unique ticker that appears in any top list. Same "
+        "stock-level facts every horizon would otherwise show — listed once, "
+        "sorted by upside._"
+    )
+    parts.append("")
+    parts.append(_coverage_snapshot_md(_coverage_snapshot_rows(by_h)))
+    parts.append("")
+
     # --- Sustained picks (≥1 week on the list, ≥2 stars mostly) ---
     history_sustained = _load_history(settings.sustained_days)
     parts.append(f"## Sustained picks — top 3 over the last {settings.sustained_days} d")
@@ -617,22 +774,12 @@ def _html_top_table(rows: list[dict]) -> str:
         "<th title='Rule-based score from nine weighted features.'>Composite</th>"
         "<th title='LightGBM predicted forward return (cold-start = composite).'>ML</th>"
         "<th title='Percentile of blended score in this horizon.'>Pctile</th>"
-        "<th title='Consensus price target / last close − 1.'>Upside</th>"
-        "<th title='Strong Buy + Buy count.'>Buy</th>"
-        "<th>Hold</th>"
-        "<th title='Sell + Strong Sell count.'>Sell</th>"
-        "<th title='Total analyst firms currently covering the stock — equals Buy + Hold + Sell.'>Analysts</th>"
-        "<th title='Tracked 13F filers holding the stock.'>Insts</th>"
         "</tr></thead>"
     )
+    from invest.firms import firm_tier  # local import to keep top-level imports tidy
     body_rows = []
     for i, r in enumerate(rows):
         pct = f"{(r['percentile'] or 0) * 100:.1f}%"
-        upside = (
-            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
-            if r.get("upside_pct") is not None
-            else "—"
-        )
         sector = r["sector"] or ""
         sector_html = (
             f"<span class='sector' style='background:{_sector_colour(sector)}'>"
@@ -640,12 +787,24 @@ def _html_top_table(rows: list[dict]) -> str:
             if sector
             else ""
         )
-        # Analyst firms drawer.
+        # Analyst firms drawer (now with a Tier column).
         actions = r.get("recent_actions", [])
+
+        def _tier_cell(firm: str | None) -> str:
+            t = firm_tier(firm)
+            if t == 1:
+                return "<td class='tier1'><strong>T1</strong></td>"
+            if t == 2:
+                return "<td class='tier2'>T2</td>"
+            if t == 3:
+                return "<td class='tier3'>T3</td>"
+            return "<td class='src'>—</td>"
+
         drawer_rows = "".join(
             "<tr>"
             f"<td>{a['date'].isoformat() if a.get('date') else ''}</td>"
-            f"<td>{_html_escape(a.get('firm') or '')}</td>"
+            + _tier_cell(a.get("firm"))
+            + f"<td>{_html_escape(a.get('firm') or '')}</td>"
             f"<td>{_html_escape((a.get('action') or '').title())}</td>"
             f"<td>{_html_escape((a.get('from') or '') + ' → ' + (a.get('to') or ''))}</td>"
             f"<td class='num'>{a.get('target') or ''}</td>"
@@ -655,9 +814,9 @@ def _html_top_table(rows: list[dict]) -> str:
         )
         drawer_html = (
             f"<tr class='drawer' id='drawer-{r['ticker']}-{i}' style='display:none'>"
-            "<td colspan='14'>"
+            "<td colspan='9'>"
             "<strong>Recent analyst actions</strong>"
-            "<table class='inner'><thead><tr><th>Date</th><th>Firm</th>"
+            "<table class='inner'><thead><tr><th>Date</th><th>Tier</th><th>Firm</th>"
             "<th>Action</th><th>From → To</th><th>Target</th><th>Source</th></tr></thead>"
             f"<tbody>{drawer_rows}</tbody></table>"
             "</td></tr>"
@@ -684,12 +843,6 @@ def _html_top_table(rows: list[dict]) -> str:
             f"<td class='num'>{r['composite']:.3f}</td>"
             f"<td class='num'>{r['ml']:.3f}</td>"
             f"<td class='num'>{pct}</td>"
-            f"<td class='num'>{upside}</td>"
-            f"<td class='num ok'>{r.get('buy') or 0}</td>"
-            f"<td class='num'>{r.get('hold') or 0}</td>"
-            f"<td class='num err'>{r.get('sell') or 0}</td>"
-            f"<td class='num'>{r.get('analysts') or 0}</td>"
-            f"<td class='num'>{r.get('inst_count') or 0}</td>"
             "</tr>"
             + drawer_html
         )
@@ -783,6 +936,14 @@ def _build_html(as_of: date, n: int) -> str:
             f"{_html_top_table(by_h[h])}"
             "</section>"
         )
+    snapshot_rows = _coverage_snapshot_rows(by_h)
+    sections.append(
+        "<section><h2>Stock coverage snapshot</h2>"
+        "<p class='blurb'>One row per unique ticker in any top list, sorted "
+        "by upside. Stock-level facts (Buy/Hold/Sell/Upside/Analysts) are "
+        "the same for a ticker no matter the horizon, so they live here.</p>"
+        f"{_coverage_snapshot_html(snapshot_rows)}</section>"
+    )
     runs_html = _html_runs_table(_recent_runs_safe())
     columns_html = _html_columns()
     return f"""<!doctype html>
@@ -830,6 +991,10 @@ def _build_html(as_of: date, n: int) -> str:
   .starred {{ background: rgba(214,158,46,0.1); border-left: 3px solid #d69e2e;
               padding: 0.6rem 1rem; margin: 1rem 0; border-radius: 4px; }}
   .starred.muted {{ background: rgba(127,127,127,0.08); border-left-color: #aaa; color: #666; }}
+  td.tier1 {{ color: #2f5fa7; }}
+  td.tier2 {{ color: #6b6b6b; }}
+  td.tier3 {{ color: #999; }}
+  table.snapshot {{ margin-top: 0.5rem; }}
 </style>
 </head>
 <body>

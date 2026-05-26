@@ -8,10 +8,20 @@ from ..config import FEATURE_NAMES, HORIZONS, WEIGHTS, Horizon, get_settings
 
 
 def _zscore(s: pd.Series) -> pd.Series:
+    """Standard z-score, hardened against float drift on constant inputs.
+
+    `pd.Series([0.1]*6).std()` is not exactly 0 — it's ~1.5e-17 — so a
+    naive `(x - mean) / std` divides comparable garbage by comparable
+    garbage and returns spurious ±0.91. We treat any column with fewer
+    than two distinct values, or whose std falls below a tiny epsilon,
+    as zero-variance and return all-zero contributions.
+    """
     x = pd.to_numeric(s, errors="coerce")
+    if x.nunique(dropna=True) < 2:
+        return pd.Series(np.zeros(len(s)), index=s.index)
     mu = x.mean(skipna=True)
     sd = x.std(skipna=True)
-    if not sd or np.isnan(sd) or sd == 0:
+    if not sd or np.isnan(sd) or sd < 1e-12:
         return pd.Series(np.zeros(len(s)), index=s.index)
     return (x - mu) / sd
 
@@ -25,35 +35,34 @@ def liquidity_mask(features: pd.DataFrame) -> pd.Series:
 
 
 def outlook_mask(features: pd.DataFrame) -> pd.Series:
-    """Drop tickers with explicitly negative analyst outlook.
+    """Drop tickers with explicitly negative or insufficiently bullish outlook.
 
     A stock is excluded from the ranking if ANY of:
-      - consensus is net-bearish (more sells than buys, raw consensus_z < min)
-      - the consensus price target is meaningfully below the last close
-      - too few analyst firms cover it for the consensus signal to be reliable
-    Stocks with no consensus data (consensus_z == 0) are treated as neutral
-    and ALLOWED through, so non-US names without rich coverage aren't
-    needlessly excluded.
+      - consensus is not strictly net-bullish  (consensus_z <= min_consensus_z)
+      - upside to consensus mean target is below the floor  (upside_z < min_upside)
+      - too few analyst firms cover it       (num_analysts < min_firms)
+
+    With the default thresholds (``min_consensus_z = 0`` and
+    ``min_upside = 0.04``), stocks with no analyst coverage have
+    ``consensus_z = 0`` and ``upside_z = 0`` and so are excluded by design —
+    only names that are *demonstrably* positive (covered + bullish + ≥ 4 %
+    upside) survive.
     """
     settings = get_settings()
     mask = pd.Series(True, index=features.index)
     if "consensus_z" in features.columns:
         cz = pd.to_numeric(features["consensus_z"], errors="coerce").fillna(0.0)
-        # Only filter strictly bearish; treat 0/NaN as neutral.
-        mask &= cz >= settings.min_consensus_z
+        # Strict: require net-bullish (> 0), not just non-negative.
+        mask &= cz > settings.min_consensus_z
     if "upside_z" in features.columns:
         up = pd.to_numeric(features["upside_z"], errors="coerce").fillna(0.0)
         mask &= up >= settings.min_upside
     if "num_analysts" in features.columns:
-        # Total firms currently covering the stock (Strong Buy + Buy + Hold +
-        # Sell + Strong Sell). Only enforce min-firms when the ticker has ANY
-        # consensus data so small / foreign names with no coverage aren't
-        # excluded just for being uncovered.
+        # Require at least `min_firms` covering firms. The strict consensus
+        # gate above already removes thinly-covered names; this is a hard
+        # backstop for cases where we have stale or partial consensus rows.
         na = pd.to_numeric(features["num_analysts"], errors="coerce").fillna(0.0)
-        has_consensus = (
-            pd.to_numeric(features.get("consensus_z", 0), errors="coerce").fillna(0.0) != 0
-        )
-        mask &= (~has_consensus) | (na >= settings.min_firms)
+        mask &= na >= settings.min_firms
     return mask
 
 

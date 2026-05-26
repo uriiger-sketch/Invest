@@ -42,13 +42,14 @@ class Settings(BaseSettings):
     # Quality gates: a stock is excluded from the top-N if its analyst outlook
     # is meaningfully negative on any of these axes. Tunable here so users can
     # be stricter or looser without code changes.
-    min_consensus_z: float = -0.10   # net consensus (-1..+1); -0.1 keeps slightly mixed names
-    min_upside: float = -0.05        # consensus mean target / last close - 1
-    min_firms: int = 3               # require at least 3 covering firms IF the ticker has any consensus
+    min_consensus_z: float = 0.0     # require strictly net-bullish consensus
+    min_upside: float = 0.04         # require ≥ 4 % upside to consensus target
+    min_firms: int = 5               # require at least 5 covering firms IF the ticker has any consensus
+    consensus_max_age_days: int = 14 # ignore Consensus rows older than this
 
     blend_composite_weight: float = 0.6
     blend_ml_weight: float = 0.4
-    top_n: int = 10
+    top_n: int = 8
 
     # Sustained-picks + history (used by the report generator).
     history_path: str = "docs/history.jsonl"
@@ -61,19 +62,19 @@ class Settings(BaseSettings):
 # Weight matrix per horizon. Rows must sum to ~1 (negative entries allowed).
 WEIGHTS: dict[Horizon, dict[str, float]] = {
     "hours": {
-        # Fastest horizon — lean almost entirely on short-term momentum signals
-        # and very-recent rating changes. Consensus & price-target upside have
-        # almost no predictive value on hours-to-days; risk gets the biggest
-        # penalty because intraday noise dominates.
-        "consensus_z": 0.05,
-        "upside_z": 0.00,
-        "rating_mom_7d": 0.30,
+        # Fastest horizon — leans on short-term momentum + recent rating changes
+        # BUT still respects analyst consensus + upside so a single high-quality
+        # name can plausibly top this list AND the longer horizons. Pure-momentum
+        # weights made ★★★★ cross-horizon agreement effectively impossible.
+        "consensus_z": 0.15,
+        "upside_z": 0.10,
+        "rating_mom_7d": 0.25,
         "rating_mom_30d": 0.05,
         "target_revision_30d": 0.05,
         "inst_flow_13f": 0.00,
         "insider_net_buy_90d": 0.05,
-        "price_mom_21d": 0.30,
-        "risk_penalty": 0.20,
+        "price_mom_21d": 0.20,
+        "risk_penalty": 0.10,
     },
     "daily": {
         # ~5 trading days. Same flavour as "hours" but with a bit more weight on

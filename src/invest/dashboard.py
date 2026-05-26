@@ -1,4 +1,4 @@
-"""Streamlit dashboard. Four pages: Top 10, Drill-down, Sources & freshness, Methodology."""
+"""Streamlit dashboard. Four pages: Top 8, Drill-down, Sources & freshness, Methodology."""
 from __future__ import annotations
 
 from datetime import date, timedelta
@@ -21,7 +21,7 @@ from invest.models import (
     Stock,
 )
 
-st.set_page_config(page_title="Invest — Top 10", layout="wide")
+st.set_page_config(page_title="Invest — Top 8", layout="wide")
 
 
 _HORIZON_LABELS: dict[str, str] = {
@@ -219,7 +219,7 @@ def _13f_flow(ticker: str) -> pd.DataFrame:
 st.sidebar.title("Invest")
 page = st.sidebar.radio(
     "Page",
-    ("Top 10", "Ticker drill-down", "Sources & freshness", "Methodology"),
+    ("Top 8", "Ticker drill-down", "Sources & freshness", "Methodology"),
 )
 settings = get_settings()
 as_of = _latest_score_as_of()
@@ -231,8 +231,8 @@ else:
 
 # ---------------------------- Page 1 ----------------------------
 
-if page == "Top 10":
-    st.title("Top 10 stocks to invest in")
+if page == "Top 8":
+    st.title("Top 8 stocks to invest in")
     if as_of is None:
         st.stop()
     tabs = st.tabs([_horizon_label(h) for h in HORIZONS])

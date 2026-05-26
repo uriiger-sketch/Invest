@@ -41,6 +41,15 @@ def _available_sources() -> list[Callable[[list[str]], int]]:
         except Exception as e:  # noqa: BLE001
             logger.warning("finnhub source unavailable: %s", e)
 
+    # FMP self-skips when FMP_API_KEY is unset; keep it registered so a key
+    # added later just starts working without code changes.
+    try:
+        from ..sources.fmp_src import FmpSource
+
+        runners.append(FmpSource().run)
+    except Exception as e:  # noqa: BLE001
+        logger.warning("fmp source unavailable: %s", e)
+
     try:
         from ..sources.edgar_src import EdgarSource
 
@@ -87,6 +96,48 @@ def _run_stooq_backfill(tickers: list[str]) -> int:
     return StooqSource().run(missing)
 
 
+def _validate_consensus_agreement(tickers: list[str], max_pct_diff: float = 0.25) -> int:
+    """Compare mean_target across sources on the same as_of_date. Logs (and
+    writes a `run_log` row via log_run) when two sources disagree by more
+    than ``max_pct_diff``. Returns the number of flagged tickers."""
+    from datetime import date
+
+    from sqlalchemy import select
+
+    from ..db import session_scope
+    from ..models import Consensus
+
+    today = date.today()
+    flagged = 0
+    with log_run("validate.consensus_agreement") as c:
+        with session_scope() as s:
+            rows = s.execute(
+                select(
+                    Consensus.ticker, Consensus.source, Consensus.mean_target
+                ).where(
+                    Consensus.ticker.in_(tickers),
+                    Consensus.as_of_date == today,
+                    Consensus.mean_target.isnot(None),
+                )
+            ).all()
+        by_ticker: dict[str, dict[str, float]] = {}
+        for ticker, source, mt in rows:
+            by_ticker.setdefault(ticker, {})[source] = float(mt)
+        for ticker, by_src in by_ticker.items():
+            if len(by_src) < 2:
+                continue
+            targets = list(by_src.values())
+            lo, hi = min(targets), max(targets)
+            if lo > 0 and (hi - lo) / lo > max_pct_diff:
+                logger.warning(
+                    "consensus disagreement on %s: sources=%s targets=%s",
+                    ticker, list(by_src.keys()), targets,
+                )
+                flagged += 1
+        c["rows"] = flagged
+    return flagged
+
+
 def ingest_all(tickers: list[str] | None = None) -> int:
     tickers = tickers or current_universe()
     logger.info("ingest starting for %d tickers", len(tickers))
@@ -97,6 +148,13 @@ def ingest_all(tickers: list[str] | None = None) -> int:
         except Exception:  # noqa: BLE001
             logger.exception("source runner failed")
             continue
+    # After all sources have written, sanity-check that the consensus snapshots
+    # agree where we have multiple opinions. Disagreements are logged but never
+    # abort the ingest.
+    try:
+        _validate_consensus_agreement(tickers)
+    except Exception:  # noqa: BLE001
+        logger.exception("consensus validation failed")
     logger.info("ingest finished, total rows written: %d", total)
     return total
 

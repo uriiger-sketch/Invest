@@ -3,13 +3,13 @@
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile |
 |---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **ELV** | Elevance Health, Inc. | Healthcare | 4.361 | 1.410 | 1.410 | 100.0% |
-| 2 | ★★ | **FROG** | JFrog Ltd. | Technology | 2.212 | 0.557 | 0.557 | 100.0% |
-| 3 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 2.101 | 0.529 | 0.529 | 98.2% |
-| 4 | ★★★ | **CSCO** | Cisco Systems, Inc. | Technology | 1.857 | 0.468 | 0.468 | 96.4% |
-| 5 | ★★ | **ETSY** | Etsy, Inc. | Consumer Cyclical | 1.543 | 0.388 | 0.388 | 94.6% |
-| 6 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.141 | 0.287 | 0.287 | 92.9% |
-| 7 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.722 | 0.181 | 0.181 | 91.1% |
-| 8 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 0.703 | 0.176 | 0.176 | 89.3% |
+| 2 | ★★ | **FROG** | JFrog Ltd. | Technology | 2.219 | 0.550 | 0.550 | 100.0% |
+| 3 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 2.087 | 0.517 | 0.517 | 98.2% |
+| 4 | ★★★ | **CSCO** | Cisco Systems, Inc. | Technology | 1.908 | 0.472 | 0.472 | 96.5% |
+| 5 | ★★ | **ETSY** | Etsy, Inc. | Consumer Cyclical | 1.533 | 0.378 | 0.378 | 94.7% |
+| 6 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.164 | 0.286 | 0.286 | 93.0% |
+| 7 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.746 | 0.181 | 0.181 | 91.2% |
+| 8 |  | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.733 | 0.178 | 0.178 | 89.5% |
 
 
 ## Daily (~5 trading days) — top 8
@@ -17,13 +17,13 @@
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile |
 |---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **ELV** | Elevance Health, Inc. | Healthcare | 4.392 | 1.550 | 1.550 | 100.0% |
-| 2 | ★★★ | **CSCO** | Cisco Systems, Inc. | Technology | 2.474 | 0.654 | 0.654 | 100.0% |
-| 3 | ★★ | **FROG** | JFrog Ltd. | Technology | 2.185 | 0.573 | 0.573 | 98.2% |
-| 4 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 1.849 | 0.479 | 0.479 | 96.4% |
-| 5 | ★★ | **ETSY** | Etsy, Inc. | Consumer Cyclical | 1.621 | 0.415 | 0.415 | 94.6% |
-| 6 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.163 | 0.286 | 0.286 | 92.9% |
-| 7 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.813 | 0.188 | 0.188 | 91.1% |
-| 8 | ★★ | **ABNB** | Airbnb, Inc. | Consumer Cyclical | 0.721 | 0.162 | 0.162 | 89.3% |
+| 2 | ★★★ | **CSCO** | Cisco Systems, Inc. | Technology | 2.540 | 0.661 | 0.661 | 100.0% |
+| 3 | ★★ | **FROG** | JFrog Ltd. | Technology | 2.183 | 0.562 | 0.562 | 98.2% |
+| 4 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 1.815 | 0.461 | 0.461 | 96.5% |
+| 5 | ★★ | **ETSY** | Etsy, Inc. | Consumer Cyclical | 1.575 | 0.394 | 0.394 | 94.7% |
+| 6 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.181 | 0.285 | 0.285 | 93.0% |
+| 7 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.836 | 0.189 | 0.189 | 91.2% |
+| 8 | ★★ | **ABNB** | Airbnb, Inc. | Consumer Cyclical | 0.713 | 0.155 | 0.155 | 89.5% |
 
 
 ## Weekly (~1 month) — top 8
@@ -31,27 +31,27 @@
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile |
 |---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **ELV** | Elevance Health, Inc. | Healthcare | 2.321 | 0.751 | 0.751 | 100.0% |
-| 2 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 2.281 | 0.693 | 0.693 | 100.0% |
-| 3 | ★★ | **CLS** | Celestica Inc. | Technology | 1.739 | 0.547 | 0.547 | 98.2% |
-| 4 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 1.707 | 0.539 | 0.539 | 96.4% |
-| 5 | ★★★ | **CSCO** | Cisco Systems, Inc. | Technology | 1.656 | 0.525 | 0.525 | 94.6% |
-| 6 | ★★ | **BSX** | Boston Scientific Corporation | Healthcare | 1.389 | 0.453 | 0.453 | 92.9% |
-| 7 | ★★ | **ABNB** | Airbnb, Inc. | Consumer Cyclical | 1.049 | 0.362 | 0.362 | 91.1% |
-| 8 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.045 | 0.361 | 0.361 | 89.3% |
+| 2 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 2.261 | 0.683 | 0.683 | 100.0% |
+| 3 | ★★ | **CLS** | Celestica Inc. | Technology | 1.769 | 0.550 | 0.550 | 98.2% |
+| 4 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 1.719 | 0.537 | 0.537 | 96.5% |
+| 5 | ★★★ | **CSCO** | Cisco Systems, Inc. | Technology | 1.669 | 0.523 | 0.523 | 94.7% |
+| 6 | ★★ | **BSX** | Boston Scientific Corporation | Healthcare | 1.413 | 0.454 | 0.454 | 93.0% |
+| 7 | ★★ | **ABNB** | Airbnb, Inc. | Consumer Cyclical | 1.088 | 0.367 | 0.367 | 91.2% |
+| 8 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.032 | 0.352 | 0.352 | 89.5% |
 
 
 ## Month and above (~90 days) — top 8
 
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile |
 |---|---|---|---|---|---|---|---|---|
-| 1 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 3.231 | 1.175 | 1.175 | 100.0% |
-| 2 | ★★ | **BSX** | Boston Scientific Corporation | Healthcare | 2.240 | 0.868 | 0.868 | 98.2% |
-| 3 |  | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.509 | 0.642 | 0.642 | 96.4% |
-| 4 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.441 | 0.620 | 0.620 | 94.6% |
-| 5 |  | **CRH** | CRH plc | Basic Materials | 1.132 | 0.525 | 0.525 | 92.9% |
-| 6 |  | **ABT** | Abbott Laboratories | Healthcare | 1.040 | 0.496 | 0.496 | 91.1% |
-| 7 | ★★ | **CLS** | Celestica Inc. | Technology | 1.008 | 0.486 | 0.486 | 89.3% |
-| 8 |  | **BILL** | BILL Holdings, Inc. | Technology | 0.996 | 0.483 | 0.483 | 87.5% |
+| 1 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 3.197 | 1.163 | 1.163 | 100.0% |
+| 2 | ★★ | **BSX** | Boston Scientific Corporation | Healthcare | 2.298 | 0.883 | 0.883 | 98.2% |
+| 3 |  | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.535 | 0.645 | 0.645 | 96.5% |
+| 4 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.404 | 0.604 | 0.604 | 94.7% |
+| 5 |  | **CRH** | CRH plc | Basic Materials | 1.122 | 0.516 | 0.516 | 93.0% |
+| 6 |  | **BILL** | BILL Holdings, Inc. | Technology | 1.112 | 0.513 | 0.513 | 91.2% |
+| 7 | ★★ | **CLS** | Celestica Inc. | Technology | 1.052 | 0.494 | 0.494 | 89.5% |
+| 8 |  | **ABT** | Abbott Laboratories | Healthcare | 1.041 | 0.491 | 0.491 | 87.7% |
 
 
 ## Stock coverage snapshot
@@ -60,22 +60,23 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 
 | Ticker | Sector | Upside | Buy | Hold | Sell | Analysts | Tier-1 firms | Insts | Horizons |
 |---|---|---|---|---|---|---|---|---|---|
-| **CHWY** | Consumer Cyclical | +90.6% | 20 | 5 | 0 | 25 | 10 | 0 | hours, weekly, monthly |
-| **BSX** | Healthcare | +62.6% | 31 | 2 | 0 | 33 | 15 | 0 | weekly, monthly |
-| **BILL** | Technology | +55.7% | 14 | 9 | 0 | 23 | 5 | 0 | monthly |
-| **DASH** | Consumer Cyclical | +54.9% | 35 | 9 | 0 | 44 | 12 | 0 | monthly |
-| **DHR** | Healthcare | +42.7% | 23 | 2 | 0 | 25 | 8 | 0 | weekly, monthly |
-| **ABT** | Healthcare | +38.2% | 21 | 7 | 0 | 28 | 9 | 0 | monthly |
+| **CHWY** | Consumer Cyclical | +91.4% | 20 | 5 | 0 | 25 | 10 | 0 | weekly, monthly |
+| **BSX** | Healthcare | +65.4% | 31 | 2 | 0 | 33 | 15 | 0 | weekly, monthly |
+| **BILL** | Technology | +58.8% | 14 | 9 | 0 | 23 | 5 | 0 | monthly |
+| **DASH** | Consumer Cyclical | +56.1% | 35 | 9 | 0 | 44 | 12 | 0 | monthly |
+| **DHR** | Healthcare | +42.3% | 23 | 2 | 0 | 25 | 8 | 0 | weekly, monthly |
+| **ABT** | Healthcare | +38.5% | 21 | 7 | 0 | 28 | 9 | 0 | monthly |
 | **CRH** | Basic Materials | +34.3% | 21 | 2 | 0 | 23 | 3 | 0 | monthly |
-| **CLS** | Technology | +22.4% | 20 | 1 | 0 | 21 | 8 | 0 | weekly, monthly |
-| **ABNB** | Consumer Cyclical | +17.5% | 21 | 18 | 2 | 41 | 12 | 0 | daily, weekly |
-| **ABBV** | Healthcare | +17.3% | 24 | 8 | 0 | 32 | 5 | 0 | hours, daily |
-| **DOCN** | Technology | +16.7% | 10 | 4 | 0 | 14 | 7 | 0 | hours, daily, weekly |
-| **FROG** | Technology | +11.7% | 20 | 1 | 0 | 21 | 11 | 0 | hours, daily |
-| **ETSY** | Consumer Cyclical | +10.6% | 9 | 20 | 1 | 30 | 11 | 0 | hours, daily |
-| **BUD** | Consumer Defensive | +10.1% | 10 | 1 | 0 | 11 | 2 | 0 | hours, daily |
-| **CSCO** | Technology | +5.2% | 17 | 8 | 1 | 26 | 12 | 0 | hours, daily, weekly |
-| **ELV** | Healthcare | +2.9% | 15 | 7 | 0 | 22 | 10 | 0 | hours, daily, weekly |
+| **CLS** | Technology | +23.4% | 20 | 1 | 0 | 21 | 8 | 0 | weekly, monthly |
+| **ABNB** | Consumer Cyclical | +18.7% | 21 | 18 | 2 | 41 | 12 | 0 | daily, weekly |
+| **DOCN** | Technology | +17.7% | 10 | 4 | 0 | 14 | 7 | 0 | hours, daily, weekly |
+| **ABBV** | Healthcare | +17.4% | 24 | 8 | 0 | 32 | 5 | 0 | hours, daily |
+| **AMZN** | Consumer Cyclical | +15.0% | 62 | 4 | 0 | 66 | 23 | 0 | hours |
+| **ETSY** | Consumer Cyclical | +13.1% | 9 | 20 | 1 | 30 | 11 | 0 | hours, daily |
+| **FROG** | Technology | +12.2% | 20 | 1 | 0 | 21 | 11 | 0 | hours, daily |
+| **BUD** | Consumer Defensive | +10.4% | 10 | 1 | 0 | 11 | 2 | 0 | hours, daily |
+| **CSCO** | Technology | +4.8% | 17 | 8 | 1 | 26 | 12 | 0 | hours, daily, weekly |
+| **ELV** | Healthcare | +3.2% | 15 | 7 | 0 | 22 | 10 | 0 | hours, daily, weekly |
 
 
 ## Sustained picks — top 3 over the last 7 d
@@ -84,9 +85,9 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **ADP** | 3.106 | 47 | ★★ | daily, hours | 59 runs |
-| **CHWY** | 2.962 | 59 | ★★★ | hours, monthly, weekly | 59 runs |
-| **ELV** | 2.864 | 59 | ★★★ | daily, hours, weekly | 59 runs |
+| **ADP** | 3.139 | 46 | ★★ | daily, hours | 59 runs |
+| **CHWY** | 2.954 | 59 | ★★★ | hours, monthly, weekly | 59 runs |
+| **ELV** | 2.896 | 59 | ★★★ | daily, hours, weekly | 59 runs |
 
 
 ## Top 3 by date — last 14 d

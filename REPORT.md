@@ -3,13 +3,13 @@
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile |
 |---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **ELV** | Elevance Health, Inc. | Healthcare | 4.361 | 1.410 | 1.410 | 100.0% |
-| 2 | ★★ | **FROG** | JFrog Ltd. | Technology | 2.219 | 0.550 | 0.550 | 100.0% |
+| 2 | ★★ | **FROG** | JFrog Ltd. | Technology | 2.219 | 0.549 | 0.549 | 100.0% |
 | 3 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 2.087 | 0.517 | 0.517 | 98.2% |
 | 4 | ★★★ | **CSCO** | Cisco Systems, Inc. | Technology | 1.908 | 0.472 | 0.472 | 96.5% |
-| 5 | ★★ | **ETSY** | Etsy, Inc. | Consumer Cyclical | 1.533 | 0.378 | 0.378 | 94.7% |
-| 6 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.164 | 0.286 | 0.286 | 93.0% |
+| 5 | ★★ | **ETSY** | Etsy, Inc. | Consumer Cyclical | 1.534 | 0.378 | 0.378 | 94.7% |
+| 6 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.165 | 0.286 | 0.286 | 93.0% |
 | 7 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.746 | 0.181 | 0.181 | 91.2% |
-| 8 |  | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.733 | 0.178 | 0.178 | 89.5% |
+| 8 |  | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.734 | 0.178 | 0.178 | 89.5% |
 
 
 ## Daily (~5 trading days) — top 8
@@ -19,7 +19,7 @@
 | 1 | ★★★ | **ELV** | Elevance Health, Inc. | Healthcare | 4.392 | 1.550 | 1.550 | 100.0% |
 | 2 | ★★★ | **CSCO** | Cisco Systems, Inc. | Technology | 2.540 | 0.661 | 0.661 | 100.0% |
 | 3 | ★★ | **FROG** | JFrog Ltd. | Technology | 2.183 | 0.562 | 0.562 | 98.2% |
-| 4 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 1.815 | 0.461 | 0.461 | 96.5% |
+| 4 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 1.815 | 0.460 | 0.460 | 96.5% |
 | 5 | ★★ | **ETSY** | Etsy, Inc. | Consumer Cyclical | 1.575 | 0.394 | 0.394 | 94.7% |
 | 6 | ★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.181 | 0.285 | 0.285 | 93.0% |
 | 7 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.836 | 0.189 | 0.189 | 91.2% |
@@ -31,12 +31,12 @@
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile |
 |---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **ELV** | Elevance Health, Inc. | Healthcare | 2.321 | 0.751 | 0.751 | 100.0% |
-| 2 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 2.261 | 0.683 | 0.683 | 100.0% |
+| 2 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 2.259 | 0.682 | 0.682 | 100.0% |
 | 3 | ★★ | **CLS** | Celestica Inc. | Technology | 1.769 | 0.550 | 0.550 | 98.2% |
-| 4 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 1.719 | 0.537 | 0.537 | 96.5% |
+| 4 | ★★★ | **DOCN** | DigitalOcean Holdings, Inc. | Technology | 1.720 | 0.537 | 0.537 | 96.5% |
 | 5 | ★★★ | **CSCO** | Cisco Systems, Inc. | Technology | 1.669 | 0.523 | 0.523 | 94.7% |
-| 6 | ★★ | **BSX** | Boston Scientific Corporation | Healthcare | 1.413 | 0.454 | 0.454 | 93.0% |
-| 7 | ★★ | **ABNB** | Airbnb, Inc. | Consumer Cyclical | 1.088 | 0.367 | 0.367 | 91.2% |
+| 6 | ★★ | **BSX** | Boston Scientific Corporation | Healthcare | 1.412 | 0.454 | 0.454 | 93.0% |
+| 7 | ★★ | **ABNB** | Airbnb, Inc. | Consumer Cyclical | 1.089 | 0.367 | 0.367 | 91.2% |
 | 8 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.032 | 0.352 | 0.352 | 89.5% |
 
 
@@ -44,12 +44,12 @@
 
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile |
 |---|---|---|---|---|---|---|---|---|
-| 1 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 3.197 | 1.163 | 1.163 | 100.0% |
-| 2 | ★★ | **BSX** | Boston Scientific Corporation | Healthcare | 2.298 | 0.883 | 0.883 | 98.2% |
+| 1 | ★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 3.196 | 1.162 | 1.162 | 100.0% |
+| 2 | ★★ | **BSX** | Boston Scientific Corporation | Healthcare | 2.298 | 0.882 | 0.882 | 98.2% |
 | 3 |  | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.535 | 0.645 | 0.645 | 96.5% |
-| 4 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.404 | 0.604 | 0.604 | 94.7% |
+| 4 | ★★ | **DHR** | Danaher Corporation | Healthcare | 1.403 | 0.604 | 0.604 | 94.7% |
 | 5 |  | **CRH** | CRH plc | Basic Materials | 1.122 | 0.516 | 0.516 | 93.0% |
-| 6 |  | **BILL** | BILL Holdings, Inc. | Technology | 1.112 | 0.513 | 0.513 | 91.2% |
+| 6 |  | **BILL** | BILL Holdings, Inc. | Technology | 1.111 | 0.512 | 0.512 | 91.2% |
 | 7 | ★★ | **CLS** | Celestica Inc. | Technology | 1.052 | 0.494 | 0.494 | 89.5% |
 | 8 |  | **ABT** | Abbott Laboratories | Healthcare | 1.041 | 0.491 | 0.491 | 87.7% |
 
@@ -85,9 +85,9 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **ADP** | 3.139 | 46 | ★★ | daily, hours | 59 runs |
-| **CHWY** | 2.954 | 59 | ★★★ | hours, monthly, weekly | 59 runs |
-| **ELV** | 2.896 | 59 | ★★★ | daily, hours, weekly | 59 runs |
+| **ADP** | 3.209 | 44 | ★★ | daily, hours | 58 runs |
+| **ELV** | 2.946 | 58 | ★★★ | daily, hours, weekly | 58 runs |
+| **CHWY** | 2.938 | 58 | ★★★ | hours, monthly, weekly | 58 runs |
 
 
 ## Top 3 by date — last 14 d

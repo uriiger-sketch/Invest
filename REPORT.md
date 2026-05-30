@@ -84,9 +84,9 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **ELV** | 3.445 | 33 | ★★★ | daily, hours, weekly | 55 runs |
-| **CHWY** | 2.384 | 55 | ★★★ | hours, monthly, weekly | 55 runs |
-| **ETSY** | 1.804 | 39 | ★★★ | daily, hours, weekly | 55 runs |
+| **CHWY** | 2.362 | 55 | ★★★ | hours, monthly, weekly | 55 runs |
+| **ETSY** | 1.825 | 38 | ★★★ | daily, hours, weekly | 55 runs |
+| **CSCO** | 1.705 | 55 | ★★★ | daily, hours, weekly | 55 runs |
 
 
 ## Top 3 by date — last 14 d

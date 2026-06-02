@@ -85,9 +85,9 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **CHWY** | 2.045 | 52 | ★★★ | hours, monthly, weekly | 52 runs |
-| **CSCO** | 1.779 | 47 | ★★★ | daily, hours, weekly | 52 runs |
-| **DOCN** | 1.552 | 47 | ★★★ | daily, hours, weekly | 52 runs |
+| **CHWY** | 2.028 | 51 | ★★★ | hours, monthly, weekly | 51 runs |
+| **CSCO** | 1.776 | 45 | ★★★ | daily, hours, weekly | 51 runs |
+| **DOCN** | 1.520 | 45 | ★★★ | daily, hours, weekly | 51 runs |
 
 
 ## Top 3 by date — last 14 d
@@ -108,4 +108,3 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-05-22 | **CSCO**, **ADP**, **ELV** | **CSCO**, **ADP**, **ELV** | **CHWY**, **AMD**, **ABNB** | **CHWY**, **CRH**, **DASH** |
 | 2026-05-21 | **CSCO**, **ADP**, **DDOG** | **CSCO**, **ADP**, **AMD** | **CHWY**, **AMD**, **DOCN** | **CHWY**, **DASH**, **CRH** |
 | 2026-05-20 | **CSCO**, **DDOG**, **DOCN** | **CSCO**, **DDOG**, **DOCN** | **CHWY**, **DOCN**, **ABNB** | **CHWY**, **DHR**, **APH** |
-| 2026-05-19 | **CSCO**, **CRWD**, **DDOG** | **CSCO**, **CRWD**, **DDOG** | **CHWY**, **CRWD**, **ABNB** | **CHWY**, **DHR**, **BSX** |

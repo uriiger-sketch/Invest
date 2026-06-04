@@ -60,21 +60,21 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 
 | Ticker | Sector | Upside | Buy | Hold | Sell | Analysts | Tier-1 firms | Insts | Sources | Horizons |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **AMZN** | Consumer Cyclical | +23.3% | 62 | 4 | 0 | 66 | 23 | 0 | 29 | monthly |
-| **BSX** | Healthcare | +62.4% | 27 | 4 | 0 | 31 | 15 | 0 | 19 | monthly |
-| **DELL** | Technology | +13.7% | 19 | 8 | 0 | 27 | 13 | 0 | 14 | hours, daily, weekly |
-| **CHWY** | Consumer Cyclical | +88.7% | 20 | 5 | 0 | 25 | 11 | 0 | 12 | hours, weekly, monthly |
-| **DASH** | Consumer Cyclical | +54.1% | 35 | 9 | 0 | 44 | 11 | 0 | 11 | weekly, monthly |
-| **ABT** | Healthcare | +30.1% | 20 | 7 | 0 | 27 | 9 | 0 | 11 | daily |
-| **ELV** | Healthcare | -0.3% | 15 | 7 | 0 | 22 | 10 | 0 | 11 | daily |
-| **DHR** | Healthcare | +31.6% | 22 | 3 | 0 | 25 | 10 | 0 | 10 | hours |
-| **BAC** | Financial Services | +17.3% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
-| **DIS** | Communication Services | +30.3% | 27 | 2 | 1 | 30 | 7 | 0 | 7 | hours, daily, weekly, monthly |
-| **BP** | Energy | +14.0% | 9 | 6 | 3 | 18 | 6 | 0 | 7 | daily, weekly |
-| **ABBV** | Healthcare | +13.0% | 24 | 8 | 0 | 32 | 5 | 0 | 6 | hours, daily |
+| **AMZN** | Consumer Cyclical | +22.8% | 62 | 4 | 0 | 66 | 23 | 0 | 29 | monthly |
+| **BSX** | Healthcare | +62.3% | 27 | 4 | 0 | 31 | 15 | 0 | 19 | monthly |
+| **DELL** | Technology | +13.3% | 19 | 8 | 0 | 27 | 13 | 0 | 14 | hours, daily, weekly |
+| **CHWY** | Consumer Cyclical | +89.0% | 20 | 5 | 0 | 25 | 11 | 0 | 12 | hours, weekly, monthly |
+| **DASH** | Consumer Cyclical | +53.9% | 35 | 9 | 0 | 44 | 11 | 0 | 11 | weekly, monthly |
+| **ABT** | Healthcare | +30.7% | 20 | 7 | 0 | 27 | 9 | 0 | 11 | daily |
+| **ELV** | Healthcare | -0.4% | 15 | 7 | 0 | 22 | 10 | 0 | 11 | daily |
+| **DHR** | Healthcare | +31.8% | 22 | 3 | 0 | 25 | 10 | 0 | 10 | hours |
+| **BAC** | Financial Services | +17.2% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
+| **DIS** | Communication Services | +30.5% | 27 | 2 | 1 | 30 | 7 | 0 | 7 | hours, daily, weekly, monthly |
+| **BP** | Energy | +13.9% | 9 | 6 | 3 | 18 | 6 | 0 | 7 | daily, weekly |
+| **ABBV** | Healthcare | +13.5% | 24 | 8 | 0 | 32 | 5 | 0 | 6 | hours, daily |
 | **BUD** | Consumer Defensive | +18.3% | 10 | 1 | 0 | 11 | 2 | 0 | 2 | hours, weekly, monthly |
-| **CRH** | Basic Materials | +34.8% | 21 | 2 | 0 | 23 | 1 | 0 | 1 | weekly, monthly |
-| **AZN** | Healthcare | +22.9% | 9 | 1 | 0 | 10 | 0 | 0 | 0 | hours, daily, weekly, monthly |
+| **CRH** | Basic Materials | +34.7% | 21 | 2 | 0 | 23 | 1 | 0 | 1 | weekly, monthly |
+| **AZN** | Healthcare | +22.8% | 9 | 1 | 0 | 10 | 0 | 0 | 0 | hours, daily, weekly, monthly |
 
 
 ## Sustained picks — top 3 over the last 7 d
@@ -83,9 +83,9 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **CHWY** | 1.981 | 52 | ★★★ | hours, monthly, weekly | 52 runs |
-| **CSCO** | 1.751 | 35 | ★★★ | daily, hours, weekly | 52 runs |
-| **DOCN** | 1.438 | 35 | ★★★ | daily, hours, weekly | 52 runs |
+| **CHWY** | 1.983 | 53 | ★★★ | hours, monthly, weekly | 53 runs |
+| **CSCO** | 1.751 | 35 | ★★★ | daily, hours, weekly | 53 runs |
+| **DOCN** | 1.438 | 35 | ★★★ | daily, hours, weekly | 53 runs |
 
 
 ## Top 3 by date — last 14 d

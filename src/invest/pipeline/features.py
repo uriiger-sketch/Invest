@@ -263,14 +263,61 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
 
     inst = _inst_flow(tickers)
 
+    # total_sources_count = distinct named contributors per ticker:
+    #   sell-side firms in last 90 d  ∪
+    #   tracked 13F filers (latest stored quarter)  ∪
+    #   insider filers in last 90 d
+    # This is the headline coverage number the report shows and the
+    # outlook gate enforces (≥ settings.min_total_sources).
+    cutoff_90 = date.today() - timedelta(days=90)
+    with session_scope() as s:
+        firm_pairs = s.execute(
+            select(AnalystAction.ticker, AnalystAction.firm).where(
+                AnalystAction.ticker.in_(tickers),
+                AnalystAction.date >= cutoff_90,
+                AnalystAction.firm.isnot(None),
+            )
+        ).all()
+        filer_pairs = s.execute(
+            select(Holding13F.ticker, Holding13F.filer_cik).where(
+                Holding13F.ticker.in_(tickers),
+                Holding13F.filer_cik.isnot(None),
+            )
+        ).all()
+        insider_pairs = s.execute(
+            select(InsiderTrade.ticker, InsiderTrade.filer).where(
+                InsiderTrade.ticker.in_(tickers),
+                InsiderTrade.date >= cutoff_90,
+                InsiderTrade.filer.isnot(None),
+            )
+        ).all()
+    sources_set: dict[str, set[tuple[str, str]]] = {}
+    for t, firm in firm_pairs:
+        sources_set.setdefault(t, set()).add(("firm", firm.lower().strip()))
+    for t, cik in filer_pairs:
+        sources_set.setdefault(t, set()).add(("13f", cik))
+    for t, ifiler in insider_pairs:
+        sources_set.setdefault(t, set()).add(("insider", ifiler.lower().strip()))
+    total_sources = pd.DataFrame(
+        [{"ticker": t, "total_sources_count": len(s_)} for t, s_ in sources_set.items()]
+    ) if sources_set else pd.DataFrame(columns=["ticker", "total_sources_count"])
+
     # Merge all
     out = pd.DataFrame({"ticker": tickers})
-    for d in (price_df, cons, rating_mom_7d, rating_mom_30d, insider, inst, firm_count_90d):
+    for d in (
+        price_df, cons, rating_mom_7d, rating_mom_30d,
+        insider, inst, firm_count_90d, total_sources,
+    ):
         if d is not None and not d.empty:
             out = out.merge(d, on="ticker", how="left")
     if "firm_count_90d" not in out.columns:
         out["firm_count_90d"] = 0
     out["firm_count_90d"] = pd.to_numeric(out["firm_count_90d"], errors="coerce").fillna(0)
+    if "total_sources_count" not in out.columns:
+        out["total_sources_count"] = 0
+    out["total_sources_count"] = pd.to_numeric(
+        out["total_sources_count"], errors="coerce"
+    ).fillna(0).astype(int)
 
     # Fill missing feature columns with 0 so the scoring stage doesn't drop rows.
     for col in FEATURE_NAMES:

@@ -8,7 +8,7 @@ from datetime import date, timedelta
 import numpy as np
 
 from invest.db import session_scope
-from invest.models import Consensus, Price, Stock
+from invest.models import AnalystAction, Consensus, Holding13F, Price, Stock
 from invest.pipeline.rank import rank_all, top_n
 
 
@@ -35,23 +35,41 @@ def _seed(tickers: list[str], days: int = 120) -> None:
                         volume=2_000_000,
                     )
                 )
-            # Consensus snapshot as of today
+            # Consensus snapshot as of today — strictly bullish + ≥ 4 % upside
+            # so the quality gate is satisfied.
+            sb = int(rng.integers(8, 12))
+            b = int(rng.integers(6, 10))
+            h = int(rng.integers(2, 5))
             s.add(
                 Consensus(
                     ticker=t,
                     as_of_date=today,
                     source="yfinance",
-                    strong_buy=int(rng.integers(0, 10)),
-                    buy=int(rng.integers(0, 10)),
-                    hold=int(rng.integers(0, 10)),
-                    sell=int(rng.integers(0, 5)),
-                    strong_sell=int(rng.integers(0, 5)),
-                    mean_target=price * float(rng.uniform(1.05, 1.25)),
-                    high_target=price * 1.3,
-                    low_target=price * 0.9,
-                    num_analysts=20,
+                    strong_buy=sb,
+                    buy=b,
+                    hold=h,
+                    sell=0,
+                    strong_sell=0,
+                    mean_target=price * 1.20,
+                    high_target=price * 1.30,
+                    low_target=price * 1.10,
+                    num_analysts=sb + b + h,
                 )
             )
+            # Seed enough distinct contributors so the ≥ 50-sources gate
+            # is satisfied: 30 sell-side firms + 25 13F filers.
+            for k in range(30):
+                s.add(AnalystAction(
+                    ticker=t, firm=f"Firm-{k:02d}", action="upgrade",
+                    from_grade="Hold", to_grade="Buy",
+                    date=today - timedelta(days=(k % 80)), source="yfinance",
+                ))
+            for k in range(25):
+                s.add(Holding13F(
+                    filer_cik=f"{k:010d}", filer_name=f"Filer-{k:02d}",
+                    ticker=t, shares=1000, value_usd=1e6,
+                    quarter="2026Q1", filing_date=today,
+                ))
 
 
 def test_rank_all_produces_top_n_per_horizon():

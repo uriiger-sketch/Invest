@@ -63,6 +63,13 @@ def outlook_mask(features: pd.DataFrame) -> pd.Series:
         # backstop for cases where we have stale or partial consensus rows.
         na = pd.to_numeric(features["num_analysts"], errors="coerce").fillna(0.0)
         mask &= na >= settings.min_firms
+    if "total_sources_count" in features.columns:
+        # Headline coverage floor: every top stock must have at least
+        # `min_total_sources` distinct named contributors backing it
+        # (sell-side firms in last 90 d + tracked 13F filers + insider
+        # filers in last 90 d). Default 50.
+        ts = pd.to_numeric(features["total_sources_count"], errors="coerce").fillna(0.0)
+        mask &= ts >= settings.min_total_sources
     return mask
 
 

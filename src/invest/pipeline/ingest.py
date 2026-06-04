@@ -4,7 +4,6 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 
-from ..config import get_settings
 from ..sources.base import log_run
 from ..universe import current_universe
 
@@ -15,7 +14,6 @@ def _available_sources() -> list[Callable[[list[str]], int]]:
     """Return each source's `run` method. Imports are lazy so one missing dep
     doesn't break the others."""
     runners: list[Callable[[list[str]], int]] = []
-    settings = get_settings()
 
     try:
         from ..sources.yfinance_src import YFinanceSource
@@ -33,16 +31,16 @@ def _available_sources() -> list[Callable[[list[str]], int]]:
     except Exception as e:  # noqa: BLE001
         logger.warning("stooq source unavailable: %s", e)
 
-    if settings.finnhub_api_key:
-        try:
-            from ..sources.finnhub_src import FinnhubSource
+    # Finnhub + FMP both self-skip when their API keys are unset; we always
+    # register them so the dashboard's Sources & freshness page lists every
+    # source we'd be using if keys were configured, and adding a key later
+    # "just works" without code changes.
+    try:
+        from ..sources.finnhub_src import FinnhubSource
 
-            runners.append(FinnhubSource().run)
-        except Exception as e:  # noqa: BLE001
-            logger.warning("finnhub source unavailable: %s", e)
-
-    # FMP self-skips when FMP_API_KEY is unset; keep it registered so a key
-    # added later just starts working without code changes.
+        runners.append(FinnhubSource().run)
+    except Exception as e:  # noqa: BLE001
+        logger.warning("finnhub source unavailable: %s", e)
     try:
         from ..sources.fmp_src import FmpSource
 

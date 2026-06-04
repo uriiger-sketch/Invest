@@ -45,6 +45,8 @@ class Settings(BaseSettings):
     min_consensus_z: float = 0.0     # require strictly net-bullish consensus
     min_upside: float = 0.04         # require ≥ 4 % upside to consensus target
     min_firms: int = 5               # require at least 5 covering firms IF the ticker has any consensus
+    # distinct named contributors required: sell-side firms ∪ 13F filers ∪ insider filers
+    min_total_sources: int = 50
     consensus_max_age_days: int = 14 # ignore Consensus rows older than this
 
     blend_composite_weight: float = 0.6

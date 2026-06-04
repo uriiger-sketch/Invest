@@ -62,8 +62,19 @@ def test_positive_upside_4pct_threshold():
 def test_min_firms_excludes_thinly_covered():
     df = _mk_features(3, bullish_outlook=True)
     df["num_analysts"] = [10, 4, 0]   # min_firms = 5
+    df["total_sources_count"] = 60    # keep total_sources gate satisfied
     mask = outlook_mask(df).reset_index(drop=True)
     assert list(mask) == [True, False, False]
+
+
+def test_min_total_sources_gate():
+    """The headline coverage floor: ≥ 50 distinct named contributors per
+    top stock. A name with 49 is excluded; 50 and 100 survive."""
+    df = _mk_features(3, bullish_outlook=True)
+    df["num_analysts"] = 20
+    df["total_sources_count"] = [49, 50, 100]
+    mask = outlook_mask(df).reset_index(drop=True)
+    assert list(mask) == [False, True, True]
 
 
 def test_buy_hold_sell_equals_num_analysts_invariant():

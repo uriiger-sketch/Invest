@@ -127,6 +127,15 @@ SNAPSHOT_COLUMN_DOCS: list[tuple[str, str]] = [
         "the stock in their most recent 13F-HR.",
     ),
     (
+        "Sources",
+        "Distinct named contributors backing this stock's signal: "
+        "sell-side firms with a rating action in the last 90 d ∪ tracked "
+        "13F filers (latest stored quarter) ∪ insider filers (Form-4) in "
+        "the last 90 d. Every top-listed stock is required to have at "
+        "least 50 distinct sources — this is the floor that proves the "
+        "ranking isn't driven by any single feed.",
+    ),
+    (
         "Horizons",
         "Which of {hours, daily, weekly, monthly} top-8 lists the ticker "
         "appears in.",
@@ -425,6 +434,45 @@ def _tier1_count_per_ticker(tickers: list[str], lookback_days: int = 90) -> dict
     return out
 
 
+def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
+    """Distinct named contributors per ticker: sell-side firms (last 90 d) ∪
+    tracked 13F filers (latest quarter) ∪ insider filers (last 90 d).
+
+    Read directly from the same tables `features.py` uses so the snapshot
+    column and the `min_total_sources` gate stay in sync."""
+    if not tickers:
+        return {}
+    from invest.models import Holding13F, InsiderTrade
+
+    cutoff = date.today() - timedelta(days=90)
+    out: dict[str, set[tuple[str, str]]] = {}
+    with session_scope() as s:
+        for t, firm in s.execute(
+            select(AnalystAction.ticker, AnalystAction.firm).where(
+                AnalystAction.ticker.in_(tickers),
+                AnalystAction.date >= cutoff,
+                AnalystAction.firm.isnot(None),
+            )
+        ).all():
+            out.setdefault(t, set()).add(("firm", firm.lower().strip()))
+        for t, cik in s.execute(
+            select(Holding13F.ticker, Holding13F.filer_cik).where(
+                Holding13F.ticker.in_(tickers),
+                Holding13F.filer_cik.isnot(None),
+            )
+        ).all():
+            out.setdefault(t, set()).add(("13f", cik))
+        for t, ifiler in s.execute(
+            select(InsiderTrade.ticker, InsiderTrade.filer).where(
+                InsiderTrade.ticker.in_(tickers),
+                InsiderTrade.date >= cutoff,
+                InsiderTrade.filer.isnot(None),
+            )
+        ).all():
+            out.setdefault(t, set()).add(("insider", ifiler.lower().strip()))
+    return {t: len(s_) for t, s_ in out.items()}
+
+
 def _coverage_snapshot_rows(by_h: dict[str, list[dict]]) -> list[dict]:
     """One row per unique ticker that appears in any horizon's top list."""
     seen: dict[str, dict] = {}
@@ -445,10 +493,12 @@ def _coverage_snapshot_rows(by_h: dict[str, list[dict]]) -> list[dict]:
                     "horizons": r.get("horizons") or [],
                 }
     tier1 = _tier1_count_per_ticker(list(seen.keys()))
+    total_sources = _total_sources_per_ticker(list(seen.keys()))
     for t, row in seen.items():
         row["tier1_firms"] = tier1.get(t, 0)
+        row["total_sources"] = total_sources.get(t, 0)
     rows = list(seen.values())
-    rows.sort(key=lambda r: (-(r.get("upside_pct") or 0), -(r.get("analysts") or 0)))
+    rows.sort(key=lambda r: (-(r.get("total_sources") or 0), -(r.get("upside_pct") or 0)))
     return rows
 
 
@@ -457,7 +507,7 @@ def _coverage_snapshot_md(rows: list[dict]) -> str:
         return "_(no tickers passed the quality gate this run)_\n"
     headers = [
         "Ticker", "Sector", "Upside", "Buy", "Hold", "Sell",
-        "Analysts", "Tier-1 firms", "Insts", "Horizons",
+        "Analysts", "Tier-1 firms", "Insts", "Sources", "Horizons",
     ]
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
     for r in rows:
@@ -479,6 +529,7 @@ def _coverage_snapshot_md(rows: list[dict]) -> str:
                     str(r["analysts"]),
                     str(r["tier1_firms"]),
                     str(r["inst_count"]),
+                    str(r.get("total_sources") or 0),
                     ", ".join(r["horizons"]) or "—",
                 ]
             )
@@ -498,6 +549,9 @@ def _coverage_snapshot_html(rows: list[dict]) -> str:
         "<th title='Total firms covering. Equals Buy + Hold + Sell.'>Analysts</th>"
         "<th title='Distinct tier-1 firms (Goldman, MS, JPM, BofA, …) with an action in the last 90 d.'>Tier-1</th>"
         "<th title='Tracked 13F filers holding the stock.'>Insts</th>"
+        "<th title='Distinct named contributors: sell-side firms (90 d) "
+        "+ tracked 13F filers (latest quarter) + insider filers (90 d). "
+        "Floor = 50.'>Sources</th>"
         "<th>Horizons</th>"
         "</tr></thead>"
     )
@@ -526,6 +580,7 @@ def _coverage_snapshot_html(rows: list[dict]) -> str:
             f"<td class='num'>{r['analysts']}</td>"
             f"<td class='num'>{r['tier1_firms']}</td>"
             f"<td class='num'>{r['inst_count']}</td>"
+            f"<td class='num'><strong>{r.get('total_sources') or 0}</strong></td>"
             f"<td>{', '.join(r['horizons']) or '—'}</td>"
             "</tr>"
         )
@@ -913,9 +968,62 @@ def _heartbeat_badge() -> str:
     return f"<span class='badge {cls}' title='{title}'>last crawl: {label}</span>"
 
 
+def _source_breadth_html() -> str:
+    """One-line badge enumerating every data source and its last-success time.
+    Stops the "we only use Yahoo" misconception cold."""
+    sources_seen = {
+        "yfinance": "Yahoo Finance",
+        "finnhub": "Finnhub",
+        "fmp": "Financial Modeling Prep",
+        "stooq": "stooq",
+        "edgar.13f": "SEC EDGAR (13F)",
+        "edgar.form4": "SEC EDGAR (Form 4)",
+    }
+    try:
+        with session_scope() as s:
+            rows = s.execute(
+                select(RunLog.job, RunLog.status, RunLog.finished_at)
+                .where(RunLog.finished_at.isnot(None))
+                .order_by(RunLog.finished_at.desc())
+                .limit(500)
+            ).all()
+    except Exception:
+        rows = []
+    # Most recent success per source prefix.
+    last_ok: dict[str, datetime] = {}
+    for job, status, finished in rows:
+        if status != "ok":
+            continue
+        for prefix in sources_seen:
+            if job and job.startswith(prefix) and prefix not in last_ok:
+                last_ok[prefix] = finished
+                break
+    parts: list[str] = []
+    for prefix, pretty in sources_seen.items():
+        finished = last_ok.get(prefix)
+        if finished is not None:
+            age_min = int((datetime.utcnow() - finished).total_seconds() / 60)
+            label = f"{age_min} min" if age_min < 120 else f"{age_min / 60:.1f} h"
+            iso = finished.isoformat(timespec="seconds")
+            parts.append(
+                f"<span class='src-badge ok' title='Last ok: {iso}Z'>"
+                f"<strong>{pretty}</strong> ✓ {label}</span>"
+            )
+        else:
+            parts.append(
+                f"<span class='src-badge none' title='No successful run yet — key may be missing'>"
+                f"{pretty} ⚠</span>"
+            )
+    return "<p class='src-breadth'>Sources this run: " + " · ".join(parts) + "</p>"
+
+
 def _build_html(as_of: date, n: int) -> str:
+    from invest.config import get_settings
+
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     heartbeat = _heartbeat_badge()
+    source_breadth_html = _source_breadth_html()
+    min_sources_threshold = get_settings().min_total_sources
     by_h = _collect_top_by_horizon(as_of, n)
     starred = sorted(
         {r["ticker"] for rows in by_h.values() for r in rows if r["horizon_count"] >= 2}
@@ -995,16 +1103,24 @@ def _build_html(as_of: date, n: int) -> str:
   td.tier2 {{ color: #6b6b6b; }}
   td.tier3 {{ color: #999; }}
   table.snapshot {{ margin-top: 0.5rem; }}
+  .src-breadth {{ font-size: 0.88rem; margin: 0.4rem 0 1rem 0; color: #444; }}
+  .src-badge {{ display: inline-block; padding: 0.12rem 0.5rem; border-radius: 4px;
+                margin-right: 0.2rem; }}
+  .src-badge.ok {{ background: rgba(47,133,90,0.15); color: #1e5d3d; }}
+  .src-badge.none {{ background: rgba(127,127,127,0.15); color: #888; }}
 </style>
 </head>
 <body>
 <h1>Invest — Top {n} {heartbeat}</h1>
 <p class="meta">Generated: <strong>{generated}</strong> · Scores as of: <strong>{as_of.isoformat()}</strong>
  · page auto-refreshes every 5 min · pipeline runs every 2 hours via GitHub Actions.</p>
+{source_breadth_html}
 <blockquote>
-  <strong>Not investment advice.</strong> Ranks publicly available analyst consensus, price-target upside,
-  rating momentum, institutional 13F flow, insider activity, price momentum, and risk into a blended
-  composite + ML score per horizon. Click any row to see the most recent analyst actions for that ticker.
+  <strong>Not investment advice.</strong> Ranks publicly available analyst consensus and price targets
+  aggregated across every covering sell-side firm (Yahoo Finance + Finnhub + Financial Modeling Prep),
+  117 tracked institutional 13F filers via SEC EDGAR, Form-4 insider activity, and price data from
+  yfinance with stooq as a backup. Every top-ranked stock is required to have ≥ {min_sources_threshold}
+  distinct named contributors; click any row to see the most recent named analyst actions.
 </blockquote>
 
 {starred_html}

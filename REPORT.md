@@ -60,21 +60,21 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 
 | Ticker | Sector | Upside | Buy | Hold | Sell | Analysts | Tier-1 firms | Insts | Sources | Horizons |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **AMZN** | Consumer Cyclical | — | 62 | 4 | 0 | 66 | 23 | 0 | 29 | monthly |
-| **BSX** | Healthcare | — | 27 | 4 | 0 | 31 | 15 | 0 | 19 | monthly |
+| **AMZN** | Consumer Cyclical | +23.2% | 62 | 4 | 0 | 66 | 23 | 0 | 29 | monthly |
+| **BSX** | Healthcare | +61.4% | 27 | 4 | 0 | 31 | 15 | 0 | 19 | monthly |
 | **DELL** | Technology | — | 19 | 8 | 0 | 27 | 13 | 0 | 14 | hours, daily, weekly |
 | **CHWY** | Consumer Cyclical | — | 20 | 5 | 0 | 25 | 11 | 0 | 12 | hours, weekly, monthly |
-| **ELV** | Healthcare | — | 15 | 7 | 0 | 22 | 11 | 0 | 12 | daily |
-| **ABT** | Healthcare | — | 20 | 7 | 0 | 27 | 9 | 0 | 11 | daily |
+| **ELV** | Healthcare | -0.4% | 15 | 7 | 0 | 22 | 11 | 0 | 12 | daily |
+| **ABT** | Healthcare | +29.2% | 20 | 7 | 0 | 27 | 9 | 0 | 11 | daily |
 | **DASH** | Consumer Cyclical | — | 35 | 9 | 0 | 44 | 11 | 0 | 11 | weekly, monthly |
-| **DHR** | Healthcare | — | 22 | 3 | 0 | 25 | 10 | 0 | 10 | hours |
-| **BAC** | Financial Services | — | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
-| **DIS** | Communication Services | — | 27 | 2 | 1 | 30 | 7 | 0 | 7 | hours, daily, weekly, monthly |
-| **BP** | Energy | — | 9 | 6 | 3 | 18 | 6 | 0 | 7 | daily, weekly |
+| **DHR** | Healthcare | +30.9% | 22 | 3 | 0 | 25 | 10 | 0 | 10 | hours |
+| **BAC** | Financial Services | +16.6% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
+| **DIS** | Communication Services | +30.4% | 27 | 2 | 1 | 30 | 7 | 0 | 7 | hours, daily, weekly, monthly |
+| **BP** | Energy | +13.5% | 9 | 6 | 3 | 18 | 6 | 0 | 7 | daily, weekly |
 | **ABBV** | Healthcare | — | 24 | 8 | 0 | 32 | 5 | 0 | 6 | hours, daily |
-| **BUD** | Consumer Defensive | — | 10 | 1 | 0 | 11 | 2 | 0 | 2 | hours, weekly, monthly |
-| **CRH** | Basic Materials | — | 21 | 2 | 0 | 23 | 1 | 0 | 1 | weekly, monthly |
-| **AZN** | Healthcare | — | 9 | 1 | 0 | 10 | 0 | 0 | 0 | hours, daily, weekly, monthly |
+| **BUD** | Consumer Defensive | +19.0% | 10 | 1 | 0 | 11 | 2 | 0 | 2 | hours, weekly, monthly |
+| **CRH** | Basic Materials | +33.9% | 21 | 2 | 0 | 23 | 1 | 0 | 1 | weekly, monthly |
+| **AZN** | Healthcare | +23.5% | 9 | 1 | 0 | 10 | 0 | 0 | 0 | hours, daily, weekly, monthly |
 
 
 ## Sustained picks — top 3 over the last 7 d
@@ -83,9 +83,9 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 3.794 | 35 | ★★★ | daily, hours, weekly | 53 runs |
-| **CHWY** | 1.980 | 53 | ★★★ | hours, monthly, weekly | 53 runs |
-| **ABNB** | 1.442 | 43 | ★★ | daily, weekly | 53 runs |
+| **DELL** | 3.827 | 36 | ★★★ | daily, hours, weekly | 54 runs |
+| **CHWY** | 1.982 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
+| **ABNB** | 1.442 | 43 | ★★ | daily, weekly | 54 runs |
 
 
 ## Top 3 by date — last 14 d

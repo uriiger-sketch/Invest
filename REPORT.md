@@ -64,9 +64,9 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **BSX** | Healthcare | +61.4% | 27 | 4 | 0 | 31 | 15 | 0 | 19 | monthly |
 | **DELL** | Technology | +14.6% | 19 | 8 | 0 | 27 | 13 | 0 | 14 | hours, daily, weekly |
 | **CHWY** | Consumer Cyclical | +87.8% | 20 | 5 | 0 | 25 | 11 | 0 | 12 | hours, weekly, monthly |
+| **ELV** | Healthcare | -0.4% | 15 | 7 | 0 | 22 | 11 | 0 | 12 | daily |
 | **DASH** | Consumer Cyclical | +53.7% | 35 | 9 | 0 | 44 | 11 | 0 | 11 | weekly, monthly |
 | **ABT** | Healthcare | +29.2% | 20 | 7 | 0 | 27 | 9 | 0 | 11 | daily |
-| **ELV** | Healthcare | -0.4% | 15 | 7 | 0 | 22 | 10 | 0 | 11 | daily |
 | **DHR** | Healthcare | +30.9% | 22 | 3 | 0 | 25 | 10 | 0 | 10 | hours |
 | **BAC** | Financial Services | +16.6% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
 | **DIS** | Communication Services | +30.4% | 27 | 2 | 1 | 30 | 7 | 0 | 7 | hours, daily, weekly, monthly |
@@ -83,15 +83,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 3.723 | 33 | ★★★ | daily, hours, weekly | 54 runs |
-| **CHWY** | 1.980 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
-| **CSCO** | 1.748 | 34 | ★★★ | daily, hours, weekly | 54 runs |
+| **DELL** | 3.760 | 34 | ★★★ | daily, hours, weekly | 53 runs |
+| **CHWY** | 1.977 | 53 | ★★★ | hours, monthly, weekly | 53 runs |
+| **CSCO** | 1.739 | 32 | ★★★ | daily, hours, weekly | 53 runs |
 
 
 ## Top 3 by date — last 14 d
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-05 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-04 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-03 | **DELL**, **BUD**, **CHWY** | **DELL**, **ABNB**, **BP** | **DELL**, **CHWY**, **ABNB** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-02 | **DELL**, **BUD**, **CHWY** | **DELL**, **BP**, **ABNB** | **DELL**, **CHWY**, **ABNB** | **CHWY**, **BSX**, **DASH** |

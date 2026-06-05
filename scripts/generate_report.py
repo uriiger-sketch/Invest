@@ -316,18 +316,23 @@ def _recent_runs_safe(limit: int = 20) -> list[dict]:
 
 
 def _md_table(rows: list[dict]) -> str:
-    """Slim horizon table: only horizon-specific columns. Stock-level facts
-    (Buy/Hold/Sell/Upside/Analysts/Insts) live in the Stock coverage
-    snapshot section, so they don't get repeated four times."""
+    """Horizon table: horizon-specific score columns + Upside (the single
+    most relevant stock-level fact). Buy/Hold/Sell/Analysts/Insts stay in
+    the Stock coverage snapshot section to avoid four-way duplication."""
     if not rows:
         return "_(no data)_\n"
     headers = [
         "#", "★", "Ticker", "Name", "Sector",
-        "Blended", "Composite", "ML", "Pctile",
+        "Blended", "Composite", "ML", "Pctile", "Upside",
     ]
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
     for r in rows:
         pct = f"{(r['percentile'] or 0) * 100:.1f}%"
+        upside = (
+            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
+            if r.get("upside_pct") is not None
+            else "—"
+        )
         hc = r.get("horizon_count") or 1
         stars = "★" * hc if hc >= 2 else ""
         lines.append(
@@ -343,6 +348,7 @@ def _md_table(rows: list[dict]) -> str:
                     f"{r['composite']:.3f}",
                     f"{r['ml']:.3f}",
                     pct,
+                    upside,
                 ]
             )
             + " |"
@@ -829,12 +835,18 @@ def _html_top_table(rows: list[dict]) -> str:
         "<th title='Rule-based score from nine weighted features.'>Composite</th>"
         "<th title='LightGBM predicted forward return (cold-start = composite).'>ML</th>"
         "<th title='Percentile of blended score in this horizon.'>Pctile</th>"
+        "<th title='Consensus mean target / last close − 1. Floor = +4 %.'>Upside</th>"
         "</tr></thead>"
     )
     from invest.firms import firm_tier  # local import to keep top-level imports tidy
     body_rows = []
     for i, r in enumerate(rows):
         pct = f"{(r['percentile'] or 0) * 100:.1f}%"
+        upside = (
+            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
+            if r.get("upside_pct") is not None
+            else "—"
+        )
         sector = r["sector"] or ""
         sector_html = (
             f"<span class='sector' style='background:{_sector_colour(sector)}'>"
@@ -869,7 +881,7 @@ def _html_top_table(rows: list[dict]) -> str:
         )
         drawer_html = (
             f"<tr class='drawer' id='drawer-{r['ticker']}-{i}' style='display:none'>"
-            "<td colspan='9'>"
+            "<td colspan='10'>"
             "<strong>Recent analyst actions</strong>"
             "<table class='inner'><thead><tr><th>Date</th><th>Tier</th><th>Firm</th>"
             "<th>Action</th><th>From → To</th><th>Target</th><th>Source</th></tr></thead>"
@@ -898,6 +910,7 @@ def _html_top_table(rows: list[dict]) -> str:
             f"<td class='num'>{r['composite']:.3f}</td>"
             f"<td class='num'>{r['ml']:.3f}</td>"
             f"<td class='num'>{pct}</td>"
+            f"<td class='num'>{upside}</td>"
             "</tr>"
             + drawer_html
         )
@@ -1018,12 +1031,9 @@ def _source_breadth_html() -> str:
 
 
 def _build_html(as_of: date, n: int) -> str:
-    from invest.config import get_settings
-
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     heartbeat = _heartbeat_badge()
     source_breadth_html = _source_breadth_html()
-    min_sources_threshold = get_settings().min_total_sources
     by_h = _collect_top_by_horizon(as_of, n)
     starred = sorted(
         {r["ticker"] for rows in by_h.values() for r in rows if r["horizon_count"] >= 2}
@@ -1053,7 +1063,6 @@ def _build_html(as_of: date, n: int) -> str:
         f"{_coverage_snapshot_html(snapshot_rows)}</section>"
     )
     runs_html = _html_runs_table(_recent_runs_safe())
-    columns_html = _html_columns()
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -1115,20 +1124,7 @@ def _build_html(as_of: date, n: int) -> str:
 <p class="meta">Generated: <strong>{generated}</strong> · Scores as of: <strong>{as_of.isoformat()}</strong>
  · page auto-refreshes every 5 min · pipeline runs every 2 hours via GitHub Actions.</p>
 {source_breadth_html}
-<blockquote>
-  <strong>Not investment advice.</strong> Ranks publicly available analyst consensus and price targets
-  aggregated across every covering sell-side firm (Yahoo Finance + Finnhub + Financial Modeling Prep),
-  117 tracked institutional 13F filers via SEC EDGAR, Form-4 insider activity, and price data from
-  yfinance with stooq as a backup. Every top-ranked stock is required to have ≥ {min_sources_threshold}
-  distinct named contributors; click any row to see the most recent named analyst actions.
-</blockquote>
-
 {starred_html}
-
-<details open>
-  <summary>How to read this report</summary>
-  {columns_html}
-</details>
 
 {"".join(sections)}
 

@@ -9,7 +9,7 @@
 | 5 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.461 | 0.188 | 0.188 | 92.3% | +20.7% |
 | 6 |  | **DHR** | Danaher Corporation | Healthcare | 0.458 | 0.187 | 0.187 | 90.4% | +32.5% |
 | 7 | ★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.422 | 0.174 | 0.174 | 88.5% | +18.1% |
-| 8 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.402 | 0.167 | 0.167 | 86.5% | +11.3% |
+| 8 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.402 | 0.167 | 0.167 | 86.5% | +11.6% |
 
 
 ## Daily (~5 trading days) — top 8
@@ -19,7 +19,7 @@
 | 1 | ★★★ | **DELL** | Dell Technologies Inc. | Technology | 5.395 | 2.071 | 2.071 | 100.0% | +22.7% |
 | 2 | ★★ | **BP** | BP p.l.c. | Energy | 0.689 | 0.242 | 0.242 | 98.1% | +16.3% |
 | 3 |  | **ELV** | Elevance Health, Inc. | Healthcare | 0.671 | 0.232 | 0.232 | 96.1% | -1.0% |
-| 4 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.498 | 0.168 | 0.168 | 96.2% | +11.3% |
+| 4 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.498 | 0.168 | 0.168 | 96.2% | +11.6% |
 | 5 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.491 | 0.165 | 0.165 | 94.2% | +17.3% |
 | 6 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.435 | 0.144 | 0.144 | 92.3% | +20.7% |
 | 7 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.391 | 0.126 | 0.126 | 90.4% | +30.0% |
@@ -71,7 +71,7 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **BAC** | Financial Services | +17.3% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
 | **DIS** | Communication Services | +30.0% | 27 | 2 | 1 | 30 | 8 | 0 | 8 | hours, daily, weekly, monthly |
 | **BP** | Energy | +16.3% | 9 | 6 | 3 | 18 | 6 | 0 | 7 | daily, weekly |
-| **ABBV** | Healthcare | +11.3% | 24 | 8 | 0 | 32 | 5 | 0 | 6 | hours, daily |
+| **ABBV** | Healthcare | +11.6% | 24 | 8 | 0 | 32 | 5 | 0 | 6 | hours, daily |
 | **BUD** | Consumer Defensive | +18.1% | 10 | 1 | 0 | 11 | 2 | 0 | 2 | hours, weekly, monthly |
 | **CRH** | Basic Materials | +35.8% | 21 | 2 | 0 | 23 | 1 | 0 | 1 | weekly, monthly |
 | **AZN** | Healthcare | +20.7% | 9 | 1 | 0 | 10 | 0 | 0 | 0 | hours, daily, weekly, monthly |
@@ -83,15 +83,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 4.161 | 51 | ★★★ | daily, hours, weekly | 54 runs |
-| **CHWY** | 2.045 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
-| **DASH** | 1.422 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
+| **DELL** | 4.202 | 51 | ★★★ | daily, hours, weekly | 54 runs |
+| **CHWY** | 2.047 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
+| **DASH** | 1.419 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
 
 
 ## Top 3 by date — last 14 d
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-07 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-06 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-05 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-04 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

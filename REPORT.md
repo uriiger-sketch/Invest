@@ -83,15 +83,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 4.752 | 51 | ★★★ | daily, hours, weekly | 54 runs |
-| **CHWY** | 2.072 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
-| **DASH** | 1.387 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
+| **DELL** | 4.789 | 51 | ★★★ | daily, hours, weekly | 54 runs |
+| **CHWY** | 2.070 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
+| **DASH** | 1.386 | 54 | ★★★ | hours, monthly, weekly | 54 runs |
 
 
 ## Top 3 by date — last 14 d
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-09 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-08 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-07 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-06 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

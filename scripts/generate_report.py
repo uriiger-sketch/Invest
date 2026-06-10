@@ -479,6 +479,60 @@ def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
     return {t: len(s_) for t, s_ in out.items()}
 
 
+def _recognised_firms_count() -> int:
+    """Total distinct firm aliases we recognise in the tier map. Used in the
+    report header to prove the system isn't just rebadging one feed."""
+    from invest.firms import TIER_1, TIER_2, TIER_3
+
+    return len(TIER_1) + len(TIER_2) + len(TIER_3)
+
+
+def _firms_seen_in_window(lookback_days: int = 90) -> dict[int, list[str]]:
+    """Distinct named firms seen across ALL tickers in the window, grouped
+    by tier. Proves how many real firms actually contributed signal."""
+    from invest.firms import firm_tier
+
+    cutoff = date.today() - timedelta(days=lookback_days)
+    seen: set[str] = set()
+    with session_scope() as s:
+        for (firm,) in s.execute(
+            select(AnalystAction.firm)
+            .where(AnalystAction.date >= cutoff, AnalystAction.firm.isnot(None))
+            .distinct()
+        ).all():
+            if firm:
+                seen.add(firm)
+    by_tier: dict[int, list[str]] = {1: [], 2: [], 3: [], 0: []}
+    for firm in sorted(seen, key=str.lower):
+        by_tier[firm_tier(firm)].append(firm)
+    return by_tier
+
+
+def _named_firms_for_tickers(tickers: list[str], lookback_days: int = 90) -> dict[str, list[tuple[str, int]]]:
+    """For each ticker, return the distinct named sell-side firms seen in
+    the last `lookback_days` along with each firm's tier (0..3). Sorted
+    by tier ASC (tier-1 first) then by firm name."""
+    if not tickers:
+        return {}
+    from invest.firms import firm_tier
+
+    cutoff = date.today() - timedelta(days=lookback_days)
+    out: dict[str, set[str]] = {}
+    with session_scope() as s:
+        for t, firm in s.execute(
+            select(AnalystAction.ticker, AnalystAction.firm).where(
+                AnalystAction.ticker.in_(tickers),
+                AnalystAction.date >= cutoff,
+                AnalystAction.firm.isnot(None),
+            )
+        ).all():
+            out.setdefault(t, set()).add(firm)
+    return {
+        t: sorted(((f, firm_tier(f)) for f in firms), key=lambda x: (x[1] or 99, x[0].lower()))
+        for t, firms in out.items()
+    }
+
+
 def _coverage_snapshot_rows(by_h: dict[str, list[dict]]) -> list[dict]:
     """One row per unique ticker that appears in any horizon's top list."""
     seen: dict[str, dict] = {}
@@ -500,9 +554,11 @@ def _coverage_snapshot_rows(by_h: dict[str, list[dict]]) -> list[dict]:
                 }
     tier1 = _tier1_count_per_ticker(list(seen.keys()))
     total_sources = _total_sources_per_ticker(list(seen.keys()))
+    named_firms = _named_firms_for_tickers(list(seen.keys()))
     for t, row in seen.items():
         row["tier1_firms"] = tier1.get(t, 0)
         row["total_sources"] = total_sources.get(t, 0)
+        row["named_firms"] = named_firms.get(t, [])
     rows = list(seen.values())
     rows.sort(key=lambda r: (-(r.get("total_sources") or 0), -(r.get("upside_pct") or 0)))
     return rows
@@ -733,6 +789,49 @@ def _sustained_md(picks: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _named_firms_md(snapshot_rows: list[dict]) -> str:
+    """A per-ticker list of every named firm with a rating action in the
+    last 90 d. Lets you scan UBS / B.Riley / Scotiabank / etc. directly."""
+    if not snapshot_rows:
+        return "_(no tickers passed the gate)_\n"
+    lines = ["| Ticker | Tier-1 firms | Tier-2 firms | Other firms |", "|---|---|---|---|"]
+    for r in snapshot_rows:
+        firms = r.get("named_firms") or []
+        t1 = [f for f, tier in firms if tier == 1]
+        t2 = [f for f, tier in firms if tier == 2]
+        other = [f for f, tier in firms if tier not in (1, 2)]
+        lines.append(
+            f"| **{r['ticker']}** "
+            f"| {', '.join(t1) or '—'} "
+            f"| {', '.join(t2) or '—'} "
+            f"| {', '.join(other) or '—'} |"
+        )
+    return "\n".join(lines) + "\n"
+
+
+def _all_firms_seen_md(by_tier: dict[int, list[str]]) -> str:
+    """Flat list of every distinct firm we've seen in the last 90 d, grouped
+    by tier. Stops the 'only Yahoo' misconception cold — these are the
+    actual sell-side firms whose calls drive the score."""
+    t1, t2, t3, unknown = by_tier.get(1, []), by_tier.get(2, []), by_tier.get(3, []), by_tier.get(0, [])
+    total = len(t1) + len(t2) + len(t3) + len(unknown)
+    if not total:
+        return "_(no analyst actions in the last 90 days yet — first deep crawl will populate this)_\n"
+    parts: list[str] = [f"_Total: **{total}** distinct firms with a rating action in the last 90 d._", ""]
+    if t1:
+        parts.append(f"**Tier-1 ({len(t1)}):** " + ", ".join(t1))
+        parts.append("")
+    if t2:
+        parts.append(f"**Tier-2 ({len(t2)}):** " + ", ".join(t2))
+        parts.append("")
+    if t3:
+        parts.append(f"**Tier-3 ({len(t3)}):** " + ", ".join(t3))
+        parts.append("")
+    if unknown:
+        parts.append(f"_Unclassified ({len(unknown)}):_ " + ", ".join(unknown))
+    return "\n".join(parts) + "\n"
+
+
 def _history_md(by_date: dict[str, dict[str, list[dict]]]) -> str:
     if not by_date:
         return "_(no historical reports stored yet)_\n"
@@ -779,6 +878,7 @@ def _build_markdown(as_of: date, n: int) -> str:
         parts.append("")
 
     # --- Stock coverage snapshot (one row per unique top ticker) ---
+    snapshot_rows = _coverage_snapshot_rows(by_h)
     parts.append("## Stock coverage snapshot")
     parts.append("")
     parts.append(
@@ -787,7 +887,22 @@ def _build_markdown(as_of: date, n: int) -> str:
         "sorted by upside._"
     )
     parts.append("")
-    parts.append(_coverage_snapshot_md(_coverage_snapshot_rows(by_h)))
+    parts.append(_coverage_snapshot_md(snapshot_rows))
+    parts.append("")
+
+    # --- Named analyst firms backing each pick ---
+    parts.append("## Named analyst firms behind each pick (last 90 d)")
+    parts.append("")
+    parts.append(_named_firms_md(snapshot_rows))
+    parts.append("")
+
+    # --- All distinct firms seen across the universe (last 90 d) ---
+    parts.append(
+        f"## All sell-side firms seen across the universe "
+        f"(last 90 d, {_recognised_firms_count()} aliases recognised)"
+    )
+    parts.append("")
+    parts.append(_all_firms_seen_md(_firms_seen_in_window()))
     parts.append("")
 
     # --- Sustained picks (≥1 week on the list, ≥2 stars mostly) ---

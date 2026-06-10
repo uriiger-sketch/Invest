@@ -18,7 +18,7 @@
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **DELL** | Dell Technologies Inc. | Technology | 5.395 | 2.071 | 2.071 | 100.0% | +26.7% |
 | 2 | ★★ | **BP** | BP p.l.c. | Energy | 0.689 | 0.242 | 0.242 | 98.1% | +17.2% |
-| 3 |  | **ELV** | Elevance Health, Inc. | Healthcare | 0.671 | 0.232 | 0.232 | 96.1% | -3.1% |
+| 3 |  | **ELV** | Elevance Health, Inc. | Healthcare | 0.671 | 0.232 | 0.232 | 96.1% | -2.0% |
 | 4 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.498 | 0.168 | 0.168 | 96.2% | +12.5% |
 | 5 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.491 | 0.165 | 0.165 | 94.2% | +16.1% |
 | 6 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.435 | 0.144 | 0.144 | 92.3% | +22.4% |
@@ -64,10 +64,10 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **BSX** | Healthcare | +59.7% | 27 | 4 | 0 | 31 | 15 | 0 | 19 | monthly |
 | **DELL** | Technology | +26.7% | 19 | 8 | 0 | 27 | 13 | 0 | 14 | hours, daily, weekly |
 | **CHWY** | Consumer Cyclical | +90.4% | 20 | 5 | 0 | 25 | 11 | 0 | 12 | hours, weekly, monthly |
-| **ELV** | Healthcare | -3.1% | 15 | 7 | 0 | 22 | 11 | 0 | 12 | daily |
+| **ELV** | Healthcare | -2.0% | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
 | **DASH** | Consumer Cyclical | +58.0% | 35 | 9 | 0 | 44 | 11 | 0 | 11 | weekly, monthly |
-| **ABT** | Healthcare | +28.5% | 20 | 7 | 0 | 27 | 9 | 0 | 11 | daily |
 | **DHR** | Healthcare | +29.6% | 22 | 3 | 0 | 25 | 10 | 0 | 10 | hours |
+| **ABT** | Healthcare | +28.5% | 20 | 7 | 0 | 27 | 8 | 0 | 10 | daily |
 | **BAC** | Financial Services | +16.1% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
 | **DIS** | Communication Services | +30.5% | 27 | 2 | 1 | 30 | 8 | 0 | 8 | hours, daily, weekly, monthly |
 | **BP** | Energy | +17.2% | 9 | 6 | 3 | 18 | 6 | 0 | 7 | daily, weekly |
@@ -83,15 +83,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 4.852 | 55 | ★★★ | daily, hours, weekly | 55 runs |
-| **CHWY** | 2.063 | 55 | ★★★ | hours, monthly, weekly | 55 runs |
-| **DASH** | 1.400 | 55 | ★★ | monthly, weekly | 55 runs |
+| **DELL** | 4.877 | 55 | ★★★ | daily, hours, weekly | 55 runs |
+| **CHWY** | 2.064 | 55 | ★★★ | hours, monthly, weekly | 55 runs |
+| **DASH** | 1.398 | 55 | ★★ | monthly, weekly | 55 runs |
 
 
 ## Top 3 by date — last 14 d
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-10 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-09 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-08 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-07 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

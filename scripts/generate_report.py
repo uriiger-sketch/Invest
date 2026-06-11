@@ -397,7 +397,10 @@ def _heartbeat_md() -> str:
     mins = int((datetime.utcnow() - finished).total_seconds() / 60)
     icon = "🟢" if mins < 30 else "🟡" if mins < 120 else "🔴"
     label = f"{mins} min ago" if mins < 120 else f"{mins / 60:.1f} h ago"
-    return f"{icon} last successful crawl: {label} (at {finished.isoformat(timespec='seconds')}Z)"
+    iso = finished.isoformat(timespec="seconds") + "Z"
+    # The "N min ago" is the value AT GENERATION TIME — Markdown can't run
+    # JS, so we always show the absolute UTC alongside.
+    return f"{icon} last successful crawl: {iso} ({label} when this report was generated)"
 
 
 def _collect_top_by_horizon(as_of: date, n: int) -> dict[str, list[dict]]:
@@ -1064,8 +1067,14 @@ def _html_columns() -> str:
 
 
 def _heartbeat_badge() -> str:
-    """Return an HTML badge showing how long since the most recent successful run.
-    Colour-coded so you can tell at a glance if the crawler is alive."""
+    """Return an HTML badge that the client will keep updating from a
+    machine-readable ISO timestamp. Server side we just emit the bones —
+    the inline JS at the bottom of the page computes "N min ago" live on
+    every render and re-colours the badge based on the current age.
+
+    Without this, the badge would freeze at the value computed when
+    REPORT.md was generated, so every reader saw "0 min ago" forever.
+    """
     try:
         with session_scope() as s:
             row = (
@@ -1082,18 +1091,13 @@ def _heartbeat_badge() -> str:
             "no runs yet</span>"
         )
     finished = row[0]
-    age = datetime.utcnow() - finished
-    mins = int(age.total_seconds() / 60)
-    if mins < 30:
-        cls, label = "green", f"{mins} min ago"
-    elif mins < 120:
-        cls, label = "amber", f"{mins} min ago"
-    else:
-        hours = mins / 60
-        cls, label = "red", f"{hours:.1f} h ago"
-    iso = finished.isoformat(timespec="seconds")
-    title = f"Last successful pipeline run at {iso}Z"
-    return f"<span class='badge {cls}' title='{title}'>last crawl: {label}</span>"
+    iso = finished.isoformat(timespec="seconds") + "Z"
+    title = f"Last successful pipeline run at {iso}"
+    # Initial classes — JS will overwrite them on load.
+    return (
+        f"<span class='badge live-ago amber' data-iso='{iso}' title='{title}'>"
+        f"last crawl: <span class='ago'>—</span></span>"
+    )
 
 
 def _source_breadth_html() -> str:
@@ -1130,23 +1134,26 @@ def _source_breadth_html() -> str:
     for prefix, pretty in sources_seen.items():
         finished = last_ok.get(prefix)
         if finished is not None:
-            age_min = int((datetime.utcnow() - finished).total_seconds() / 60)
-            label = f"{age_min} min" if age_min < 120 else f"{age_min / 60:.1f} h"
-            iso = finished.isoformat(timespec="seconds")
+            iso = finished.isoformat(timespec="seconds") + "Z"
+            # `.live-ago` is the hook the inline JS uses to keep the age fresh.
             parts.append(
-                f"<span class='src-badge ok' title='Last ok: {iso}Z'>"
-                f"<strong>{pretty}</strong> ✓ {label}</span>"
+                f"<span class='src-badge ok live-ago' data-iso='{iso}' "
+                f"title='Last ok: {iso}'>"
+                f"<strong>{pretty}</strong> ✓ <span class='ago'>—</span></span>"
             )
         else:
             parts.append(
-                f"<span class='src-badge none' title='No successful run yet — key may be missing'>"
+                "<span class='src-badge none' "
+                "title='No successful run yet — key may be missing'>"
                 f"{pretty} ⚠</span>"
             )
     return "<p class='src-breadth'>Sources this run: " + " · ".join(parts) + "</p>"
 
 
 def _build_html(as_of: date, n: int) -> str:
-    generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    now = datetime.utcnow()
+    generated = now.strftime("%Y-%m-%d %H:%M UTC")
+    generated_iso = now.replace(microsecond=0).isoformat() + "Z"
     heartbeat = _heartbeat_badge()
     source_breadth_html = _source_breadth_html()
     by_h = _collect_top_by_horizon(as_of, n)
@@ -1184,7 +1191,7 @@ def _build_html(as_of: date, n: int) -> str:
 <meta charset="utf-8">
 <title>Invest — Top {n}</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="refresh" content="300">
+<meta http-equiv="refresh" content="120">
 <style>
   :root {{ color-scheme: light dark; --accent: #2b6cb0; }}
   body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
@@ -1236,8 +1243,9 @@ def _build_html(as_of: date, n: int) -> str:
 </head>
 <body>
 <h1>Invest — Top {n} {heartbeat}</h1>
-<p class="meta">Generated: <strong>{generated}</strong> · Scores as of: <strong>{as_of.isoformat()}</strong>
- · page auto-refreshes every 5 min · pipeline runs every 2 hours via GitHub Actions.</p>
+<p class="meta">Generated: <span class="live-ago" data-iso="{generated_iso}" title="{generated}">
+<span class="ago">just now</span></span> · Scores as of: <strong>{as_of.isoformat()}</strong>
+ · page auto-refreshes every 2 min · pipeline runs every 2 hours via GitHub Actions.</p>
 {source_breadth_html}
 {starred_html}
 
@@ -1250,6 +1258,38 @@ def _build_html(as_of: date, n: int) -> str:
   SEC EDGAR (13F-HR holdings from ~40 top institutional filers, Form 4 insider activity),
   Finnhub (optional, when an API key is configured).
 </footer>
+<script>
+(function () {{
+  function fmt(mins) {{
+    if (mins < 1) return "just now";
+    if (mins < 60) return mins + " min ago";
+    var h = Math.floor(mins / 60), m = mins % 60;
+    if (h < 24) return h + " h " + m + " min ago";
+    var d = Math.floor(h / 24);
+    return d + " d " + (h % 24) + " h ago";
+  }}
+  function refresh() {{
+    var now = Date.now();
+    var nodes = document.querySelectorAll(".live-ago");
+    for (var i = 0; i < nodes.length; i++) {{
+      var el = nodes[i];
+      var iso = el.getAttribute("data-iso");
+      if (!iso) continue;
+      var ts = Date.parse(iso);
+      if (isNaN(ts)) continue;
+      var mins = Math.max(0, Math.floor((now - ts) / 60000));
+      var target = el.querySelector(".ago") || el;
+      target.textContent = fmt(mins);
+      if (el.classList.contains("badge")) {{
+        el.classList.remove("green", "amber", "red");
+        el.classList.add(mins < 30 ? "green" : mins < 120 ? "amber" : "red");
+      }}
+    }}
+  }}
+  refresh();
+  setInterval(refresh, 60000);
+}})();
+</script>
 </body>
 </html>
 """

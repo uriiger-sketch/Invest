@@ -70,7 +70,7 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **ABT** | Healthcare | +31.5% | 20 | 7 | 0 | 27 | 8 | 0 | 10 | daily |
 | **BAC** | Financial Services | +15.8% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
 | **DIS** | Communication Services | +31.5% | 27 | 2 | 1 | 30 | 8 | 0 | 8 | hours, daily, weekly, monthly |
-| **BP** | Energy | +16.4% | 9 | 6 | 3 | 18 | 6 | 0 | 7 | daily, weekly |
+| **BP** | Energy | +16.4% | 9 | 6 | 3 | 18 | 5 | 0 | 6 | daily, weekly |
 | **ABBV** | Healthcare | +12.7% | 24 | 8 | 0 | 32 | 5 | 0 | 6 | hours, daily |
 | **BUD** | Consumer Defensive | +14.1% | 10 | 1 | 0 | 11 | 2 | 0 | 2 | hours, weekly, monthly |
 | **CRH** | Basic Materials | +42.7% | 21 | 2 | 0 | 23 | 1 | 0 | 1 | weekly, monthly |
@@ -91,7 +91,7 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **ABT** | Barclays, BTIG, Evercore ISI Group, Goldman Sachs, Oppenheimer, Piper Sandler, RBC Capital, Stifel | Benchmark | B of A Securities |
 | **BAC** | Evercore ISI Group, Goldman Sachs, Jefferies, JP Morgan, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities | — | Keefe, Bruyette & Woods |
 | **DIS** | Barclays, Citigroup, Guggenheim, JP Morgan, Needham, Raymond James, Rosenblatt, Wells Fargo | — | — |
-| **BP** | HSBC, Piper Sandler, RBC Capital, Scotiabank, UBS, Wells Fargo | Argus Research | — |
+| **BP** | HSBC, RBC Capital, Scotiabank, UBS, Wells Fargo | Argus Research | — |
 | **ABBV** | Cantor Fitzgerald, Evercore ISI Group, Guggenheim, Morgan Stanley, Piper Sandler | Canaccord Genuity | — |
 | **BUD** | JP Morgan, Wells Fargo | — | — |
 | **CRH** | Wells Fargo | — | — |
@@ -117,15 +117,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 4.942 | 56 | ★★★ | daily, hours, weekly | 56 runs |
-| **CHWY** | 2.068 | 56 | ★★★ | hours, monthly, weekly | 56 runs |
-| **DASH** | 1.390 | 56 | ★★ | monthly, weekly | 56 runs |
+| **DELL** | 4.955 | 56 | ★★★ | daily, hours, weekly | 56 runs |
+| **CHWY** | 2.070 | 56 | ★★★ | hours, monthly, weekly | 56 runs |
+| **DASH** | 1.389 | 56 | ★★ | monthly, weekly | 56 runs |
 
 
 ## Top 3 by date — last 14 d
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-11 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-10 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-09 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-08 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
@@ -140,4 +141,3 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-05-30 | **DOCN**, **CSCO**, **BUD** | **CSCO**, **DOCN**, **ABNB** | **CSCO**, **CHWY**, **ABNB** | **CHWY**, **BSX**, **DASH** |
 | 2026-05-29 | **FROG**, **DOCN**, **CSCO** | **CSCO**, **FROG**, **DOCN** | **CLS**, **CHWY**, **CSCO** | **CHWY**, **BSX**, **DASH** |
 | 2026-05-28 | **ETSY**, **DOCN**, **FROG** | **ETSY**, **CSCO**, **FROG** | **CLS**, **CHWY**, **CSCO** | **CHWY**, **BSX**, **DASH** |
-| 2026-05-27 | **ELV**, **FROG**, **DOCN** | **ELV**, **CSCO**, **FROG** | **ELV**, **CHWY**, **CLS** | **CHWY**, **BSX**, **DASH** |

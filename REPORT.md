@@ -140,4 +140,3 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-06-02 | **DELL**, **BUD**, **CHWY** | **DELL**, **BP**, **ABNB** | **DELL**, **CHWY**, **ABNB** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-01 | **DELL**, **DOCN**, **CSCO** | **DELL**, **CSCO**, **DOCN** | **CHWY**, **BP**, **ABNB** | **CHWY**, **BSX**, **DASH** |
 | 2026-05-31 | **DELL**, **DOCN**, **CSCO** | **DELL**, **CSCO**, **DOCN** | **CHWY**, **ABNB**, **BP** | **CHWY**, **BSX**, **DASH** |
-| 2026-05-30 | **DOCN**, **CSCO**, **BUD** | **CSCO**, **DOCN**, **ABNB** | **CSCO**, **CHWY**, **ABNB** | **CHWY**, **BSX**, **DASH** |

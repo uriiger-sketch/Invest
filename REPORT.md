@@ -50,7 +50,7 @@
 | 4 | ★★ | **CRH** | CRH plc | Basic Materials | 1.265 | 0.576 | 0.576 | 94.2% | +30.4% |
 | 5 | ★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.045 | 0.508 | 0.508 | 92.3% | +15.2% |
 | 6 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 1.010 | 0.497 | 0.497 | 90.4% | +28.6% |
-| 7 |  | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.984 | 0.488 | 0.488 | 88.5% | +31.6% |
+| 7 |  | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.984 | 0.488 | 0.488 | 88.5% | +31.8% |
 | 8 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.897 | 0.461 | 0.461 | 86.5% | +26.2% |
 
 
@@ -60,10 +60,10 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 
 | Ticker | Sector | Upside | Buy | Hold | Sell | Analysts | Tier-1 firms | Insts | Sources | Horizons |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **AMZN** | Consumer Cyclical | +31.6% | 63 | 4 | 0 | 67 | 24 | 0 | 29 | monthly |
+| **AMZN** | Consumer Cyclical | +31.8% | 63 | 4 | 0 | 67 | 24 | 0 | 29 | monthly |
 | **BSX** | Healthcare | +71.5% | 27 | 4 | 0 | 31 | 15 | 0 | 18 | monthly |
+| **DELL** | Technology | +15.4% | 19 | 8 | 0 | 27 | 15 | 0 | 18 | hours, daily, weekly |
 | **CHWY** | Consumer Cyclical | +75.8% | 20 | 5 | 0 | 25 | 15 | 0 | 15 | hours, weekly, monthly |
-| **DELL** | Technology | +15.4% | 20 | 7 | 0 | 27 | 13 | 0 | 14 | hours, daily, weekly |
 | **ELV** | Healthcare | +6.3% | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
 | **DASH** | Consumer Cyclical | +47.7% | 35 | 9 | 0 | 44 | 11 | 0 | 11 | weekly, monthly |
 | **DHR** | Healthcare | +36.3% | 22 | 4 | 0 | 26 | 11 | 0 | 11 | hours |
@@ -83,8 +83,8 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 |---|---|---|---|
 | **AMZN** | Barclays, Bernstein, BMO Capital, Cantor Fitzgerald, Citigroup, Citizens, Evercore ISI Group, Guggenheim, JP Morgan, Keybanc, Mizuho, Morgan Stanley, Needham, Oppenheimer, Piper Sandler, RBC Capital, Rosenblatt, Scotiabank, Stifel, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | Benchmark, Canaccord Genuity, Tigress Financial | B of A Securities, Telsey Advisory Group |
 | **BSX** | Baird, Barclays, BTIG, Citigroup, Evercore ISI Group, Goldman Sachs, Jefferies, Mizuho, Needham, Raymond James, RBC Capital, Stifel, Truist Securities, Wells Fargo, Wolfe Research | Canaccord Genuity, Leerink Partners | B of A Securities |
+| **DELL** | Barclays, Bernstein, Citigroup, Evercore ISI Group, Goldman Sachs, JP Morgan, Mizuho, Morgan Stanley, Piper Sandler, Raymond James, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | Argus Research | B of A Securities, Loop Capital |
 | **CHWY** | Baird, Barclays, BNP Paribas, Citigroup, Citizens, Goldman Sachs, Guggenheim, JP Morgan, Mizuho, Morgan Stanley, Needham, RBC Capital, TD Cowen, UBS, Wedbush | — | — |
-| **DELL** | Barclays, Bernstein, Citigroup, Evercore ISI Group, Goldman Sachs, JP Morgan, Mizuho, Morgan Stanley, Piper Sandler, Susquehanna, Truist Securities, UBS, Wells Fargo | — | B of A Securities |
 | **ELV** | Baird, Barclays, Deutsche Bank, Evercore ISI Group, Guggenheim, Jefferies, JP Morgan, Mizuho, Morgan Stanley, Truist Securities, UBS | — | B of A Securities |
 | **DASH** | BTIG, Citigroup, DA Davidson, Needham, Piper Sandler, Stifel, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | — | — |
 | **DHR** | Baird, Barclays, Citigroup, Evercore ISI Group, Goldman Sachs, Guggenheim, HSBC, Morgan Stanley, Piper Sandler, UBS, Wells Fargo | — | — |
@@ -117,15 +117,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 4.963 | 50 | ★★★ | daily, hours, weekly | 50 runs |
-| **CHWY** | 2.078 | 50 | ★★★ | hours, monthly, weekly | 50 runs |
-| **DASH** | 1.384 | 50 | ★★ | monthly, weekly | 50 runs |
+| **DELL** | 4.963 | 49 | ★★★ | daily, hours, weekly | 49 runs |
+| **CHWY** | 2.078 | 49 | ★★★ | hours, monthly, weekly | 49 runs |
+| **DASH** | 1.384 | 49 | ★★ | monthly, weekly | 49 runs |
 
 
 ## Top 3 by date — last 14 d
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-18 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-17 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-16 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-15 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
@@ -140,4 +141,3 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-06-06 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-05 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-04 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
-| 2026-06-03 | **DELL**, **BUD**, **CHWY** | **DELL**, **ABNB**, **BP** | **DELL**, **CHWY**, **ABNB** | **CHWY**, **BSX**, **DASH** |

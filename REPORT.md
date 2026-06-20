@@ -18,7 +18,7 @@
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **DELL** | Dell Technologies Inc. | Technology | 5.395 | 2.071 | 2.071 | 100.0% | +18.2% |
 | 2 | ★★ | **BP** | BP p.l.c. | Energy | 0.689 | 0.242 | 0.242 | 98.1% | +27.9% |
-| 3 |  | **ELV** | Elevance Health, Inc. | Healthcare | 0.671 | 0.232 | 0.232 | 96.1% | — |
+| 3 |  | **ELV** | Elevance Health, Inc. | Healthcare | 0.671 | 0.232 | 0.232 | 96.1% | +7.0% |
 | 4 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.498 | 0.168 | 0.168 | 96.2% | +17.1% |
 | 5 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.491 | 0.165 | 0.165 | 94.2% | +12.4% |
 | 6 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.435 | 0.144 | 0.144 | 92.3% | +28.3% |
@@ -64,7 +64,7 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **BSX** | Healthcare | +70.2% | 27 | 4 | 0 | 31 | 15 | 0 | 18 | monthly |
 | **DELL** | Technology | +18.2% | 19 | 8 | 0 | 27 | 15 | 0 | 18 | hours, daily, weekly |
 | **CHWY** | Consumer Cyclical | +71.5% | 20 | 5 | 0 | 25 | 15 | 0 | 15 | hours, weekly, monthly |
-| **ELV** | Healthcare | — | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
+| **ELV** | Healthcare | +7.0% | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
 | **DASH** | Consumer Cyclical | +41.1% | 35 | 9 | 0 | 44 | 11 | 0 | 11 | weekly, monthly |
 | **DHR** | Healthcare | +36.8% | 22 | 4 | 0 | 26 | 11 | 0 | 11 | hours |
 | **ABT** | Healthcare | +31.8% | 20 | 7 | 0 | 27 | 8 | 0 | 10 | daily |

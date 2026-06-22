@@ -45,7 +45,7 @@
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile | Upside |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 3.126 | 1.157 | 1.157 | 100.0% | +71.5% |
-| 2 |  | **BSX** | Boston Scientific Corporation | Healthcare | 2.002 | 0.806 | 0.806 | 98.1% | +70.2% |
+| 2 |  | **BSX** | Boston Scientific Corporation | Healthcare | 2.002 | 0.806 | 0.806 | 98.1% | +68.9% |
 | 3 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.496 | 0.648 | 0.648 | 96.2% | +41.1% |
 | 4 | ★★ | **CRH** | CRH plc | Basic Materials | 1.265 | 0.576 | 0.576 | 94.2% | +28.2% |
 | 5 | ★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.045 | 0.508 | 0.508 | 92.3% | +15.1% |
@@ -61,15 +61,15 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | Ticker | Sector | Upside | Buy | Hold | Sell | Analysts | Tier-1 firms | Insts | Sources | Horizons |
 |---|---|---|---|---|---|---|---|---|---|---|
 | **AMZN** | Consumer Cyclical | +28.1% | 63 | 4 | 0 | 67 | 24 | 0 | 29 | monthly |
-| **BSX** | Healthcare | +70.2% | 27 | 4 | 0 | 31 | 15 | 0 | 18 | monthly |
+| **BSX** | Healthcare | +68.9% | 26 | 4 | 0 | 30 | 15 | 0 | 18 | monthly |
 | **DELL** | Technology | +18.2% | 19 | 8 | 0 | 27 | 15 | 0 | 18 | hours, daily, weekly |
 | **CHWY** | Consumer Cyclical | +71.5% | 20 | 5 | 0 | 25 | 15 | 0 | 15 | hours, weekly, monthly |
 | **ELV** | Healthcare | +7.0% | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
 | **DASH** | Consumer Cyclical | +41.1% | 35 | 9 | 0 | 44 | 11 | 0 | 11 | weekly, monthly |
 | **DHR** | Healthcare | +36.8% | 22 | 4 | 0 | 26 | 11 | 0 | 11 | hours |
 | **ABT** | Healthcare | +31.8% | 20 | 7 | 0 | 27 | 8 | 0 | 10 | daily |
-| **BAC** | Financial Services | +12.4% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
 | **DIS** | Communication Services | +24.8% | 27 | 2 | 1 | 30 | 8 | 0 | 8 | hours, daily, weekly, monthly |
+| **BAC** | Financial Services | +12.4% | 22 | 2 | 0 | 24 | 7 | 0 | 8 | hours, daily |
 | **ABBV** | Healthcare | +17.1% | 24 | 8 | 0 | 32 | 5 | 0 | 6 | hours, daily |
 | **BP** | Energy | +27.9% | 9 | 6 | 3 | 18 | 4 | 0 | 5 | daily, weekly |
 | **BUD** | Consumer Defensive | +15.1% | 9 | 2 | 0 | 11 | 2 | 0 | 2 | hours, weekly, monthly |
@@ -89,8 +89,8 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **DASH** | BTIG, Citigroup, DA Davidson, Needham, Piper Sandler, Stifel, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | — | — |
 | **DHR** | Baird, Barclays, Citigroup, Evercore ISI Group, Goldman Sachs, Guggenheim, HSBC, Morgan Stanley, Piper Sandler, UBS, Wells Fargo | — | — |
 | **ABT** | Barclays, BTIG, Evercore ISI Group, Goldman Sachs, Oppenheimer, Piper Sandler, RBC Capital, Stifel | Benchmark | B of A Securities |
-| **BAC** | Evercore ISI Group, Goldman Sachs, Jefferies, JP Morgan, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities | — | Keefe, Bruyette & Woods |
 | **DIS** | Barclays, Citigroup, Guggenheim, JP Morgan, Needham, Raymond James, Rosenblatt, Wells Fargo | — | — |
+| **BAC** | Evercore ISI Group, Jefferies, JP Morgan, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities | — | Keefe, Bruyette & Woods |
 | **ABBV** | Cantor Fitzgerald, Evercore ISI Group, Guggenheim, Morgan Stanley, Piper Sandler | Canaccord Genuity | — |
 | **BP** | RBC Capital, Scotiabank, UBS, Wells Fargo | Argus Research | — |
 | **BUD** | JP Morgan, Wells Fargo | — | — |
@@ -126,6 +126,7 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-22 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-21 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-20 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-19 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

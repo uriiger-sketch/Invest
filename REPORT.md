@@ -3,13 +3,13 @@
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile | Upside |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **DELL** | Dell Technologies Inc. | Technology | 5.640 | 2.084 | 2.084 | 100.0% | +18.5% |
-| 2 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 0.590 | 0.236 | 0.236 | 98.1% | +72.2% |
-| 3 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.479 | 0.195 | 0.195 | 96.2% | +8.9% |
+| 2 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 0.590 | 0.236 | 0.236 | 98.1% | +71.2% |
+| 3 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.479 | 0.195 | 0.195 | 96.2% | +9.2% |
 | 4 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.464 | 0.189 | 0.189 | 94.2% | +32.2% |
 | 5 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.461 | 0.188 | 0.188 | 92.3% | +20.9% |
 | 6 |  | **DHR** | Danaher Corporation | Healthcare | 0.458 | 0.187 | 0.187 | 90.4% | +25.4% |
 | 7 | ★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.422 | 0.174 | 0.174 | 88.5% | +10.5% |
-| 8 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.402 | 0.167 | 0.167 | 86.5% | +4.4% |
+| 8 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.402 | 0.167 | 0.167 | 86.5% | +4.6% |
 
 
 ## Daily (~5 trading days) — top 8
@@ -18,9 +18,9 @@
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **DELL** | Dell Technologies Inc. | Technology | 5.395 | 2.071 | 2.071 | 100.0% | +18.5% |
 | 2 | ★★ | **BP** | BP p.l.c. | Energy | 0.689 | 0.242 | 0.242 | 98.1% | +30.9% |
-| 3 |  | **ELV** | Elevance Health, Inc. | Healthcare | 0.671 | 0.232 | 0.232 | 96.1% | +7.4% |
-| 4 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.498 | 0.168 | 0.168 | 96.2% | +4.4% |
-| 5 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.491 | 0.165 | 0.165 | 94.2% | +8.9% |
+| 3 |  | **ELV** | Elevance Health, Inc. | Healthcare | 0.671 | 0.232 | 0.232 | 96.1% | +8.1% |
+| 4 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.498 | 0.168 | 0.168 | 96.2% | +4.6% |
+| 5 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.491 | 0.165 | 0.165 | 94.2% | +9.2% |
 | 6 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.435 | 0.144 | 0.144 | 92.3% | +20.9% |
 | 7 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.391 | 0.126 | 0.126 | 90.4% | +32.2% |
 | 8 |  | **ABT** | Abbott Laboratories | Healthcare | 0.385 | 0.124 | 0.124 | 88.5% | +25.0% |
@@ -31,7 +31,7 @@
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile | Upside |
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **DELL** | Dell Technologies Inc. | Technology | 3.855 | 1.052 | 1.052 | 100.0% | +18.5% |
-| 2 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 2.518 | 0.717 | 0.717 | 98.1% | +72.2% |
+| 2 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 2.518 | 0.717 | 0.717 | 98.1% | +71.2% |
 | 3 | ★★ | **BP** | BP p.l.c. | Energy | 1.414 | 0.440 | 0.440 | 96.2% | +30.9% |
 | 4 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.272 | 0.404 | 0.404 | 94.2% | +38.3% |
 | 5 | ★★ | **CRH** | CRH plc | Basic Materials | 0.964 | 0.327 | 0.327 | 92.3% | +26.4% |
@@ -44,8 +44,8 @@
 
 | # | ★ | Ticker | Name | Sector | Blended | Composite | ML | Pctile | Upside |
 |---|---|---|---|---|---|---|---|---|---|
-| 1 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 3.126 | 1.157 | 1.157 | 100.0% | +72.2% |
-| 2 |  | **BSX** | Boston Scientific Corporation | Healthcare | 2.002 | 0.806 | 0.806 | 98.1% | +74.3% |
+| 1 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 3.126 | 1.157 | 1.157 | 100.0% | +71.2% |
+| 2 |  | **BSX** | Boston Scientific Corporation | Healthcare | 2.002 | 0.806 | 0.806 | 98.1% | +69.7% |
 | 3 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.496 | 0.648 | 0.648 | 96.2% | +38.3% |
 | 4 | ★★ | **CRH** | CRH plc | Basic Materials | 1.265 | 0.576 | 0.576 | 94.2% | +26.4% |
 | 5 | ★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.045 | 0.508 | 0.508 | 92.3% | +10.5% |
@@ -61,16 +61,16 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | Ticker | Sector | Upside | Buy | Hold | Sell | Analysts | Tier-1 firms | Insts | Sources | Horizons |
 |---|---|---|---|---|---|---|---|---|---|---|
 | **AMZN** | Consumer Cyclical | +37.9% | 63 | 4 | 0 | 67 | 24 | 0 | 28 | monthly |
-| **BSX** | Healthcare | +74.3% | 25 | 4 | 0 | 29 | 15 | 0 | 18 | monthly |
+| **BSX** | Healthcare | +69.7% | 25 | 4 | 0 | 29 | 15 | 0 | 18 | monthly |
 | **DELL** | Technology | +18.5% | 19 | 8 | 0 | 27 | 15 | 0 | 18 | hours, daily, weekly |
-| **CHWY** | Consumer Cyclical | +72.2% | 20 | 5 | 0 | 25 | 13 | 0 | 13 | hours, weekly, monthly |
+| **CHWY** | Consumer Cyclical | +71.2% | 20 | 5 | 0 | 25 | 13 | 0 | 13 | hours, weekly, monthly |
 | **DASH** | Consumer Cyclical | +38.3% | 35 | 9 | 0 | 44 | 12 | 0 | 12 | weekly, monthly |
-| **ELV** | Healthcare | +7.4% | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
+| **ELV** | Healthcare | +8.1% | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
 | **DHR** | Healthcare | +25.4% | 22 | 4 | 0 | 26 | 11 | 0 | 11 | hours |
 | **ABT** | Healthcare | +25.0% | 20 | 7 | 0 | 27 | 8 | 0 | 10 | daily |
-| **BAC** | Financial Services | +8.9% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
+| **BAC** | Financial Services | +9.2% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
 | **DIS** | Communication Services | +32.2% | 27 | 2 | 1 | 30 | 8 | 0 | 8 | hours, daily, weekly, monthly |
-| **ABBV** | Healthcare | +4.4% | 24 | 8 | 0 | 32 | 5 | 0 | 6 | hours, daily |
+| **ABBV** | Healthcare | +4.6% | 24 | 7 | 1 | 32 | 5 | 0 | 6 | hours, daily |
 | **BP** | Energy | +30.9% | 8 | 6 | 3 | 17 | 4 | 0 | 5 | daily, weekly |
 | **BUD** | Consumer Defensive | +10.5% | 9 | 2 | 0 | 11 | 2 | 0 | 2 | hours, weekly, monthly |
 | **CRH** | Basic Materials | +26.4% | 19 | 2 | 0 | 21 | 1 | 0 | 1 | weekly, monthly |
@@ -117,15 +117,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 4.963 | 52 | ★★★ | daily, hours, weekly | 52 runs |
-| **CHWY** | 2.078 | 52 | ★★★ | hours, monthly, weekly | 52 runs |
-| **DASH** | 1.384 | 52 | ★★ | monthly, weekly | 52 runs |
+| **DELL** | 4.963 | 53 | ★★★ | daily, hours, weekly | 53 runs |
+| **CHWY** | 2.078 | 53 | ★★★ | hours, monthly, weekly | 53 runs |
+| **DASH** | 1.384 | 53 | ★★ | monthly, weekly | 53 runs |
 
 
 ## Top 3 by date — last 14 d
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-26 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-25 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-24 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-23 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
@@ -140,4 +141,3 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-06-14 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-13 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-12 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
-| 2026-06-11 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **DELL** | Dell Technologies Inc. | Technology | 5.640 | 2.084 | 2.084 | 100.0% | +21.4% |
 | 2 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 0.590 | 0.236 | 0.236 | 98.1% | +67.4% |
-| 3 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.479 | 0.195 | 0.195 | 96.2% | +9.8% |
+| 3 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.479 | 0.195 | 0.195 | 96.2% | +10.1% |
 | 4 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.464 | 0.189 | 0.189 | 94.2% | +31.2% |
 | 5 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.461 | 0.188 | 0.188 | 92.3% | +19.1% |
 | 6 |  | **DHR** | Danaher Corporation | Healthcare | 0.458 | 0.187 | 0.187 | 90.4% | +23.5% |
@@ -20,7 +20,7 @@
 | 2 | ★★ | **BP** | BP p.l.c. | Energy | 0.689 | 0.242 | 0.242 | 98.1% | +33.0% |
 | 3 |  | **ELV** | Elevance Health, Inc. | Healthcare | 0.671 | 0.232 | 0.232 | 96.1% | +5.9% |
 | 4 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.498 | 0.168 | 0.168 | 96.2% | +0.4% |
-| 5 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.491 | 0.165 | 0.165 | 94.2% | +9.8% |
+| 5 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.491 | 0.165 | 0.165 | 94.2% | +10.1% |
 | 6 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.435 | 0.144 | 0.144 | 92.3% | +19.1% |
 | 7 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.391 | 0.126 | 0.126 | 90.4% | +31.2% |
 | 8 |  | **ABT** | Abbott Laboratories | Healthcare | 0.385 | 0.124 | 0.124 | 88.5% | +23.8% |
@@ -34,7 +34,7 @@
 | 2 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 2.518 | 0.717 | 0.717 | 98.1% | +67.4% |
 | 3 | ★★ | **BP** | BP p.l.c. | Energy | 1.414 | 0.440 | 0.440 | 96.2% | +33.0% |
 | 4 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.272 | 0.404 | 0.404 | 94.2% | +33.6% |
-| 5 | ★★ | **CRH** | CRH plc | Basic Materials | 0.964 | 0.327 | 0.327 | 92.3% | +27.3% |
+| 5 | ★★ | **CRH** | CRH plc | Basic Materials | 0.964 | 0.327 | 0.327 | 92.3% | +27.9% |
 | 6 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.922 | 0.316 | 0.316 | 90.4% | +31.2% |
 | 7 | ★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.822 | 0.291 | 0.291 | 88.5% | +9.7% |
 | 8 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.813 | 0.289 | 0.289 | 86.5% | +19.1% |
@@ -47,7 +47,7 @@
 | 1 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 3.126 | 1.157 | 1.157 | 100.0% | +67.4% |
 | 2 |  | **BSX** | Boston Scientific Corporation | Healthcare | 2.002 | 0.806 | 0.806 | 98.1% | +69.6% |
 | 3 | ★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.496 | 0.648 | 0.648 | 96.2% | +33.6% |
-| 4 | ★★ | **CRH** | CRH plc | Basic Materials | 1.265 | 0.576 | 0.576 | 94.2% | +27.3% |
+| 4 | ★★ | **CRH** | CRH plc | Basic Materials | 1.265 | 0.576 | 0.576 | 94.2% | +27.9% |
 | 5 | ★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.045 | 0.508 | 0.508 | 92.3% | +9.7% |
 | 6 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 1.010 | 0.497 | 0.497 | 90.4% | +31.2% |
 | 7 |  | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.984 | 0.488 | 0.488 | 88.5% | +34.5% |
@@ -68,12 +68,12 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **ELV** | Healthcare | +5.9% | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
 | **DHR** | Healthcare | +23.5% | 22 | 4 | 0 | 26 | 11 | 0 | 11 | hours |
 | **ABT** | Healthcare | +23.8% | 20 | 7 | 0 | 27 | 8 | 0 | 10 | daily |
-| **BAC** | Financial Services | +9.8% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
+| **BAC** | Financial Services | +10.1% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
 | **DIS** | Communication Services | +31.2% | 27 | 2 | 1 | 30 | 8 | 0 | 8 | hours, daily, weekly, monthly |
 | **ABBV** | Healthcare | +0.4% | 24 | 7 | 1 | 32 | 5 | 0 | 6 | hours, daily |
 | **BP** | Energy | +33.0% | 8 | 6 | 3 | 17 | 4 | 0 | 5 | daily, weekly |
 | **BUD** | Consumer Defensive | +9.7% | 9 | 2 | 0 | 11 | 3 | 0 | 3 | hours, weekly, monthly |
-| **CRH** | Basic Materials | +27.3% | 19 | 2 | 0 | 21 | 2 | 0 | 2 | weekly, monthly |
+| **CRH** | Basic Materials | +27.9% | 19 | 2 | 0 | 21 | 2 | 0 | 2 | weekly, monthly |
 | **AZN** | Healthcare | +19.1% | 9 | 1 | 0 | 10 | 0 | 0 | 0 | hours, daily, weekly, monthly |
 
 
@@ -126,6 +126,7 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-28 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-27 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-26 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-25 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
@@ -140,4 +141,3 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-06-16 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-15 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-14 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
-| 2026-06-13 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

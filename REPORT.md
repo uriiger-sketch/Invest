@@ -61,8 +61,8 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | Ticker | Sector | Upside | Buy | Hold | Sell | Analysts | Tier-1 firms | Insts | Sources | Horizons |
 |---|---|---|---|---|---|---|---|---|---|---|
 | **AMZN** | Consumer Cyclical | +34.5% | 63 | 4 | 0 | 67 | 24 | 0 | 28 | monthly |
-| **BSX** | Healthcare | +69.6% | 25 | 4 | 0 | 29 | 15 | 0 | 18 | monthly |
 | **DELL** | Technology | +21.4% | 19 | 8 | 0 | 27 | 15 | 0 | 18 | hours, daily, weekly |
+| **BSX** | Healthcare | +69.6% | 25 | 4 | 0 | 29 | 14 | 0 | 17 | monthly |
 | **CHWY** | Consumer Cyclical | +67.4% | 20 | 5 | 0 | 25 | 13 | 0 | 13 | hours, weekly, monthly |
 | **DASH** | Consumer Cyclical | +33.6% | 35 | 9 | 0 | 44 | 12 | 0 | 12 | weekly, monthly |
 | **ELV** | Healthcare | +5.9% | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
@@ -82,8 +82,8 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | Ticker | Tier-1 firms | Tier-2 firms | Other firms |
 |---|---|---|---|
 | **AMZN** | Barclays, Bernstein, BMO Capital, Cantor Fitzgerald, Citigroup, Citizens, Evercore ISI Group, Guggenheim, JP Morgan, Keybanc, Mizuho, Morgan Stanley, Needham, Oppenheimer, Piper Sandler, RBC Capital, Rosenblatt, Scotiabank, Stifel, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | Benchmark, Canaccord Genuity | B of A Securities, Telsey Advisory Group |
-| **BSX** | Baird, Barclays, BTIG, Citigroup, Evercore ISI Group, Goldman Sachs, Jefferies, Mizuho, Needham, Raymond James, RBC Capital, Stifel, Truist Securities, Wells Fargo, Wolfe Research | Canaccord Genuity, Leerink Partners | B of A Securities |
 | **DELL** | Barclays, Bernstein, Citigroup, Evercore ISI Group, Goldman Sachs, JP Morgan, Mizuho, Morgan Stanley, Piper Sandler, Raymond James, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | Argus Research | B of A Securities, Loop Capital |
+| **BSX** | Baird, Barclays, BTIG, Citigroup, Evercore ISI Group, Goldman Sachs, Jefferies, Mizuho, Needham, RBC Capital, Stifel, Truist Securities, Wells Fargo, Wolfe Research | Canaccord Genuity, Leerink Partners | B of A Securities |
 | **CHWY** | Baird, Barclays, Citigroup, Citizens, Goldman Sachs, Guggenheim, JP Morgan, Mizuho, Morgan Stanley, Needham, RBC Capital, TD Cowen, UBS | — | — |
 | **DASH** | BTIG, Citigroup, DA Davidson, Guggenheim, Needham, Piper Sandler, Stifel, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | — | — |
 | **ELV** | Baird, Barclays, Deutsche Bank, Evercore ISI Group, Guggenheim, Jefferies, JP Morgan, Mizuho, Morgan Stanley, Truist Securities, UBS | — | B of A Securities |
@@ -100,7 +100,7 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 
 ## All sell-side firms seen across the universe (last 90 d, 214 aliases recognised)
 
-_Total: **63** distinct firms with a rating action in the last 90 d._
+_Total: **62** distinct firms with a rating action in the last 90 d._
 
 **Tier-1 (40):** Baird, Barclays, Bernstein, BMO Capital, BNP Paribas, BTIG, Cantor Fitzgerald, CIBC, Citigroup, Citizens, DA Davidson, Daiwa Capital, Deutsche Bank, Evercore ISI Group, Goldman Sachs, Guggenheim, HSBC, Jefferies, JP Morgan, Keybanc, Macquarie, Melius Research, Mizuho, MoffettNathanson, Morgan Stanley, Needham, Oppenheimer, Piper Sandler, Raymond James, RBC Capital, Rosenblatt, Scotiabank, Stifel, Susquehanna, TD Cowen, Truist Securities, UBS, Wedbush, Wells Fargo, Wolfe Research
 
@@ -108,7 +108,7 @@ _Total: **63** distinct firms with a rating action in the last 90 d._
 
 **Tier-3 (1):** Seaport Global
 
-_Unclassified (12):_ B of A Securities, BWG Global, CICC, Freedom Capital Markets, GLJ Research, Keefe, Bruyette & Woods, Loop Capital, New Street Research, Northland Capital Markets, Roth Capital, Rothschild & Co, Telsey Advisory Group
+_Unclassified (11):_ B of A Securities, BWG Global, CICC, Freedom Capital Markets, Keefe, Bruyette & Woods, Loop Capital, New Street Research, Northland Capital Markets, Roth Capital, Rothschild & Co, Telsey Advisory Group
 
 
 ## Sustained picks — top 3 over the last 7 d
@@ -126,6 +126,7 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-29 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-28 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-27 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-26 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
@@ -140,4 +141,3 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-06-17 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-16 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-15 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
-| 2026-06-14 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

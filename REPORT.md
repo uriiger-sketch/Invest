@@ -4,7 +4,7 @@
 |---|---|---|---|---|---|---|---|---|---|
 | 1 | ★★★ | **DELL** | Dell Technologies Inc. | Technology | 5.640 | 2.084 | 2.084 | 100.0% | +17.0% |
 | 2 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 0.590 | 0.236 | 0.236 | 98.1% | +59.9% |
-| 3 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.479 | 0.195 | 0.195 | 96.2% | +10.1% |
+| 3 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.479 | 0.195 | 0.195 | 96.2% | +10.5% |
 | 4 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.464 | 0.189 | 0.189 | 94.2% | +31.4% |
 | 5 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.461 | 0.188 | 0.188 | 92.3% | +17.6% |
 | 6 |  | **DHR** | Danaher Corporation | Healthcare | 0.458 | 0.187 | 0.187 | 90.4% | +25.7% |
@@ -20,7 +20,7 @@
 | 2 | ★★ | **BP** | BP p.l.c. | Energy | 0.689 | 0.242 | 0.242 | 98.1% | +32.2% |
 | 3 |  | **ELV** | Elevance Health, Inc. | Healthcare | 0.671 | 0.232 | 0.232 | 96.1% | +7.9% |
 | 4 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.498 | 0.168 | 0.168 | 96.2% | +0.0% |
-| 5 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.491 | 0.165 | 0.165 | 94.2% | +10.1% |
+| 5 | ★★ | **BAC** | Bank of America Corporation | Financial Services | 0.491 | 0.165 | 0.165 | 94.2% | +10.5% |
 | 6 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.435 | 0.144 | 0.144 | 92.3% | +17.6% |
 | 7 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.391 | 0.126 | 0.126 | 90.4% | +31.4% |
 | 8 |  | **ABT** | Abbott Laboratories | Healthcare | 0.385 | 0.124 | 0.124 | 88.5% | +25.7% |
@@ -68,7 +68,7 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **ELV** | Healthcare | +7.9% | 14 | 8 | 0 | 22 | 11 | 0 | 12 | daily |
 | **DHR** | Healthcare | +25.7% | 22 | 4 | 0 | 26 | 11 | 0 | 11 | hours |
 | **ABT** | Healthcare | +25.7% | 20 | 7 | 0 | 27 | 8 | 0 | 10 | daily |
-| **BAC** | Financial Services | +10.1% | 22 | 2 | 0 | 24 | 8 | 0 | 9 | hours, daily |
+| **BAC** | Financial Services | +10.5% | 22 | 2 | 0 | 24 | 9 | 0 | 10 | hours, daily |
 | **DIS** | Communication Services | +31.4% | 27 | 2 | 1 | 30 | 8 | 0 | 8 | hours, daily, weekly, monthly |
 | **ABBV** | Healthcare | +0.0% | 24 | 7 | 1 | 32 | 5 | 0 | 6 | hours, daily |
 | **BP** | Energy | +32.2% | 8 | 6 | 3 | 17 | 4 | 0 | 5 | daily, weekly |
@@ -89,7 +89,7 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **ELV** | Baird, Barclays, Deutsche Bank, Evercore ISI Group, Guggenheim, Jefferies, JP Morgan, Mizuho, Morgan Stanley, Truist Securities, UBS | — | B of A Securities |
 | **DHR** | Baird, Barclays, Citigroup, Evercore ISI Group, Goldman Sachs, Guggenheim, HSBC, Morgan Stanley, Piper Sandler, UBS, Wells Fargo | — | — |
 | **ABT** | Barclays, BTIG, Evercore ISI Group, Goldman Sachs, Oppenheimer, Piper Sandler, RBC Capital, Stifel | Benchmark | B of A Securities |
-| **BAC** | Citigroup, Evercore ISI Group, Jefferies, JP Morgan, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities | — | Keefe, Bruyette & Woods |
+| **BAC** | Citigroup, Evercore ISI Group, Jefferies, JP Morgan, Morgan Stanley, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities | — | Keefe, Bruyette & Woods |
 | **DIS** | Barclays, Citigroup, Guggenheim, JP Morgan, Needham, Raymond James, Rosenblatt, Wells Fargo | — | — |
 | **ABBV** | Cantor Fitzgerald, Evercore ISI Group, Guggenheim, Morgan Stanley, Piper Sandler | Canaccord Genuity | — |
 | **BP** | RBC Capital, Scotiabank, UBS, Wells Fargo | Argus Research | — |
@@ -117,15 +117,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 4.963 | 56 | ★★★ | daily, hours, weekly | 56 runs |
-| **CHWY** | 2.078 | 56 | ★★★ | hours, monthly, weekly | 56 runs |
-| **DASH** | 1.384 | 56 | ★★ | monthly, weekly | 56 runs |
+| **DELL** | 4.963 | 57 | ★★★ | daily, hours, weekly | 57 runs |
+| **CHWY** | 2.078 | 57 | ★★★ | hours, monthly, weekly | 57 runs |
+| **DASH** | 1.384 | 57 | ★★ | monthly, weekly | 57 runs |
 
 
 ## Top 3 by date — last 14 d
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-06-30 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-29 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-28 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-27 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

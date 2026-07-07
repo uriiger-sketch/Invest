@@ -66,9 +66,9 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **CHWY** | Consumer Cyclical | +45.8% | 20 | 5 | 0 | 25 | 13 | 0 | 13 | hours, weekly, monthly |
 | **ELV** | Healthcare | +3.2% | 14 | 8 | 0 | 22 | 12 | 0 | 13 | daily |
 | **DASH** | Consumer Cyclical | +30.5% | 35 | 8 | 0 | 43 | 12 | 0 | 12 | weekly, monthly |
+| **DHR** | Healthcare | +25.2% | 22 | 4 | 0 | 26 | 11 | 0 | 11 | hours |
 | **ABT** | Healthcare | +22.1% | 21 | 7 | 0 | 28 | 9 | 0 | 11 | daily |
-| **DHR** | Healthcare | +25.2% | 22 | 4 | 0 | 26 | 10 | 0 | 10 | hours |
-| **BAC** | Financial Services | +7.0% | 21 | 3 | 0 | 24 | 9 | 0 | 10 | hours, daily |
+| **BAC** | Financial Services | +7.0% | 21 | 3 | 0 | 24 | 10 | 0 | 11 | hours, daily |
 | **DIS** | Communication Services | +33.1% | 27 | 2 | 1 | 30 | 8 | 0 | 8 | hours, daily, weekly, monthly |
 | **ABBV** | Healthcare | +0.5% | 24 | 6 | 1 | 31 | 5 | 0 | 6 | hours, daily |
 | **BP** | Energy | +28.3% | 8 | 6 | 3 | 17 | 4 | 0 | 5 | daily, weekly |
@@ -87,9 +87,9 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **CHWY** | Baird, Barclays, Citigroup, Citizens, Goldman Sachs, Guggenheim, JP Morgan, Mizuho, Morgan Stanley, Needham, RBC Capital, TD Cowen, UBS | — | — |
 | **ELV** | Baird, Barclays, Bernstein, Deutsche Bank, Evercore ISI Group, Guggenheim, Jefferies, JP Morgan, Mizuho, Morgan Stanley, Truist Securities, UBS | — | B of A Securities |
 | **DASH** | BTIG, Citigroup, DA Davidson, Guggenheim, Needham, Piper Sandler, Stifel, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | — | — |
+| **DHR** | Baird, Barclays, Citigroup, Evercore ISI Group, Goldman Sachs, Guggenheim, HSBC, Morgan Stanley, Piper Sandler, UBS, Wells Fargo | — | — |
 | **ABT** | Baird, Barclays, BTIG, Evercore ISI Group, Goldman Sachs, Oppenheimer, Piper Sandler, RBC Capital, Stifel | Benchmark | B of A Securities |
-| **DHR** | Baird, Barclays, Citigroup, Goldman Sachs, Guggenheim, HSBC, Morgan Stanley, Piper Sandler, UBS, Wells Fargo | — | — |
-| **BAC** | Citigroup, Evercore ISI Group, Jefferies, JP Morgan, Morgan Stanley, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities | — | Keefe, Bruyette & Woods |
+| **BAC** | Citigroup, Evercore ISI Group, Jefferies, JP Morgan, Morgan Stanley, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities, Wells Fargo | — | Keefe, Bruyette & Woods |
 | **DIS** | Barclays, Citigroup, Guggenheim, JP Morgan, Needham, Raymond James, Rosenblatt, Wells Fargo | — | — |
 | **ABBV** | Cantor Fitzgerald, Evercore ISI Group, Guggenheim, Morgan Stanley, Piper Sandler | Canaccord Genuity | — |
 | **BP** | RBC Capital, Scotiabank, UBS, Wells Fargo | Argus Research | — |
@@ -117,15 +117,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Ticker | Avg blended score | Appearances | Max stars | Horizons | Of 7 d |
 |---|---:|---:|---:|---|---:|
-| **DELL** | 4.963 | 58 | ★★★ | daily, hours, weekly | 58 runs |
-| **CHWY** | 2.078 | 58 | ★★★ | hours, monthly, weekly | 58 runs |
-| **DASH** | 1.384 | 58 | ★★ | monthly, weekly | 58 runs |
+| **DELL** | 4.963 | 59 | ★★★ | daily, hours, weekly | 59 runs |
+| **CHWY** | 2.078 | 59 | ★★★ | hours, monthly, weekly | 59 runs |
+| **DASH** | 1.384 | 59 | ★★ | monthly, weekly | 59 runs |
 
 
 ## Top 3 by date — last 14 d
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-07-07 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-06 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-05 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-04 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

@@ -137,7 +137,7 @@ SNAPSHOT_COLUMN_DOCS: list[tuple[str, str]] = [
     ),
     (
         "Horizons",
-        "Which of {hours, daily, weekly, monthly} top-8 lists the ticker "
+        "Which of {hours, daily, weekly, monthly} top lists the ticker "
         "appears in.",
     ),
 ]
@@ -166,8 +166,10 @@ def _latest_as_of() -> date | None:
 
 
 def _top_rows(horizon: str, as_of: date, n: int) -> list[dict]:
+    from invest.pipeline.rank import select_diversified
+
     with session_scope() as s:
-        rows = (
+        raw = (
             s.query(
                 Score.ticker,
                 Score.blended_score,
@@ -180,9 +182,20 @@ def _top_rows(horizon: str, as_of: date, n: int) -> list[dict]:
             .outerjoin(Stock, Stock.ticker == Score.ticker)
             .filter(Score.horizon == horizon, Score.as_of == as_of)
             .order_by(Score.blended_score.desc())
-            .limit(n)
+            .limit(n * 4)
             .all()
         )
+    # Same per-sector diversification cap the CLI's top_n applies, so the
+    # report and terminal output can never disagree on the top list.
+    candidates = [
+        {
+            "ticker": r.ticker,
+            "sector": r.sector,
+            "_row": r,
+        }
+        for r in raw
+    ]
+    rows = [c["_row"] for c in select_diversified(candidates, n)]
     tickers = [r.ticker for r in rows]
     extras = _enrichment_for(tickers)
     return [

@@ -49,9 +49,25 @@ class Settings(BaseSettings):
     min_total_sources: int = 50
     consensus_max_age_days: int = 14 # ignore Consensus rows older than this
 
+    # Data-quality gates — reliability hardening. A ticker is excluded when its
+    # underlying market data can't be trusted, regardless of how bullish the
+    # analyst signal looks:
+    stale_price_max_days: int = 7      # last close older than this → excluded
+    min_price_history_days: int = 60   # need this much history for vol/momentum to mean anything
+    max_upside_sane: float = 2.0       # upside > 200 % almost always means stale/wrong target data → excluded
+    upside_cap: float = 0.75           # cap upside used in SCORING at 75 % so one outlier can't dominate
+
+    # Analyst-reliability shrinkage: consensus_z is multiplied by n/(n+k) so a
+    # 3-analyst unanimous "buy" doesn't outrank a 30-analyst 80 %-buy.
+    consensus_shrinkage_k: float = 10.0
+
+    # Diversification: cap how many names from one sector can occupy a single
+    # horizon's top list (0 = no cap). Prevents an all-semis top-13.
+    max_per_sector: int = 5
+
     blend_composite_weight: float = 0.6
     blend_ml_weight: float = 0.4
-    top_n: int = 8
+    top_n: int = 13
 
     # Sustained-picks + history (used by the report generator).
     history_path: str = "docs/history.jsonl"

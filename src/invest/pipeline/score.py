@@ -8,17 +8,26 @@ from ..config import FEATURE_NAMES, HORIZONS, WEIGHTS, Horizon, get_settings
 
 
 def _zscore(s: pd.Series) -> pd.Series:
-    """Standard z-score, hardened against float drift on constant inputs.
+    """Robust z-score using median / MAD instead of mean / std.
 
-    `pd.Series([0.1]*6).std()` is not exactly 0 — it's ~1.5e-17 — so a
-    naive `(x - mean) / std` divides comparable garbage by comparable
-    garbage and returns spurious ±0.91. We treat any column with fewer
-    than two distinct values, or whose std falls below a tiny epsilon,
-    as zero-variance and return all-zero contributions.
+    Mean/std z-scores are hostage to outliers: one ticker with a broken
+    +900 % "upside" inflates the std and squashes every legitimate value
+    toward zero. Median/MAD ignores tails entirely — 1.4826 · MAD equals
+    the std for normal data, so scale is comparable to a classic z.
+
+    Also hardened against float drift on constant inputs (a constant
+    column's std is ~1e-17, not exactly 0) and falls back to mean/std
+    when MAD is 0 but the column still varies (e.g. >50 % identical
+    values with a few distinct ones).
     """
     x = pd.to_numeric(s, errors="coerce")
     if x.nunique(dropna=True) < 2:
         return pd.Series(np.zeros(len(s)), index=s.index)
+    med = x.median(skipna=True)
+    mad = (x - med).abs().median(skipna=True)
+    if mad and not np.isnan(mad) and mad > 1e-12:
+        return (x - med) / (1.4826 * mad)
+    # MAD == 0 but the column varies: fall back to classic z-score.
     mu = x.mean(skipna=True)
     sd = x.std(skipna=True)
     if not sd or np.isnan(sd) or sd < 1e-12:
@@ -73,17 +82,50 @@ def outlook_mask(features: pd.DataFrame) -> pd.Series:
     return mask
 
 
+def data_quality_mask(features: pd.DataFrame) -> pd.Series:
+    """Exclude tickers whose underlying market data can't be trusted.
+
+    Independent of how bullish the analyst signal looks:
+      - stale price: last close older than ``stale_price_max_days``
+        (a wrong denominator makes "upside" meaningless)
+      - short history: fewer than ``min_price_history_days`` closes
+        (volatility / momentum on 10 data points is noise)
+      - absurd upside: > ``max_upside_sane`` (200 %) almost always means
+        stale or mis-scaled target data, not a real opportunity
+    Each check only applies when its column is present, so unit tests and
+    partial frames aren't forced to fabricate every column.
+    """
+    settings = get_settings()
+    mask = pd.Series(True, index=features.index)
+    if "last_price_age_days" in features.columns:
+        age = pd.to_numeric(features["last_price_age_days"], errors="coerce").fillna(999)
+        mask &= age <= settings.stale_price_max_days
+    if "price_history_days" in features.columns:
+        hist = pd.to_numeric(features["price_history_days"], errors="coerce").fillna(0)
+        mask &= hist >= settings.min_price_history_days
+    if "upside_z" in features.columns:
+        up = pd.to_numeric(features["upside_z"], errors="coerce").fillna(0.0)
+        mask &= up <= settings.max_upside_sane
+    return mask
+
+
 def quality_mask(features: pd.DataFrame) -> pd.Series:
-    """Combined gate: liquidity + outlook."""
-    return liquidity_mask(features) & outlook_mask(features)
+    """Combined gate: liquidity + outlook + data quality."""
+    return liquidity_mask(features) & outlook_mask(features) & data_quality_mask(features)
 
 
 def composite_scores(features: pd.DataFrame) -> pd.DataFrame:
     """Return DataFrame[ticker, horizon, composite_score] covering all horizons."""
+    settings = get_settings()
     z = pd.DataFrame({"ticker": features["ticker"]})
     for col in FEATURE_NAMES:
         if col in features.columns:
-            z[col] = _zscore(features[col]).clip(-5, 5)
+            raw = features[col]
+            if col == "upside_z":
+                # Cap the raw upside used for scoring so one 90 % outlier
+                # (often stale target data) can't dominate the whole rank.
+                raw = pd.to_numeric(raw, errors="coerce").clip(upper=settings.upside_cap)
+            z[col] = _zscore(raw).clip(-5, 5)
         else:
             z[col] = 0.0
 

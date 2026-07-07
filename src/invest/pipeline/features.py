@@ -73,11 +73,27 @@ def _latest_consensus(tickers: list[str]) -> pd.DataFrame:
             for r in rows
         ]
     )
-    # Prefer the most recent record per ticker, with finnhub breaking ties over yfinance.
-    src_rank = {"finnhub": 0, "yfinance": 1, "finviz": 2}
-    df["src_rank"] = df["source"].map(src_rank).fillna(9)
-    df = df.sort_values(["ticker", "as_of_date", "src_rank"], ascending=[True, False, True])
-    return df.drop_duplicates("ticker", keep="first")
+    # Cross-source merge instead of winner-takes-all:
+    #  - rating counts come from the source with the deepest coverage
+    #    (max num_analysts) — counts from different aggregators aren't
+    #    additive, so we can't sum them.
+    #  - mean_target is the MEDIAN across every source's latest row, so a
+    #    single aggregator's stale/mis-scaled target can't skew the upside.
+    df = df.sort_values(["ticker", "as_of_date"], ascending=[True, False])
+    latest_per_source = df.drop_duplicates(["ticker", "source"], keep="first")
+
+    target_med = (
+        latest_per_source.dropna(subset=["mean_target"])
+        .groupby("ticker", as_index=False)["mean_target"]
+        .median()
+    )
+    counts = (
+        latest_per_source.sort_values("num_analysts", ascending=False)
+        .drop_duplicates("ticker", keep="first")
+        .drop(columns=["mean_target"])
+    )
+    merged = counts.merge(target_med, on="ticker", how="left")
+    return merged
 
 
 def _historic_consensus(tickers: list[str], days_ago: int) -> pd.DataFrame:
@@ -172,6 +188,10 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
         window = rets[-60:] if len(rets) >= 60 else rets
         vol = float(np.std(window) * np.sqrt(252)) if len(window) > 1 else 0.0
         dollar_vol = float(np.mean((closes[-20:] * vols[-20:])[-20:])) if len(closes) >= 20 else 0.0
+        # Data-quality fields for the reliability gate: how fresh is the last
+        # close, and how much history backs the vol/momentum numbers.
+        last_dt = g["date"].iloc[-1]
+        last_price_age = (pd.Timestamp(date.today()) - pd.Timestamp(last_dt)).days
         price_feats.append(
             {
                 "ticker": t,
@@ -179,6 +199,8 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
                 "price_mom_21d": mom_21,
                 "risk_penalty": -vol,
                 "dollar_volume_20d": dollar_vol,
+                "last_price_age_days": int(last_price_age),
+                "price_history_days": int(len(closes)),
             }
         )
     price_df = pd.DataFrame(price_feats)
@@ -188,10 +210,19 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
         columns={"mean_target": "mean_target_30d_ago"}
     )
     if not cons.empty:
+        from ..config import get_settings as _gs
+
         total = cons[["strong_buy", "buy", "hold", "sell", "strong_sell"]].sum(axis=1).replace(0, np.nan)
-        cons["consensus_z"] = (
+        raw_consensus = (
             2 * cons["strong_buy"] + cons["buy"] - cons["sell"] - 2 * cons["strong_sell"]
         ) / total
+        # Analyst-reliability shrinkage: multiply by n/(n+k) so a 3-analyst
+        # unanimous "buy" (raw = 1.0, shrunk ≈ 0.23 with k=10) can't outrank a
+        # 30-analyst 80 %-buy (raw = 0.8, shrunk = 0.6). More opinions →
+        # more trust in the consensus number.
+        k = _gs().consensus_shrinkage_k
+        n = total.fillna(0)
+        cons["consensus_z"] = raw_consensus * (n / (n + k))
         # num_analysts = sum of every rating bucket. By construction this
         # equals Buy + Hold + Sell in the report, so the columns tie out.
         cons["num_analysts"] = total.fillna(0).astype(int)
@@ -329,6 +360,18 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
         out["last_close"] = np.nan
     if "dollar_volume_20d" not in out.columns:
         out["dollar_volume_20d"] = 0.0
+    # Data-quality columns: tickers with no price rows at all get worst-case
+    # defaults so the reliability gate excludes them rather than passing NaN.
+    if "last_price_age_days" not in out.columns:
+        out["last_price_age_days"] = 999
+    out["last_price_age_days"] = pd.to_numeric(
+        out["last_price_age_days"], errors="coerce"
+    ).fillna(999).astype(int)
+    if "price_history_days" not in out.columns:
+        out["price_history_days"] = 0
+    out["price_history_days"] = pd.to_numeric(
+        out["price_history_days"], errors="coerce"
+    ).fillna(0).astype(int)
     return out
 
 

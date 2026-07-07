@@ -73,8 +73,48 @@ def _persist(df: pd.DataFrame) -> None:
         s.execute(stmt)
 
 
+def select_diversified(rows: list[dict], n: int, max_per_sector: int | None = None) -> list[dict]:
+    """Greedy top-N selection with a per-sector concentration cap.
+
+    `rows` must be sorted best-first and each dict may carry a "sector" key.
+    With the cap (default from settings, 0 = disabled) an all-semiconductor
+    market can't fill an entire top list — once a sector hits the cap, the
+    next-best name from any other sector takes the slot. Unknown/missing
+    sectors are treated as their own bucket so they're capped too.
+    """
+    settings = get_settings()
+    cap = settings.max_per_sector if max_per_sector is None else max_per_sector
+    if cap <= 0:
+        return rows[:n]
+    picked: list[dict] = []
+    sector_counts: dict[str, int] = {}
+    for r in rows:
+        if len(picked) >= n:
+            break
+        sector = (r.get("sector") or "?").strip() or "?"
+        if sector_counts.get(sector, 0) >= cap:
+            continue
+        picked.append(r)
+        sector_counts[sector] = sector_counts.get(sector, 0) + 1
+    # If the cap left empty slots (tiny candidate pool), backfill by score.
+    if len(picked) < n:
+        chosen = {r["ticker"] for r in picked}
+        for r in rows:
+            if len(picked) >= n:
+                break
+            if r["ticker"] not in chosen:
+                picked.append(r)
+    return picked
+
+
 def top_n(as_of: date | None = None, n: int | None = None) -> dict[str, pd.DataFrame]:
-    """Return dict[horizon -> top-N DataFrame] from persisted scores."""
+    """Return dict[horizon -> top-N DataFrame] from persisted scores.
+
+    Fetches a deep candidate pool (4×n) and applies the per-sector
+    diversification cap before final ranking.
+    """
+    from ..models import Stock
+
     settings = get_settings()
     n = n or settings.top_n
     as_of = as_of or date.today()
@@ -82,23 +122,36 @@ def top_n(as_of: date | None = None, n: int | None = None) -> dict[str, pd.DataF
     with session_scope() as s:
         for h in HORIZONS:
             rows = (
-                s.query(Score)
+                s.query(Score, Stock.sector)
+                .outerjoin(Stock, Stock.ticker == Score.ticker)
                 .filter(Score.horizon == h, Score.as_of == as_of)
                 .order_by(Score.blended_score.desc())
-                .limit(n)
+                .limit(n * 4)
                 .all()
             )
+            candidates = [
+                {
+                    "ticker": r.Score.ticker,
+                    "sector": r.sector,
+                    "blended_score": r.Score.blended_score,
+                    "composite_score": r.Score.composite_score,
+                    "ml_score": r.Score.ml_score,
+                    "percentile": r.Score.percentile,
+                }
+                for r in rows
+            ]
+            picked = select_diversified(candidates, n)
             out[h] = pd.DataFrame(
                 [
                     {
                         "rank": i + 1,
-                        "ticker": r.ticker,
-                        "blended_score": r.blended_score,
-                        "composite_score": r.composite_score,
-                        "ml_score": r.ml_score,
-                        "percentile": r.percentile,
+                        "ticker": r["ticker"],
+                        "blended_score": r["blended_score"],
+                        "composite_score": r["composite_score"],
+                        "ml_score": r["ml_score"],
+                        "percentile": r["percentile"],
                     }
-                    for i, r in enumerate(rows)
+                    for i, r in enumerate(picked)
                 ]
             )
     return out

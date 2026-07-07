@@ -80,3 +80,43 @@ def test_build_features_picks_up_consensus_and_actions():
     # Most recent close in seeded path is near 100-110; target 150 gives positive upside.
     assert row["upside_z"] > 0
     assert row["rating_mom_7d"] >= 1
+
+
+def test_consensus_shrinkage_prefers_broad_coverage():
+    """A 3-analyst unanimous buy must NOT outrank a 30-analyst 80 % buy.
+
+    Shrinkage multiplies raw consensus by n/(n+k): with k=10 the tiny
+    unanimous name lands ≈ 0.35, the broadly-covered one ≈ 0.53.
+    """
+    _seed_prices("TINY")
+    _seed_prices("BROAD")
+    today = date.today()
+    with session_scope() as s:
+        s.add(Consensus(ticker="TINY", as_of_date=today, source="yfinance",
+                        strong_buy=3, buy=0, hold=0, sell=0, strong_sell=0,
+                        mean_target=150.0, high_target=160.0, low_target=140.0,
+                        num_analysts=3))
+        s.add(Consensus(ticker="BROAD", as_of_date=today, source="yfinance",
+                        strong_buy=12, buy=12, hold=6, sell=0, strong_sell=0,
+                        mean_target=150.0, high_target=170.0, low_target=130.0,
+                        num_analysts=30))
+    df = build_features(["TINY", "BROAD"]).set_index("ticker")
+    assert df.loc["BROAD", "consensus_z"] > df.loc["TINY", "consensus_z"]
+
+
+def test_cross_source_median_target():
+    """mean_target is the MEDIAN across sources' latest rows, so one broken
+    aggregator can't skew the upside."""
+    _seed_prices("MED")
+    today = date.today()
+    with session_scope() as s:
+        for src, tgt in [("yfinance", 120.0), ("finnhub", 122.0), ("fmp", 500.0)]:
+            s.add(Consensus(ticker="MED", as_of_date=today, source=src,
+                            strong_buy=10, buy=10, hold=5, sell=0, strong_sell=0,
+                            mean_target=tgt, high_target=tgt * 1.1, low_target=tgt * 0.9,
+                            num_analysts=25))
+    from invest.pipeline.features import _latest_consensus
+
+    cons = _latest_consensus(["MED"]).set_index("ticker")
+    # median(120, 122, 500) = 122 — the broken 500 target is ignored.
+    assert cons.loc["MED", "mean_target"] == 122.0

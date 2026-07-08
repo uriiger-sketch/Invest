@@ -155,7 +155,7 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 |---|---:|---:|---:|---|---:|
 | **DELL** | 4.963 | 62 | ★★★ | daily, hours, weekly | 62 runs |
 | **CHWY** | 2.078 | 62 | ★★★ | hours, monthly, weekly | 62 runs |
-| **DASH** | 1.302 | 62 | ★★★ | hours, monthly, weekly | 62 runs |
+| **DASH** | 1.295 | 62 | ★★★ | hours, monthly, weekly | 62 runs |
 
 
 ## Top 3 by date — last 14 d
@@ -176,4 +176,3 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-06-27 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-26 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-25 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
-| 2026-06-24 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |

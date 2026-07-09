@@ -155,7 +155,7 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 |---|---:|---:|---:|---|---:|
 | **DELL** | 4.963 | 63 | ★★★ | daily, hours, weekly | 63 runs |
 | **CHWY** | 2.078 | 63 | ★★★ | hours, monthly, weekly | 63 runs |
-| **DASH** | 1.264 | 63 | ★★★ | hours, monthly, weekly | 63 runs |
+| **DASH** | 1.258 | 63 | ★★★ | hours, monthly, weekly | 63 runs |
 
 
 ## Top 3 by date — last 14 d
@@ -177,3 +177,16 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-06-27 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-26 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-25 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
+
+
+## Israeli & European picks by timeframe
+
+_Best non-US names that cleared every quality gate and made a horizon's top list — shown only where relevant._
+
+**Next few hours:** **AZN** (🇪🇺 Europe, +17.8%), **BUD** (🇪🇺 Europe, +17.9%)
+
+**Daily (~5 trading days):** **BP** (🇪🇺 Europe, +22.2%), **AZN** (🇪🇺 Europe, +17.8%), **BUD** (🇪🇺 Europe, +17.9%)
+
+**Weekly (~1 month):** **BP** (🇪🇺 Europe, +22.2%), **CRH** (🇪🇺 Europe, +39.2%), **BUD** (🇪🇺 Europe, +17.9%), **AZN** (🇪🇺 Europe, +17.8%)
+
+**Month and above (~90 days):** **CRH** (🇪🇺 Europe, +39.2%), **BUD** (🇪🇺 Europe, +17.9%), **AZN** (🇪🇺 Europe, +17.8%)

@@ -868,6 +868,99 @@ def _history_md(by_date: dict[str, dict[str, list[dict]]]) -> str:
     return "\n".join(lines) + "\n"
 
 
+# -------------------------- international picks --------------------------
+
+
+_REGION_LABEL = {"IL": "🇮🇱 Israel", "EU": "🇪🇺 Europe"}
+
+
+def _ticker_region_map() -> dict[str, str]:
+    """{ticker: 'IL' | 'EU'} for every non-US name in the static universe.
+    US-L / US-S tickers are omitted since this map only exists to flag
+    international names in the report."""
+    from invest.universe import static_universe_entries
+
+    return {t: region for t, _name, _sector, region in static_universe_entries() if region in ("IL", "EU")}
+
+
+def _international_picks(by_h: dict[str, list[dict]]) -> dict[str, list[dict]]:
+    """Best Israeli/European names per horizon, already-ranked and quality-
+    gated (they only appear here if they cleared every screen and made that
+    horizon's top list). Sorted by blended score, best first."""
+    region_map = _ticker_region_map()
+    out: dict[str, list[dict]] = {}
+    for h in HORIZONS:
+        picks = [
+            {**r, "region": region_map[r["ticker"]]}
+            for r in by_h.get(h, [])
+            if r["ticker"] in region_map
+        ]
+        picks.sort(key=lambda r: r["blended"], reverse=True)
+        out[h] = picks
+    return out
+
+
+def _international_picks_md(by_h_intl: dict[str, list[dict]]) -> str:
+    lines: list[str] = []
+    any_picks = any(by_h_intl.values())
+    if not any_picks:
+        return (
+            "_No Israeli or European name cleared the quality bar (≥ 4 % "
+            "upside, ≥ 50 sources, strictly bullish consensus) in any "
+            "horizon this run — only US names qualified._\n"
+        )
+    for h in HORIZONS:
+        picks = by_h_intl.get(h, [])
+        title = HORIZON_TITLE.get(h, h)
+        if not picks:
+            lines.append(f"**{title}:** _none cleared the bar this run._")
+            lines.append("")
+            continue
+        cells = []
+        for r in picks:
+            region_flag = _REGION_LABEL.get(r["region"], r["region"])
+            upside = (
+                f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
+                if r.get("upside_pct") is not None
+                else "—"
+            )
+            cells.append(f"**{r['ticker']}** ({region_flag}, {upside})")
+        lines.append(f"**{title}:** " + ", ".join(cells))
+        lines.append("")
+    return "\n".join(lines).rstrip() + "\n"
+
+
+def _international_picks_html(by_h_intl: dict[str, list[dict]]) -> str:
+    any_picks = any(by_h_intl.values())
+    if not any_picks:
+        return (
+            "<p><em>No Israeli or European name cleared the quality bar "
+            "(≥ 4 % upside, ≥ 50 sources, strictly bullish consensus) in "
+            "any horizon this run — only US names qualified.</em></p>"
+        )
+    rows_html = []
+    for h in HORIZONS:
+        picks = by_h_intl.get(h, [])
+        title = HORIZON_TITLE.get(h, h)
+        if not picks:
+            rows_html.append(f"<li><strong>{_html_escape(title)}:</strong> none cleared the bar this run.</li>")
+            continue
+        cells = []
+        for r in picks:
+            region_flag = _REGION_LABEL.get(r["region"], r["region"])
+            upside = (
+                f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
+                if r.get("upside_pct") is not None
+                else "—"
+            )
+            cells.append(
+                f"<strong>{_html_escape(r['ticker'])}</strong> "
+                f"({_html_escape(region_flag)}, {upside})"
+            )
+        rows_html.append(f"<li><strong>{_html_escape(title)}:</strong> " + ", ".join(cells) + "</li>")
+    return "<ul class='intl-picks'>" + "".join(rows_html) + "</ul>"
+
+
 # ------------------------------ Markdown ------------------------------
 
 
@@ -939,6 +1032,17 @@ def _build_markdown(as_of: date, n: int) -> str:
     parts.append(f"## Top 3 by date — last {settings.history_show_days} d")
     parts.append("")
     parts.append(_history_md(_history_top3_by_date(history_show)))
+    parts.append("")
+
+    # --- Summary: best Israeli & European picks per timeframe ---
+    parts.append("## Israeli & European picks by timeframe")
+    parts.append("")
+    parts.append(
+        "_Best non-US names that cleared every quality gate and made a "
+        "horizon's top list — shown only where relevant._"
+    )
+    parts.append("")
+    parts.append(_international_picks_md(_international_picks(by_h)))
     return "\n".join(parts).rstrip() + "\n"
 
 
@@ -1197,6 +1301,13 @@ def _build_html(as_of: date, n: int) -> str:
         "the same for a ticker no matter the horizon, so they live here.</p>"
         f"{_coverage_snapshot_html(snapshot_rows)}</section>"
     )
+    intl_picks = _international_picks(by_h)
+    sections.append(
+        "<section><h2>Israeli &amp; European picks by timeframe</h2>"
+        "<p class='blurb'>Best non-US names that cleared every quality gate "
+        "and made a horizon's top list — shown only where relevant.</p>"
+        f"{_international_picks_html(intl_picks)}</section>"
+    )
     runs_html = _html_runs_table(_recent_runs_safe())
     return f"""<!doctype html>
 <html lang="en">
@@ -1249,6 +1360,7 @@ def _build_html(as_of: date, n: int) -> str:
   td.tier2 {{ color: #6b6b6b; }}
   td.tier3 {{ color: #999; }}
   table.snapshot {{ margin-top: 0.5rem; }}
+  ul.intl-picks {{ margin: 0.5rem 0 0 0; padding-left: 1.2rem; line-height: 1.7; }}
   .src-breadth {{ font-size: 0.88rem; margin: 0.4rem 0 1rem 0; color: #444; }}
   .src-badge {{ display: inline-block; padding: 0.12rem 0.5rem; border-radius: 4px;
                 margin-right: 0.2rem; }}

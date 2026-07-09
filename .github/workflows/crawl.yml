@@ -156,6 +156,9 @@ jobs:
     permissions:
       pages: write
       id-token: write
+    # The github-pages environment URL is PERMANENT: every deployment serves
+    # at https://uriiger-sketch.github.io/Invest/ — bookmark that one link;
+    # it never changes between runs (unlike per-run artifact URLs).
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -164,3 +167,19 @@ jobs:
         id: deployment
         uses: actions/deploy-pages@v4
         continue-on-error: true
+
+      - name: Publish permanent link in run summary
+        if: always()
+        run: |
+          {
+            echo "## 📈 Invest — live report"
+            echo ""
+            if [ -n "${{ steps.deployment.outputs.page_url }}" ]; then
+              echo "**Permanent link (same every deployment):** ${{ steps.deployment.outputs.page_url }}"
+            else
+              echo "**Permanent link (same every deployment):** https://uriiger-sketch.github.io/Invest/"
+              echo ""
+              echo "> Pages deployment did not report a URL this run. If the link 404s,"
+              echo "> enable it once: repo **Settings → Pages → Source: GitHub Actions**."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

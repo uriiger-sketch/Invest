@@ -1,10 +1,16 @@
-# Invest — autonomous stock ranking crawler
+# <img src="docs/favicon.svg" width="28" alt="Invest icon" align="top"> Invest — autonomous stock ranking crawler
 
-A small, always-on local client that ingests what the world's top investment
-houses, funds, and sell-side analysts are publicly saying about the US stock
-market, then distils it into a ranked **top-20** list of stocks across three
-horizons — **few days / few weeks / few months** — with a transparent, testable
-score and an optional ML re-ranker layered on top.
+**📈 Live report (permanent link — same address every deployment):**
+**<https://uriiger-sketch.github.io/Invest/>**
+
+The Markdown snapshot lives at [`REPORT.md`](REPORT.md); both refresh
+automatically every 2 hours via GitHub Actions.
+
+A small, always-on crawler that ingests what the world's top investment
+houses, funds, and sell-side analysts are publicly saying about the stock
+market, then distils it into a ranked **top-13** list of stocks across four
+horizons — **next few hours / daily / weekly / month and above** — with a
+transparent, testable score and an optional ML re-ranker layered on top.
 
 > **Not investment advice.** This tool summarises publicly available data to
 > help you build a shortlist for further research. Paywalled analyst reports

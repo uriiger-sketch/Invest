@@ -21,7 +21,7 @@ from invest.models import (
     Stock,
 )
 
-st.set_page_config(page_title="Invest — Top 13", layout="wide")
+st.set_page_config(page_title="Invest — Top 13", page_icon="📈", layout="wide")
 
 
 _HORIZON_LABELS: dict[str, str] = {

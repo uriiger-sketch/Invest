@@ -1203,6 +1203,8 @@ def _build_html(as_of: date, n: int) -> str:
 <head>
 <meta charset="utf-8">
 <title>Invest — Top {n}</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="refresh" content="120">
 <style>
@@ -1312,7 +1314,8 @@ def _placeholder() -> tuple[str, str]:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     md = "_(awaiting first crawl)_\n"
     _ = generated  # used only in the HTML placeholder below
-    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — Top 10</title>
+    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — Top 13</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta http-equiv="refresh" content="60"></head>
 <body style="font-family: -apple-system, Helvetica, sans-serif; max-width: 800px; margin: 3rem auto;">
 <h1>Invest — awaiting first crawl</h1>

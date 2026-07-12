@@ -150,6 +150,25 @@ def _normalize(name: str) -> str:
     return n
 
 
+def canonical_firm_key(name: str | None) -> str:
+    """Public canonical identity for a firm name.
+
+    The SAME real-world firm arrives spelled differently depending on which
+    feed reported it — "Goldman Sachs" (yfinance) vs "Goldman Sachs & Co."
+    (FMP) vs "GOLDMAN SACHS GROUP" (Finnhub), or "RBC Capital Markets" vs
+    "RBC Capital" vs "RBC". Every place that counts DISTINCT firms (the
+    AnalystAction unique constraint, firm_count_90d, total_sources_count,
+    the coverage-snapshot Tier-1/Sources columns, the "All firms seen"
+    section) must dedupe on THIS key, not on the raw string, or the same
+    analyst/firm gets counted as multiple separate sources.
+
+    Returns "" for empty/unknown input so callers can treat that as "no
+    identity" rather than accidentally bucketing every blank firm together
+    with a real firm named "".
+    """
+    return _normalize(name or "")
+
+
 def firm_tier(name: str | None) -> int:
     """Return 1/2/3 if `name` matches a known firm; 0 ("unknown") otherwise."""
     if not name:

@@ -432,28 +432,40 @@ def _collect_top_by_horizon(as_of: date, n: int) -> dict[str, list[dict]]:
     return by_h
 
 
+def _firm_identity(firm: str | None, firm_key: str | None) -> str:
+    """Canonical identity for a (firm, firm_key) row pair. Prefer the stored
+    firm_key (set at insert time); fall back to computing it on the fly for
+    rows written before the firm_key column existed."""
+    from invest.firms import canonical_firm_key
+
+    return firm_key or canonical_firm_key(firm)
+
+
 def _tier1_count_per_ticker(tickers: list[str], lookback_days: int = 90) -> dict[str, int]:
-    """Distinct tier-1 firms with an action on the ticker in the lookback window."""
+    """Distinct tier-1 firms with an action on the ticker in the lookback
+    window. Deduped by canonical identity — "Goldman Sachs" and "Goldman
+    Sachs & Co." must count as ONE firm, not two."""
     if not tickers:
         return {}
     from invest.firms import firm_tier
 
     cutoff = date.today() - timedelta(days=lookback_days)
-    out: dict[str, int] = dict.fromkeys(tickers, 0)
+    seen: dict[str, set[str]] = {}
     with session_scope() as s:
         rows = s.execute(
-            select(AnalystAction.ticker, AnalystAction.firm)
-            .where(
+            select(AnalystAction.ticker, AnalystAction.firm, AnalystAction.firm_key).where(
                 AnalystAction.ticker.in_(tickers),
                 AnalystAction.date >= cutoff,
                 AnalystAction.firm.isnot(None),
             )
-            .distinct()
         ).all()
-    for t, firm in rows:
-        if firm_tier(firm) == 1:
-            out[t] = out.get(t, 0) + 1
-    return out
+    for t, firm, firm_key in rows:
+        if firm_tier(firm) != 1:
+            continue
+        key = _firm_identity(firm, firm_key)
+        if key:
+            seen.setdefault(t, set()).add(key)
+    return {t: len(keys) for t, keys in seen.items()}
 
 
 def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
@@ -461,7 +473,9 @@ def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
     tracked 13F filers (latest quarter) ∪ insider filers (last 90 d).
 
     Read directly from the same tables `features.py` uses so the snapshot
-    column and the `min_total_sources` gate stay in sync."""
+    column and the `min_total_sources` gate stay in sync. The firm bucket
+    is keyed by canonical identity so spelling variants of the same real
+    firm collapse to one source."""
     if not tickers:
         return {}
     from invest.models import Holding13F, InsiderTrade
@@ -469,14 +483,16 @@ def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
     cutoff = date.today() - timedelta(days=90)
     out: dict[str, set[tuple[str, str]]] = {}
     with session_scope() as s:
-        for t, firm in s.execute(
-            select(AnalystAction.ticker, AnalystAction.firm).where(
+        for t, firm, firm_key in s.execute(
+            select(AnalystAction.ticker, AnalystAction.firm, AnalystAction.firm_key).where(
                 AnalystAction.ticker.in_(tickers),
                 AnalystAction.date >= cutoff,
                 AnalystAction.firm.isnot(None),
             )
         ).all():
-            out.setdefault(t, set()).add(("firm", firm.lower().strip()))
+            key = _firm_identity(firm, firm_key)
+            if key:
+                out.setdefault(t, set()).add(("firm", key))
         for t, cik in s.execute(
             select(Holding13F.ticker, Holding13F.filer_cik).where(
                 Holding13F.ticker.in_(tickers),
@@ -505,47 +521,61 @@ def _recognised_firms_count() -> int:
 
 def _firms_seen_in_window(lookback_days: int = 90) -> dict[int, list[str]]:
     """Distinct named firms seen across ALL tickers in the window, grouped
-    by tier. Proves how many real firms actually contributed signal."""
+    by tier. Proves how many real firms actually contributed signal.
+
+    Deduped by canonical identity: if two rows are really the same firm
+    under different spellings, only ONE representative name is shown
+    (the alphabetically-first raw spelling, for determinism)."""
     from invest.firms import firm_tier
 
     cutoff = date.today() - timedelta(days=lookback_days)
-    seen: set[str] = set()
+    by_key: dict[str, str] = {}  # canonical key -> representative display name
     with session_scope() as s:
-        for (firm,) in s.execute(
-            select(AnalystAction.firm)
+        for firm, firm_key in s.execute(
+            select(AnalystAction.firm, AnalystAction.firm_key)
             .where(AnalystAction.date >= cutoff, AnalystAction.firm.isnot(None))
             .distinct()
         ).all():
-            if firm:
-                seen.add(firm)
+            key = _firm_identity(firm, firm_key)
+            if not key:
+                continue
+            if key not in by_key or firm.lower() < by_key[key].lower():
+                by_key[key] = firm
     by_tier: dict[int, list[str]] = {1: [], 2: [], 3: [], 0: []}
-    for firm in sorted(seen, key=str.lower):
+    for firm in sorted(by_key.values(), key=str.lower):
         by_tier[firm_tier(firm)].append(firm)
     return by_tier
 
 
 def _named_firms_for_tickers(tickers: list[str], lookback_days: int = 90) -> dict[str, list[tuple[str, int]]]:
     """For each ticker, return the distinct named sell-side firms seen in
-    the last `lookback_days` along with each firm's tier (0..3). Sorted
-    by tier ASC (tier-1 first) then by firm name."""
+    the last `lookback_days` along with each firm's tier (0..3). Deduped by
+    canonical identity — the same real firm shows once, using the
+    alphabetically-first raw spelling seen, not once per spelling variant.
+    Sorted by tier ASC (tier-1 first) then by firm name."""
     if not tickers:
         return {}
     from invest.firms import firm_tier
 
     cutoff = date.today() - timedelta(days=lookback_days)
-    out: dict[str, set[str]] = {}
+    out: dict[str, dict[str, str]] = {}  # ticker -> {canonical key: representative name}
     with session_scope() as s:
-        for t, firm in s.execute(
-            select(AnalystAction.ticker, AnalystAction.firm).where(
+        for t, firm, firm_key in s.execute(
+            select(AnalystAction.ticker, AnalystAction.firm, AnalystAction.firm_key).where(
                 AnalystAction.ticker.in_(tickers),
                 AnalystAction.date >= cutoff,
                 AnalystAction.firm.isnot(None),
             )
         ).all():
-            out.setdefault(t, set()).add(firm)
+            key = _firm_identity(firm, firm_key)
+            if not key:
+                continue
+            bucket = out.setdefault(t, {})
+            if key not in bucket or firm.lower() < bucket[key].lower():
+                bucket[key] = firm
     return {
-        t: sorted(((f, firm_tier(f)) for f in firms), key=lambda x: (x[1] or 99, x[0].lower()))
-        for t, firms in out.items()
+        t: sorted(((f, firm_tier(f)) for f in reps.values()), key=lambda x: (x[1] or 99, x[0].lower()))
+        for t, reps in out.items()
     }
 
 

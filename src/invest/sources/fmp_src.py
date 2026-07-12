@@ -20,8 +20,9 @@ import requests
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
 from ..db import session_scope
-from ..models import AnalystAction, Consensus
-from .base import BaseSource, TransientSourceError, log_run, with_retries
+from ..firms import canonical_firm_key
+from ..models import Consensus
+from .base import BaseSource, TransientSourceError, log_run, upsert_analyst_actions, with_retries
 
 logger = logging.getLogger(__name__)
 
@@ -124,47 +125,49 @@ class FmpSource(BaseSource):
         "reiterated": "reiterate",
     }
 
-    def _ingest_actions_one(self, ticker: str, cutoff: date) -> int:
+    def _ingest_actions_one(self, ticker: str, cutoff: date) -> list[dict]:
         # FMP's grade endpoint returns a list of recent rating changes.
         data = self._get(f"/grade/{ticker}") or []
         if not data:
-            return 0
-        written = 0
-        with session_scope() as s:
-            for item in data:
-                try:
-                    d = datetime.strptime(item.get("date", ""), "%Y-%m-%d").date()
-                except (ValueError, TypeError):
-                    continue
-                if d < cutoff:
-                    continue
-                action_raw = (item.get("action") or "").lower()
-                mapped = self._ACTION_MAP.get(action_raw, action_raw or None)
-                s.add(
-                    AnalystAction(
-                        ticker=ticker,
-                        firm=(item.get("gradingCompany") or "")[:128] or None,
-                        analyst=None,
-                        action=mapped,
-                        from_grade=(item.get("previousGrade") or "")[:64] or None,
-                        to_grade=(item.get("newGrade") or "")[:64] or None,
-                        target_price=None,
-                        date=d,
-                        source="fmp",
-                    )
-                )
-                written += 1
-        return written
+            return []
+        rows: list[dict] = []
+        for item in data:
+            try:
+                d = datetime.strptime(item.get("date", ""), "%Y-%m-%d").date()
+            except (ValueError, TypeError):
+                continue
+            if d < cutoff:
+                continue
+            action_raw = (item.get("action") or "").lower()
+            mapped = self._ACTION_MAP.get(action_raw, action_raw or None)
+            firm = (item.get("gradingCompany") or "")[:128] or None
+            rows.append(
+                {
+                    "ticker": ticker,
+                    "firm": firm,
+                    "firm_key": canonical_firm_key(firm),
+                    "analyst": None,
+                    "action": mapped,
+                    "from_grade": (item.get("previousGrade") or "")[:64] or None,
+                    "to_grade": (item.get("newGrade") or "")[:64] or None,
+                    "target_price": None,
+                    "date": d,
+                    "source": "fmp",
+                }
+            )
+        return rows
 
     def ingest_actions(self, tickers: list[str], lookback_days: int = 90) -> int:
         cutoff = date.today() - timedelta(days=lookback_days)
-        n = 0
+        all_rows: list[dict] = []
         for t in tickers:
             try:
-                n += self._ingest_actions_one(t, cutoff)
+                all_rows.extend(self._ingest_actions_one(t, cutoff))
             except TransientSourceError as e:
                 logger.warning("fmp actions %s failed: %s", t, e)
-        return n
+        # Upsert on (ticker, firm_key, date, action, source): re-crawling the
+        # same historical action updates the row instead of duplicating it.
+        return upsert_analyst_actions(all_rows)
 
     # ----------------------------- run -----------------------------
 

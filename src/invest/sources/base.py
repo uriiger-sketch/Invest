@@ -17,7 +17,7 @@ from tenacity import (
 )
 
 from ..db import session_scope
-from ..models import RunLog
+from ..models import AnalystAction, RunLog
 
 logger = logging.getLogger(__name__)
 
@@ -90,6 +90,44 @@ def log_run(job: str) -> Iterator[dict[str, int]]:
                 row.finished_at = datetime.utcnow()
                 row.status = "ok"
                 row.rows_written = counter["rows"]
+
+
+def upsert_analyst_actions(rows: list[dict]) -> int:
+    """Insert AnalystAction rows, upserting on (ticker, firm_key, date,
+    action, source) so the SAME real analyst action reported again on a
+    later crawl (every feed returns a rolling ~90-day window each call)
+    updates the existing row instead of creating a duplicate.
+
+    Every ingester (yfinance, Finnhub, FMP) MUST route through this
+    instead of `session.add(AnalystAction(...))` — that was the actual
+    root cause of the same firm being counted as multiple sources: a
+    single Goldman Sachs upgrade re-inserted on every 2-hour crawl became
+    dozens of identical-looking rows within days.
+
+    Each dict in `rows` must already have `firm_key` set via
+    `invest.firms.canonical_firm_key(firm)`. Rows without a usable
+    `firm_key` (blank firm) are skipped — they can't be deduped and
+    aren't real named sources anyway.
+    """
+    from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+
+    usable = [r for r in rows if r.get("firm_key")]
+    if not usable:
+        return 0
+    with session_scope() as s:
+        stmt = sqlite_insert(AnalystAction).values(usable)
+        stmt = stmt.on_conflict_do_update(
+            index_elements=["ticker", "firm_key", "date", "action", "source"],
+            set_={
+                "firm": stmt.excluded.firm,
+                "analyst": stmt.excluded.analyst,
+                "from_grade": stmt.excluded.from_grade,
+                "to_grade": stmt.excluded.to_grade,
+                "target_price": stmt.excluded.target_price,
+            },
+        )
+        s.execute(stmt)
+    return len(usable)
 
 
 class BaseSource(ABC):

@@ -10,9 +10,10 @@ import yfinance as yf
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
 from ..db import session_scope
-from ..models import AnalystAction, Consensus, Price, Stock
+from ..firms import canonical_firm_key
+from ..models import Consensus, Price, Stock
 from ..universe import chunks
-from .base import BaseSource, TransientSourceError, log_run, with_retries
+from .base import BaseSource, TransientSourceError, log_run, upsert_analyst_actions, with_retries
 
 logger = logging.getLogger(__name__)
 
@@ -227,21 +228,19 @@ class YFinanceSource(BaseSource):
 
     def ingest_actions(self, tickers: list[str], lookback_days: int = 90) -> int:
         cutoff = date.today() - timedelta(days=lookback_days)
-        written = 0
-        with session_scope() as s:
-            for t in tickers:
-                try:
-                    df = self._upgrades(t)
-                except TransientSourceError:
-                    continue
-                if df is None or getattr(df, "empty", True):
-                    continue
-                rows = _actions_frame_to_rows(df, t, cutoff)
-                for r in rows:
-                    # Dedup: (ticker, firm, action, date) treated as unique
-                    s.add(AnalystAction(**r))
-                written += len(rows)
-        return written
+        all_rows: list[dict] = []
+        for t in tickers:
+            try:
+                df = self._upgrades(t)
+            except TransientSourceError:
+                continue
+            if df is None or getattr(df, "empty", True):
+                continue
+            all_rows.extend(_actions_frame_to_rows(df, t, cutoff))
+        # Upsert on (ticker, firm_key, date, action, source) so re-crawling
+        # the same historical action updates the existing row instead of
+        # creating a duplicate "source".
+        return upsert_analyst_actions(all_rows)
 
     # --------------------------- run -----------------------------
 
@@ -385,10 +384,12 @@ def _actions_frame_to_rows(df: pd.DataFrame, ticker: str, cutoff: date) -> list[
         if d is None or d < cutoff:
             continue
         action_raw = str(r[action_col]).strip().lower() if action_col else ""
+        firm = str(r[firm_col])[:128] if firm_col else None
         rows.append(
             {
                 "ticker": ticker,
-                "firm": str(r[firm_col])[:128] if firm_col else None,
+                "firm": firm,
+                "firm_key": canonical_firm_key(firm),
                 "analyst": None,
                 "action": _ACTION_MAP.get(action_raw, action_raw or None),
                 "from_grade": str(r[from_col])[:64] if from_col and pd.notna(r[from_col]) else None,

@@ -10,8 +10,9 @@ from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
 from ..config import get_settings
 from ..db import session_scope
-from ..models import AnalystAction, Consensus
-from .base import BaseSource, TransientSourceError, log_run, with_retries
+from ..firms import canonical_firm_key
+from ..models import Consensus
+from .base import BaseSource, TransientSourceError, log_run, upsert_analyst_actions, with_retries
 
 logger = logging.getLogger(__name__)
 
@@ -98,47 +99,51 @@ class FinnhubSource(BaseSource):
 
     # ---------------------- upgrades / downgrades ----------------------
 
-    def _ingest_actions_one(self, ticker: str, cutoff: date) -> int:
+    def _ingest_actions_one(self, ticker: str, cutoff: date) -> list[dict]:
         data = self._get(
             "/stock/upgrade-downgrade",
             {"symbol": ticker, "from": cutoff.isoformat(), "to": date.today().isoformat()},
         ) or []
         if not data:
-            return 0
-        with session_scope() as s:
-            for item in data:
-                try:
-                    d = datetime.utcfromtimestamp(int(item.get("gradeTime", 0))).date()
-                except Exception:  # noqa: BLE001
-                    continue
-                if d < cutoff:
-                    continue
-                action = (item.get("action") or "").lower()
-                mapped = "upgrade" if "up" in action else "downgrade" if "down" in action else action or None
-                s.add(
-                    AnalystAction(
-                        ticker=ticker,
-                        firm=(item.get("company") or "")[:128] or None,
-                        analyst=None,
-                        action=mapped,
-                        from_grade=(item.get("fromGrade") or "")[:64] or None,
-                        to_grade=(item.get("toGrade") or "")[:64] or None,
-                        target_price=None,
-                        date=d,
-                        source="finnhub",
-                    )
-                )
-        return len(data)
+            return []
+        rows: list[dict] = []
+        for item in data:
+            try:
+                d = datetime.utcfromtimestamp(int(item.get("gradeTime", 0))).date()
+            except Exception:  # noqa: BLE001
+                continue
+            if d < cutoff:
+                continue
+            action = (item.get("action") or "").lower()
+            mapped = "upgrade" if "up" in action else "downgrade" if "down" in action else action or None
+            firm = (item.get("company") or "")[:128] or None
+            rows.append(
+                {
+                    "ticker": ticker,
+                    "firm": firm,
+                    "firm_key": canonical_firm_key(firm),
+                    "analyst": None,
+                    "action": mapped,
+                    "from_grade": (item.get("fromGrade") or "")[:64] or None,
+                    "to_grade": (item.get("toGrade") or "")[:64] or None,
+                    "target_price": None,
+                    "date": d,
+                    "source": "finnhub",
+                }
+            )
+        return rows
 
     def ingest_actions(self, tickers: list[str], lookback_days: int = 90) -> int:
         cutoff = date.today() - timedelta(days=lookback_days)
-        n = 0
+        all_rows: list[dict] = []
         for t in tickers:
             try:
-                n += self._ingest_actions_one(t, cutoff)
+                all_rows.extend(self._ingest_actions_one(t, cutoff))
             except TransientSourceError as e:
                 logger.warning("finnhub actions %s failed: %s", t, e)
-        return n
+        # Upsert on (ticker, firm_key, date, action, source): re-crawling the
+        # same historical action updates the row instead of duplicating it.
+        return upsert_analyst_actions(all_rows)
 
     # ------------------------------- run -------------------------------
 

@@ -54,6 +54,12 @@ class AnalystAction(Base):
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     ticker: Mapped[str] = mapped_column(String(16), ForeignKey("stocks.ticker"), index=True)
     firm: Mapped[str | None] = mapped_column(String(128))
+    # Canonical identity for `firm` (invest.firms.canonical_firm_key), computed
+    # at insert time. "Goldman Sachs" / "Goldman Sachs & Co." / "GOLDMAN SACHS
+    # GROUP" all collapse to the same firm_key so the same real analyst desk
+    # can never be stored — or counted — as more than one source, regardless
+    # of which feed reported it or how that feed spelled the name.
+    firm_key: Mapped[str | None] = mapped_column(String(160))
     analyst: Mapped[str | None] = mapped_column(String(128))
     action: Mapped[str | None] = mapped_column(String(32))  # upgrade / downgrade / init / reiterate
     from_grade: Mapped[str | None] = mapped_column(String(64))
@@ -64,6 +70,17 @@ class AnalystAction(Base):
 
     __table_args__ = (
         Index("ix_analyst_actions_ticker_date", "ticker", "date"),
+        # The real fix for "same firm counted as multiple sources": without
+        # this, every crawl re-inserts the SAME historical action (feeds
+        # return a rolling 90-day window each call), so one real Goldman
+        # Sachs upgrade could physically exist as dozens of duplicate rows
+        # after a few days of scheduled crawling. This constraint makes that
+        # impossible at the database level; ingesters upsert against it.
+        Index(
+            "uq_analyst_actions_identity",
+            "ticker", "firm_key", "date", "action", "source",
+            unique=True,
+        ),
     )
 
 

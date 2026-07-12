@@ -262,22 +262,35 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
 
     # Distinct firm count over the last 90 d — used by the outlook gate to
     # exclude thinly-covered names (where consensus is unreliable).
+    #
+    # Dedup by canonical firm_key, NOT the raw firm string: different feeds
+    # spell the same real firm differently ("Goldman Sachs" vs "Goldman
+    # Sachs & Co."), and without this the same analyst desk gets counted as
+    # multiple separate sources. firm_key is populated at insert time by the
+    # ingesters; fall back to computing it on the fly for any row where it
+    # isn't (e.g. rows written before the firm_key column existed).
+    from ..firms import canonical_firm_key
+
     cutoff_90 = date.today() - timedelta(days=90)
     with session_scope() as s:
         firm_rows = s.execute(
-            select(AnalystAction.ticker, AnalystAction.firm).where(
+            select(AnalystAction.ticker, AnalystAction.firm, AnalystAction.firm_key).where(
                 AnalystAction.ticker.in_(tickers),
                 AnalystAction.date >= cutoff_90,
                 AnalystAction.firm.isnot(None),
             )
         ).all()
     if firm_rows:
-        firms_df = pd.DataFrame(firm_rows, columns=["ticker", "firm"])
+        firms_df = pd.DataFrame(firm_rows, columns=["ticker", "firm", "firm_key"])
+        firms_df["key"] = firms_df["firm_key"].where(
+            firms_df["firm_key"].notna() & (firms_df["firm_key"] != ""),
+            firms_df["firm"].map(canonical_firm_key),
+        )
         firm_count_90d = (
-            firms_df.drop_duplicates()
-            .groupby("ticker", as_index=False)["firm"]
+            firms_df.drop_duplicates(["ticker", "key"])
+            .groupby("ticker", as_index=False)["key"]
             .count()
-            .rename(columns={"firm": "firm_count_90d"})
+            .rename(columns={"key": "firm_count_90d"})
         )
     else:
         firm_count_90d = pd.DataFrame(columns=["ticker", "firm_count_90d"])
@@ -299,11 +312,14 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
     #   tracked 13F filers (latest stored quarter)  ∪
     #   insider filers in last 90 d
     # This is the headline coverage number the report shows and the
-    # outlook gate enforces (≥ settings.min_total_sources).
+    # outlook gate enforces (≥ settings.min_total_sources). The firm bucket
+    # is keyed by canonical_firm_key (not the raw string) so the same real
+    # analyst desk reported under different spellings by different feeds
+    # counts once, not once-per-spelling.
     cutoff_90 = date.today() - timedelta(days=90)
     with session_scope() as s:
         firm_pairs = s.execute(
-            select(AnalystAction.ticker, AnalystAction.firm).where(
+            select(AnalystAction.ticker, AnalystAction.firm, AnalystAction.firm_key).where(
                 AnalystAction.ticker.in_(tickers),
                 AnalystAction.date >= cutoff_90,
                 AnalystAction.firm.isnot(None),
@@ -323,8 +339,10 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
             )
         ).all()
     sources_set: dict[str, set[tuple[str, str]]] = {}
-    for t, firm in firm_pairs:
-        sources_set.setdefault(t, set()).add(("firm", firm.lower().strip()))
+    for t, firm, firm_key in firm_pairs:
+        key = firm_key or canonical_firm_key(firm)
+        if key:
+            sources_set.setdefault(t, set()).add(("firm", key))
     for t, cik in filer_pairs:
         sources_set.setdefault(t, set()).add(("13f", cik))
     for t, ifiler in insider_pairs:

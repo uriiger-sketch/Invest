@@ -155,7 +155,7 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 |---|---:|---:|---:|---|---:|
 | **DELL** | 4.963 | 65 | ★★★ | daily, hours, weekly | 65 runs |
 | **CHWY** | 2.078 | 65 | ★★★ | hours, monthly, weekly | 65 runs |
-| **DASH** | 1.125 | 65 | ★★★ | hours, monthly, weekly | 65 runs |
+| **DASH** | 1.121 | 65 | ★★★ | hours, monthly, weekly | 65 runs |
 
 
 ## Top 3 by date — last 14 d

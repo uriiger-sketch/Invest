@@ -89,14 +89,14 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **C** | Financial Services | +10.8% | 17 | 5 | 0 | 22 | 11 | 0 | 13 | daily |
 | **EQIX** | Real Estate | +18.0% | 25 | 6 | 0 | 31 | 12 | 0 | 12 | daily |
 | **BAC** | Financial Services | +10.6% | 21 | 3 | 0 | 24 | 11 | 0 | 12 | hours, daily, weekly, monthly |
-| **APP** | Communication Services | +47.8% | 29 | 3 | 0 | 32 | 10 | 0 | 11 | hours |
+| **ABBV** | Healthcare | +6.0% | 24 | 6 | 1 | 31 | 10 | 0 | 12 | hours, daily |
 | **DASH** | Consumer Cyclical | +29.9% | 35 | 8 | 0 | 43 | 11 | 0 | 11 | hours, weekly, monthly |
+| **APP** | Communication Services | +47.8% | 29 | 3 | 0 | 32 | 10 | 0 | 10 | hours |
 | **ABT** | Healthcare | +26.4% | 21 | 7 | 0 | 28 | 8 | 0 | 10 | hours, daily, weekly |
-| **DHR** | Healthcare | +21.0% | 22 | 4 | 0 | 26 | 10 | 0 | 10 | hours, daily, monthly |
-| **ABBV** | Healthcare | +6.0% | 24 | 6 | 1 | 31 | 8 | 0 | 10 | hours, daily |
-| **DIS** | Communication Services | +35.1% | 27 | 2 | 1 | 30 | 8 | 0 | 8 | hours, daily, weekly, monthly |
+| **DIS** | Communication Services | +35.1% | 27 | 2 | 1 | 30 | 8 | 0 | 9 | hours, daily, weekly, monthly |
+| **DHR** | Healthcare | +21.0% | 22 | 4 | 0 | 26 | 9 | 0 | 9 | hours, daily, monthly |
 | **BILL** | Technology | +25.1% | 14 | 10 | 0 | 24 | 7 | 0 | 8 | weekly, monthly |
-| **APH** | Technology | +18.4% | 15 | 3 | 0 | 18 | 6 | 0 | 7 | hours |
+| **APH** | Technology | +18.4% | 15 | 3 | 0 | 18 | 7 | 0 | 8 | hours |
 | **ADP** | Technology | +0.4% | 5 | 11 | 2 | 18 | 6 | 0 | 7 | daily |
 | **BLK** | Financial Services | +22.1% | 14 | 3 | 0 | 17 | 5 | 0 | 6 | monthly |
 | **BUD** | Consumer Defensive | +18.7% | 9 | 2 | 0 | 11 | 4 | 0 | 4 | hours, daily, weekly, monthly |
@@ -118,14 +118,14 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **C** | Barclays, Evercore ISI Group, Goldman Sachs, JP Morgan, Morgan Stanley, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities, UBS, Wells Fargo | — | B of A Securities, Keefe, Bruyette & Woods |
 | **EQIX** | Barclays, Cantor Fitzgerald, Citigroup, Evercore ISI Group, Goldman Sachs, Guggenheim, HSBC, JP Morgan, Mizuho, Scotiabank, TD Cowen, Wells Fargo | — | — |
 | **BAC** | Citigroup, Evercore ISI Group, Jefferies, JP Morgan, Morgan Stanley, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities, UBS, Wells Fargo | — | Keefe, Bruyette & Woods |
-| **APP** | BTIG, Citigroup, JP Morgan, Macquarie, Needham, Piper Sandler, Raymond James, UBS, Wedbush, Wells Fargo | Argus Research | — |
+| **ABBV** | BMO Capital, Cantor Fitzgerald, Evercore ISI Group, Guggenheim, JP Morgan, Morgan Stanley, Piper Sandler, RBC Capital, UBS, Wells Fargo | Canaccord Genuity | B of A Securities |
 | **DASH** | BTIG, Citigroup, DA Davidson, Guggenheim, Needham, Piper Sandler, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | — | — |
+| **APP** | BTIG, Citigroup, JP Morgan, Macquarie, Needham, Piper Sandler, Raymond James, UBS, Wedbush, Wells Fargo | — | — |
 | **ABT** | Baird, Barclays, BTIG, Evercore ISI Group, Oppenheimer, Piper Sandler, RBC Capital, Stifel | Benchmark | B of A Securities |
-| **DHR** | Baird, Barclays, Citigroup, Evercore ISI Group, Guggenheim, HSBC, Morgan Stanley, Piper Sandler, UBS, Wells Fargo | — | — |
-| **ABBV** | Cantor Fitzgerald, Evercore ISI Group, Guggenheim, JP Morgan, Morgan Stanley, Piper Sandler, RBC Capital, Wells Fargo | Canaccord Genuity | B of A Securities |
-| **DIS** | Barclays, Citigroup, Guggenheim, JP Morgan, Needham, Raymond James, Rosenblatt, Wells Fargo | — | — |
+| **DIS** | Barclays, Citigroup, Guggenheim, JP Morgan, Needham, Raymond James, Rosenblatt, Wells Fargo | Benchmark | — |
+| **DHR** | Baird, Citigroup, Evercore ISI Group, Guggenheim, HSBC, Morgan Stanley, Piper Sandler, UBS, Wells Fargo | — | — |
 | **BILL** | Baird, Goldman Sachs, JP Morgan, Morgan Stanley, Oppenheimer, TD Cowen, Truist Securities | — | Keefe, Bruyette & Woods |
-| **APH** | Barclays, Citigroup, Evercore ISI Group, JP Morgan, Truist Securities, UBS | — | B of A Securities |
+| **APH** | Barclays, Citigroup, Evercore ISI Group, JP Morgan, TD Cowen, Truist Securities, UBS | — | B of A Securities |
 | **ADP** | Cantor Fitzgerald, Citigroup, Stifel, TD Cowen, UBS, Wells Fargo | Argus Research | — |
 | **BLK** | Barclays, Evercore ISI Group, Goldman Sachs, Morgan Stanley, UBS | — | Keefe, Bruyette & Woods |
 | **BUD** | JP Morgan, Morgan Stanley, TD Cowen, Wells Fargo | — | — |
@@ -162,6 +162,7 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-07-14 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-13 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-12 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-11 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
@@ -176,7 +177,6 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-07-02 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-01 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-06-30 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
-| 2026-06-29 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 
 
 ## Israeli & European picks by timeframe

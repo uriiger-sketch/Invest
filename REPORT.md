@@ -69,7 +69,7 @@
 | 8 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.897 | 0.461 | 0.461 | 86.5% | +28.2% |
 | 9 | ★★ | **BILL** | BILL Holdings, Inc. | Technology | 0.815 | 0.436 | 0.436 | 84.6% | +20.2% |
 | 10 | ★★★★ | **BAC** | Bank of America Corporation | Financial Services | 0.782 | 0.426 | 0.426 | 82.7% | +6.8% |
-| 11 |  | **BLK** | BlackRock, Inc. | Financial Services | 0.780 | 0.425 | 0.425 | 80.8% | +15.2% |
+| 11 |  | **BLK** | BlackRock, Inc. | Financial Services | 0.780 | 0.425 | 0.425 | 80.8% | +15.1% |
 | 12 | ★★★ | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | 0.744 | 0.414 | 0.414 | 78.8% | +22.7% |
 | 13 | ★★★ | **DHR** | Danaher Corporation | Healthcare | 0.727 | 0.408 | 0.408 | 76.9% | +20.7% |
 
@@ -80,26 +80,26 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 
 | Ticker | Sector | Upside | Buy | Hold | Sell | Analysts | Tier-1 firms | Insts | Sources | Horizons |
 |---|---|---|---|---|---|---|---|---|---|---|
-| **AMZN** | Consumer Cyclical | +23.3% | 62 | 3 | 0 | 65 | 23 | 0 | 27 | weekly, monthly |
+| **AMZN** | Consumer Cyclical | +23.3% | 62 | 3 | 0 | 65 | 24 | 0 | 28 | weekly, monthly |
 | **DELL** | Technology | +18.1% | 19 | 8 | 0 | 27 | 15 | 0 | 18 | hours, daily, weekly |
+| **BSX** | Healthcare | +70.4% | 27 | 4 | 0 | 31 | 14 | 0 | 17 | monthly |
 | **BKNG** | Consumer Cyclical | +22.7% | 30 | 7 | 0 | 37 | 15 | 0 | 17 | hours, weekly, monthly |
-| **BSX** | Healthcare | +70.4% | 27 | 4 | 0 | 31 | 13 | 0 | 16 | monthly |
 | **ELV** | Healthcare | +2.8% | 14 | 8 | 0 | 22 | 13 | 0 | 14 | daily |
 | **CHWY** | Consumer Cyclical | +46.4% | 20 | 5 | 0 | 25 | 13 | 0 | 13 | hours, weekly, monthly |
 | **DASH** | Consumer Cyclical | +29.5% | 35 | 8 | 0 | 43 | 13 | 0 | 13 | hours, weekly, monthly |
+| **ABBV** | Healthcare | +8.8% | 24 | 6 | 1 | 31 | 11 | 0 | 13 | hours, daily |
 | **EQIX** | Real Estate | +18.0% | 25 | 6 | 0 | 31 | 12 | 0 | 12 | daily |
-| **ABBV** | Healthcare | +8.8% | 24 | 6 | 1 | 31 | 10 | 0 | 12 | hours, daily |
 | **BAC** | Financial Services | +6.8% | 21 | 3 | 0 | 24 | 11 | 0 | 12 | hours, daily, weekly, monthly |
 | **APP** | Communication Services | +44.6% | 29 | 3 | 0 | 32 | 10 | 0 | 10 | hours |
 | **ABT** | Healthcare | +30.4% | 21 | 7 | 0 | 28 | 8 | 0 | 10 | hours, daily, weekly |
+| **C** | Financial Services | +15.5% | 16 | 5 | 0 | 21 | 8 | 0 | 10 | daily |
 | **DIS** | Communication Services | +32.2% | 28 | 2 | 1 | 31 | 8 | 0 | 9 | hours, daily, weekly, monthly |
 | **DHR** | Healthcare | +20.7% | 22 | 4 | 0 | 26 | 9 | 0 | 9 | hours, daily, monthly |
-| **C** | Financial Services | +15.5% | 17 | 5 | 0 | 22 | 7 | 0 | 9 | daily |
 | **BILL** | Technology | +20.2% | 14 | 10 | 0 | 24 | 7 | 0 | 8 | weekly, monthly |
 | **APH** | Technology | +19.6% | 15 | 3 | 0 | 18 | 7 | 0 | 8 | hours |
 | **ADP** | Technology | +2.2% | 5 | 11 | 2 | 18 | 6 | 0 | 7 | daily |
 | **BUD** | Consumer Defensive | +17.8% | 9 | 2 | 0 | 11 | 4 | 0 | 4 | hours, daily, weekly, monthly |
-| **BLK** | Financial Services | +15.2% | 14 | 3 | 0 | 17 | 3 | 0 | 4 | monthly |
+| **BLK** | Financial Services | +15.1% | 14 | 3 | 0 | 17 | 3 | 0 | 4 | monthly |
 | **BP** | Energy | +14.8% | 8 | 6 | 3 | 17 | 2 | 0 | 3 | daily, weekly |
 | **CRH** | Basic Materials | +37.8% | 19 | 2 | 0 | 21 | 2 | 0 | 2 | weekly, monthly |
 | **AZN** | Healthcare | +28.2% | 8 | 2 | 0 | 10 | 0 | 0 | 0 | hours, daily, weekly, monthly |
@@ -109,21 +109,21 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 
 | Ticker | Tier-1 firms | Tier-2 firms | Other firms |
 |---|---|---|---|
-| **AMZN** | Barclays, Bernstein, BMO Capital, Cantor Fitzgerald, Citigroup, Evercore ISI Group, Guggenheim, JP Morgan, Keybanc, Mizuho, Morgan Stanley, Needham, Oppenheimer, Piper Sandler, RBC Capital, Rosenblatt, Scotiabank, Stifel, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | Benchmark, Canaccord Genuity | B of A Securities, Telsey Advisory Group |
+| **AMZN** | Barclays, Bernstein, BMO Capital, Cantor Fitzgerald, Citigroup, Citizens, Evercore ISI Group, Guggenheim, JP Morgan, Keybanc, Mizuho, Morgan Stanley, Needham, Oppenheimer, Piper Sandler, RBC Capital, Rosenblatt, Scotiabank, Stifel, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | Benchmark, Canaccord Genuity | B of A Securities, Telsey Advisory Group |
 | **DELL** | Barclays, Bernstein, Citigroup, Evercore ISI Group, Goldman Sachs, JP Morgan, Mizuho, Morgan Stanley, Piper Sandler, Raymond James, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | Argus Research | B of A Securities, Loop Capital |
+| **BSX** | Baird, Barclays, BTIG, Citigroup, Evercore ISI Group, Goldman Sachs, Jefferies, Mizuho, Needham, RBC Capital, Stifel, Truist Securities, Wells Fargo, Wolfe Research | Canaccord Genuity, Leerink Partners | B of A Securities |
 | **BKNG** | Baird, Barclays, BTIG, Cantor Fitzgerald, Citigroup, DA Davidson, Deutsche Bank, Evercore ISI Group, Jefferies, JP Morgan, Oppenheimer, RBC Capital, TD Cowen, UBS, Wells Fargo | Argus Research, B. Riley Securities | — |
-| **BSX** | Baird, Barclays, BTIG, Citigroup, Evercore ISI Group, Goldman Sachs, Jefferies, Needham, RBC Capital, Stifel, Truist Securities, Wells Fargo, Wolfe Research | Canaccord Genuity, Leerink Partners | B of A Securities |
 | **ELV** | Baird, Barclays, Bernstein, Cantor Fitzgerald, Deutsche Bank, Evercore ISI Group, Guggenheim, Jefferies, JP Morgan, Mizuho, Morgan Stanley, Truist Securities, UBS | — | B of A Securities |
 | **CHWY** | Baird, Barclays, Citigroup, Citizens, Goldman Sachs, Guggenheim, JP Morgan, Mizuho, Morgan Stanley, Needham, RBC Capital, TD Cowen, UBS | — | — |
 | **DASH** | BTIG, Citigroup, DA Davidson, Guggenheim, Jefferies, Keybanc, Needham, Piper Sandler, Susquehanna, TD Cowen, Truist Securities, UBS, Wells Fargo | — | — |
+| **ABBV** | BMO Capital, Cantor Fitzgerald, Citigroup, Evercore ISI Group, Guggenheim, JP Morgan, Morgan Stanley, Piper Sandler, RBC Capital, UBS, Wells Fargo | Canaccord Genuity | B of A Securities |
 | **EQIX** | Barclays, Cantor Fitzgerald, Citigroup, Evercore ISI Group, Goldman Sachs, Guggenheim, HSBC, JP Morgan, Mizuho, Scotiabank, TD Cowen, Wells Fargo | — | — |
-| **ABBV** | BMO Capital, Cantor Fitzgerald, Evercore ISI Group, Guggenheim, JP Morgan, Morgan Stanley, Piper Sandler, RBC Capital, UBS, Wells Fargo | Canaccord Genuity | B of A Securities |
-| **BAC** | Citigroup, Evercore ISI Group, Jefferies, JP Morgan, Morgan Stanley, Oppenheimer, Piper Sandler, RBC Capital, Truist Securities, UBS, Wells Fargo | — | Keefe, Bruyette & Woods |
+| **BAC** | Baird, Barclays, Citigroup, Evercore ISI Group, JP Morgan, Morgan Stanley, Oppenheimer, RBC Capital, Truist Securities, UBS, Wells Fargo | — | Keefe, Bruyette & Woods |
 | **APP** | BTIG, Citigroup, JP Morgan, Macquarie, Needham, Piper Sandler, Raymond James, UBS, Wedbush, Wells Fargo | — | — |
 | **ABT** | Baird, Barclays, BTIG, Evercore ISI Group, Oppenheimer, Piper Sandler, RBC Capital, Stifel | Benchmark | B of A Securities |
+| **C** | Evercore ISI Group, JP Morgan, Morgan Stanley, Oppenheimer, RBC Capital, Truist Securities, UBS, Wells Fargo | — | B of A Securities, Keefe, Bruyette & Woods |
 | **DIS** | Barclays, Citigroup, Guggenheim, JP Morgan, Needham, Raymond James, Rosenblatt, Wells Fargo | Benchmark | — |
 | **DHR** | Baird, Citigroup, Evercore ISI Group, Guggenheim, HSBC, Morgan Stanley, Piper Sandler, UBS, Wells Fargo | — | — |
-| **C** | Evercore ISI Group, JP Morgan, Morgan Stanley, Oppenheimer, Truist Securities, UBS, Wells Fargo | — | B of A Securities, Keefe, Bruyette & Woods |
 | **BILL** | Baird, Goldman Sachs, JP Morgan, Morgan Stanley, Oppenheimer, TD Cowen, Truist Securities | — | Keefe, Bruyette & Woods |
 | **APH** | Barclays, Citigroup, Evercore ISI Group, JP Morgan, TD Cowen, Truist Securities, UBS | — | B of A Securities |
 | **ADP** | Cantor Fitzgerald, Citigroup, Stifel, TD Cowen, UBS, Wells Fargo | Argus Research | — |
@@ -162,6 +162,7 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-07-16 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-15 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-14 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-13 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
@@ -176,7 +177,6 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-07-04 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-03 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-02 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
-| 2026-07-01 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 
 
 ## Israeli & European picks by timeframe

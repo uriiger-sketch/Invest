@@ -92,13 +92,13 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **BAC** | Financial Services | +9.8% | 20 | 4 | 0 | 24 | 11 | 0 | 12 | hours, daily, weekly, monthly |
 | **APP** | Communication Services | +54.2% | 29 | 3 | 0 | 32 | 10 | 0 | 10 | hours |
 | **C** | Financial Services | +19.4% | 16 | 5 | 0 | 21 | 8 | 0 | 10 | daily |
+| **ABT** | Healthcare | +15.8% | 20 | 7 | 0 | 27 | 10 | 0 | 10 | hours, daily, weekly |
 | **DIS** | Communication Services | +30.7% | 28 | 2 | 1 | 31 | 8 | 0 | 9 | hours, daily, weekly, monthly |
 | **DHR** | Healthcare | +19.0% | 22 | 4 | 0 | 26 | 9 | 0 | 9 | hours, daily, monthly |
 | **APH** | Technology | +24.7% | 15 | 3 | 0 | 18 | 7 | 0 | 8 | hours |
+| **BLK** | Financial Services | +21.5% | 15 | 2 | 0 | 17 | 6 | 0 | 8 | monthly |
 | **BILL** | Technology | +20.0% | 14 | 9 | 0 | 23 | 7 | 0 | 8 | weekly, monthly |
-| **BLK** | Financial Services | +21.5% | 15 | 2 | 0 | 17 | 5 | 0 | 7 | monthly |
 | **ADP** | Technology | -1.0% | 5 | 11 | 2 | 18 | 6 | 0 | 7 | daily |
-| **ABT** | Healthcare | +15.8% | 20 | 7 | 0 | 27 | 5 | 0 | 5 | hours, daily, weekly |
 | **BUD** | Consumer Defensive | +16.8% | 9 | 2 | 0 | 11 | 4 | 0 | 4 | hours, daily, weekly, monthly |
 | **BP** | Energy | +13.5% | 8 | 6 | 3 | 17 | 3 | 0 | 4 | daily, weekly |
 | **CRH** | Basic Materials | +38.6% | 19 | 2 | 0 | 21 | 2 | 0 | 2 | weekly, monthly |
@@ -121,13 +121,13 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **BAC** | Baird, Barclays, Citigroup, Evercore ISI Group, JP Morgan, Morgan Stanley, Oppenheimer, RBC Capital, Truist Securities, UBS, Wells Fargo | — | Keefe, Bruyette & Woods |
 | **APP** | BTIG, Citigroup, JP Morgan, Macquarie, Needham, Piper Sandler, Raymond James, UBS, Wedbush, Wells Fargo | — | — |
 | **C** | Evercore ISI Group, JP Morgan, Morgan Stanley, Oppenheimer, RBC Capital, Truist Securities, UBS, Wells Fargo | — | B of A Securities, Keefe, Bruyette & Woods |
+| **ABT** | Baird, Barclays, BTIG, Citigroup, Evercore ISI Group, JP Morgan, Piper Sandler, RBC Capital, TD Cowen, Wells Fargo | — | — |
 | **DIS** | Barclays, Citigroup, Guggenheim, JP Morgan, Needham, Raymond James, Rosenblatt, Wells Fargo | Benchmark | — |
 | **DHR** | Baird, Citigroup, Evercore ISI Group, Guggenheim, HSBC, Morgan Stanley, Piper Sandler, UBS, Wells Fargo | — | — |
 | **APH** | Barclays, Citigroup, Evercore ISI Group, JP Morgan, TD Cowen, Truist Securities, UBS | — | B of A Securities |
+| **BLK** | Barclays, BMO Capital, Evercore ISI Group, JP Morgan, Morgan Stanley, UBS | — | B of A Securities, Keefe, Bruyette & Woods |
 | **BILL** | Baird, Goldman Sachs, JP Morgan, Morgan Stanley, Oppenheimer, TD Cowen, Truist Securities | — | Keefe, Bruyette & Woods |
-| **BLK** | Barclays, Evercore ISI Group, JP Morgan, Morgan Stanley, UBS | — | B of A Securities, Keefe, Bruyette & Woods |
 | **ADP** | Cantor Fitzgerald, Citigroup, Stifel, TD Cowen, UBS, Wells Fargo | Argus Research | — |
-| **ABT** | Baird, Barclays, BTIG, Evercore ISI Group, Piper Sandler | — | — |
 | **BUD** | JP Morgan, Morgan Stanley, TD Cowen, Wells Fargo | — | — |
 | **BP** | RBC Capital, Scotiabank, TD Cowen | Argus Research | — |
 | **CRH** | Jefferies, Wells Fargo | — | — |
@@ -162,6 +162,7 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 | Date | Hours | Daily | Weekly | Monthly |
 |---|---|---|---|---|
+| 2026-07-18 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-17 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-16 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-15 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
@@ -176,7 +177,6 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 | 2026-07-06 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-05 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 | 2026-07-04 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
-| 2026-07-03 | **DELL**, **CHWY**, **BAC** | **DELL**, **BP**, **ELV** | **DELL**, **CHWY**, **BP** | **CHWY**, **BSX**, **DASH** |
 
 
 ## Israeli & European picks by timeframe

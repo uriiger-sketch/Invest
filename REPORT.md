@@ -8,11 +8,11 @@
 | 4 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.464 | 0.189 | 0.189 | 94.2% | +34.4% |
 | 5 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.461 | 0.188 | 0.188 | 92.3% | +26.4% |
 | 6 | ★★★ | **DHR** | Danaher Corporation | Healthcare | 0.458 | 0.187 | 0.187 | 90.4% | +18.9% |
-| 7 | ★★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.422 | 0.174 | 0.174 | 88.5% | — |
+| 7 | ★★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.422 | 0.174 | 0.174 | 88.5% | +15.3% |
 | 8 | ★★ | **ABBV** | AbbVie Inc. | Healthcare | 0.402 | 0.167 | 0.167 | 86.5% | +3.2% |
 | 9 | ★★★ | **ABT** | Abbott Laboratories | Healthcare | 0.396 | 0.164 | 0.164 | 84.6% | +15.6% |
 | 10 | ★★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 0.378 | 0.158 | 0.158 | 82.7% | +41.8% |
-| 11 | ★★★ | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | 0.336 | 0.143 | 0.143 | 80.8% | — |
+| 11 | ★★★ | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | 0.336 | 0.143 | 0.143 | 80.8% | +26.3% |
 | 12 |  | **APH** | Amphenol Corporation | Technology | 0.334 | 0.142 | 0.142 | 78.8% | +24.1% |
 | 13 |  | **APP** | AppLovin Corporation | Communication Servic | 0.330 | 0.140 | 0.140 | 76.9% | +67.0% |
 
@@ -32,7 +32,7 @@
 | 9 |  | **C** | Citigroup Inc. | Financial Services | 0.359 | 0.114 | 0.114 | 86.5% | +17.5% |
 | 10 |  | **EQIX** | Equinix, Inc. | Real Estate | 0.347 | 0.109 | 0.109 | 84.6% | +18.0% |
 | 11 |  | **ADP** | Automatic Data Processing, Inc. | Technology | 0.345 | 0.109 | 0.109 | 82.7% | +3.0% |
-| 12 | ★★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.331 | 0.103 | 0.103 | 80.8% | — |
+| 12 | ★★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.331 | 0.103 | 0.103 | 80.8% | +15.3% |
 | 13 | ★★★ | **DHR** | Danaher Corporation | Healthcare | 0.287 | 0.086 | 0.086 | 78.8% | +18.9% |
 
 
@@ -44,12 +44,12 @@
 | 2 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 2.518 | 0.717 | 0.717 | 98.1% | +48.8% |
 | 3 | ★★ | **BP** | BP p.l.c. | Energy | 1.414 | 0.440 | 0.440 | 96.2% | +7.9% |
 | 4 | ★★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.272 | 0.404 | 0.404 | 94.2% | +41.8% |
-| 5 | ★★ | **CRH** | CRH plc | Basic Materials | 0.964 | 0.327 | 0.327 | 92.3% | — |
+| 5 | ★★ | **CRH** | CRH plc | Basic Materials | 0.964 | 0.327 | 0.327 | 92.3% | +42.8% |
 | 6 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 0.922 | 0.316 | 0.316 | 90.4% | +34.4% |
-| 7 | ★★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.822 | 0.291 | 0.291 | 88.5% | — |
+| 7 | ★★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 0.822 | 0.291 | 0.291 | 88.5% | +15.3% |
 | 8 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.813 | 0.289 | 0.289 | 86.5% | +26.4% |
 | 9 | ★★★★ | **BAC** | Bank of America Corporation | Financial Services | 0.712 | 0.264 | 0.264 | 84.6% | +10.0% |
-| 10 | ★★★ | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | 0.701 | 0.261 | 0.261 | 82.7% | — |
+| 10 | ★★★ | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | 0.701 | 0.261 | 0.261 | 82.7% | +26.3% |
 | 11 | ★★★ | **ABT** | Abbott Laboratories | Healthcare | 0.697 | 0.260 | 0.260 | 80.8% | +15.6% |
 | 12 | ★★ | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.666 | 0.252 | 0.252 | 78.8% | +34.9% |
 | 13 | ★★ | **BILL** | BILL Holdings, Inc. | Technology | 0.627 | 0.242 | 0.242 | 76.9% | +24.8% |
@@ -62,15 +62,15 @@
 | 1 | ★★★ | **CHWY** | Chewy, Inc. | Consumer Cyclical | 3.126 | 1.157 | 1.157 | 100.0% | +48.8% |
 | 2 |  | **BSX** | Boston Scientific Corporation | Healthcare | 2.002 | 0.806 | 0.806 | 98.1% | +63.7% |
 | 3 | ★★★ | **DASH** | DoorDash, Inc. | Consumer Cyclical | 1.496 | 0.648 | 0.648 | 96.2% | +41.8% |
-| 4 | ★★ | **CRH** | CRH plc | Basic Materials | 1.265 | 0.576 | 0.576 | 94.2% | — |
-| 5 | ★★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.045 | 0.508 | 0.508 | 92.3% | — |
+| 4 | ★★ | **CRH** | CRH plc | Basic Materials | 1.265 | 0.576 | 0.576 | 94.2% | +42.8% |
+| 5 | ★★★★ | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | 1.045 | 0.508 | 0.508 | 92.3% | +15.3% |
 | 6 | ★★★★ | **DIS** | The Walt Disney Company | Communication Servic | 1.010 | 0.497 | 0.497 | 90.4% | +34.4% |
 | 7 | ★★ | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | 0.984 | 0.488 | 0.488 | 88.5% | +34.9% |
 | 8 | ★★★★ | **AZN** | AstraZeneca PLC | Healthcare | 0.897 | 0.461 | 0.461 | 86.5% | +26.4% |
 | 9 | ★★ | **BILL** | BILL Holdings, Inc. | Technology | 0.815 | 0.436 | 0.436 | 84.6% | +24.8% |
 | 10 | ★★★★ | **BAC** | Bank of America Corporation | Financial Services | 0.782 | 0.426 | 0.426 | 82.7% | +10.0% |
 | 11 |  | **BLK** | BlackRock, Inc. | Financial Services | 0.780 | 0.425 | 0.425 | 80.8% | +24.4% |
-| 12 | ★★★ | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | 0.744 | 0.414 | 0.414 | 78.8% | — |
+| 12 | ★★★ | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | 0.744 | 0.414 | 0.414 | 78.8% | +26.3% |
 | 13 | ★★★ | **DHR** | Danaher Corporation | Healthcare | 0.727 | 0.408 | 0.408 | 76.9% | +18.9% |
 
 
@@ -83,7 +83,7 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **AMZN** | Consumer Cyclical | +34.9% | 63 | 3 | 0 | 66 | 22 | 0 | 25 | weekly, monthly |
 | **DELL** | Technology | +14.5% | 19 | 8 | 0 | 27 | 15 | 0 | 18 | hours, daily, weekly |
 | **BSX** | Healthcare | +63.7% | 26 | 4 | 0 | 30 | 13 | 0 | 16 | monthly |
-| **BKNG** | Consumer Cyclical | — | 31 | 7 | 0 | 38 | 14 | 0 | 16 | hours, weekly, monthly |
+| **BKNG** | Consumer Cyclical | +26.3% | 31 | 7 | 0 | 38 | 14 | 0 | 16 | hours, weekly, monthly |
 | **CHWY** | Consumer Cyclical | +48.8% | 20 | 5 | 0 | 25 | 13 | 0 | 13 | hours, weekly, monthly |
 | **DASH** | Consumer Cyclical | +41.8% | 35 | 9 | 0 | 44 | 13 | 0 | 13 | hours, weekly, monthly |
 | **ABBV** | Healthcare | +3.2% | 24 | 6 | 1 | 31 | 11 | 0 | 13 | hours, daily |
@@ -99,9 +99,9 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **BLK** | Financial Services | +24.4% | 15 | 2 | 0 | 17 | 6 | 0 | 8 | monthly |
 | **APH** | Technology | +24.1% | 15 | 3 | 0 | 18 | 7 | 0 | 8 | hours |
 | **ADP** | Technology | +3.0% | 5 | 11 | 2 | 18 | 7 | 0 | 8 | daily |
+| **BUD** | Consumer Defensive | +15.3% | 9 | 2 | 0 | 11 | 4 | 0 | 4 | hours, daily, weekly, monthly |
 | **BP** | Energy | +7.9% | 9 | 7 | 3 | 19 | 3 | 0 | 4 | daily, weekly |
-| **BUD** | Consumer Defensive | — | 9 | 2 | 0 | 11 | 4 | 0 | 4 | hours, daily, weekly, monthly |
-| **CRH** | Basic Materials | — | 19 | 2 | 0 | 21 | 2 | 0 | 2 | weekly, monthly |
+| **CRH** | Basic Materials | +42.8% | 19 | 2 | 0 | 21 | 2 | 0 | 2 | weekly, monthly |
 | **AZN** | Healthcare | +26.4% | 8 | 2 | 0 | 10 | 0 | 0 | 0 | hours, daily, weekly, monthly |
 
 
@@ -128,8 +128,8 @@ _One row per unique ticker that appears in any top list. Same stock-level facts 
 | **BLK** | Barclays, BMO Capital, Evercore ISI Group, JP Morgan, Morgan Stanley, UBS | — | B of A Securities, Keefe, Bruyette & Woods |
 | **APH** | Barclays, Citigroup, Evercore ISI Group, JP Morgan, TD Cowen, Truist Securities, UBS | — | B of A Securities |
 | **ADP** | Cantor Fitzgerald, Citigroup, Guggenheim, Stifel, TD Cowen, UBS, Wells Fargo | Argus Research | — |
-| **BP** | Mizuho, RBC Capital, TD Cowen | Argus Research | — |
 | **BUD** | JP Morgan, Morgan Stanley, TD Cowen, Wells Fargo | — | — |
+| **BP** | Mizuho, RBC Capital, TD Cowen | Argus Research | — |
 | **CRH** | Jefferies, Wells Fargo | — | — |
 | **AZN** | — | — | — |
 
@@ -183,10 +183,10 @@ _Tickers that have been on a top list for ≥60 % of runs in the window and carr
 
 _Best non-US names that cleared every quality gate and made a horizon's top list — shown only where relevant._
 
-**Next few hours:** **AZN** (🇪🇺 Europe, +26.4%), **BUD** (🇪🇺 Europe, —)
+**Next few hours:** **AZN** (🇪🇺 Europe, +26.4%), **BUD** (🇪🇺 Europe, +15.3%)
 
-**Daily (~5 trading days):** **BP** (🇪🇺 Europe, +7.9%), **AZN** (🇪🇺 Europe, +26.4%), **BUD** (🇪🇺 Europe, —)
+**Daily (~5 trading days):** **BP** (🇪🇺 Europe, +7.9%), **AZN** (🇪🇺 Europe, +26.4%), **BUD** (🇪🇺 Europe, +15.3%)
 
-**Weekly (~1 month):** **BP** (🇪🇺 Europe, +7.9%), **CRH** (🇪🇺 Europe, —), **BUD** (🇪🇺 Europe, —), **AZN** (🇪🇺 Europe, +26.4%)
+**Weekly (~1 month):** **BP** (🇪🇺 Europe, +7.9%), **CRH** (🇪🇺 Europe, +42.8%), **BUD** (🇪🇺 Europe, +15.3%), **AZN** (🇪🇺 Europe, +26.4%)
 
-**Month and above (~90 days):** **CRH** (🇪🇺 Europe, —), **BUD** (🇪🇺 Europe, —), **AZN** (🇪🇺 Europe, +26.4%)
+**Month and above (~90 days):** **CRH** (🇪🇺 Europe, +42.8%), **BUD** (🇪🇺 Europe, +15.3%), **AZN** (🇪🇺 Europe, +26.4%)

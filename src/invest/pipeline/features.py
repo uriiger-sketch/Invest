@@ -223,8 +223,18 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
         k = _gs().consensus_shrinkage_k
         n = total.fillna(0)
         cons["consensus_z"] = raw_consensus * (n / (n + k))
+        # Preserve the feed's own analyst count BEFORE overwriting it below.
+        # Yahoo reports `numberOfAnalysts` alongside the price target, which
+        # can be non-zero for names that have targets but no published
+        # buy/hold/sell breakdown — real coverage the bucket sum can't see.
+        cons["target_analysts"] = (
+            pd.to_numeric(cons["num_analysts"], errors="coerce").fillna(0).astype(int)
+        )
         # num_analysts = sum of every rating bucket. By construction this
         # equals Buy + Hold + Sell in the report, so the columns tie out.
+        # Do NOT widen this to include target_analysts: the report's column
+        # math depends on the identity, and a user already reported the
+        # mismatch once.
         cons["num_analysts"] = total.fillna(0).astype(int)
         cons = cons.merge(price_df[["ticker", "last_close"]], on="ticker", how="left")
         cons["upside_z"] = cons["mean_target"] / cons["last_close"] - 1
@@ -307,15 +317,13 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
 
     inst = _inst_flow(tickers)
 
-    # total_sources_count = distinct named contributors per ticker:
-    #   sell-side firms in last 90 d  ∪
-    #   tracked 13F filers (latest stored quarter)  ∪
-    #   insider filers in last 90 d
-    # This is the headline coverage number the report shows and the
-    # outlook gate enforces (≥ settings.min_total_sources). The firm bucket
-    # is keyed by canonical_firm_key (not the raw string) so the same real
-    # analyst desk reported under different spellings by different feeds
-    # counts once, not once-per-spelling.
+    # Coverage buckets feeding `total_sources_count` (assembled after the
+    # merge below, because the sell-side bucket also needs `num_analysts`):
+    #   named_firm_sources — sell-side desks that published a rating ACTION
+    #                        in the last 90 d, deduped by canonical_firm_key
+    #                        so one desk spelled two ways counts once
+    #   inst_sources       — distinct 13F filers holding the name
+    #   insider_sources    — distinct insider filers in the last 90 d
     cutoff_90 = date.today() - timedelta(days=90)
     with session_scope() as s:
         firm_pairs = s.execute(
@@ -338,18 +346,32 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
                 InsiderTrade.filer.isnot(None),
             )
         ).all()
-    sources_set: dict[str, set[tuple[str, str]]] = {}
+    named_firms: dict[str, set[str]] = {}
+    inst_filers: dict[str, set[str]] = {}
+    insider_filers: dict[str, set[str]] = {}
     for t, firm, firm_key in firm_pairs:
         key = firm_key or canonical_firm_key(firm)
         if key:
-            sources_set.setdefault(t, set()).add(("firm", key))
+            named_firms.setdefault(t, set()).add(key)
     for t, cik in filer_pairs:
-        sources_set.setdefault(t, set()).add(("13f", cik))
+        inst_filers.setdefault(t, set()).add(cik)
     for t, ifiler in insider_pairs:
-        sources_set.setdefault(t, set()).add(("insider", ifiler.lower().strip()))
-    total_sources = pd.DataFrame(
-        [{"ticker": t, "total_sources_count": len(s_)} for t, s_ in sources_set.items()]
-    ) if sources_set else pd.DataFrame(columns=["ticker", "total_sources_count"])
+        insider_filers.setdefault(t, set()).add(ifiler.lower().strip())
+
+    _bucket_tickers = set(named_firms) | set(inst_filers) | set(insider_filers)
+    source_buckets = pd.DataFrame(
+        [
+            {
+                "ticker": t,
+                "named_firm_sources": len(named_firms.get(t, ())),
+                "inst_sources": len(inst_filers.get(t, ())),
+                "insider_sources": len(insider_filers.get(t, ())),
+            }
+            for t in _bucket_tickers
+        ]
+    ) if _bucket_tickers else pd.DataFrame(
+        columns=["ticker", "named_firm_sources", "inst_sources", "insider_sources"]
+    )
 
     # Merge all.
     #
@@ -364,7 +386,7 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
     out = pd.DataFrame({"ticker": tickers})
     for d in (
         price_df, cons, rating_mom_7d, rating_mom_30d,
-        insider, inst, firm_count_90d, total_sources,
+        insider, inst, firm_count_90d, source_buckets,
     ):
         if d is not None and not d.empty:
             out = out.merge(d, on="ticker", how="left")
@@ -379,11 +401,37 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
     if "firm_count_90d" not in out.columns:
         out["firm_count_90d"] = 0
     out["firm_count_90d"] = pd.to_numeric(out["firm_count_90d"], errors="coerce").fillna(0)
-    if "total_sources_count" not in out.columns:
-        out["total_sources_count"] = 0
-    out["total_sources_count"] = pd.to_numeric(
-        out["total_sources_count"], errors="coerce"
-    ).fillna(0).astype(int)
+    for _bucket in ("named_firm_sources", "inst_sources", "insider_sources"):
+        if _bucket not in out.columns:
+            out[_bucket] = 0
+        out[_bucket] = pd.to_numeric(out[_bucket], errors="coerce").fillna(0).astype(int)
+
+    # total_sources_count = distinct contributors backing the name.
+    #
+    # The sell-side bucket is max(num_analysts, named_firm_sources), NOT their
+    # sum: `num_analysts` is the count of desks currently *covering* the stock
+    # (the buy/hold/sell census), while `named_firm_sources` counts desks that
+    # published a rating *change* in the last 90 d — a strict subset of the
+    # coverage universe, just the only ones we learn the name of. Summing them
+    # would double-count every firm that both covers the name and moved on it.
+    #
+    # This previously counted ONLY the named 90-day changers, which is why a
+    # freshly-restored database reported 0 sources for all 301 tickers and the
+    # coverage gate rejected the entire universe: no rating-change history had
+    # been crawled yet, even though consensus showed 30-50 covering analysts.
+    # A stock followed by 45 analysts is well covered whether or not any of
+    # them happened to change their rating this quarter.
+    for _c in ("num_analysts", "target_analysts"):
+        if _c not in out.columns:
+            out[_c] = 0
+        out[_c] = pd.to_numeric(out[_c], errors="coerce").fillna(0).astype(int)
+    out["sell_side_sources"] = np.maximum(
+        np.maximum(out["num_analysts"], out["target_analysts"]),
+        out["named_firm_sources"],
+    ).astype(int)
+    out["total_sources_count"] = (
+        out["sell_side_sources"] + out["inst_sources"] + out["insider_sources"]
+    ).astype(int)
 
     # Fill missing feature columns with 0 so the scoring stage doesn't drop rows.
     for col in FEATURE_NAMES:

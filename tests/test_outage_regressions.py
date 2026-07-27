@@ -159,6 +159,127 @@ def test_successful_rank_persists_scores():
     assert persisted > 0, "rank_all must persist Score rows for today"
 
 
+def test_coverage_counts_covering_analysts_not_just_named_changers():
+    """A ticker with consensus but NO rating-change history is still covered.
+
+    This is the cold-database failure: `total_sources_count` counted only
+    firms appearing in the 90-day upgrade/downgrade feed, so a database
+    restored from empty reported 0 sources for all 301 tickers even though
+    consensus showed 30-50 analysts covering them. The coverage gate then
+    rejected the entire universe and `rank` produced nothing.
+
+    A stock followed by 25 analysts is well covered whether or not any of
+    them happened to change their rating this quarter.
+    """
+    from invest.pipeline.features import build_features
+
+    price = 100.0
+    with session_scope() as s:
+        s.add(Stock(ticker="COLD", name="Cold Start Inc", sector="Technology",
+                    in_universe=True))
+        for i in range(120):
+            s.add(Price(ticker="COLD", date=date.today() - timedelta(days=120 - i),
+                        close=price, adj_close=price, volume=5_000_000))
+        s.add(Consensus(ticker="COLD", as_of_date=date.today(), source="yfinance",
+                        strong_buy=15, buy=6, hold=4, sell=0, strong_sell=0,
+                        mean_target=price * 1.2, high_target=price * 1.5,
+                        low_target=price, num_analysts=25))
+    # Deliberately NO AnalystAction rows — this is a freshly-seeded database.
+
+    df = build_features(["COLD"]).set_index("ticker")
+    assert df.loc["COLD", "named_firm_sources"] == 0
+    assert df.loc["COLD", "total_sources_count"] == 25, (
+        "25 covering analysts must count as 25 sources even with no rating "
+        "changes on file"
+    )
+    assert df.loc["COLD", "total_sources_count"] >= get_settings().min_total_sources
+
+
+def test_sell_side_sources_are_not_double_counted():
+    """Named rating-changers are a SUBSET of covering analysts, so the
+    sell-side bucket takes their max — never their sum. Summing would inflate
+    a 25-analyst name to 40 sources and let thin coverage look deep."""
+    from invest.pipeline.features import build_features
+
+    _seed("DEDUP", analysts=25)  # 25 covering analysts + min_total_sources+4 named firms
+    df = build_features(["DEDUP"]).set_index("ticker")
+    named = int(df.loc["DEDUP", "named_firm_sources"])
+    assert named > 0, "fixture should have seeded named firms"
+    assert df.loc["DEDUP", "sell_side_sources"] == max(25, named)
+    assert df.loc["DEDUP", "total_sources_count"] == max(25, named), (
+        "no 13F/insider rows seeded, so total must equal the sell-side bucket"
+    )
+
+
+def _load_report_module():
+    """Import scripts/generate_report.py, which is a script, not a package."""
+    import importlib.util
+    from pathlib import Path
+
+    path = Path(__file__).resolve().parent.parent / "scripts" / "generate_report.py"
+    spec = importlib.util.spec_from_file_location("generate_report", path)
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def test_report_source_count_matches_the_gate():
+    """The Sources column must be computed the same way as the gate.
+
+    They diverged once: the report counted only named rating-changers while
+    ranking used a different definition, so picks that had supposedly cleared
+    a 12-source floor were displayed with `Sources = 0`. Any reader comparing
+    the two sees a contradiction, and there is no way to tell which number is
+    lying without reading the code.
+    """
+    from invest.pipeline.features import build_features
+
+    _seed("MATCH", analysts=25)
+    # A ticker with consensus only — no named firms at all.
+    price = 100.0
+    with session_scope() as s:
+        s.add(Stock(ticker="BARE", name="Bare Inc", sector="Technology", in_universe=True))
+        for i in range(120):
+            s.add(Price(ticker="BARE", date=date.today() - timedelta(days=120 - i),
+                        close=price, adj_close=price, volume=5_000_000))
+        s.add(Consensus(ticker="BARE", as_of_date=date.today(), source="yfinance",
+                        strong_buy=12, buy=5, hold=3, sell=0, strong_sell=0,
+                        mean_target=price * 1.2, high_target=price * 1.4,
+                        low_target=price, num_analysts=20))
+
+    tickers = ["MATCH", "BARE"]
+    feats = build_features(tickers).set_index("ticker")
+    report_counts = _load_report_module()._total_sources_per_ticker(tickers)
+    for t in tickers:
+        assert report_counts[t] == int(feats.loc[t, "total_sources_count"]), (
+            f"{t}: report shows {report_counts[t]} sources but the gate used "
+            f"{int(feats.loc[t, 'total_sources_count'])}"
+        )
+    assert report_counts["BARE"] == 20, "consensus-only coverage must still count"
+
+
+def test_coverage_sweep_is_not_capped_below_the_universe():
+    """The hourly sweep must be able to reach every ticker.
+
+    A fixed 60-ticker cap left a restored-from-empty database with analyst
+    coverage for only 20 % of a 301-name universe — far too thin for anything
+    to clear the coverage gate. The wall-clock budget is the safety valve now,
+    not an arbitrary count.
+    """
+    from invest.pipeline.ingest import stalest_tickers
+
+    settings = get_settings()
+    assert settings.coverage_sweep_max == 0, "0 means no cap — sweep the whole universe"
+    assert settings.coverage_budget_seconds > 0, "an unbounded sweep can blow the job timeout"
+
+    universe = [f"U{i:03d}" for i in range(301)]
+    with session_scope() as s:
+        for t in universe:
+            s.add(Stock(ticker=t, name=t, sector="Technology", in_universe=True))
+    picked = stalest_tickers(universe, settings.coverage_sweep_max or len(universe))
+    assert len(picked) == len(universe)
+
+
 def test_last_close_survives_feature_merge():
     """`price_df` and `cons` both carry last_close; an unsuffixed merge used to
     yield last_close_x/_y and leave last_close as NaN for EVERY ticker,

@@ -45,15 +45,20 @@ class Settings(BaseSettings):
     min_consensus_z: float = 0.0     # require strictly net-bullish consensus
     min_upside: float = 0.04         # require ≥ 4 % upside to consensus target
     min_firms: int = 5               # require at least 5 covering firms IF the ticker has any consensus
-    # Distinct named contributors required: sell-side firms ∪ 13F filers ∪ insider filers.
+    # Distinct contributors required, as computed in features.build_features:
+    #   max(covering analysts, named rating-changers in 90 d) + 13F filers + insider filers
     #
-    # CALIBRATION NOTE: this was 50, which NO ticker could ever satisfy (the
-    # best-covered name in the whole universe reaches ~28, because the 13F and
-    # insider buckets were contributing zero). The gate therefore rejected
-    # 100 % of the universe, composite_scores returned empty, and no Score row
-    # was written for five weeks while the workflow stayed green. Keep this at
-    # a level real data can clear; `invest rank` now fails loudly if a gate
-    # ever wipes out the entire universe again.
+    # CALIBRATION NOTE — two separate miscalibrations have killed this gate:
+    #   1. The threshold was 50 while the metric could not exceed ~28.
+    #   2. The metric itself counted only *named* firms from the 90-day
+    #      upgrade/downgrade feed, so a database restored from empty scored
+    #      every ticker at 0 regardless of how many analysts actually covered
+    #      it. Both rejected 100 % of the universe, which meant no Score rows
+    #      were persisted at all.
+    # 12 covering desks is a real bar that well-followed US names clear
+    # comfortably while still admitting the better-covered Israeli and
+    # European listings. Raising it above ~20 will start excluding those.
+    # `invest rank` now fails loudly if any gate wipes out the whole universe.
     min_total_sources: int = 12
     consensus_max_age_days: int = 14 # ignore Consensus rows older than this
 
@@ -77,11 +82,18 @@ class Settings(BaseSettings):
     blend_ml_weight: float = 0.4
     top_n: int = 13
 
-    # Rolling consensus refresh: how many of the STALEST tickers each fast
-    # (hourly) run re-fetches analyst consensus + price targets for. Sized so
-    # a run stays well inside its timeout; over a day the whole universe
-    # cycles, so upside keeps moving hourly instead of once per 24 h.
-    consensus_refresh_batch: int = 60
+    # Hourly coverage sweep: consensus + price targets + named rating actions,
+    # walked stalest-first over the whole universe.
+    #
+    # `coverage_sweep_max` = 0 means "no cap — every ticker every run", which is
+    # what we want: an earlier fixed 60-ticker cap left a restored-from-empty
+    # database with analyst coverage for only 20 % of the universe, so nothing
+    # could clear the coverage gate and the run produced no rankings at all.
+    # `coverage_budget_seconds` is the real safety valve: the sweep stops when
+    # it runs out of time, and because it is ordered stalest-first the leftover
+    # names are simply first in line next run.
+    coverage_sweep_max: int = 0
+    coverage_budget_seconds: float = 900.0
 
     # Report staleness: if the newest persisted Score is older than this many
     # days, the report shows a loud warning instead of presenting old

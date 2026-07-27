@@ -1,15 +1,15 @@
 name: crawl
 
-# Runs the pipeline every 20 min (plus on-demand and on push). Each run:
+# Runs the pipeline hourly (plus on-demand and on push). Each run:
 #   1. commits the refreshed REPORT.md + docs/index.html back to the branch
-#   2. publishes docs/ to GitHub Pages so the top-20 is viewable in a browser
+#   2. publishes docs/ to GitHub Pages so the top picks are viewable in a browser
 #
 # Notes on reliability:
 # - GitHub's scheduled workflows are best-effort. 5–15 min jitter is normal,
-#   and ticks CAN be skipped under load. Running at */20 means we get ~3
-#   runs/hour in practice; the report banner exposes the real last-ran time.
+#   and ticks CAN be skipped under load, so treat the hourly cron as "about
+#   once an hour"; the report banner exposes the real last-ran time.
 # - Fast and deep runs use separate concurrency groups so the daily deep
-#   ingest cannot starve the 20-min fast heartbeat.
+#   ingest cannot starve the hourly fast heartbeat.
 # - Auto-commit messages end with "[skip ci]" so the workflow does not
 #   re-trigger itself.
 

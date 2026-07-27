@@ -197,16 +197,19 @@ def stalest_tickers(tickers: list[str], limit: int) -> list[str]:
 
 
 def ingest_fast(tickers: list[str] | None = None) -> int:
-    """Fast path for the hourly loop: prices for everything + a rolling
-    consensus refresh for the stalest slice of the universe.
+    """Fast path for the hourly loop: prices + a full coverage sweep.
 
-    Upside = target / last_close - 1. Refreshing prices hourly already moves
-    the denominator every hour; refreshing a rotating slice of targets keeps
-    the numerator fresh too, so predictions genuinely change hourly instead
-    of being frozen between once-a-day deep crawls.
+    Upside = target / last_close − 1, so refreshing prices moves the
+    denominator every hour and refreshing consensus moves the numerator.
+    Both have to happen for predictions to genuinely change hourly.
 
-    The slice size (`settings.consensus_refresh_batch`) bounds the per-run
-    cost: consensus is a per-ticker call, so it is the expensive part.
+    The sweep walks the WHOLE universe (stalest first) gathering consensus,
+    price targets and named rating actions in a single pass per symbol, under
+    a wall-clock budget. Earlier versions capped this at a fixed 60-ticker
+    slice, which meant a restored-from-empty database had analyst coverage for
+    only 20 % of the universe — not enough for anything to clear the coverage
+    gate. Stalest-first ordering means a budget-truncated sweep still cycles
+    the full universe across consecutive runs.
     """
     tickers = tickers or current_universe()
     from ..config import get_settings
@@ -223,17 +226,23 @@ def ingest_fast(tickers: list[str] | None = None) -> int:
     except Exception:  # noqa: BLE001
         logger.exception("stooq backfill failed")
 
-    # Rolling consensus/price-target refresh over the stalest slice.
-    batch = stalest_tickers(tickers, settings.consensus_refresh_batch)
+    batch = stalest_tickers(tickers, settings.coverage_sweep_max or len(tickers))
     if batch:
         logger.info(
-            "rolling consensus refresh: %d of %d tickers (stalest first)",
-            len(batch), len(tickers),
+            "coverage sweep: %d of %d tickers (stalest first, %.0fs budget)",
+            len(batch), len(tickers), settings.coverage_budget_seconds,
         )
         try:
-            with log_run("yfinance.consensus_rolling") as c:
-                c["rows"] = src.ingest_consensus(batch)
-                total += c["rows"]
+            with log_run("yfinance.coverage_sweep") as c:
+                rows, processed = src.ingest_coverage(
+                    batch, budget_seconds=settings.coverage_budget_seconds
+                )
+                c["rows"] = rows
+                total += rows
+                logger.info(
+                    "coverage sweep wrote %d rows across %d/%d tickers",
+                    rows, processed, len(batch),
+                )
         except Exception:  # noqa: BLE001
-            logger.exception("rolling consensus refresh failed")
+            logger.exception("coverage sweep failed")
     return total

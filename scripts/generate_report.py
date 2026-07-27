@@ -388,19 +388,29 @@ def _tier1_count_per_ticker(tickers: list[str], lookback_days: int = 90) -> dict
 
 
 def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
-    """Distinct named contributors per ticker: sell-side firms (last 90 d) ∪
-    tracked 13F filers (latest quarter) ∪ insider filers (last 90 d).
+    """Distinct contributors per ticker, matching `features.build_features`.
 
-    Read directly from the same tables `features.py` uses so the snapshot
-    column and the `min_total_sources` gate stay in sync. The firm bucket
-    is keyed by canonical identity so spelling variants of the same real
-    firm collapse to one source."""
+        max(covering analysts, named rating-changers in 90 d)
+        + tracked 13F filers + insider filers in 90 d
+
+    The sell-side bucket takes the MAX, not the sum: the firms that published
+    a rating change are a subset of the firms covering the stock — we just
+    only learn the names of the former. Summing would double-count them.
+
+    This must stay identical to the feature computation, otherwise the column
+    the reader sees disagrees with the gate that selected the row. It did
+    disagree once: the report showed `Sources = 0` next to picks that had
+    supposedly cleared a 12-source floor, because this counted only named
+    rating-changers while the ranking ran on a different definition.
+    """
     if not tickers:
         return {}
     from invest.models import Holding13F, InsiderTrade
 
     cutoff = date.today() - timedelta(days=90)
-    out: dict[str, set[tuple[str, str]]] = {}
+    named: dict[str, set[str]] = {}
+    insts: dict[str, set[str]] = {}
+    insiders: dict[str, set[str]] = {}
     with session_scope() as s:
         for t, firm, firm_key in s.execute(
             select(AnalystAction.ticker, AnalystAction.firm, AnalystAction.firm_key).where(
@@ -411,14 +421,14 @@ def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
         ).all():
             key = _firm_identity(firm, firm_key)
             if key:
-                out.setdefault(t, set()).add(("firm", key))
+                named.setdefault(t, set()).add(key)
         for t, cik in s.execute(
             select(Holding13F.ticker, Holding13F.filer_cik).where(
                 Holding13F.ticker.in_(tickers),
                 Holding13F.filer_cik.isnot(None),
             )
         ).all():
-            out.setdefault(t, set()).add(("13f", cik))
+            insts.setdefault(t, set()).add(cik)
         for t, ifiler in s.execute(
             select(InsiderTrade.ticker, InsiderTrade.filer).where(
                 InsiderTrade.ticker.in_(tickers),
@@ -426,8 +436,46 @@ def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
                 InsiderTrade.filer.isnot(None),
             )
         ).all():
-            out.setdefault(t, set()).add(("insider", ifiler.lower().strip()))
-    return {t: len(s_) for t, s_ in out.items()}
+            insiders.setdefault(t, set()).add(ifiler.lower().strip())
+
+    covering = _covering_analysts_per_ticker(tickers)
+    return {
+        t: max(covering.get(t, 0), len(named.get(t, ())))
+        + len(insts.get(t, ()))
+        + len(insiders.get(t, ()))
+        for t in tickers
+    }
+
+
+def _covering_analysts_per_ticker(tickers: list[str]) -> dict[str, int]:
+    """Covering-analyst count from the freshest consensus snapshot per ticker.
+
+    Uses the larger of the rating-bucket sum and the feed's own
+    `num_analysts`, since a name can carry price targets without a published
+    buy/hold/sell breakdown.
+    """
+    if not tickers:
+        return {}
+    cutoff = date.today() - timedelta(days=get_settings().consensus_max_age_days)
+    best: dict[str, tuple[date, int]] = {}
+    with session_scope() as s:
+        rows = s.execute(
+            select(Consensus).where(
+                Consensus.ticker.in_(tickers),
+                Consensus.as_of_date >= cutoff,
+            )
+        ).scalars().all()
+    for r in rows:
+        buckets = sum(
+            v or 0 for v in (r.strong_buy, r.buy, r.hold, r.sell, r.strong_sell)
+        )
+        n = max(buckets, r.num_analysts or 0)
+        prev = best.get(r.ticker)
+        if prev is None or r.as_of_date > prev[0]:
+            best[r.ticker] = (r.as_of_date, n)
+        elif r.as_of_date == prev[0]:
+            best[r.ticker] = (prev[0], max(prev[1], n))
+    return {t: n for t, (_, n) in best.items()}
 
 
 

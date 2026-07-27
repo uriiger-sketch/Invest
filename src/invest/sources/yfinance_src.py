@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+import time
 from datetime import date, datetime, timedelta
 from typing import Any
 
@@ -138,10 +139,10 @@ class YFinanceSource(BaseSource):
     # -------------------- consensus + targets ---------------------
 
     @with_retries
-    def _recs_summary(self, ticker: str) -> pd.DataFrame | None:
+    def _recs_summary(self, ticker: str, tk: Any = None) -> pd.DataFrame | None:
         self.throttle()
         try:
-            tk = yf.Ticker(ticker)
+            tk = tk or yf.Ticker(ticker)
             # Newer yfinance: .recommendations_summary; older: fall back to .recommendations
             df = getattr(tk, "recommendations_summary", None)
             if df is None or (hasattr(df, "empty") and df.empty):
@@ -151,10 +152,10 @@ class YFinanceSource(BaseSource):
         return df
 
     @with_retries
-    def _price_targets(self, ticker: str) -> dict[str, Any]:
+    def _price_targets(self, ticker: str, tk: Any = None) -> dict[str, Any]:
         self.throttle()
         try:
-            tk = yf.Ticker(ticker)
+            tk = tk or yf.Ticker(ticker)
             tgt = getattr(tk, "analyst_price_targets", None)
             return tgt or {}
         except Exception as e:  # noqa: BLE001
@@ -165,67 +166,29 @@ class YFinanceSource(BaseSource):
         written = 0
         with session_scope() as s:
             for t in tickers:
+                # One Ticker object per symbol: yfinance caches the quoteSummary
+                # response on the instance, so the recs + targets pair costs one
+                # network round-trip instead of two.
+                tk = yf.Ticker(t)
                 try:
-                    summary = self._recs_summary(t)
-                    tgt = self._price_targets(t)
+                    summary = self._recs_summary(t, tk)
+                    tgt = self._price_targets(t, tk)
                 except TransientSourceError:
                     continue
-                row = _recs_summary_to_counts(summary)
-                if row is None and not tgt:
+                values = _consensus_values(t, today, summary, tgt)
+                if values is None:
                     continue
-                strong_buy = row.get("strongBuy") if row else None
-                buy = row.get("buy") if row else None
-                hold = row.get("hold") if row else None
-                sell = row.get("sell") if row else None
-                strong_sell = row.get("strongSell") if row else None
-                num = None
-                if row:
-                    num = sum(v for v in (strong_buy, buy, hold, sell, strong_sell) if v) or None
-                mean_t = _coerce_float(tgt.get("mean") if isinstance(tgt, dict) else None)
-                high_t = _coerce_float(tgt.get("high") if isinstance(tgt, dict) else None)
-                low_t = _coerce_float(tgt.get("low") if isinstance(tgt, dict) else None)
-                num_t = tgt.get("numberOfAnalysts") if isinstance(tgt, dict) else None
-                if num is None and isinstance(num_t, (int, float)):
-                    num = int(num_t)
-                stmt = sqlite_insert(Consensus).values(
-                    ticker=t,
-                    as_of_date=today,
-                    source="yfinance",
-                    strong_buy=strong_buy,
-                    buy=buy,
-                    hold=hold,
-                    sell=sell,
-                    strong_sell=strong_sell,
-                    mean_target=mean_t,
-                    high_target=high_t,
-                    low_target=low_t,
-                    num_analysts=num,
-                )
-                stmt = stmt.on_conflict_do_update(
-                    index_elements=["ticker", "as_of_date", "source"],
-                    set_={
-                        "strong_buy": stmt.excluded.strong_buy,
-                        "buy": stmt.excluded.buy,
-                        "hold": stmt.excluded.hold,
-                        "sell": stmt.excluded.sell,
-                        "strong_sell": stmt.excluded.strong_sell,
-                        "mean_target": stmt.excluded.mean_target,
-                        "high_target": stmt.excluded.high_target,
-                        "low_target": stmt.excluded.low_target,
-                        "num_analysts": stmt.excluded.num_analysts,
-                    },
-                )
-                s.execute(stmt)
+                s.execute(_consensus_upsert(values))
                 written += 1
         return written
 
     # ------------------- upgrades / downgrades --------------------
 
     @with_retries
-    def _upgrades(self, ticker: str) -> pd.DataFrame | None:
+    def _upgrades(self, ticker: str, tk: Any = None) -> pd.DataFrame | None:
         self.throttle()
         try:
-            tk = yf.Ticker(ticker)
+            tk = tk or yf.Ticker(ticker)
             df = getattr(tk, "upgrades_downgrades", None)
             if df is None or (hasattr(df, "empty") and df.empty):
                 df = getattr(tk, "recommendations", None)
@@ -248,6 +211,63 @@ class YFinanceSource(BaseSource):
         # the same historical action updates the existing row instead of
         # creating a duplicate "source".
         return upsert_analyst_actions(all_rows)
+
+    # ------------------------ combined coverage -------------------------
+
+    def ingest_coverage(
+        self,
+        tickers: list[str],
+        budget_seconds: float = 0.0,
+        lookback_days: int = 90,
+    ) -> tuple[int, int]:
+        """Crawl consensus + price targets + named rating actions in one pass.
+
+        This is the hourly workhorse. Doing all three per symbol against a
+        single ``yf.Ticker`` reuses yfinance's per-instance response cache, so
+        a full sweep costs roughly what consensus alone used to.
+
+        ``budget_seconds`` (0 = unlimited) caps wall-clock time. Callers pass
+        the stalest tickers first, so a truncated sweep still makes forward
+        progress and the universe cycles across runs instead of a slow run
+        blowing the job timeout.
+
+        Returns ``(rows_written, tickers_processed)``.
+        """
+        today = date.today()
+        cutoff = today - timedelta(days=lookback_days)
+        started = time.monotonic()
+        written = 0
+        processed = 0
+        action_rows: list[dict] = []
+        for t in tickers:
+            if budget_seconds and (time.monotonic() - started) > budget_seconds:
+                logger.info(
+                    "coverage sweep hit its %.0fs budget after %d/%d tickers; "
+                    "the remainder are the stalest next run",
+                    budget_seconds, processed, len(tickers),
+                )
+                break
+            tk = yf.Ticker(t)
+            try:
+                summary = self._recs_summary(t, tk)
+                tgt = self._price_targets(t, tk)
+            except TransientSourceError:
+                summary, tgt = None, {}
+            consensus_row = _consensus_values(t, today, summary, tgt)
+            if consensus_row is not None:
+                with session_scope() as s:
+                    s.execute(_consensus_upsert(consensus_row))
+                written += 1
+            try:
+                df = self._upgrades(t, tk)
+            except TransientSourceError:
+                df = None
+            if df is not None and not getattr(df, "empty", True):
+                action_rows.extend(_actions_frame_to_rows(df, t, cutoff))
+            processed += 1
+        if action_rows:
+            written += upsert_analyst_actions(action_rows)
+        return written, processed
 
     # --------------------------- run -----------------------------
 
@@ -323,6 +343,65 @@ def _prices_frame_to_rows(df: pd.DataFrame, batch: list[str]) -> list[dict]:
                 }
             )
     return rows
+
+
+def _consensus_values(
+    ticker: str, as_of: date, summary: pd.DataFrame | None, tgt: Any
+) -> dict[str, Any] | None:
+    """Build a Consensus row from a recommendations summary + price targets.
+
+    Returns None when the feed gave us neither, so callers can skip the write.
+    """
+    row = _recs_summary_to_counts(summary)
+    if row is None and not tgt:
+        return None
+    strong_buy = row.get("strongBuy") if row else None
+    buy = row.get("buy") if row else None
+    hold = row.get("hold") if row else None
+    sell = row.get("sell") if row else None
+    strong_sell = row.get("strongSell") if row else None
+    num = None
+    if row:
+        num = sum(v for v in (strong_buy, buy, hold, sell, strong_sell) if v) or None
+    mean_t = _coerce_float(tgt.get("mean") if isinstance(tgt, dict) else None)
+    high_t = _coerce_float(tgt.get("high") if isinstance(tgt, dict) else None)
+    low_t = _coerce_float(tgt.get("low") if isinstance(tgt, dict) else None)
+    num_t = tgt.get("numberOfAnalysts") if isinstance(tgt, dict) else None
+    if num is None and isinstance(num_t, (int, float)):
+        num = int(num_t)
+    return {
+        "ticker": ticker,
+        "as_of_date": as_of,
+        "source": "yfinance",
+        "strong_buy": strong_buy,
+        "buy": buy,
+        "hold": hold,
+        "sell": sell,
+        "strong_sell": strong_sell,
+        "mean_target": mean_t,
+        "high_target": high_t,
+        "low_target": low_t,
+        "num_analysts": num,
+    }
+
+
+def _consensus_upsert(values: dict[str, Any]):
+    """Idempotent write keyed on (ticker, as_of_date, source)."""
+    stmt = sqlite_insert(Consensus).values(**values)
+    return stmt.on_conflict_do_update(
+        index_elements=["ticker", "as_of_date", "source"],
+        set_={
+            "strong_buy": stmt.excluded.strong_buy,
+            "buy": stmt.excluded.buy,
+            "hold": stmt.excluded.hold,
+            "sell": stmt.excluded.sell,
+            "strong_sell": stmt.excluded.strong_sell,
+            "mean_target": stmt.excluded.mean_target,
+            "high_target": stmt.excluded.high_target,
+            "low_target": stmt.excluded.low_target,
+            "num_analysts": stmt.excluded.num_analysts,
+        },
+    )
 
 
 def _recs_summary_to_counts(df: pd.DataFrame | None) -> dict[str, int] | None:

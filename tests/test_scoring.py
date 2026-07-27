@@ -3,15 +3,20 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 
-from invest.config import FEATURE_NAMES, HORIZONS
+from invest.config import FEATURE_NAMES, HORIZONS, get_settings
 from invest.pipeline.score import composite_scores, liquidity_mask, outlook_mask
 
 
 def _mk_features(n: int = 10, bullish_outlook: bool = True) -> pd.DataFrame:
-    """Build a feature frame.
+    """Build a feature frame that exercises EVERY gate.
 
-    When ``bullish_outlook=True`` (default) every ticker has positive
-    consensus + ≥ 4 % upside and 12 analysts, so all pass the quality gate.
+    Historically this helper omitted ``total_sources_count``, so the
+    coverage gate hit its ``if col in features.columns`` branch as False and
+    was silently skipped by almost the whole suite. That blind spot is
+    exactly why a mis-calibrated threshold could reject 100 % of the real
+    universe for five weeks with 37/37 tests green. Every gate input is now
+    populated by default, so a threshold that rejects everything WILL fail
+    the suite.
     """
     rng = np.random.default_rng(42)
     tickers = [f"T{i:02d}" for i in range(n)]
@@ -20,6 +25,11 @@ def _mk_features(n: int = 10, bullish_outlook: bool = True) -> pd.DataFrame:
         df[col] = rng.normal(size=n)
     df["last_close"] = 100.0
     df["num_analysts"] = 12
+    # Realistic coverage: comfortably above the configured floor, but nowhere
+    # near the fantasy numbers a fixture could invent.
+    df["total_sources_count"] = get_settings().min_total_sources + 6
+    df["last_price_age_days"] = 1
+    df["price_history_days"] = 120
     if bullish_outlook:
         df["consensus_z"] = 0.5
         df["upside_z"] = 0.10
@@ -68,13 +78,31 @@ def test_min_firms_excludes_thinly_covered():
 
 
 def test_min_total_sources_gate():
-    """The headline coverage floor: ≥ 50 distinct named contributors per
-    top stock. A name with 49 is excluded; 50 and 100 survive."""
+    """The coverage floor excludes names just below it and admits those at
+    or above it. Boundaries are derived from the configured threshold rather
+    than hardcoded, so re-tuning the threshold can't leave a stale test
+    asserting the old value."""
+    floor = get_settings().min_total_sources
     df = _mk_features(3, bullish_outlook=True)
     df["num_analysts"] = 20
-    df["total_sources_count"] = [49, 50, 100]
+    df["total_sources_count"] = [floor - 1, floor, floor + 50]
     mask = outlook_mask(df).reset_index(drop=True)
     assert list(mask) == [False, True, True]
+
+
+def test_min_total_sources_is_actually_achievable():
+    """Regression guard for the five-week outage.
+
+    `min_total_sources` was set to 50 when the best-covered ticker in the
+    real universe reached only ~28, so the gate rejected everything and the
+    pipeline silently stopped persisting scores. A coverage floor that real
+    data cannot clear is always a bug — keep it inside a plausible range.
+    """
+    floor = get_settings().min_total_sources
+    assert 0 < floor <= 30, (
+        f"min_total_sources={floor} is outside the range real coverage data can "
+        "satisfy; observed production maximum was ~28 distinct sources"
+    )
 
 
 def test_buy_hold_sell_equals_num_analysts_invariant():

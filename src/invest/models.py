@@ -29,6 +29,12 @@ class Stock(Base):
     industry: Mapped[str | None] = mapped_column(String(128))
     market_cap: Mapped[float | None] = mapped_column(Float)
     beta: Mapped[float | None] = mapped_column(Float)
+    # CUSIP is the authoritative security identifier used by SEC 13F filings.
+    # Matching holdings on CUSIP instead of company name is what makes the
+    # institutional-holder counts actually populate: 13F legal names
+    # ("AMAZON COM INC") rarely equal the vendor names we store
+    # ("Amazon.com, Inc."), so name matching dropped nearly every holding.
+    cusip: Mapped[str | None] = mapped_column(String(12), index=True)
     in_universe: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     updated_at: Mapped[datetime | None] = mapped_column(DateTime)
 

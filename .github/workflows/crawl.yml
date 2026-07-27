@@ -16,7 +16,7 @@ name: crawl
 on:
   schedule:
     # Fast refresh every 2 hours (prices + stooq backfill).
-    - cron: "0 */2 * * *"
+    - cron: "0 * * * *"
     # Deep refresh once a day at 23:30 UTC (fundamentals + EDGAR 13F + Form 4).
     - cron: "30 23 * * *"
   workflow_dispatch:
@@ -24,7 +24,7 @@ on:
       universe_max:
         description: "Universe cap for this run (0 = no cap)"
         required: false
-        default: "80"
+        default: "0"
       deep:
         description: "Full ingest (fundamentals + Finnhub + EDGAR, slower)"
         type: boolean
@@ -57,10 +57,10 @@ jobs:
           && 'deep' || 'fast'
         }}
       cancel-in-progress: true
-    timeout-minutes: 20
+    timeout-minutes: 50
     env:
       INVEST_DB_URL: sqlite:///data/invest.db
-      UNIVERSE_MAX: ${{ inputs.universe_max || '80' }}
+      UNIVERSE_MAX: ${{ inputs.universe_max || '0' }}
       FINNHUB_API_KEY: ${{ secrets.FINNHUB_API_KEY }}
       SEC_USER_AGENT: ${{ secrets.SEC_USER_AGENT || 'Invest Research Client <you@example.com>' }}
       RUN_SCHEDULER: "false"
@@ -84,33 +84,31 @@ jobs:
           pip install --only-binary=:all: multitasking || true
           pip install -e ".[dev]"
 
-      - name: Restore SQLite cache
-        uses: actions/cache@v4
-        with:
-          path: data/invest.db
-          key: invest-db-${{ runner.os }}-${{ github.run_id }}
-          restore-keys: |
-            invest-db-${{ runner.os }}-
-
+      # NOTE: state is the COMMITTED data/invest.db, not actions/cache.
+      # actions/cache was silently losing the database: its key embedded
+      # github.run_id so it never hit exactly, restore-keys served an
+      # arbitrarily old fallback, and GitHub evicts caches after 7 days.
+      # On eviction the DB came back EMPTY, which is how the pipeline ended
+      # up ranking stocks with no analyst data at all.
       - name: Migrate
         run: |
           mkdir -p data docs
           alembic upgrade head
 
-      - name: Ingest (fast)
+      - name: Ingest (fast — prices + rolling consensus refresh)
         if: ${{ env.DEEP_RUN == 'false' }}
-        timeout-minutes: 8
+        timeout-minutes: 25
         run: python -m invest.cli ingest-fast
-        continue-on-error: true
 
       - name: Ingest (deep — fundamentals + Finnhub + EDGAR 13F + Form 4)
         if: ${{ env.DEEP_RUN == 'true' }}
-        timeout-minutes: 15
+        timeout-minutes: 35
         run: python -m invest.cli ingest
-        continue-on-error: true
 
+      # No continue-on-error: if ranking produces nothing the run MUST fail
+      # so the previous good report stays published and we get told about it.
       - name: Rank
-        timeout-minutes: 3
+        timeout-minutes: 10
         run: python -m invest.cli rank
 
       - name: Generate report
@@ -122,7 +120,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           # Always rebase to account for other runs that may have committed.
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
-          git add REPORT.md docs/index.html docs/history.jsonl
+          # data/invest.db is committed so state survives between runs.
+          git add REPORT.md docs/index.html docs/history.jsonl data/invest.db
           if git diff --cached --quiet; then
             echo "no report changes"
           else

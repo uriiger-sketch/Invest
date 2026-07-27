@@ -45,8 +45,16 @@ class Settings(BaseSettings):
     min_consensus_z: float = 0.0     # require strictly net-bullish consensus
     min_upside: float = 0.04         # require ≥ 4 % upside to consensus target
     min_firms: int = 5               # require at least 5 covering firms IF the ticker has any consensus
-    # distinct named contributors required: sell-side firms ∪ 13F filers ∪ insider filers
-    min_total_sources: int = 50
+    # Distinct named contributors required: sell-side firms ∪ 13F filers ∪ insider filers.
+    #
+    # CALIBRATION NOTE: this was 50, which NO ticker could ever satisfy (the
+    # best-covered name in the whole universe reaches ~28, because the 13F and
+    # insider buckets were contributing zero). The gate therefore rejected
+    # 100 % of the universe, composite_scores returned empty, and no Score row
+    # was written for five weeks while the workflow stayed green. Keep this at
+    # a level real data can clear; `invest rank` now fails loudly if a gate
+    # ever wipes out the entire universe again.
+    min_total_sources: int = 12
     consensus_max_age_days: int = 14 # ignore Consensus rows older than this
 
     # Data-quality gates — reliability hardening. A ticker is excluded when its
@@ -68,6 +76,17 @@ class Settings(BaseSettings):
     blend_composite_weight: float = 0.6
     blend_ml_weight: float = 0.4
     top_n: int = 13
+
+    # Rolling consensus refresh: how many of the STALEST tickers each fast
+    # (hourly) run re-fetches analyst consensus + price targets for. Sized so
+    # a run stays well inside its timeout; over a day the whole universe
+    # cycles, so upside keeps moving hourly instead of once per 24 h.
+    consensus_refresh_batch: int = 60
+
+    # Report staleness: if the newest persisted Score is older than this many
+    # days, the report shows a loud warning instead of presenting old
+    # rankings as if they were current.
+    max_score_age_days: int = 2
 
     # Sustained-picks + history (used by the report generator).
     history_path: str = "docs/history.jsonl"

@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-from collections import defaultdict
 from datetime import date, datetime, timedelta
 from pathlib import Path
 
@@ -328,92 +327,12 @@ def _recent_runs_safe(limit: int = 20) -> list[dict]:
 # ------------------------------- Markdown --------------------------------
 
 
-def _md_table(rows: list[dict]) -> str:
-    """Horizon table: horizon-specific score columns + Upside (the single
-    most relevant stock-level fact). Buy/Hold/Sell/Analysts/Insts stay in
-    the Stock coverage snapshot section to avoid four-way duplication."""
-    if not rows:
-        return "_(no data)_\n"
-    headers = [
-        "#", "★", "Ticker", "Name", "Sector",
-        "Blended", "Composite", "ML", "Pctile", "Upside",
-    ]
-    lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
-    for r in rows:
-        pct = f"{(r['percentile'] or 0) * 100:.1f}%"
-        upside = (
-            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
-            if r.get("upside_pct") is not None
-            else "—"
-        )
-        hc = r.get("horizon_count") or 1
-        stars = "★" * hc if hc >= 2 else ""
-        lines.append(
-            "| "
-            + " | ".join(
-                [
-                    str(r["rank"]),
-                    stars,
-                    f"**{r['ticker']}**",
-                    (r["name"] or "")[:40],
-                    (r["sector"] or "")[:20],
-                    f"{r['blended']:.3f}",
-                    f"{r['composite']:.3f}",
-                    f"{r['ml']:.3f}",
-                    pct,
-                    upside,
-                ]
-            )
-            + " |"
-        )
-    return "\n".join(lines) + "\n"
 
 
-def _runs_md_table(rows: list[dict]) -> str:
-    if not rows:
-        return "_(no runs logged)_\n"
-    lines = [
-        "| Job | Status | Rows | Started | Error |",
-        "|---|---|---:|---|---|",
-    ]
-    for r in rows:
-        started = r["started"].strftime("%Y-%m-%d %H:%M:%SZ") if r["started"] else ""
-        err = (r["error"] or "").replace("|", "\\|")
-        lines.append(
-            f"| {r['job']} | {r['status']} | {r['rows']} | {started} | {err} |"
-        )
-    return "\n".join(lines) + "\n"
 
 
-def _columns_md() -> str:
-    lines = ["| Column | What it means |", "|---|---|"]
-    for name, doc in COLUMN_DOCS:
-        lines.append(f"| **{name}** | {doc} |")
-    return "\n".join(lines) + "\n"
 
 
-def _heartbeat_md() -> str:
-    """Plain-text version of the freshness badge for Markdown output."""
-    try:
-        with session_scope() as s:
-            row = (
-                s.query(RunLog.finished_at)
-                .filter(RunLog.status == "ok", RunLog.finished_at.isnot(None))
-                .order_by(RunLog.finished_at.desc())
-                .first()
-            )
-    except Exception:
-        row = None
-    if not row or not row[0]:
-        return "⚪ no crawl run recorded"
-    finished = row[0]
-    mins = int((datetime.utcnow() - finished).total_seconds() / 60)
-    icon = "🟢" if mins < 30 else "🟡" if mins < 120 else "🔴"
-    label = f"{mins} min ago" if mins < 120 else f"{mins / 60:.1f} h ago"
-    iso = finished.isoformat(timespec="seconds") + "Z"
-    # The "N min ago" is the value AT GENERATION TIME — Markdown can't run
-    # JS, so we always show the absolute UTC alongside.
-    return f"{icon} last successful crawl: {iso} ({label} when this report was generated)"
 
 
 def _collect_top_by_horizon(as_of: date, n: int) -> dict[str, list[dict]]:
@@ -511,40 +430,8 @@ def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
     return {t: len(s_) for t, s_ in out.items()}
 
 
-def _recognised_firms_count() -> int:
-    """Total distinct firm aliases we recognise in the tier map. Used in the
-    report header to prove the system isn't just rebadging one feed."""
-    from invest.firms import TIER_1, TIER_2, TIER_3
-
-    return len(TIER_1) + len(TIER_2) + len(TIER_3)
 
 
-def _firms_seen_in_window(lookback_days: int = 90) -> dict[int, list[str]]:
-    """Distinct named firms seen across ALL tickers in the window, grouped
-    by tier. Proves how many real firms actually contributed signal.
-
-    Deduped by canonical identity: if two rows are really the same firm
-    under different spellings, only ONE representative name is shown
-    (the alphabetically-first raw spelling, for determinism)."""
-    from invest.firms import firm_tier
-
-    cutoff = date.today() - timedelta(days=lookback_days)
-    by_key: dict[str, str] = {}  # canonical key -> representative display name
-    with session_scope() as s:
-        for firm, firm_key in s.execute(
-            select(AnalystAction.firm, AnalystAction.firm_key)
-            .where(AnalystAction.date >= cutoff, AnalystAction.firm.isnot(None))
-            .distinct()
-        ).all():
-            key = _firm_identity(firm, firm_key)
-            if not key:
-                continue
-            if key not in by_key or firm.lower() < by_key[key].lower():
-                by_key[key] = firm
-    by_tier: dict[int, list[str]] = {1: [], 2: [], 3: [], 0: []}
-    for firm in sorted(by_key.values(), key=str.lower):
-        by_tier[firm_tier(firm)].append(firm)
-    return by_tier
 
 
 def _named_firms_for_tickers(tickers: list[str], lookback_days: int = 90) -> dict[str, list[tuple[str, int]]]:
@@ -579,120 +466,10 @@ def _named_firms_for_tickers(tickers: list[str], lookback_days: int = 90) -> dic
     }
 
 
-def _coverage_snapshot_rows(by_h: dict[str, list[dict]]) -> list[dict]:
-    """One row per unique ticker that appears in any horizon's top list."""
-    seen: dict[str, dict] = {}
-    for h in HORIZONS:
-        for r in by_h.get(h, []):
-            t = r["ticker"]
-            if t not in seen:
-                seen[t] = {
-                    "ticker": t,
-                    "name": r.get("name") or "",
-                    "sector": r.get("sector") or "",
-                    "upside_pct": r.get("upside_pct"),
-                    "buy": r.get("buy") or 0,
-                    "hold": r.get("hold") or 0,
-                    "sell": r.get("sell") or 0,
-                    "analysts": r.get("analysts") or 0,
-                    "inst_count": r.get("inst_count") or 0,
-                    "horizons": r.get("horizons") or [],
-                }
-    tier1 = _tier1_count_per_ticker(list(seen.keys()))
-    total_sources = _total_sources_per_ticker(list(seen.keys()))
-    named_firms = _named_firms_for_tickers(list(seen.keys()))
-    for t, row in seen.items():
-        row["tier1_firms"] = tier1.get(t, 0)
-        row["total_sources"] = total_sources.get(t, 0)
-        row["named_firms"] = named_firms.get(t, [])
-    rows = list(seen.values())
-    rows.sort(key=lambda r: (-(r.get("total_sources") or 0), -(r.get("upside_pct") or 0)))
-    return rows
 
 
-def _coverage_snapshot_md(rows: list[dict]) -> str:
-    if not rows:
-        return "_(no tickers passed the quality gate this run)_\n"
-    headers = [
-        "Ticker", "Sector", "Upside", "Buy", "Hold", "Sell",
-        "Analysts", "Tier-1 firms", "Insts", "Sources", "Horizons",
-    ]
-    lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
-    for r in rows:
-        upside = (
-            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
-            if r.get("upside_pct") is not None
-            else "—"
-        )
-        lines.append(
-            "| "
-            + " | ".join(
-                [
-                    f"**{r['ticker']}**",
-                    (r["sector"] or "")[:24],
-                    upside,
-                    str(r["buy"]),
-                    str(r["hold"]),
-                    str(r["sell"]),
-                    str(r["analysts"]),
-                    str(r["tier1_firms"]),
-                    str(r["inst_count"]),
-                    str(r.get("total_sources") or 0),
-                    ", ".join(r["horizons"]) or "—",
-                ]
-            )
-            + " |"
-        )
-    return "\n".join(lines) + "\n"
 
 
-def _coverage_snapshot_html(rows: list[dict]) -> str:
-    if not rows:
-        return "<p><em>(no tickers passed the quality gate this run)</em></p>"
-    head = (
-        "<thead><tr>"
-        "<th>Ticker</th><th>Sector</th>"
-        "<th title='Consensus mean target / last close − 1.'>Upside</th>"
-        "<th>Buy</th><th>Hold</th><th>Sell</th>"
-        "<th title='Total firms covering. Equals Buy + Hold + Sell.'>Analysts</th>"
-        "<th title='Distinct tier-1 firms (Goldman, MS, JPM, BofA, …) with an action in the last 90 d.'>Tier-1</th>"
-        "<th title='Tracked 13F filers holding the stock.'>Insts</th>"
-        "<th title='Distinct named contributors: sell-side firms (90 d) "
-        "+ tracked 13F filers (latest quarter) + insider filers (90 d). "
-        "Floor = 50.'>Sources</th>"
-        "<th>Horizons</th>"
-        "</tr></thead>"
-    )
-    body_rows = []
-    for r in rows:
-        upside = (
-            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
-            if r.get("upside_pct") is not None
-            else "—"
-        )
-        sector = r["sector"] or ""
-        sector_html = (
-            f"<span class='sector' style='background:{_sector_colour(sector)}'>"
-            f"{_html_escape(sector[:24])}</span>"
-            if sector
-            else ""
-        )
-        body_rows.append(
-            "<tr>"
-            f"<td><strong>{_html_escape(r['ticker'])}</strong></td>"
-            f"<td>{sector_html}</td>"
-            f"<td class='num'>{upside}</td>"
-            f"<td class='num ok'>{r['buy']}</td>"
-            f"<td class='num'>{r['hold']}</td>"
-            f"<td class='num err'>{r['sell']}</td>"
-            f"<td class='num'>{r['analysts']}</td>"
-            f"<td class='num'>{r['tier1_firms']}</td>"
-            f"<td class='num'>{r['inst_count']}</td>"
-            f"<td class='num'><strong>{r.get('total_sources') or 0}</strong></td>"
-            f"<td>{', '.join(r['horizons']) or '—'}</td>"
-            "</tr>"
-        )
-    return f"<table class='snapshot'>{head}<tbody>{''.join(body_rows)}</tbody></table>"
 
 
 # ------------------------- history persistence -------------------------
@@ -751,151 +528,16 @@ def _load_history(days: int) -> list[dict]:
     return out
 
 
-def _sustained_picks(history: list[dict]) -> list[dict]:
-    """Top 3 names that appeared on ≥60 % of runs in the last `sustained_days`
-    AND carried ≥2 stars (horizon_count ≥ 2) on at least half of those
-    appearances. Ranked by mean blended_score."""
-    settings = get_settings()
-    if not history:
-        return []
-    # Distinct run timestamps in the window.
-    run_ts = sorted({r["_ts"] for r in history})
-    if len(run_ts) < 2:
-        return []
-    n_runs = len(run_ts)
-
-    # Aggregate per ticker (collapse across horizons — best blended_score per run).
-    per_ticker: dict[str, list[dict]] = defaultdict(list)
-    for r in history:
-        per_ticker[r["ticker"]].append(r)
-
-    candidates: list[dict] = []
-    for ticker, rows in per_ticker.items():
-        present_runs = {r["_ts"] for r in rows}
-        appearances = len(present_runs)
-        if appearances / n_runs < settings.sustained_min_runs_pct:
-            continue
-        starred_runs = sum(1 for r in rows if int(r.get("hc") or 1) >= settings.sustained_min_stars)
-        if starred_runs / max(1, len(rows)) < 0.5:
-            continue
-        mean_score = sum(float(r.get("score") or 0) for r in rows) / len(rows)
-        max_stars = max(int(r.get("hc") or 1) for r in rows)
-        # The horizons on which it actually appeared.
-        horizons = sorted({r["h"] for r in rows})
-        candidates.append(
-            {
-                "ticker": ticker,
-                "mean_score": mean_score,
-                "appearances": appearances,
-                "n_runs": n_runs,
-                "max_stars": max_stars,
-                "horizons": horizons,
-            }
-        )
-    candidates.sort(key=lambda c: c["mean_score"], reverse=True)
-    return candidates[:3]
 
 
-def _history_top3_by_date(history: list[dict]) -> dict[str, dict[str, list[dict]]]:
-    """Group last-N days' history into {date_iso: {horizon: [{rank, ticker, score}]}},
-    keeping only the most recent run per date / horizon and only ranks 1-3."""
-    by_date: dict[str, dict[str, dict[int, dict]]] = defaultdict(lambda: defaultdict(dict))
-    # Iterate newest-first; first hit wins (most recent run of the day).
-    for r in sorted(history, key=lambda x: x["_ts"], reverse=True):
-        if r["rank"] > 3:
-            continue
-        d = r["_ts"].date().isoformat()
-        slot = by_date[d][r["h"]]
-        if r["rank"] not in slot:
-            slot[r["rank"]] = r
-    # Flatten back to lists.
-    out: dict[str, dict[str, list[dict]]] = {}
-    for d, by_h in by_date.items():
-        out[d] = {
-            h: [v for _, v in sorted(rows.items())]  # rank 1, 2, 3
-            for h, rows in by_h.items()
-        }
-    return dict(sorted(out.items(), reverse=True))
 
 
-def _sustained_md(picks: list[dict]) -> str:
-    if not picks:
-        return "_(no sustained picks yet — needs at least a week of history)_\n"
-    settings = get_settings()
-    lines = [
-        f"| Ticker | Avg blended score | Appearances | Max stars | Horizons | Of {settings.sustained_days} d |",
-        "|---|---:|---:|---:|---|---:|",
-    ]
-    for p in picks:
-        hz = ", ".join(p["horizons"])
-        lines.append(
-            f"| **{p['ticker']}** | {p['mean_score']:.3f} | "
-            f"{p['appearances']} | {'★' * p['max_stars']} | {hz} | {p['n_runs']} runs |"
-        )
-    return "\n".join(lines) + "\n"
 
 
-def _named_firms_md(snapshot_rows: list[dict]) -> str:
-    """A per-ticker list of every named firm with a rating action in the
-    last 90 d. Lets you scan UBS / B.Riley / Scotiabank / etc. directly."""
-    if not snapshot_rows:
-        return "_(no tickers passed the gate)_\n"
-    lines = ["| Ticker | Tier-1 firms | Tier-2 firms | Other firms |", "|---|---|---|---|"]
-    for r in snapshot_rows:
-        firms = r.get("named_firms") or []
-        t1 = [f for f, tier in firms if tier == 1]
-        t2 = [f for f, tier in firms if tier == 2]
-        other = [f for f, tier in firms if tier not in (1, 2)]
-        lines.append(
-            f"| **{r['ticker']}** "
-            f"| {', '.join(t1) or '—'} "
-            f"| {', '.join(t2) or '—'} "
-            f"| {', '.join(other) or '—'} |"
-        )
-    return "\n".join(lines) + "\n"
 
 
-def _all_firms_seen_md(by_tier: dict[int, list[str]]) -> str:
-    """Flat list of every distinct firm we've seen in the last 90 d, grouped
-    by tier. Stops the 'only Yahoo' misconception cold — these are the
-    actual sell-side firms whose calls drive the score."""
-    t1, t2, t3, unknown = by_tier.get(1, []), by_tier.get(2, []), by_tier.get(3, []), by_tier.get(0, [])
-    total = len(t1) + len(t2) + len(t3) + len(unknown)
-    if not total:
-        return "_(no analyst actions in the last 90 days yet — first deep crawl will populate this)_\n"
-    parts: list[str] = [f"_Total: **{total}** distinct firms with a rating action in the last 90 d._", ""]
-    if t1:
-        parts.append(f"**Tier-1 ({len(t1)}):** " + ", ".join(t1))
-        parts.append("")
-    if t2:
-        parts.append(f"**Tier-2 ({len(t2)}):** " + ", ".join(t2))
-        parts.append("")
-    if t3:
-        parts.append(f"**Tier-3 ({len(t3)}):** " + ", ".join(t3))
-        parts.append("")
-    if unknown:
-        parts.append(f"_Unclassified ({len(unknown)}):_ " + ", ".join(unknown))
-    return "\n".join(parts) + "\n"
 
 
-def _history_md(by_date: dict[str, dict[str, list[dict]]]) -> str:
-    if not by_date:
-        return "_(no historical reports stored yet)_\n"
-    horizon_short = {"hours": "Hours", "daily": "Daily", "weekly": "Weekly", "monthly": "Monthly"}
-    lines = [
-        "| Date | " + " | ".join(horizon_short.get(h, h) for h in HORIZONS) + " |",
-        "|---|" + "|".join(["---"] * len(HORIZONS)) + "|",
-    ]
-    for d, by_h in by_date.items():
-        cells = []
-        for h in HORIZONS:
-            picks = by_h.get(h, [])
-            if not picks:
-                cells.append("—")
-            else:
-                cells.append(", ".join(f"**{p['ticker']}**" for p in picks))
-        lines.append(f"| {d} | " + " | ".join(cells) + " |")
-    return "\n".join(lines) + "\n"
 
 
 # -------------------------- international picks --------------------------
@@ -913,166 +555,148 @@ def _ticker_region_map() -> dict[str, str]:
     return {t: region for t, _name, _sector, region in static_universe_entries() if region in ("IL", "EU")}
 
 
-def _international_picks(by_h: dict[str, list[dict]]) -> dict[str, list[dict]]:
-    """Best Israeli/European names per horizon, already-ranked and quality-
-    gated (they only appear here if they cleared every screen and made that
-    horizon's top list). Sorted by blended score, best first."""
-    region_map = _ticker_region_map()
-    out: dict[str, list[dict]] = {}
+
+
+
+
+
+
+# --------------------------- main table ---------------------------
+
+
+_HORIZON_LETTER = {"hours": "H", "daily": "D", "weekly": "W", "monthly": "M"}
+
+
+def main_table_rows(by_h: dict[str, list[dict]]) -> list[dict]:
+    """Collapse the four per-horizon lists into ONE ranked table.
+
+    A ticker's strength is how many horizons rank it and how well: we sum
+    its per-horizon percentile so a name that only tops the 'hours' list
+    can't outrank one that every horizon likes. Ties break on upside.
+    Returns rows sorted best-first.
+    """
+    agg: dict[str, dict] = {}
     for h in HORIZONS:
-        picks = [
-            {**r, "region": region_map[r["ticker"]]}
-            for r in by_h.get(h, [])
-            if r["ticker"] in region_map
-        ]
-        picks.sort(key=lambda r: r["blended"], reverse=True)
-        out[h] = picks
-    return out
+        for r in by_h.get(h, []):
+            t = r["ticker"]
+            row = agg.setdefault(
+                t,
+                {
+                    "ticker": t,
+                    "name": r.get("name") or "",
+                    "sector": r.get("sector") or "",
+                    "upside_pct": r.get("upside_pct"),
+                    "last_close": r.get("last_close"),
+                    "mean_target": r.get("mean_target"),
+                    "analysts": r.get("analysts") or 0,
+                    "horizons": [],
+                    "score": 0.0,
+                    "best_rank": 99,
+                },
+            )
+            row["horizons"].append(h)
+            row["score"] += float(r.get("percentile") or 0.0)
+            row["best_rank"] = min(row["best_rank"], int(r.get("rank") or 99))
+
+    rows = list(agg.values())
+    tickers = [r["ticker"] for r in rows]
+    sources = _total_sources_per_ticker(tickers)
+    for r in rows:
+        r["sources"] = sources.get(r["ticker"], 0)
+    rows.sort(
+        key=lambda r: (-(r["score"]), -(r.get("upside_pct") or 0.0), r["best_rank"])
+    )
+    for i, r in enumerate(rows, start=1):
+        r["rank"] = i
+    return rows
 
 
-def _international_picks_md(by_h_intl: dict[str, list[dict]]) -> str:
-    lines: list[str] = []
-    any_picks = any(by_h_intl.values())
-    if not any_picks:
-        return (
-            "_No Israeli or European name cleared the quality bar (≥ 4 % "
-            "upside, ≥ 50 sources, strictly bullish consensus) in any "
-            "horizon this run — only US names qualified._\n"
+def _timeframe_marks(horizons: list[str]) -> str:
+    """Compact H/D/W/M markers — replaces four near-duplicate tables."""
+    present = {h for h in horizons}
+    return "".join(
+        _HORIZON_LETTER[h] if h in present else "·" for h in HORIZONS
+    )
+
+
+def _main_table_md(rows: list[dict]) -> str:
+    if not rows:
+        return "_(no picks cleared the quality gates this run)_\n"
+    headers = [
+        "#", "Ticker", "Name", "Sector", "Upside",
+        "Price", "Target", "Score", "H/D/W/M", "Analysts", "Sources",
+    ]
+    lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
+    for r in rows:
+        upside = (
+            f"**{(r.get('upside_pct') or 0) * 100:+.1f}%**"
+            if r.get("upside_pct") is not None
+            else "—"
         )
-    for h in HORIZONS:
-        picks = by_h_intl.get(h, [])
-        title = HORIZON_TITLE.get(h, h)
-        if not picks:
-            lines.append(f"**{title}:** _none cleared the bar this run._")
-            lines.append("")
-            continue
-        cells = []
-        for r in picks:
-            region_flag = _REGION_LABEL.get(r["region"], r["region"])
-            upside = (
-                f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
-                if r.get("upside_pct") is not None
-                else "—"
+        price = f"{r['last_close']:.2f}" if r.get("last_close") else "—"
+        target = f"{r['mean_target']:.2f}" if r.get("mean_target") else "—"
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    str(r["rank"]),
+                    f"**{r['ticker']}**",
+                    (r["name"] or "")[:34],
+                    (r["sector"] or "")[:20],
+                    upside,
+                    price,
+                    target,
+                    f"{r['score']:.2f}",
+                    _timeframe_marks(r["horizons"]),
+                    str(r["analysts"]),
+                    str(r["sources"]),
+                ]
             )
-            cells.append(f"**{r['ticker']}** ({region_flag}, {upside})")
-        lines.append(f"**{title}:** " + ", ".join(cells))
-        lines.append("")
-    return "\n".join(lines).rstrip() + "\n"
-
-
-def _international_picks_html(by_h_intl: dict[str, list[dict]]) -> str:
-    any_picks = any(by_h_intl.values())
-    if not any_picks:
-        return (
-            "<p><em>No Israeli or European name cleared the quality bar "
-            "(≥ 4 % upside, ≥ 50 sources, strictly bullish consensus) in "
-            "any horizon this run — only US names qualified.</em></p>"
+            + " |"
         )
-    rows_html = []
-    for h in HORIZONS:
-        picks = by_h_intl.get(h, [])
-        title = HORIZON_TITLE.get(h, h)
-        if not picks:
-            rows_html.append(f"<li><strong>{_html_escape(title)}:</strong> none cleared the bar this run.</li>")
-            continue
-        cells = []
-        for r in picks:
-            region_flag = _REGION_LABEL.get(r["region"], r["region"])
-            upside = (
-                f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
-                if r.get("upside_pct") is not None
-                else "—"
-            )
-            cells.append(
-                f"<strong>{_html_escape(r['ticker'])}</strong> "
-                f"({_html_escape(region_flag)}, {upside})"
-            )
-        rows_html.append(f"<li><strong>{_html_escape(title)}:</strong> " + ", ".join(cells) + "</li>")
-    return "<ul class='intl-picks'>" + "".join(rows_html) + "</ul>"
+    return "\n".join(lines) + "\n"
+
+
+def _staleness_banner_md(as_of: date) -> str | None:
+    """Loud warning when the newest scores are old.
+
+    Without this the page happily presented a five-week-old ranking as if it
+    were current, because the enrichment columns were recomputed live.
+    """
+    age = (date.today() - as_of).days
+    if age <= get_settings().max_score_age_days:
+        return None
+    return (
+        f"> ⚠️ **STALE DATA — these rankings are {age} days old** "
+        f"(scored {as_of.isoformat()}). The crawler has not produced fresh "
+        f"scores since then; treat everything below as out of date.\n"
+    )
 
 
 # ------------------------------ Markdown ------------------------------
 
 
 def _build_markdown(as_of: date, n: int) -> str:
-    """Concise Markdown: four top-N tables, plus two small history sections
-    at the bottom (sustained picks + per-date top-3).
+    """ONE ranked main table, Upside first. Nothing else.
 
-    Per-row star indicators (★★ to ★★★★) flag tickers that appear in more
-    than one horizon's top list. The HTML page carries the rich version
-    (heartbeat, disclaimer, how-to-read, recent runs); this Markdown view
-    stays minimal so it scans in two seconds.
+    Previously this emitted four near-duplicate per-timeframe tables plus a
+    wall of ~64 firm names, a per-pick firm table, a 14-day history matrix,
+    sustained picks and a separate IL/EU section — burying the single number
+    that actually drives a decision. Those are all gone: the four timeframes
+    are collapsed into one H/D/W/M column, and international names now
+    compete in the main table on merit.
     """
-    settings = get_settings()
     by_h = _collect_top_by_horizon(as_of, n)
-    # Persist this run's top-N into the history file BEFORE reading it back so
-    # the sustained-picks calculation sees the current snapshot too.
+    # Persist this run's top-N into the history file (still used by the
+    # HTML view and for auditing), before rendering.
     _append_history(by_h, datetime.utcnow())
 
     parts: list[str] = []
-    for h in HORIZONS:
-        parts.append(f"## {HORIZON_TITLE.get(h, h)} — top {n}")
+    banner = _staleness_banner_md(as_of)
+    if banner:
+        parts.append(banner)
         parts.append("")
-        parts.append(_md_table(by_h[h]))
-        parts.append("")
-
-    # --- Stock coverage snapshot (one row per unique top ticker) ---
-    snapshot_rows = _coverage_snapshot_rows(by_h)
-    parts.append("## Stock coverage snapshot")
-    parts.append("")
-    parts.append(
-        "_One row per unique ticker that appears in any top list. Same "
-        "stock-level facts every horizon would otherwise show — listed once, "
-        "sorted by upside._"
-    )
-    parts.append("")
-    parts.append(_coverage_snapshot_md(snapshot_rows))
-    parts.append("")
-
-    # --- Named analyst firms backing each pick ---
-    parts.append("## Named analyst firms behind each pick (last 90 d)")
-    parts.append("")
-    parts.append(_named_firms_md(snapshot_rows))
-    parts.append("")
-
-    # --- All distinct firms seen across the universe (last 90 d) ---
-    parts.append(
-        f"## All sell-side firms seen across the universe "
-        f"(last 90 d, {_recognised_firms_count()} aliases recognised)"
-    )
-    parts.append("")
-    parts.append(_all_firms_seen_md(_firms_seen_in_window()))
-    parts.append("")
-
-    # --- Sustained picks (≥1 week on the list, ≥2 stars mostly) ---
-    history_sustained = _load_history(settings.sustained_days)
-    parts.append(f"## Sustained picks — top 3 over the last {settings.sustained_days} d")
-    parts.append("")
-    parts.append(
-        "_Tickers that have been on a top list for ≥"
-        f"{int(settings.sustained_min_runs_pct * 100)} % of runs in the window "
-        f"and carried ≥{settings.sustained_min_stars} stars on a majority of those._"
-    )
-    parts.append("")
-    parts.append(_sustained_md(_sustained_picks(history_sustained)))
-    parts.append("")
-
-    # --- Per-date top-3 by horizon (last `history_show_days` days) ---
-    history_show = _load_history(settings.history_show_days)
-    parts.append(f"## Top 3 by date — last {settings.history_show_days} d")
-    parts.append("")
-    parts.append(_history_md(_history_top3_by_date(history_show)))
-    parts.append("")
-
-    # --- Summary: best Israeli & European picks per timeframe ---
-    parts.append("## Israeli & European picks by timeframe")
-    parts.append("")
-    parts.append(
-        "_Best non-US names that cleared every quality gate and made a "
-        "horizon's top list — shown only where relevant._"
-    )
-    parts.append("")
-    parts.append(_international_picks_md(_international_picks(by_h)))
+    parts.append(_main_table_md(main_table_rows(by_h)))
     return "\n".join(parts).rstrip() + "\n"
 
 
@@ -1088,30 +712,54 @@ def _html_escape(s: str) -> str:
     )
 
 
-def _html_top_table(rows: list[dict]) -> str:
+
+
+def _main_table_html(rows: list[dict], by_h: dict[str, list[dict]]) -> str:
+    """The single main table, Upside first, with a click-to-expand drawer
+    per row showing that stock's recent named analyst actions."""
     if not rows:
-        return "<p><em>(no data)</em></p>"
+        return "<p><em>(no picks cleared the quality gates this run)</em></p>"
+
+    # Recent-actions payload lives on the per-horizon rows; index it once.
+    actions_by_ticker: dict[str, list[dict]] = {}
+    for h in HORIZONS:
+        for r in by_h.get(h, []):
+            actions_by_ticker.setdefault(r["ticker"], r.get("recent_actions") or [])
+
+    from invest.firms import firm_tier
+
     head = (
         "<thead><tr>"
-        "<th>#</th>"
-        "<th title='Cross-horizon highlight. ★★ = two horizons; ★★★ = three; ★★★★ = all four.'>★</th>"
-        "<th>Ticker</th><th>Name</th><th>Sector</th>"
-        "<th title='Final score, z-scored across the universe.'>Blended</th>"
-        "<th title='Rule-based score from nine weighted features.'>Composite</th>"
-        "<th title='LightGBM predicted forward return (cold-start = composite).'>ML</th>"
-        "<th title='Percentile of blended score in this horizon.'>Pctile</th>"
-        "<th title='Consensus mean target / last close − 1. Floor = +4 %.'>Upside</th>"
+        "<th>#</th><th>Ticker</th><th>Name</th><th>Sector</th>"
+        "<th title='Consensus price target vs current price.'>Upside</th>"
+        "<th>Price</th><th>Target</th>"
+        "<th title='Sum of per-timeframe percentiles — higher means more timeframes rank it highly.'>Score</th>"
+        "<th title='Which timeframes rank this name: Hours / Daily / Weekly / Monthly.'>H/D/W/M</th>"
+        "<th>Analysts</th>"
+        "<th title='Distinct named contributors: sell-side firms, 13F filers, insider filers.'>Sources</th>"
         "</tr></thead>"
     )
-    from invest.firms import firm_tier  # local import to keep top-level imports tidy
-    body_rows = []
+
+    def _tier_cell(firm: str | None) -> str:
+        t = firm_tier(firm)
+        if t == 1:
+            return "<td class='tier1'><strong>T1</strong></td>"
+        if t == 2:
+            return "<td class='tier2'>T2</td>"
+        if t == 3:
+            return "<td class='tier3'>T3</td>"
+        return "<td class='src'>—</td>"
+
+    body: list[str] = []
     for i, r in enumerate(rows):
-        pct = f"{(r['percentile'] or 0) * 100:.1f}%"
         upside = (
             f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
             if r.get("upside_pct") is not None
             else "—"
         )
+        up_cls = "num up-pos" if (r.get("upside_pct") or 0) > 0 else "num"
+        price = f"{r['last_close']:.2f}" if r.get("last_close") else "—"
+        target = f"{r['mean_target']:.2f}" if r.get("mean_target") else "—"
         sector = r["sector"] or ""
         sector_html = (
             f"<span class='sector' style='background:{_sector_colour(sector)}'>"
@@ -1119,19 +767,7 @@ def _html_top_table(rows: list[dict]) -> str:
             if sector
             else ""
         )
-        # Analyst firms drawer (now with a Tier column).
-        actions = r.get("recent_actions", [])
-
-        def _tier_cell(firm: str | None) -> str:
-            t = firm_tier(firm)
-            if t == 1:
-                return "<td class='tier1'><strong>T1</strong></td>"
-            if t == 2:
-                return "<td class='tier2'>T2</td>"
-            if t == 3:
-                return "<td class='tier3'>T3</td>"
-            return "<td class='src'>—</td>"
-
+        actions = actions_by_ticker.get(r["ticker"], [])
         drawer_rows = "".join(
             "<tr>"
             f"<td>{a['date'].isoformat() if a.get('date') else ''}</td>"
@@ -1144,42 +780,37 @@ def _html_top_table(rows: list[dict]) -> str:
             "</tr>"
             for a in actions
         )
-        drawer_html = (
-            f"<tr class='drawer' id='drawer-{r['ticker']}-{i}' style='display:none'>"
-            "<td colspan='10'>"
-            "<strong>Recent analyst actions</strong>"
+        drawer = (
+            f"<tr class='drawer' id='d-{r['ticker']}-{i}' style='display:none'>"
+            "<td colspan='11'><strong>Recent analyst actions</strong>"
             "<table class='inner'><thead><tr><th>Date</th><th>Tier</th><th>Firm</th>"
             "<th>Action</th><th>From → To</th><th>Target</th><th>Source</th></tr></thead>"
-            f"<tbody>{drawer_rows}</tbody></table>"
-            "</td></tr>"
+            f"<tbody>{drawer_rows}</tbody></table></td></tr>"
             if drawer_rows
             else ""
         )
         toggle = (
-            f" onclick=\"var d=document.getElementById('drawer-{r['ticker']}-{i}');"
+            f" onclick=\"var d=document.getElementById('d-{r['ticker']}-{i}');"
             "if(d){d.style.display=d.style.display==='none'?'table-row':'none'}\""
             if drawer_rows
             else ""
         )
-        hcount = r.get("horizon_count") or 1
-        stars = "★" * hcount if hcount >= 2 else ""
-        row_cls = "row-main star" if hcount >= 2 else "row-main"
-        body_rows.append(
-            f"<tr class='{row_cls}' {toggle} style='cursor:pointer'>"
+        body.append(
+            f"<tr class='row-main'{toggle} style='cursor:pointer'>"
             f"<td>{r['rank']}</td>"
-            f"<td class='star'>{stars}</td>"
             f"<td><strong>{_html_escape(r['ticker'])}</strong></td>"
-            f"<td>{_html_escape((r['name'] or '')[:60])}</td>"
+            f"<td>{_html_escape((r['name'] or '')[:40])}</td>"
             f"<td>{sector_html}</td>"
-            f"<td class='num'>{r['blended']:.3f}</td>"
-            f"<td class='num'>{r['composite']:.3f}</td>"
-            f"<td class='num'>{r['ml']:.3f}</td>"
-            f"<td class='num'>{pct}</td>"
-            f"<td class='num'>{upside}</td>"
-            "</tr>"
-            + drawer_html
+            f"<td class='{up_cls}'><strong>{upside}</strong></td>"
+            f"<td class='num'>{price}</td>"
+            f"<td class='num'>{target}</td>"
+            f"<td class='num'>{r['score']:.2f}</td>"
+            f"<td class='tf'>{_html_escape(_timeframe_marks(r['horizons']))}</td>"
+            f"<td class='num'>{r['analysts']}</td>"
+            f"<td class='num'>{r['sources']}</td>"
+            "</tr>" + drawer
         )
-    return f"<table class='top'>{head}<tbody>{''.join(body_rows)}</tbody></table>"
+    return f"<table class='top'>{head}<tbody>{''.join(body)}</tbody></table>"
 
 
 def _html_runs_table(rows: list[dict]) -> str:
@@ -1205,12 +836,6 @@ def _html_runs_table(rows: list[dict]) -> str:
     return f"<table>{head}<tbody>{''.join(body_rows)}</tbody></table>"
 
 
-def _html_columns() -> str:
-    items = "".join(
-        f"<dt>{_html_escape(name)}</dt><dd>{_html_escape(doc)}</dd>"
-        for name, doc in COLUMN_DOCS
-    )
-    return f"<dl class='columns'>{items}</dl>"
 
 
 def _heartbeat_badge() -> str:
@@ -1304,39 +929,22 @@ def _build_html(as_of: date, n: int) -> str:
     heartbeat = _heartbeat_badge()
     source_breadth_html = _source_breadth_html()
     by_h = _collect_top_by_horizon(as_of, n)
-    starred = sorted(
-        {r["ticker"] for rows in by_h.values() for r in rows if r["horizon_count"] >= 2}
-    )
-    starred_html = (
-        "<p class='starred'><strong>High-conviction cross-horizon picks:</strong> "
-        + ", ".join(f"<strong>{_html_escape(t)}</strong>" for t in starred)
-        + "</p>"
-        if starred
-        else "<p class='starred muted'>No ticker currently appears in more than one horizon's top list.</p>"
-    )
     sections: list[str] = []
-    for h in HORIZONS:
+    banner = _staleness_banner_md(as_of)
+    if banner:
+        age = (date.today() - as_of).days
         sections.append(
-            f"<section>"
-            f"<h2>{_html_escape(HORIZON_TITLE.get(h, h))} — top {n}</h2>"
-            f"<p class='blurb'>{_html_escape(HORIZON_BLURB.get(h, ''))}</p>"
-            f"{_html_top_table(by_h[h])}"
-            "</section>"
+            "<section><p class='stale-banner'>⚠️ <strong>STALE DATA — these "
+            f"rankings are {age} days old</strong> (scored {as_of.isoformat()}). "
+            "The crawler has not produced fresh scores since then.</p></section>"
         )
-    snapshot_rows = _coverage_snapshot_rows(by_h)
     sections.append(
-        "<section><h2>Stock coverage snapshot</h2>"
-        "<p class='blurb'>One row per unique ticker in any top list, sorted "
-        "by upside. Stock-level facts (Buy/Hold/Sell/Upside/Analysts) are "
-        "the same for a ticker no matter the horizon, so they live here.</p>"
-        f"{_coverage_snapshot_html(snapshot_rows)}</section>"
-    )
-    intl_picks = _international_picks(by_h)
-    sections.append(
-        "<section><h2>Israeli &amp; European picks by timeframe</h2>"
-        "<p class='blurb'>Best non-US names that cleared every quality gate "
-        "and made a horizon's top list — shown only where relevant.</p>"
-        f"{_international_picks_html(intl_picks)}</section>"
+        "<section><h2>Top picks</h2>"
+        "<p class='blurb'>One ranked table across all four timeframes. "
+        "Upside is the consensus price target vs the current price; H/D/W/M "
+        "shows which timeframes rank the name. Click a row for that stock's "
+        "recent analyst actions.</p>"
+        f"{_main_table_html(main_table_rows(by_h), by_h)}</section>"
     )
     runs_html = _html_runs_table(_recent_runs_safe())
     return f"""<!doctype html>
@@ -1390,6 +998,10 @@ def _build_html(as_of: date, n: int) -> str:
   td.tier2 {{ color: #6b6b6b; }}
   td.tier3 {{ color: #999; }}
   table.snapshot {{ margin-top: 0.5rem; }}
+  td.up-pos {{ color: #1e7e45; font-weight: 700; }}
+  td.tf {{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: 1px; }}
+  .stale-banner {{ background: #fff4e5; border-left: 4px solid #d97706;
+                   padding: 0.75rem 1rem; border-radius: 4px; color: #7c2d12; }}
   ul.intl-picks {{ margin: 0.5rem 0 0 0; padding-left: 1.2rem; line-height: 1.7; }}
   .src-breadth {{ font-size: 0.88rem; margin: 0.4rem 0 1rem 0; color: #444; }}
   .src-badge {{ display: inline-block; padding: 0.12rem 0.5rem; border-radius: 4px;
@@ -1404,7 +1016,6 @@ def _build_html(as_of: date, n: int) -> str:
 <span class="ago">just now</span></span> · Scores as of: <strong>{as_of.isoformat()}</strong>
  · page auto-refreshes every 2 min · pipeline runs every 2 hours via GitHub Actions.</p>
 {source_breadth_html}
-{starred_html}
 
 {"".join(sections)}
 

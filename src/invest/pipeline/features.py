@@ -351,7 +351,16 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
         [{"ticker": t, "total_sources_count": len(s_)} for t, s_ in sources_set.items()]
     ) if sources_set else pd.DataFrame(columns=["ticker", "total_sources_count"])
 
-    # Merge all
+    # Merge all.
+    #
+    # `cons` carries its own copy of `last_close` (it needs it to compute
+    # upside_z). Left in place, the unsuffixed merge below would produce
+    # `last_close_x` / `last_close_y` and NO plain `last_close` column — so
+    # the guard further down silently set last_close to NaN for every single
+    # ticker, poisoning the persisted feature snapshots and the ML training
+    # set. price_df is the authoritative source, so drop the duplicate here.
+    cons = cons.drop(columns=["last_close"], errors="ignore")
+
     out = pd.DataFrame({"ticker": tickers})
     for d in (
         price_df, cons, rating_mom_7d, rating_mom_30d,
@@ -359,6 +368,14 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
     ):
         if d is not None and not d.empty:
             out = out.merge(d, on="ticker", how="left")
+    # Any accidental duplicate-column suffixes would silently break the
+    # downstream guards, so fail loudly rather than shipping NaN features.
+    collided = [c for c in out.columns if c.endswith(("_x", "_y"))]
+    if collided:
+        raise RuntimeError(
+            f"feature merge produced duplicated columns {collided}; "
+            "two source frames share a column name — drop the duplicate before merging"
+        )
     if "firm_count_90d" not in out.columns:
         out["firm_count_90d"] = 0
     out["firm_count_90d"] = pd.to_numeric(out["firm_count_90d"], errors="coerce").fillna(0)

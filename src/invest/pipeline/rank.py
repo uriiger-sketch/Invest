@@ -17,9 +17,58 @@ from .features import build_features
 logger = logging.getLogger(__name__)
 
 
+class RankingProducedNothingError(RuntimeError):
+    """Raised when the quality gates reject every single ticker.
+
+    This is always a bug or a mis-calibrated threshold, never a normal
+    outcome: if it were normal, the app would have nothing to publish.
+    Raising (instead of returning empty) makes the workflow fail loudly and
+    leaves the previous good report in place, rather than silently going
+    stale for weeks.
+    """
+
+
+class InsufficientAnalystDataError(RuntimeError):
+    """Raised when the analyst tables are too empty to rank meaningfully.
+
+    Guards against the case where the database was lost/reset and the
+    pipeline would otherwise "rank" everything on no data at all.
+    """
+
+
 def _zscore_group(df: pd.DataFrame, col: str) -> pd.Series:
     g = df.groupby("horizon")[col]
     return (df[col] - g.transform("mean")) / g.transform("std").replace(0, np.nan)
+
+
+def _assert_analyst_data_present(features: pd.DataFrame, min_covered_pct: float = 0.10) -> None:
+    """Refuse to rank when almost nothing has analyst coverage.
+
+    If the DB was wiped (cache eviction, fresh checkout) the consensus table
+    is empty, every `num_analysts` is 0, and ranking would be meaningless.
+    Better to fail the run and keep the last good report than to publish
+    noise.
+
+    The bar is a FRACTION of the universe, not an absolute count: a small
+    universe (tests, a focused watchlist) is legitimate, whereas "0 % of
+    2,000 tickers have consensus" is always a broken ingest.
+    """
+    if "num_analysts" not in features.columns:
+        raise InsufficientAnalystDataError(
+            "features frame has no num_analysts column — consensus ingest never ran"
+        )
+    total = len(features)
+    covered = int((pd.to_numeric(features["num_analysts"], errors="coerce").fillna(0) > 0).sum())
+    if covered == 0 or (total and covered / total < min_covered_pct):
+        raise InsufficientAnalystDataError(
+            f"only {covered} of {total} tickers have any analyst coverage "
+            f"(need >= {min_covered_pct:.0%}). The consensus tables look empty — "
+            "run a deep ingest before ranking."
+        )
+    logger.info(
+        "analyst coverage check: %d/%d tickers (%.0f%%) have consensus",
+        covered, total, 100 * covered / max(total, 1),
+    )
 
 
 def rank_all(tickers: list[str]) -> pd.DataFrame:
@@ -30,10 +79,26 @@ def rank_all(tickers: list[str]) -> pd.DataFrame:
         logger.warning("no features built; nothing to rank")
         return pd.DataFrame()
 
+    _assert_analyst_data_present(features)
+
     comp = score.composite_scores(features)
     if comp.empty:
-        logger.warning("composite scores empty (liquidity gate filtered everything)")
-        return pd.DataFrame()
+        # A gate rejected the ENTIRE universe. This used to be a bland warning
+        # that blamed the wrong gate and returned quietly, so the workflow
+        # stayed green while nothing was ever persisted again. Now we report
+        # exactly which gate is responsible and raise, so the run fails
+        # visibly and the last good report is left untouched.
+        counts = score.gate_survivors(features)
+        detail = ", ".join(f"{k}={v}" for k, v in counts.items())
+        logger.error(
+            "RANKING PRODUCED NOTHING: every one of %d tickers was rejected. "
+            "Per-gate survivors: %s. Check the thresholds in config.py against "
+            "these numbers — a gate whose survivor count is 0 is the culprit.",
+            counts["universe"], detail,
+        )
+        raise RankingProducedNothingError(
+            f"all {counts['universe']} tickers rejected by quality gates ({detail})"
+        )
 
     ml = ml_rank.score_horizons(features, comp)
     merged = comp.merge(ml, on=["ticker", "horizon"], how="left")

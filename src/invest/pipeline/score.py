@@ -109,6 +109,43 @@ def data_quality_mask(features: pd.DataFrame) -> pd.Series:
     return mask
 
 
+def gate_survivors(features: pd.DataFrame) -> dict[str, int]:
+    """Per-gate survivor counts, for diagnosing a total wipeout.
+
+    Returns how many tickers survive each gate INDIVIDUALLY plus the
+    combined total. When the combined total is 0 this immediately tells
+    you which threshold is responsible instead of leaving you guessing —
+    the failure mode that silently froze the rankings for five weeks.
+    """
+    total = len(features)
+    liq = liquidity_mask(features)
+    out = outlook_mask(features)
+    dq = data_quality_mask(features)
+    counts = {
+        "universe": total,
+        "liquidity": int(liq.sum()),
+        "outlook": int(out.sum()),
+        "data_quality": int(dq.sum()),
+        "combined": int((liq & out & dq).sum()),
+    }
+    # Break the outlook gate down further — it has four sub-conditions and is
+    # the one most likely to be mis-calibrated.
+    settings = get_settings()
+    if "consensus_z" in features.columns:
+        cz = pd.to_numeric(features["consensus_z"], errors="coerce").fillna(0.0)
+        counts["outlook.consensus"] = int((cz > settings.min_consensus_z).sum())
+    if "upside_z" in features.columns:
+        up = pd.to_numeric(features["upside_z"], errors="coerce").fillna(0.0)
+        counts["outlook.upside"] = int((up >= settings.min_upside).sum())
+    if "num_analysts" in features.columns:
+        na = pd.to_numeric(features["num_analysts"], errors="coerce").fillna(0.0)
+        counts["outlook.min_firms"] = int((na >= settings.min_firms).sum())
+    if "total_sources_count" in features.columns:
+        ts = pd.to_numeric(features["total_sources_count"], errors="coerce").fillna(0.0)
+        counts["outlook.total_sources"] = int((ts >= settings.min_total_sources).sum())
+    return counts
+
+
 def quality_mask(features: pd.DataFrame) -> pd.Series:
     """Combined gate: liquidity + outlook + data quality."""
     return liquidity_mask(features) & outlook_mask(features) & data_quality_mask(features)

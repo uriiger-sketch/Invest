@@ -1,0 +1,244 @@
+"""Regression tests for the five-week silent outage.
+
+The pipeline stopped persisting scores on 2026-06-04 and nobody noticed:
+`min_total_sources = 50` rejected 100 % of the universe, `composite_scores`
+returned empty, `rank_all` returned quietly, `cli rank` exited 0, and the
+workflow stayed green while the published page served a frozen ranking with
+freshly-computed coverage numbers stitched onto it.
+
+Every test here targets one link in that chain so it cannot happen again.
+"""
+from __future__ import annotations
+
+from datetime import date, timedelta
+
+import numpy as np
+import pandas as pd
+import pytest
+
+from invest.config import FEATURE_NAMES, get_settings
+from invest.db import session_scope
+from invest.models import Consensus, Price, Stock
+from invest.pipeline.rank import (
+    InsufficientAnalystDataError,
+    RankingProducedNothingError,
+    rank_all,
+)
+from invest.pipeline.score import gate_survivors
+
+
+def _features(n: int = 5, **overrides) -> pd.DataFrame:
+    rng = np.random.default_rng(7)
+    df = pd.DataFrame(
+        {"ticker": [f"T{i:02d}" for i in range(n)], "dollar_volume_20d": 1e9}
+    )
+    for col in FEATURE_NAMES:
+        df[col] = rng.normal(size=n)
+    df["last_close"] = 100.0
+    df["num_analysts"] = 20
+    df["total_sources_count"] = get_settings().min_total_sources + 5
+    df["last_price_age_days"] = 1
+    df["price_history_days"] = 120
+    df["consensus_z"] = 0.5
+    df["upside_z"] = 0.10
+    for k, v in overrides.items():
+        df[k] = v
+    return df
+
+
+def _seed(ticker: str, *, analysts: int = 25, target_mult: float = 1.2) -> None:
+    """Seed one fully-covered, gate-passing ticker.
+
+    Includes named AnalystAction rows, not just a Consensus snapshot:
+    `total_sources_count` counts distinct named contributors, so a ticker
+    with consensus but no attributed firms scores 0 sources and is
+    (correctly) gated out.
+    """
+    from invest.firms import canonical_firm_key
+    from invest.sources.base import upsert_analyst_actions
+
+    rng = np.random.default_rng(abs(hash(ticker)) % 2**32)
+    with session_scope() as s:
+        if not s.get(Stock, ticker):
+            s.add(Stock(ticker=ticker, name=f"{ticker} Inc", sector="Technology", in_universe=True))
+        price = 100.0
+        for i in range(120):
+            price *= 1 + float(rng.normal(0.001, 0.01))
+            s.add(
+                Price(ticker=ticker, date=date.today() - timedelta(days=120 - i),
+                      close=price, adj_close=price, volume=5_000_000)
+            )
+        s.add(
+            Consensus(ticker=ticker, as_of_date=date.today(), source="yfinance",
+                      strong_buy=analysts - 6, buy=4, hold=2, sell=0, strong_sell=0,
+                      mean_target=price * target_mult, high_target=price * 1.5,
+                      low_target=price, num_analysts=analysts)
+        )
+
+    # Enough distinct named firms to clear the coverage floor.
+    n_firms = get_settings().min_total_sources + 4
+    upsert_analyst_actions([
+        {
+            "ticker": ticker, "firm": f"Firm{j:02d}",
+            "firm_key": canonical_firm_key(f"Firm{j:02d}"),
+            "analyst": None, "action": "upgrade", "from_grade": "Hold",
+            "to_grade": "Buy", "target_price": 150.0,
+            "date": date.today() - timedelta(days=j % 60), "source": "yfinance",
+        }
+        for j in range(n_firms)
+    ])
+
+
+def test_gate_survivors_pinpoints_the_culprit_gate():
+    """When a gate wipes out the universe, the diagnostics must name it.
+
+    The original failure logged a generic warning that blamed the *liquidity*
+    gate while the coverage gate was the real culprit — which is a large part
+    of why it went unnoticed for five weeks.
+    """
+    df = _features(5, total_sources_count=0)  # coverage gate rejects everything
+    counts = gate_survivors(df)
+    assert counts["universe"] == 5
+    assert counts["combined"] == 0
+    assert counts["outlook.total_sources"] == 0, "the guilty gate must report 0 survivors"
+    assert counts["liquidity"] == 5, "innocent gates must not be blamed"
+
+
+def test_rank_all_raises_when_every_ticker_is_gated_out(monkeypatch):
+    """A total wipeout must fail LOUDLY, not return an empty frame quietly."""
+    import invest.pipeline.score as score_mod
+
+    for t in ("AAA", "BBB", "CCC"):
+        _seed(t)
+
+    # Make the coverage gate unsatisfiable, exactly as min_total_sources=50 did.
+    real = score_mod.get_settings()
+
+    class _Unsatisfiable:
+        def __getattr__(self, name):
+            if name == "min_total_sources":
+                return 10_000
+            return getattr(real, name)
+
+    # monkeypatch restores the original automatically, so the patch cannot
+    # leak into other tests.
+    monkeypatch.setattr(score_mod, "get_settings", lambda: _Unsatisfiable())
+
+    with pytest.raises(RankingProducedNothingError) as excinfo:
+        rank_all(["AAA", "BBB", "CCC"])
+    # The error must carry the per-gate breakdown so the cause is obvious.
+    assert "total_sources" in str(excinfo.value)
+
+
+def test_rank_all_refuses_to_rank_without_analyst_data():
+    """If the DB was wiped, ranking on nothing must fail rather than publish noise."""
+    with session_scope() as s:
+        for t in ("EMP1", "EMP2"):
+            s.add(Stock(ticker=t, name=t, sector="Technology", in_universe=True))
+            price = 100.0
+            for i in range(120):
+                price *= 1.001
+                s.add(Price(ticker=t, date=date.today() - timedelta(days=120 - i),
+                            close=price, adj_close=price, volume=5_000_000))
+    with pytest.raises(InsufficientAnalystDataError):
+        rank_all(["EMP1", "EMP2"])
+
+
+def test_successful_rank_persists_scores():
+    """The happy path must actually write Score rows — the thing that silently
+    stopped happening for five weeks."""
+    from invest.models import Score
+
+    tickers = [f"OK{i}" for i in range(6)]
+    for t in tickers:
+        _seed(t)
+    df = rank_all(tickers)
+    assert not df.empty
+    with session_scope() as s:
+        persisted = s.query(Score).filter(Score.as_of == date.today()).count()
+    assert persisted > 0, "rank_all must persist Score rows for today"
+
+
+def test_last_close_survives_feature_merge():
+    """`price_df` and `cons` both carry last_close; an unsuffixed merge used to
+    yield last_close_x/_y and leave last_close as NaN for EVERY ticker,
+    poisoning the persisted snapshots and the ML training set."""
+    from invest.pipeline.features import build_features
+
+    _seed("LCLOSE")
+    df = build_features(["LCLOSE"]).set_index("ticker")
+    assert "last_close" in df.columns
+    assert pd.notna(df.loc["LCLOSE", "last_close"]), "last_close must not be NaN"
+    assert df.loc["LCLOSE", "last_close"] > 0
+    assert not [c for c in df.columns if c.endswith(("_x", "_y"))], "merge collision"
+
+
+def test_13f_ingest_is_idempotent():
+    """`session.merge()` on an autoincrement PK INSERTs rather than updates,
+    so the second deep run each quarter raised IntegrityError and aborted
+    BOTH 13F and insider ingest — the main reason Insts was 0 everywhere."""
+    from invest.models import Holding13F
+    from invest.sources.edgar_src import EdgarSource
+
+    batch = [
+        {
+            "filer_cik": "0001067983", "filer_name": "Berkshire Hathaway",
+            "ticker": "AAPL", "shares": 1000.0, "value_usd": 1e6,
+            "quarter": "2026Q3", "filing_date": date.today(),
+        }
+    ]
+    with session_scope() as s:
+        s.add(Stock(ticker="AAPL", name="Apple Inc.", sector="Technology", in_universe=True))
+
+    EdgarSource._upsert_holdings(batch)
+    # Same quarter, refreshed numbers — must UPDATE, never duplicate or raise.
+    batch[0]["shares"] = 2000.0
+    EdgarSource._upsert_holdings(batch)
+
+    with session_scope() as s:
+        rows = s.query(Holding13F).filter(Holding13F.ticker == "AAPL").all()
+    assert len(rows) == 1, "re-ingesting the same quarter must not duplicate"
+    assert rows[0].shares == 2000.0, "re-ingest must refresh the position"
+
+
+def test_cusip_matching_beats_name_matching():
+    """AMZN could NEVER match by name ("Amazon.com, Inc." normalises to
+    'amazoncom' but the 13F name "AMAZON COM INC" gives 'amazon com'), so
+    holdings were silently dropped. CUSIP is the authoritative key."""
+    from invest.sources.edgar_src import EdgarSource
+
+    with session_scope() as s:
+        s.add(Stock(ticker="AMZN", name="Amazon.com, Inc.", sector="Consumer Cyclical",
+                    cusip="023135106", in_universe=True))
+
+    src = EdgarSource()
+    name_lookup = src._build_name_to_ticker(["AMZN"])
+    cusip_lookup = src._build_cusip_to_ticker(["AMZN"])
+
+    # The historical failure: the 13F spelling does not match by name.
+    assert src._issuer_to_ticker("AMAZON COM INC", name_lookup) is None
+    # CUSIP resolves it, both full and issuer-prefix forms.
+    assert src._cusip_to_ticker("023135106", cusip_lookup) == "AMZN"
+    assert src._cusip_to_ticker("023135", cusip_lookup) == "AMZN"
+
+
+def test_stalest_tickers_orders_by_consensus_age():
+    """The hourly rolling refresh must pick the STALEST tickers so the whole
+    universe cycles instead of re-fetching the same names forever."""
+    from invest.pipeline.ingest import stalest_tickers
+
+    today = date.today()
+    with session_scope() as s:
+        for t, age in (("FRESH", 0), ("MID", 5), ("OLD", 30)):
+            s.add(Stock(ticker=t, name=t, sector="Technology", in_universe=True))
+            s.add(Consensus(ticker=t, as_of_date=today - timedelta(days=age),
+                            source="yfinance", strong_buy=10, buy=5, hold=1,
+                            sell=0, strong_sell=0, mean_target=120.0,
+                            high_target=130.0, low_target=110.0, num_analysts=16))
+        s.add(Stock(ticker="NEVER", name="NEVER", sector="Technology", in_universe=True))
+
+    picks = stalest_tickers(["FRESH", "MID", "OLD", "NEVER"], limit=3)
+    # Never-fetched first, then oldest-first. FRESH must be last to be picked.
+    assert picks[0] == "NEVER"
+    assert picks[1] == "OLD"
+    assert "FRESH" not in picks

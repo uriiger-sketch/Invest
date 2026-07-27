@@ -99,6 +99,10 @@ class YFinanceSource(BaseSource):
                 industry = info.get("industry")
                 mcap = _coerce_float(info.get("marketCap"))
                 beta = _coerce_float(info.get("beta"))
+                # CUSIP lets SEC 13F holdings match on the authoritative
+                # security identifier instead of fuzzy company names.
+                cusip = info.get("cusip") or info.get("CUSIP")
+                cusip = str(cusip).strip().upper()[:12] if cusip else None
                 if existing is None:
                     s.add(
                         Stock(
@@ -108,6 +112,7 @@ class YFinanceSource(BaseSource):
                             industry=industry,
                             market_cap=mcap,
                             beta=beta,
+                            cusip=cusip,
                             in_universe=True,
                             updated_at=now,
                         )
@@ -119,6 +124,8 @@ class YFinanceSource(BaseSource):
                         existing.sector = sector
                     if industry:
                         existing.industry = industry
+                    if cusip:
+                        existing.cusip = cusip
                     if mcap is not None:
                         existing.market_cap = mcap
                     if beta is not None:

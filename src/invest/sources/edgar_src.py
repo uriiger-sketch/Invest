@@ -309,6 +309,37 @@ class EdgarSource(BaseSource):
                     changed = True
         return n
 
+    def _build_cusip_to_ticker(self, tickers: list[str]) -> dict[str, str]:
+        """{normalised 9/8/6-char CUSIP: ticker} from the stocks table.
+
+        CUSIPs are indexed by their 6-character issuer prefix as well as the
+        full 9-character value, because 13F filings sometimes carry the
+        issue-level CUSIP while our stored value is the issuer-level one
+        (or vice-versa) — the first six characters identify the issuer.
+        """
+        from ..models import Stock
+
+        with session_scope() as s:
+            rows = s.query(Stock.ticker, Stock.cusip).filter(
+                Stock.ticker.in_(tickers), Stock.cusip.isnot(None)
+            ).all()
+        out: dict[str, str] = {}
+        for t, cusip in rows:
+            key = (cusip or "").strip().upper()
+            if not key:
+                continue
+            out[key] = t
+            if len(key) >= 6:
+                out.setdefault(key[:6], t)
+        return out
+
+    @staticmethod
+    def _cusip_to_ticker(cusip: str | None, lookup: dict[str, str]) -> str | None:
+        if not cusip or not lookup:
+            return None
+        key = cusip.strip().upper()
+        return lookup.get(key) or (lookup.get(key[:6]) if len(key) >= 6 else None)
+
     def _build_name_to_ticker(self, tickers: list[str]) -> dict[str, str]:
         """Build a {normalised_name: ticker} lookup from the stocks table."""
         from ..models import Stock
@@ -351,7 +382,9 @@ class EdgarSource(BaseSource):
         except Exception as e:  # noqa: BLE001
             logger.warning("seed_stocks_table failed: %s", e)
         lookup = self._build_name_to_ticker(tickers)
+        cusip_lookup = self._build_cusip_to_ticker(tickers)
         written = 0
+        filers_with_data = 0
         for name, cik in TOP_FILERS:
             try:
                 latest = self._latest_13f_for(cik)
@@ -363,26 +396,72 @@ class EdgarSource(BaseSource):
                     continue
                 rows = self._parse_infotable(xml)
                 quarter = self._quarter_label(filing_date)
-                with session_scope() as s:
-                    for r in rows:
-                        t = self._issuer_to_ticker(r.get("name_of_issuer") or "", lookup)
-                        if not t:
-                            continue
-                        s.merge(
-                            Holding13F(
-                                filer_cik=cik,
-                                filer_name=name,
-                                ticker=t,
-                                shares=r.get("shares"),
-                                value_usd=r.get("value_usd"),
-                                quarter=quarter,
-                                filing_date=filing_date,
-                            )
-                        )
-                        written += 1
+                batch: list[dict] = []
+                for r in rows:
+                    # CUSIP is the authoritative security identifier and is
+                    # already in every infoTable entry. Name matching is a
+                    # last resort: 13F legal names ("AMAZON COM INC") rarely
+                    # equal Yahoo's ("Amazon.com, Inc."), so it silently
+                    # dropped almost everything.
+                    t = self._cusip_to_ticker(r.get("cusip"), cusip_lookup) or (
+                        self._issuer_to_ticker(r.get("name_of_issuer") or "", lookup)
+                    )
+                    if not t:
+                        continue
+                    batch.append(
+                        {
+                            "filer_cik": cik,
+                            "filer_name": name,
+                            "ticker": t,
+                            "shares": r.get("shares"),
+                            "value_usd": r.get("value_usd"),
+                            "quarter": quarter,
+                            "filing_date": filing_date,
+                        }
+                    )
+                if batch:
+                    written += self._upsert_holdings(batch)
+                    filers_with_data += 1
             except TransientSourceError as e:
                 logger.warning("edgar 13F %s failed: %s", name, e)
+        if not filers_with_data:
+            # Every filer returned nothing. Almost always a blanket SEC 403
+            # (placeholder SEC_USER_AGENT) rather than 120 empty portfolios —
+            # say so instead of reporting a quiet success.
+            logger.error(
+                "EDGAR 13F ingest matched ZERO holdings across all %d tracked filers. "
+                "This usually means SEC is rejecting the requests — check that "
+                "SEC_USER_AGENT is set to a real contact address.",
+                len(TOP_FILERS),
+            )
         return written
+
+    @staticmethod
+    def _upsert_holdings(batch: list[dict]) -> int:
+        """Idempotent write keyed on (filer_cik, ticker, quarter).
+
+        The previous code called ``session.merge(Holding13F(...))`` with
+        ``id=None``. Because the PK is autoincrement, SQLAlchemy treats that
+        as a NEW object and INSERTs — colliding with the unique index on the
+        second run each quarter, raising IntegrityError, rolling back the
+        batch and aborting BOTH 13F and insider ingest. That is the main
+        reason holdings_13f stayed empty and Insts showed 0 everywhere.
+        """
+        from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+
+        with session_scope() as s:
+            stmt = sqlite_insert(Holding13F).values(batch)
+            stmt = stmt.on_conflict_do_update(
+                index_elements=["filer_cik", "ticker", "quarter"],
+                set_={
+                    "shares": stmt.excluded.shares,
+                    "value_usd": stmt.excluded.value_usd,
+                    "filing_date": stmt.excluded.filing_date,
+                    "filer_name": stmt.excluded.filer_name,
+                },
+            )
+            s.execute(stmt)
+        return len(batch)
 
     # --------------------------- Form 4 ---------------------------
 

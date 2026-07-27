@@ -6,7 +6,8 @@ __pycache__/
 .ruff_cache/
 .mypy_cache/
 .env
-data/*.db
+# data/invest.db is intentionally COMMITTED: it is the pipeline's state
+# between scheduled runs. actions/cache proved unreliable (see crawl.yml).
 data/*.db-journal
 dist/
 build/

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable
+from datetime import date
 
 from ..sources.base import log_run
 from ..universe import current_universe
@@ -168,20 +169,50 @@ def ingest_prices_only(tickers: list[str] | None = None) -> int:
         return c["rows"]
 
 
+def stalest_tickers(tickers: list[str], limit: int) -> list[str]:
+    """The `limit` tickers whose consensus snapshot is oldest (never-fetched
+    tickers first).
+
+    Drives the rolling refresh: each hourly run tops up a slice of the
+    universe, so over a day everything cycles without any single run
+    blowing its timeout.
+    """
+    from sqlalchemy import func, select
+
+    from ..db import session_scope
+    from ..models import Consensus
+
+    if limit <= 0 or not tickers:
+        return []
+    with session_scope() as s:
+        rows = s.execute(
+            select(Consensus.ticker, func.max(Consensus.as_of_date))
+            .where(Consensus.ticker.in_(tickers))
+            .group_by(Consensus.ticker)
+        ).all()
+    newest = {t: d for t, d in rows}
+    # Tickers with no consensus at all sort first (date.min), then oldest-first.
+    ordered = sorted(tickers, key=lambda t: (newest.get(t) or date.min, t))
+    return ordered[:limit]
+
+
 def ingest_fast(tickers: list[str] | None = None) -> int:
-    """Fast path for the every-20-min loop — PRICES ONLY.
+    """Fast path for the hourly loop: prices for everything + a rolling
+    consensus refresh for the stalest slice of the universe.
 
-    yfinance batched prices + stooq backfill for anything yfinance missed.
-    No fundamentals, no per-ticker consensus calls (those run on the daily
-    deep crawl via `ingest-all`). This keeps each fast run under ~3 minutes
-    so the 20-min cron cadence is actually hit.
+    Upside = target / last_close - 1. Refreshing prices hourly already moves
+    the denominator every hour; refreshing a rotating slice of targets keeps
+    the numerator fresh too, so predictions genuinely change hourly instead
+    of being frozen between once-a-day deep crawls.
 
-    Analyst consensus + price targets change on a daily scale, so being
-    up to 24 h stale between deep crawls is fine for ranking.
+    The slice size (`settings.consensus_refresh_batch`) bounds the per-run
+    cost: consensus is a per-ticker call, so it is the expensive part.
     """
     tickers = tickers or current_universe()
+    from ..config import get_settings
     from ..sources.yfinance_src import YFinanceSource
 
+    settings = get_settings()
     src = YFinanceSource()
     total = 0
     with log_run("yfinance.prices_fast") as c:
@@ -191,4 +222,18 @@ def ingest_fast(tickers: list[str] | None = None) -> int:
         total += _run_stooq_backfill(tickers)
     except Exception:  # noqa: BLE001
         logger.exception("stooq backfill failed")
+
+    # Rolling consensus/price-target refresh over the stalest slice.
+    batch = stalest_tickers(tickers, settings.consensus_refresh_batch)
+    if batch:
+        logger.info(
+            "rolling consensus refresh: %d of %d tickers (stalest first)",
+            len(batch), len(tickers),
+        )
+        try:
+            with log_run("yfinance.consensus_rolling") as c:
+                c["rows"] = src.ingest_consensus(batch)
+                total += c["rows"]
+        except Exception:  # noqa: BLE001
+            logger.exception("rolling consensus refresh failed")
     return total

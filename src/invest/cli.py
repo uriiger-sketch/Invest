@@ -60,11 +60,28 @@ def ingest_fast() -> None:
 def rank(n: int = typer.Option(20, help="Top-N per horizon")) -> None:
     """Compute features, score, blend, and print top-N per horizon."""
     _ensure_schema()
-    from .pipeline.rank import rank_all, top_n
+    from .pipeline.rank import (
+        InsufficientAnalystDataError,
+        RankingProducedNothingError,
+        rank_all,
+        top_n,
+    )
     from .universe import current_universe
 
-    rank_all(current_universe())
+    try:
+        rank_all(current_universe())
+    except (RankingProducedNothingError, InsufficientAnalystDataError) as e:
+        # Exit non-zero so the scheduled workflow turns RED instead of
+        # quietly republishing a stale report. This is the guard that would
+        # have caught the five-week outage on day one.
+        console.print(f"[bold red]ranking failed:[/] {e}")
+        raise typer.Exit(code=1) from e
+
     tops = top_n(n=n)
+    if not any(df is not None and not df.empty for df in tops.values()):
+        console.print("[bold red]no scores persisted for any horizon[/]")
+        raise typer.Exit(code=1)
+
     for h in HORIZONS:
         df = tops.get(h)
         if df is None or df.empty:

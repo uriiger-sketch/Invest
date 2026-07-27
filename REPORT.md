@@ -1,9 +1,9 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+56.2%** | 8.01 | 12.51 | 3.90 | HDWM | 28 | 41 |
+| 1 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+56.2%** | 8.01 | 12.51 | 3.89 | HDWM | 28 | 41 |
 | 2 | **GM** | General Motors Company | Consumer Cyclical | **+12.9%** | 87.04 | 98.31 | 2.96 | HDW· | 27 | 45 |
 | 3 | **T** | AT&T Inc. | Communication Servic | **+17.6%** | 24.42 | 28.71 | 2.95 | HDW· | 26 | 44 |
-| 4 | **DUK** | Duke Energy Corporation | Utilities | **+7.8%** | 128.83 | 138.84 | 2.91 | HDW· | 23 | 40 |
+| 4 | **DUK** | Duke Energy Corporation | Utilities | **+7.8%** | 128.83 | 138.84 | 2.92 | HDW· | 23 | 40 |
 | 5 | **MSFT** | Microsoft Corporation | Technology | **+43.1%** | 389.10 | 556.75 | 2.91 | H·WM | 58 | 82 |
 | 6 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+42.4%** | 21.80 | 31.05 | 2.85 | H·WM | 25 | 42 |
 | 7 | **GRAB** | Grab Holdings Limited | Technology | **+75.4%** | 3.35 | 5.88 | 1.99 | ··WM | 26 | 44 |
@@ -22,7 +22,7 @@
 | 20 | **IONQ** | IonQ, Inc. | Technology | **+92.4%** | 35.92 | 69.11 | 0.97 | ···M | 12 | 29 |
 | 21 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+140.9%** | 3.01 | 7.25 | 0.97 | ···M | 7 | 23 |
 | 22 | **META** | Meta Platforms, Inc. | Communication Servic | **+39.1%** | 593.87 | 825.84 | 0.96 | ···M | 63 | 88 |
-| 23 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.3%** | 4.62 | 7.36 | 0.95 | ··W· | 24 | 35 |
+| 23 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.6%** | 4.62 | 7.37 | 0.95 | ··W· | 24 | 35 |
 | 24 | **WMT** | Walmart Inc. | Consumer Defensive | **+23.7%** | 111.74 | 138.27 | 0.95 | ···M | 43 | 62 |
 | 25 | **S** | SentinelOne, Inc. | Technology | **+8.5%** | 18.14 | 19.68 | 0.95 | ·D·· | 35 | 51 |
 | 26 | **CRWV** | CoreWeave, Inc. | Technology | **+95.0%** | 70.79 | 138.03 | 0.94 | ··W· | 37 | 53 |

@@ -21,9 +21,9 @@
 | 19 | **IONQ** | IonQ, Inc. | Technology | **+92.4%** | 35.92 | 69.11 | 0.97 | ···M | 12 | 29 |
 | 20 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+140.9%** | 3.01 | 7.25 | 0.97 | ···M | 7 | 23 |
 | 21 | **META** | Meta Platforms, Inc. | Communication Servic | **+39.1%** | 593.87 | 825.84 | 0.96 | ···M | 63 | 88 |
-| 22 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.5%** | 4.62 | 7.37 | 0.95 | ··W· | 24 | 35 |
+| 22 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.3%** | 4.62 | 7.36 | 0.95 | ··W· | 24 | 35 |
 | 23 | **WMT** | Walmart Inc. | Consumer Defensive | **+23.7%** | 111.74 | 138.27 | 0.95 | ···M | 43 | 62 |
 | 24 | **S** | SentinelOne, Inc. | Technology | **+8.5%** | 18.14 | 19.68 | 0.95 | ·D·· | 35 | 51 |
-| 25 | **CRWV** | CoreWeave, Inc. | Technology | **+95.0%** | 70.79 | 138.03 | 0.94 | ··W· | 37 | 53 |
-| 26 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+44.3%** | 24.11 | 34.78 | 0.94 | ···M | 36 | 54 |
-| 27 | **CVX** | Chevron Corporation | Energy | **+12.7%** | 190.00 | 214.21 | 0.94 | ·D·· | 25 | 43 |
+| 25 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+44.3%** | 24.11 | 34.78 | 0.94 | ···M | 36 | 54 |
+| 26 | **CVX** | Chevron Corporation | Energy | **+12.7%** | 190.00 | 214.21 | 0.94 | ·D·· | 25 | 43 |
+| 27 | **CRWV** | CoreWeave, Inc. | Technology | **+95.0%** | 70.79 | 138.03 | 0.94 | ··W· | 37 | 53 |

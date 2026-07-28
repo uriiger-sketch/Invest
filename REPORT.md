@@ -1,6 +1,6 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+56.2%** | 8.01 | 12.51 | 3.89 | HDWM | 28 | 41 |
+| 1 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+56.2%** | 8.01 | 12.51 | 2.96 | HDW· | 28 | 41 |
 | 2 | **GM** | General Motors Company | Consumer Cyclical | **+12.9%** | 87.04 | 98.31 | 2.96 | HDW· | 27 | 45 |
 | 3 | **T** | AT&T Inc. | Communication Servic | **+17.6%** | 24.42 | 28.71 | 2.95 | HDW· | 26 | 44 |
 | 4 | **DUK** | Duke Energy Corporation | Utilities | **+7.8%** | 128.83 | 138.84 | 2.92 | HDW· | 23 | 40 |
@@ -24,6 +24,7 @@
 | 22 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+140.9%** | 3.01 | 7.25 | 0.96 | ···M | 7 | 23 |
 | 23 | **WMT** | Walmart Inc. | Consumer Defensive | **+23.7%** | 111.74 | 138.27 | 0.95 | ···M | 43 | 62 |
 | 24 | **CVX** | Chevron Corporation | Energy | **+12.7%** | 190.00 | 214.21 | 0.95 | ·D·· | 25 | 43 |
-| 25 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.3%** | 4.62 | 7.36 | 0.94 | ··W· | 24 | 35 |
+| 25 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.5%** | 4.62 | 7.37 | 0.94 | ··W· | 24 | 35 |
 | 26 | **S** | SentinelOne, Inc. | Technology | **+8.5%** | 18.14 | 19.68 | 0.94 | ·D·· | 35 | 51 |
 | 27 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+44.3%** | 24.11 | 34.78 | 0.94 | ···M | 36 | 54 |
+| 28 | **NFLX** | Netflix, Inc. | Communication Servic | **+34.7%** | 70.40 | 94.84 | 0.93 | ···M | 51 | 73 |

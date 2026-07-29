@@ -20,8 +20,8 @@
 | 18 | **MU** | Micron Technology, Inc. | Technology | **+83.7%** | 820.53 | 1507.38 | 0.99 | ···M | 45 | 66 |
 | 19 | **IONQ** | IonQ, Inc. | Technology | **+101.9%** | 33.88 | 68.41 | 0.97 | ···M | 13 | 30 |
 | 20 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+137.7%** | 3.05 | 7.25 | 0.97 | ···M | 7 | 23 |
-| 21 | **DOCN** | DigitalOcean Holdings, Inc. | Technology | **+57.2%** | 112.51 | 176.86 | 0.96 | H··· | 16 | 33 |
-| 22 | **META** | Meta Platforms, Inc. | Communication Servic | **+39.0%** | 593.41 | 824.68 | 0.96 | ···M | 62 | 87 |
+| 21 | **META** | Meta Platforms, Inc. | Communication Servic | **+39.0%** | 593.41 | 824.68 | 0.96 | ···M | 62 | 87 |
+| 22 | **DOCN** | DigitalOcean Holdings, Inc. | Technology | **+57.2%** | 112.51 | 176.86 | 0.96 | H··· | 16 | 33 |
 | 23 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+41.3%** | 24.62 | 34.78 | 0.95 | ···M | 36 | 54 |
 | 24 | **NOW** | ServiceNow, Inc. | Technology | **+26.8%** | 110.62 | 140.25 | 0.94 | ··W· | 49 | 69 |
 | 25 | **WMT** | Walmart Inc. | Consumer Defensive | **+22.1%** | 113.10 | 138.10 | 0.94 | ···M | 43 | 62 |

@@ -1,7 +1,7 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+54.3%** | 8.01 | 12.36 | 3.87 | HDWM | 28 | 41 |
-| 2 | **BLK** | BlackRock, Inc. | Financial Services | **+21.7%** | 1079.19 | 1313.50 | 3.80 | HDWM | 17 | 34 |
+| 2 | **BLK** | BlackRock, Inc. | Financial Services | **+21.7%** | 1079.19 | 1313.50 | 3.81 | HDWM | 17 | 34 |
 | 3 | **GM** | General Motors Company | Consumer Cyclical | **+10.4%** | 89.40 | 98.65 | 2.97 | HDW· | 27 | 45 |
 | 4 | **T** | AT&T Inc. | Communication Servic | **+19.9%** | 23.94 | 28.71 | 2.96 | HDW· | 25 | 43 |
 | 5 | **MDT** | Medtronic plc | Healthcare | **+12.5%** | 87.54 | 98.44 | 2.94 | HDW· | 29 | 47 |

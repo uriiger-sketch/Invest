@@ -1,29 +1,30 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+54.3%** | 8.01 | 12.36 | 3.88 | HDWM | 28 | 41 |
-| 2 | **BLK** | BlackRock, Inc. | Financial Services | **+21.7%** | 1079.19 | 1313.50 | 3.80 | HDWM | 17 | 34 |
-| 3 | **GM** | General Motors Company | Consumer Cyclical | **+10.4%** | 89.40 | 98.65 | 2.96 | HDW· | 27 | 45 |
-| 4 | **T** | AT&T Inc. | Communication Servic | **+19.9%** | 23.94 | 28.71 | 2.96 | HDW· | 25 | 43 |
-| 5 | **MDT** | Medtronic plc | Healthcare | **+12.5%** | 87.54 | 98.44 | 2.94 | HDW· | 29 | 47 |
-| 6 | **DUK** | Duke Energy Corporation | Utilities | **+7.6%** | 129.08 | 138.84 | 2.92 | HDW· | 23 | 40 |
-| 7 | **MSFT** | Microsoft Corporation | Technology | **+42.3%** | 390.54 | 555.77 | 2.90 | H·WM | 56 | 80 |
-| 8 | **GRAB** | Grab Holdings Limited | Technology | **+75.4%** | 3.35 | 5.88 | 1.99 | ··WM | 26 | 44 |
-| 9 | **NVDA** | NVIDIA Corporation | Technology | **+59.4%** | 190.01 | 302.83 | 1.98 | ··WM | 61 | 85 |
-| 10 | **BSX** | Boston Scientific Corporation | Healthcare | **+57.1%** | 46.04 | 72.31 | 1.97 | ··WM | 31 | 50 |
-| 11 | **PGR** | The Progressive Corporation | Financial Services | **+5.6%** | 219.99 | 232.33 | 1.95 | HD·· | 25 | 26 |
-| 12 | **ICE** | Intercontinental Exchange, Inc. | Financial Services | **+15.2%** | 154.28 | 177.79 | 1.94 | HD·· | 15 | 33 |
-| 13 | **RIVN** | Rivian Automotive, Inc. | Consumer Cyclical | **+15.4%** | 16.33 | 18.85 | 1.92 | HD·· | 26 | 44 |
-| 14 | **META** | Meta Platforms, Inc. | Communication Servic | **+40.8%** | 585.61 | 824.68 | 1.91 | ··WM | 62 | 87 |
-| 15 | **CVX** | Chevron Corporation | Energy | **+12.1%** | 191.86 | 215.00 | 1.90 | HD·· | 25 | 43 |
-| 16 | **BILL** | BILL Holdings, Inc. | Technology | **+15.1%** | 47.41 | 54.57 | 1.90 | HD·· | 22 | 41 |
-| 17 | **MU** | Micron Technology, Inc. | Technology | **+104.0%** | 739.00 | 1507.38 | 0.99 | ···M | 45 | 66 |
-| 18 | **IONQ** | IonQ, Inc. | Technology | **+113.8%** | 31.99 | 68.41 | 0.97 | ···M | 13 | 30 |
-| 19 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+33.3%** | 23.30 | 31.05 | 0.95 | H··· | 25 | 42 |
-| 20 | **NOW** | ServiceNow, Inc. | Technology | **+21.2%** | 115.76 | 140.25 | 0.95 | ··W· | 49 | 69 |
-| 21 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+144.1%** | 2.97 | 7.25 | 0.95 | ···M | 7 | 23 |
-| 22 | **HON** | Honeywell International Inc. | Industrials | **+8.7%** | 241.12 | 262.00 | 0.94 | ·D·· | 24 | 43 |
-| 23 | **NIO** | NIO Inc. | Consumer Cyclical | **+55.1%** | 4.76 | 7.38 | 0.94 | ··W· | 24 | 35 |
-| 24 | **SHOP** | Shopify Inc. | Technology | **+14.9%** | 129.17 | 148.39 | 0.94 | ·D·· | 52 | 69 |
-| 25 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+41.7%** | 24.55 | 34.78 | 0.93 | ···M | 36 | 54 |
-| 26 | **WMT** | Walmart Inc. | Consumer Defensive | **+20.9%** | 114.22 | 138.10 | 0.92 | ···M | 43 | 62 |
-| 27 | **MA** | Mastercard Incorporated | Financial Services | **+14.3%** | 563.32 | 644.05 | 0.91 | ···M | 41 | 62 |
+| 1 | **T** | AT&T Inc. | Communication Servic | **+23.7%** | 23.22 | 28.71 | 2.98 | HDW· | 25 | 43 |
+| 2 | **GM** | General Motors Company | Consumer Cyclical | **+13.8%** | 86.70 | 98.65 | 2.96 | HDW· | 27 | 45 |
+| 3 | **MDT** | Medtronic plc | Healthcare | **+15.3%** | 85.41 | 98.44 | 2.95 | HDW· | 29 | 47 |
+| 4 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+56.8%** | 7.89 | 12.36 | 2.93 | H·WM | 28 | 41 |
+| 5 | **BSX** | Boston Scientific Corporation | Healthcare | **+60.7%** | 45.01 | 72.31 | 2.92 | H·WM | 31 | 50 |
+| 6 | **DUK** | Duke Energy Corporation | Utilities | **+10.4%** | 125.76 | 138.84 | 2.92 | HDW· | 23 | 40 |
+| 7 | **BLK** | BlackRock, Inc. | Financial Services | **+21.0%** | 1085.55 | 1313.50 | 2.90 | HDW· | 17 | 34 |
+| 8 | **MSFT** | Microsoft Corporation | Technology | **+24.8%** | 445.43 | 555.77 | 2.87 | HDW· | 56 | 80 |
+| 9 | **GRAB** | Grab Holdings Limited | Technology | **+75.4%** | 3.35 | 5.88 | 2.00 | ··WM | 26 | 44 |
+| 10 | **NVDA** | NVIDIA Corporation | Technology | **+55.7%** | 194.51 | 302.83 | 1.98 | ··WM | 61 | 85 |
+| 11 | **PGR** | The Progressive Corporation | Financial Services | **+9.8%** | 211.58 | 232.33 | 1.96 | HD·· | 25 | 26 |
+| 12 | **ICE** | Intercontinental Exchange, Inc. | Financial Services | **+16.9%** | 152.02 | 177.79 | 1.95 | HD·· | 15 | 33 |
+| 13 | **META** | Meta Platforms, Inc. | Communication Servic | **+53.2%** | 538.47 | 824.68 | 1.94 | ··WM | 62 | 87 |
+| 14 | **CVX** | Chevron Corporation | Energy | **+13.0%** | 190.34 | 215.00 | 1.92 | HD·· | 25 | 43 |
+| 15 | **RIVN** | Rivian Automotive, Inc. | Consumer Cyclical | **+15.3%** | 16.34 | 18.85 | 1.92 | HD·· | 26 | 44 |
+| 16 | **MA** | Mastercard Incorporated | Financial Services | **+12.9%** | 570.54 | 644.05 | 1.89 | HD·· | 41 | 62 |
+| 17 | **MU** | Micron Technology, Inc. | Technology | **+77.9%** | 847.46 | 1507.38 | 0.99 | ···M | 45 | 66 |
+| 18 | **IONQ** | IonQ, Inc. | Technology | **+98.7%** | 34.42 | 68.41 | 0.98 | ···M | 13 | 30 |
+| 19 | **SOUN** | SoundHound AI, Inc. | Technology | **+122.8%** | 5.90 | 13.14 | 0.97 | ···M | 7 | 22 |
+| 20 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+142.9%** | 2.98 | 7.25 | 0.97 | ···M | 7 | 23 |
+| 21 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+48.5%** | 23.42 | 34.78 | 0.96 | ···M | 36 | 54 |
+| 22 | **HON** | Honeywell International Inc. | Industrials | **+10.0%** | 238.15 | 262.00 | 0.96 | ·D·· | 24 | 43 |
+| 23 | **NOW** | ServiceNow, Inc. | Technology | **+29.8%** | 108.05 | 140.25 | 0.96 | ··W· | 49 | 69 |
+| 24 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+40.0%** | 22.17 | 31.05 | 0.95 | ···M | 25 | 42 |
+| 25 | **NIO** | NIO Inc. | Consumer Cyclical | **+55.2%** | 4.76 | 7.39 | 0.94 | ··W· | 24 | 35 |
+| 26 | **WMT** | Walmart Inc. | Consumer Defensive | **+24.1%** | 111.28 | 138.10 | 0.94 | ···M | 43 | 62 |
+| 27 | **ACN** | Accenture plc | Technology | **+9.8%** | 162.90 | 178.89 | 0.94 | ·D·· | 27 | 45 |
+| 28 | **NFLX** | Netflix, Inc. | Communication Servic | **+32.4%** | 71.22 | 94.33 | 0.92 | ···M | 51 | 73 |

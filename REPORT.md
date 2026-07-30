@@ -18,8 +18,8 @@
 | 16 | **BILL** | BILL Holdings, Inc. | Technology | **+15.1%** | 47.41 | 54.57 | 1.89 | HD·· | 22 | 41 |
 | 17 | **MU** | Micron Technology, Inc. | Technology | **+104.0%** | 739.00 | 1507.38 | 0.99 | ···M | 45 | 66 |
 | 18 | **IONQ** | IonQ, Inc. | Technology | **+113.8%** | 31.99 | 68.41 | 0.97 | ···M | 13 | 30 |
-| 19 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+33.3%** | 23.30 | 31.05 | 0.95 | H··· | 25 | 42 |
-| 20 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+144.1%** | 2.97 | 7.25 | 0.95 | ···M | 7 | 23 |
+| 19 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+144.1%** | 2.97 | 7.25 | 0.95 | ···M | 7 | 23 |
+| 20 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+33.3%** | 23.30 | 31.05 | 0.95 | H··· | 25 | 42 |
 | 21 | **NOW** | ServiceNow, Inc. | Technology | **+21.2%** | 115.76 | 140.25 | 0.95 | ··W· | 49 | 69 |
 | 22 | **HON** | Honeywell International Inc. | Industrials | **+8.7%** | 241.12 | 262.00 | 0.95 | ·D·· | 24 | 43 |
 | 23 | **NIO** | NIO Inc. | Consumer Cyclical | **+54.9%** | 4.76 | 7.37 | 0.94 | ··W· | 24 | 35 |

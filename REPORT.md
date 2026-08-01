@@ -2,7 +2,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | **F** | Ford Motor Company | Consumer Cyclical | **+7.5%** | 14.68 | 15.78 | 2.98 | HDW· | 22 | 40 |
 | 2 | **GM** | General Motors Company | Consumer Cyclical | **+12.6%** | 88.86 | 100.04 | 2.96 | HDW· | 28 | 46 |
-| 3 | **MSFT** | Microsoft Corporation | Technology | **+20.8%** | 464.72 | 561.58 | 2.93 | HDW· | 56 | 80 |
+| 3 | **MSFT** | Microsoft Corporation | Technology | **+21.2%** | 464.72 | 563.05 | 2.93 | HDW· | 57 | 81 |
 | 4 | **MDT** | Medtronic plc. | Healthcare | **+15.3%** | 85.39 | 98.44 | 2.92 | HDW· | 29 | 47 |
 | 5 | **BLK** | BlackRock, Inc. | Financial Services | **+20.5%** | 1090.39 | 1313.50 | 2.92 | HDW· | 17 | 34 |
 | 6 | **GRAB** | Grab Holdings Limited | Technology | **+67.9%** | 3.50 | 5.88 | 2.00 | ··WM | 26 | 44 |
@@ -28,6 +28,6 @@
 | 26 | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | **+15.3%** | 271.58 | 313.07 | 0.95 | H··· | 64 | 66 |
 | 27 | **SHEL** | Shell plc | Energy | **+4.9%** | 91.98 | 96.47 | 0.95 | ·D·· | 16 | 32 |
 | 28 | **ORCL** | Oracle Corporation | Technology | **+91.1%** | 129.87 | 248.15 | 0.95 | ··W· | 44 | 63 |
-| 29 | **RBLX** | Roblox Corporation | Communication Servic | **+84.9%** | 35.60 | 65.84 | 0.95 | ···M | 34 | 53 |
+| 29 | **WMT** | Walmart Inc. | Consumer Defensive | **+24.2%** | 111.20 | 138.10 | 0.94 | ···M | 43 | 62 |
 | 30 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+47.7%** | 145.27 | 214.62 | 0.94 | ··W· | 22 | 39 |
-| 31 | **WMT** | Walmart Inc. | Consumer Defensive | **+24.2%** | 111.20 | 138.10 | 0.94 | ···M | 43 | 62 |
+| 31 | **APP** | AppLovin Corporation | Communication Servic | **+65.3%** | 395.90 | 654.60 | 0.93 | ···M | 32 | 52 |

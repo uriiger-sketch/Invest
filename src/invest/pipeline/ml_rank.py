@@ -13,14 +13,18 @@ from pathlib import Path
 import pandas as pd
 from sqlalchemy import select
 
-from ..config import FEATURE_NAMES, FORWARD_WINDOW_DAYS, HORIZONS, Horizon
+from ..config import FEATURE_NAMES, FORWARD_WINDOW_DAYS, HORIZONS, PROJECT_ROOT, Horizon
 from ..db import session_scope
 from ..models import FeatureSnapshot, Price
 
 logger = logging.getLogger(__name__)
 
 COLD_START_MIN_DAYS = 60
-MODEL_DIR = Path("data/models")
+# Rooted at PROJECT_ROOT rather than a bare relative path: a relative
+# "data/models" resolves against whatever the CURRENT WORKING DIRECTORY
+# happens to be when `train()`/`_load_model()` run, which is fragile outside
+# the one context (repo root) it was implicitly assumed to always run from.
+MODEL_DIR = PROJECT_ROOT / "data" / "models"
 
 
 def _load_snapshots() -> pd.DataFrame:
@@ -85,10 +89,16 @@ def train(horizon: Horizon) -> Path | None:
         logger.warning("lightgbm not installed; skipping training")
         return None
 
+    # Chronological order is required for the walk-forward split below: rows
+    # come back from `_load_snapshots` in DB insertion order (unordered with
+    # respect to `as_of`), so slicing 80/20 without sorting first could put
+    # NEWER rows in the training set and OLDER rows in validation — silent
+    # look-ahead leakage into the metric used for early stopping.
+    data = data.sort_values("as_of").reset_index(drop=True)
     X = data[list(FEATURE_NAMES)].astype(float).fillna(0.0)
     y = data["fwd_ret"].astype(float)
 
-    # Simple walk-forward: last 20% is validation.
+    # Simple walk-forward: last 20% (chronologically) is validation.
     cut = int(len(data) * 0.8)
     d_train = lgb.Dataset(X.iloc[:cut], label=y.iloc[:cut])
     d_val = lgb.Dataset(X.iloc[cut:], label=y.iloc[cut:])

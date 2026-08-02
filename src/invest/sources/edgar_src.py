@@ -16,7 +16,7 @@ from lxml import etree
 
 from ..config import get_settings
 from ..db import session_scope
-from ..models import Holding13F, InsiderTrade
+from ..models import Holding13F
 from .base import BaseSource, TransientSourceError, log_run, with_retries
 
 logger = logging.getLogger(__name__)
@@ -38,7 +38,13 @@ TOP_FILERS: tuple[tuple[str, str], ...] = (
     ("Franklin Resources", "0000038777"),
     ("Northern Trust", "0000073124"),
     ("Dodge & Cox", "0000200217"),
-    ("Capital World Investors", "0000921669"),
+    # "Capital World Investors" was previously listed here under
+    # 0000921669 — the same CIK as "Icahn Enterprises" below. One of the two
+    # was wrong (both can't be real 13F filers under the same CIK), and
+    # since I can't verify the correct CIK for Capital World Investors
+    # against SEC without network access, removing the unverifiable entry is
+    # safer than guessing a replacement number and silently mislabeling a
+    # different real filer's holdings under a wrong name again.
     ("Legal & General Investment", "0001645148"),
     ("Geode Capital Management", "0001330073"),
     ("Janus Henderson Group", "0001274173"),
@@ -107,7 +113,11 @@ TOP_FILERS: tuple[tuple[str, str], ...] = (
     ("Sculptor Capital (Och-Ziff)", "0001403256"),
     ("Brevan Howard Asset Mgmt", "0001435317"),
     ("Marshall Wace", "0001607796"),
-    ("Citadel Securities", "0001423053"),
+    # "Citadel Securities" was previously listed here under 0001423053 — the
+    # same CIK as "Citadel Advisors" above (the actual 13F-filing entity;
+    # Citadel Securities is a separate broker-dealer). Removed rather than
+    # guessing Citadel Securities' real CIK — see the Capital World
+    # Investors note above for why.
     ("Hudson Bay Capital Mgmt", "0001482281"),
     ("Element Capital Management", "0001431203"),
     ("Caxton Associates", "0001000275"),
@@ -473,15 +483,165 @@ class EdgarSource(BaseSource):
         )
         return self._get_text(url)
 
-    _FORM4_DATE = re.compile(r"<updated>(.*?)</updated>")
+    _FORM4_ENTRY = re.compile(r"<entry>(.*?)</entry>", re.S)
+    _FORM4_UPDATED = re.compile(r"<updated>(.*?)</updated>")
+    # SEC's atom <id> for a filing is a stable
+    # "urn:tag:sec.gov,2008:accession-number=XXXXXXXXXX-YY-NNNNNN" tag.
+    _FORM4_ACCESSION = re.compile(r"accession-number=([\d-]+)")
+    # Every <link href> in an entry points somewhere under the ISSUER's own
+    # numeric-CIK archive folder, regardless of whether we searched using a
+    # ticker symbol (browse-edgar accepts either) — so this is how we recover
+    # the real numeric CIK needed to build the document download URL.
+    _FORM4_ARCHIVE_CIK = re.compile(r"/Archives/edgar/data/(\d+)/")
+
+    # Cap the number of individual Form 4 filings we download+parse per
+    # ticker per run. A per-ticker cap bounds the extra request volume this
+    # adds (each filing needs its own fetch); filings beyond it still get a
+    # coarse placeholder row so we don't silently lose that they happened.
+    _FORM4_MAX_DETAILED_PER_TICKER = 6
+
+    # SEC transaction codes for actual open-market conviction: P = purchase,
+    # S = sale. Every other code (A=grant, M=option exercise, G=gift,
+    # F=tax withholding, C=conversion, ...) is compensation mechanics, not a
+    # buy/sell decision, and is intentionally excluded so it can't be
+    # miscounted as insider sentiment.
+    _FORM4_OPEN_MARKET_CODES = {"P": "buy", "S": "sell"}
+
+    def _parse_form4_entries(self, feed: str) -> list[dict[str, Any]]:
+        """Atom feed -> [{"date", "accession", "issuer_cik"}, ...].
+
+        Entries missing any of the three fields are dropped from the
+        returned list (the caller falls back to a coarse placeholder for
+        those, keyed only by date, so a malformed entry never means losing
+        the "something happened" signal entirely).
+        """
+        out: list[dict[str, Any]] = []
+        for block in self._FORM4_ENTRY.findall(feed):
+            m_date = self._FORM4_UPDATED.search(block)
+            m_acc = self._FORM4_ACCESSION.search(block)
+            m_cik = self._FORM4_ARCHIVE_CIK.search(block)
+            if not (m_date and m_acc and m_cik):
+                continue
+            try:
+                d = datetime.fromisoformat(m_date.group(1).replace("Z", "+00:00")).date()
+            except Exception:  # noqa: BLE001
+                continue
+            out.append({"date": d, "accession": m_acc.group(1), "issuer_cik": m_cik.group(1)})
+        return out
+
+    def _download_form4_primary_doc(self, issuer_cik: str, accession_no_dash: str) -> bytes | None:
+        """Fetch one filing's primary XML document.
+
+        Modern (post-2003) Form 3/4/5 filings are XML-only and SEC names the
+        primary document literally `primary_doc.xml`; fall back to any other
+        top-level `.xml` file for the rare filing that doesn't follow that
+        convention, mirroring the same index.json + directory-listing
+        approach `_download_13f_infotable` already uses for 13F filings.
+        """
+        cik_int = str(int(issuer_cik))
+        index_url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{accession_no_dash}/index.json"
+        idx = self._get_json(index_url)
+        if not idx:
+            return None
+        names = [item.get("name", "") for item in idx.get("directory", {}).get("item", [])]
+        target = next((n for n in names if n.lower() == "primary_doc.xml"), None)
+        if target is None:
+            target = next(
+                (n for n in names if n.lower().endswith(".xml") and "index" not in n.lower()), None
+            )
+        if target is None:
+            return None
+        url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{accession_no_dash}/{target}"
+        self.throttle()
+        try:
+            r = self.session.get(url, timeout=30)
+        except requests.RequestException as e:
+            raise TransientSourceError(str(e)) from e
+        return r.content if r.status_code < 400 else None
+
+    @classmethod
+    def _parse_form4_transactions(cls, xml_bytes: bytes) -> list[dict[str, Any]]:
+        """Parse a Form 4 ownershipDocument into open-market buy/sell rows.
+
+        Only non-derivative (Table I — actual common stock, not options)
+        transactions coded P (open-market purchase) or S (open-market sale)
+        are returned. Every other code is compensation mechanics (grants,
+        option exercises, gifts, tax withholding), not a buy/sell decision,
+        and would corrupt `insider_net_buy_90d` if counted as one.
+        """
+        try:
+            root = etree.fromstring(xml_bytes)  # noqa: S320 (trusted SEC feed)
+        except etree.XMLSyntaxError:
+            return []
+        ns = {}
+        if root.tag.startswith("{"):
+            ns["n"] = root.tag.split("}")[0].lstrip("{")
+
+        def _tag(name: str) -> str:
+            return f"n:{name}" if ns else name
+
+        def _text(el, path: str) -> str | None:
+            found = el.find("/".join(_tag(p) for p in path.split("/")), ns or None)
+            return found.text.strip() if found is not None and found.text else None
+
+        owners = root.findall(_tag("reportingOwner"), ns or None)
+        owner_names = [
+            n for n in (_text(o, "reportingOwnerId/rptOwnerName") for o in owners) if n
+        ]
+        owner_name = owner_names[0] if owner_names else None
+
+        table = root.find(_tag("nonDerivativeTable"), ns or None)
+        if table is None:
+            return []
+        out: list[dict[str, Any]] = []
+        for txn in table.findall(_tag("nonDerivativeTransaction"), ns or None):
+            code = (_text(txn, "transactionCoding/transactionCode") or "").strip().upper()
+            mapped = cls._FORM4_OPEN_MARKET_CODES.get(code)
+            if mapped is None:
+                continue
+            d_raw = _text(txn, "transactionDate/value")
+            try:
+                d = datetime.strptime(d_raw, "%Y-%m-%d").date() if d_raw else None
+            except ValueError:
+                d = None
+            if d is None:
+                continue
+            shares_raw = _text(txn, "transactionAmounts/transactionShares/value")
+            price_raw = _text(txn, "transactionAmounts/transactionPricePerShare/value")
+            try:
+                shares = float(shares_raw) if shares_raw else None
+            except ValueError:
+                shares = None
+            if shares is None:
+                continue
+            try:
+                price = float(price_raw) if price_raw else 0.0
+            except ValueError:
+                price = 0.0
+            out.append(
+                {
+                    "filer": owner_name or "(unnamed Form 4 filer)",
+                    "action": mapped,
+                    "shares": shares,
+                    "price": price,
+                    "date": d,
+                }
+            )
+        return out
 
     def ingest_insider(self, tickers: list[str], lookback_days: int = 120) -> int:
-        """Pull a lightweight list of recent Form 4 filings per ticker.
+        """Pull recent Form 4 filings per ticker and parse real per-transaction
+        detail (insider name, buy/sell, shares, price) for the most recent
+        `_FORM4_MAX_DETAILED_PER_TICKER` filings.
 
-        We do NOT parse each individual filing's XML (heavy). Instead we record
-        one "activity" row per filing date as a proxy. Richer parsing is a
-        follow-up.
+        Filings beyond that cap, or that fail to parse, still get a coarse
+        "something happened" placeholder row (as this used to do for every
+        filing) so their existence isn't silently dropped — they just don't
+        contribute to the insider_net_buy_90d feature or count as a
+        separately-named source, which real per-transaction rows do.
         """
+        from .base import upsert_insider_trades
+
         cutoff = date.today() - timedelta(days=lookback_days)
         written = 0
         for t in tickers:
@@ -492,29 +652,40 @@ class EdgarSource(BaseSource):
                 continue
             if not feed:
                 continue
-            dates: list[date] = []
-            for m in self._FORM4_DATE.finditer(feed):
-                try:
-                    d = datetime.fromisoformat(m.group(1).replace("Z", "+00:00")).date()
-                except Exception:  # noqa: BLE001
-                    continue
-                if d >= cutoff:
-                    dates.append(d)
-            if not dates:
+            entries = [e for e in self._parse_form4_entries(feed) if e["date"] >= cutoff]
+            if not entries:
                 continue
-            with session_scope() as s:
-                for d in dates:
-                    s.add(
-                        InsiderTrade(
-                            ticker=t,
-                            filer="(aggregated form-4 activity)",
-                            action="activity",
-                            shares=None,
-                            price=None,
-                            date=d,
-                        )
+            entries.sort(key=lambda e: e["date"], reverse=True)
+            rows: list[dict[str, Any]] = []
+            for entry in entries[: self._FORM4_MAX_DETAILED_PER_TICKER]:
+                txns: list[dict[str, Any]] = []
+                try:
+                    xml = self._download_form4_primary_doc(entry["issuer_cik"], entry["accession"])
+                    if xml:
+                        txns = self._parse_form4_transactions(xml)
+                except TransientSourceError as e:
+                    logger.warning(
+                        "edgar form4 doc %s/%s failed: %s", t, entry["accession"], e
                     )
-                    written += 1
+                if txns:
+                    rows.extend({**txn, "ticker": t} for txn in txns)
+                else:
+                    rows.append(
+                        {
+                            "ticker": t, "filer": "(aggregated form-4 activity)",
+                            "action": "activity", "shares": None, "price": None,
+                            "date": entry["date"],
+                        }
+                    )
+            for entry in entries[self._FORM4_MAX_DETAILED_PER_TICKER :]:
+                rows.append(
+                    {
+                        "ticker": t, "filer": "(aggregated form-4 activity)",
+                        "action": "activity", "shares": None, "price": None,
+                        "date": entry["date"],
+                    }
+                )
+            written += upsert_insider_trades(rows)
         return written
 
     # ------------------------------ run ------------------------------

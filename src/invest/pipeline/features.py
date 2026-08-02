@@ -97,6 +97,17 @@ def _latest_consensus(tickers: list[str]) -> pd.DataFrame:
 
 
 def _historic_consensus(tickers: list[str], days_ago: int) -> pd.DataFrame:
+    """Consensus target as of the closest available snapshot >= `days_ago` old.
+
+    Mirrors `_latest_consensus`'s cross-source handling: once more than one
+    source is enabled, several rows can share the same reference date, and a
+    plain `tail(1)` after an ascending sort picks whichever row SQLite/pandas
+    happens to return last for that date — a non-deterministic tie-break, and
+    not comparable to `mean_target` in `_latest_consensus` (which is a
+    cross-source median). Using the same median here keeps
+    `target_revision_30d = mean_target / mean_target_30d_ago - 1` an
+    apples-to-apples comparison.
+    """
     target = date.today() - timedelta(days=days_ago)
     with session_scope() as s:
         rows = s.execute(
@@ -107,9 +118,20 @@ def _historic_consensus(tickers: list[str], days_ago: int) -> pd.DataFrame:
     if not rows:
         return pd.DataFrame(columns=["ticker", "mean_target"])
     df = pd.DataFrame(
-        [{"ticker": r.ticker, "as_of_date": r.as_of_date, "mean_target": r.mean_target} for r in rows]
+        [
+            {"ticker": r.ticker, "as_of_date": r.as_of_date, "mean_target": r.mean_target}
+            for r in rows
+        ]
     )
-    return df.sort_values("as_of_date").groupby("ticker", as_index=False).tail(1)
+    # Per ticker, the most recent snapshot that is still <= target (i.e. the
+    # closest available point to "days_ago" in the past).
+    ref_date = df.groupby("ticker")["as_of_date"].transform("max")
+    at_ref = df[df["as_of_date"] == ref_date]
+    return (
+        at_ref.dropna(subset=["mean_target"])
+        .groupby("ticker", as_index=False)["mean_target"]
+        .median()
+    )
 
 
 def _actions_window(tickers: list[str], days: int) -> pd.DataFrame:
@@ -150,21 +172,77 @@ def _insider_window(tickers: list[str], days: int = 90) -> pd.DataFrame:
     )
 
 
+def _quarter_key(q: str) -> float:
+    """'2026Q2' -> 8105 (year*4 + quarter number), for integer quarter-gap math."""
+    try:
+        year, qn = q.split("Q")
+        return int(year) * 4 + int(qn)
+    except (ValueError, AttributeError):
+        return np.nan
+
+
 def _inst_flow(tickers: list[str]) -> pd.DataFrame:
-    """Pct change in aggregate shares held by filers quarter-over-quarter."""
+    """Position-weighted average per-filer share change, quarter-over-quarter.
+
+    The previous implementation summed shares across ALL filers per quarter
+    and diffed consecutive STORED rows regardless of which filers contributed
+    to each one. Because each filer's 13F is only crawled as "latest known",
+    filers land in the table at different real times — one quarter's
+    aggregate can come from a single filer and the next from 28 — so the pct
+    change was comparing incompatible filer sets, not a real flow. Observed
+    on live data: computed values up to +204,881 % (median +42.6, should be
+    centred near 0).
+
+    Fixed by computing the change PER (ticker, filer) and only accepting a
+    comparison when:
+      - the two snapshots are exactly one quarter apart (no gap), and
+      - the prior position was nonzero (a 0 -> N move is a new position, not
+        a "flow" — its pct change is undefined/infinite).
+    Per-filer changes are then combined into one ticker-level number as a
+    position-weighted average, so a filer initiating or exiting a position
+    doesn't get to solo-drive the result, and larger holders count for more.
+    """
     with session_scope() as s:
         rows = s.execute(select(Holding13F).where(Holding13F.ticker.in_(tickers))).scalars().all()
     if not rows:
         return pd.DataFrame(columns=["ticker", "inst_flow_13f"])
     df = pd.DataFrame(
-        [{"ticker": r.ticker, "quarter": r.quarter, "shares": r.shares or 0.0} for r in rows]
+        [
+            {
+                "ticker": r.ticker, "filer_cik": r.filer_cik,
+                "quarter": r.quarter, "shares": r.shares or 0.0,
+            }
+            for r in rows
+        ]
     )
-    agg = df.groupby(["ticker", "quarter"], as_index=False)["shares"].sum()
-    agg = agg.sort_values(["ticker", "quarter"])
-    agg["prev"] = agg.groupby("ticker")["shares"].shift(1)
-    agg["pct"] = (agg["shares"] - agg["prev"]) / agg["prev"].replace(0, np.nan)
-    latest = agg.groupby("ticker").tail(1)
-    return latest[["ticker", "pct"]].rename(columns={"pct": "inst_flow_13f"})
+    agg = df.groupby(["ticker", "filer_cik", "quarter"], as_index=False)["shares"].sum()
+    agg["qkey"] = agg["quarter"].map(_quarter_key)
+    agg = agg.dropna(subset=["qkey"]).sort_values(["ticker", "filer_cik", "qkey"])
+    grp = agg.groupby(["ticker", "filer_cik"])
+    agg["prev_shares"] = grp["shares"].shift(1)
+    agg["prev_qkey"] = grp["qkey"].shift(1)
+    adjacent = agg["qkey"] - agg["prev_qkey"] == 1
+    had_position = agg["prev_shares"] > 0
+    valid = adjacent & had_position
+    # Clip: a real filer can plausibly grow a small position 10x in a quarter,
+    # but a data glitch (e.g. a stale/duplicate row) could yield an absurd
+    # ratio — bound it so one bad row can't dominate the ticker-level average.
+    agg["pct"] = np.where(
+        valid, ((agg["shares"] - agg["prev_shares"]) / agg["prev_shares"]).clip(-0.95, 5.0), np.nan
+    )
+    latest = agg.sort_values(["ticker", "filer_cik", "qkey"]).groupby(["ticker", "filer_cik"]).tail(1)
+    latest = latest.dropna(subset=["pct"])
+    if latest.empty:
+        return pd.DataFrame(columns=["ticker", "inst_flow_13f"])
+    latest["w"] = latest["prev_shares"].clip(lower=0.0)
+
+    def _wavg(g: pd.DataFrame) -> float:
+        if g["w"].sum() > 0:
+            return float(np.average(g["pct"], weights=g["w"]))
+        return float(g["pct"].mean())
+
+    out = latest.groupby("ticker").apply(_wavg, include_groups=False).reset_index(name="inst_flow_13f")
+    return out
 
 
 def build_features(tickers: list[str]) -> pd.DataFrame:
@@ -182,7 +260,20 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
         if len(closes) < 2:
             continue
         last_close = float(closes[-1])
-        mom_21 = float(closes[-1] / closes[max(0, len(closes) - 22)] - 1) if len(closes) > 22 else 0.0
+        # Three distinct momentum windows so each horizon can lean on the
+        # timescale that actually matters to it (see WEIGHTS in config.py).
+        # Previously only a 21-day window existed and every horizon shared
+        # it, which was the main reason "hours" and "daily" rankings were
+        # nearly identical (measured Spearman rho = 0.958 on live data) —
+        # there was no feature in the whole pipeline that varied on a
+        # sub-21-day or multi-month timescale.
+        #
+        # Each threshold uses `>=` (not `>`): with N closes, index `N-k` is
+        # valid whenever `N >= k`, so requiring `N > k` incorrectly zeroed
+        # out the momentum value for tickers with EXACTLY k closes.
+        mom_5 = float(closes[-1] / closes[max(0, len(closes) - 6)] - 1) if len(closes) >= 6 else 0.0
+        mom_21 = float(closes[-1] / closes[max(0, len(closes) - 22)] - 1) if len(closes) >= 22 else 0.0
+        mom_63 = float(closes[-1] / closes[max(0, len(closes) - 64)] - 1) if len(closes) >= 64 else 0.0
         # realised vol (daily log returns, annualised).
         rets = np.diff(np.log(np.maximum(closes, 1e-9)))
         window = rets[-60:] if len(rets) >= 60 else rets
@@ -196,7 +287,9 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
             {
                 "ticker": t,
                 "last_close": last_close,
+                "price_mom_5d": mom_5,
                 "price_mom_21d": mom_21,
+                "price_mom_63d": mom_63,
                 "risk_penalty": -vol,
                 "dollar_volume_20d": dollar_vol,
                 "last_price_age_days": int(last_price_age),
@@ -305,9 +398,15 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
     else:
         firm_count_90d = pd.DataFrame(columns=["ticker", "firm_count_90d"])
 
+    # Explicit action -> sign map. Previously any action NOT starting with
+    # "buy"/"p" was treated as a SELL (-1), so any unrecognised or placeholder
+    # code (e.g. Form 4 codes we don't classify, or the old "(aggregated
+    # form-4 activity)" filler) was silently booked as bearish. Unknown codes
+    # now contribute 0 (neutral — "something happened" is not "they sold").
+    _INSIDER_SIGN = {"buy": 1.0, "sell": -1.0}
     ins = _insider_window(tickers)
     if not ins.empty:
-        signed = np.where(ins["action"].str.startswith("buy") | ins["action"].str.startswith("p"), 1, -1)
+        signed = ins["action"].map(_INSIDER_SIGN).fillna(0.0)
         ins["net_usd"] = signed * ins["shares"] * ins["price"]
         insider = ins.groupby("ticker", as_index=False)["net_usd"].sum().rename(
             columns={"net_usd": "insider_net_buy_90d"}

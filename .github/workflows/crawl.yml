@@ -1,23 +1,29 @@
 name: crawl
 
-# Runs the pipeline hourly (plus on-demand and on push). Each run:
+# Runs the pipeline every 30 minutes (plus on-demand and on push). Each run:
 #   1. commits the refreshed REPORT.md + docs/index.html back to the branch
 #   2. publishes docs/ to GitHub Pages so the top picks are viewable in a browser
 #
+# Timing headroom: the fast path (prices + full-universe coverage sweep) was
+# measured at ~4 minutes end-to-end on a 301-ticker universe (prices ~30s,
+# stooq backfill ~2s, coverage sweep ~3.5min), plus ~1-2 min of
+# checkout/install/rank/report/commit overhead — comfortably inside a
+# 30-minute window with margin to spare.
+#
 # Notes on reliability:
 # - GitHub's scheduled workflows are best-effort. 5–15 min jitter is normal,
-#   and ticks CAN be skipped under load, so treat the hourly cron as "about
-#   once an hour"; the report banner exposes the real last-ran time.
+#   and ticks CAN be skipped under load, so treat "every 30 min" as "about
+#   every 30 min"; the report banner exposes the real last-ran time.
 # - Fast and deep runs use separate concurrency groups so the daily deep
-#   ingest cannot starve the hourly fast heartbeat.
+#   ingest cannot starve the 30-min fast heartbeat.
 # - Auto-commit messages end with "[skip ci]" so the workflow does not
 #   re-trigger itself.
 
 on:
   schedule:
-    # Fast refresh every 2 hours (prices + stooq backfill).
-    - cron: "0 * * * *"
-    # Deep refresh once a day at 23:30 UTC (fundamentals + EDGAR 13F + Form 4).
+    # Fast refresh every 30 minutes (prices + full coverage sweep).
+    - cron: "*/30 * * * *"
+    # Deep refresh once a day at 23:30 UTC (fundamentals + EDGAR 13F + Form 4 + ML training).
     - cron: "30 23 * * *"
   workflow_dispatch:
     inputs:
@@ -111,6 +117,18 @@ jobs:
         timeout-minutes: 10
         run: python -m invest.cli rank
 
+      # ML training only runs on the deep (nightly) pass, not every 30-min
+      # fast run — LightGBM training is unnecessary overhead at that cadence,
+      # and `train()` self-gates on COLD_START_MIN_DAYS anyway. This step
+      # existing at all is the fix: `rank` now persists a feature snapshot
+      # every run, but nothing ever CALLED `invest train`, so the ML side of
+      # the composite+ML blend never trained and `ml_score` was silently
+      # identical to `composite_score` for every row ever persisted.
+      - name: Train ML models (deep run only)
+        if: ${{ env.DEEP_RUN == 'true' }}
+        timeout-minutes: 10
+        run: python -m invest.cli train
+
       - name: Generate report
         run: python scripts/generate_report.py
 
@@ -122,6 +140,10 @@ jobs:
           git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
           # data/invest.db is committed so state survives between runs.
           git add REPORT.md docs/index.html docs/history.jsonl data/invest.db
+          # data/models only exists after a deep run's Train step; commit it
+          # the same way so a trained model survives to the next run instead
+          # of being discarded when the runner is torn down.
+          if [ -d data/models ]; then git add data/models; fi
           if git diff --cached --quiet; then
             echo "no report changes"
           else

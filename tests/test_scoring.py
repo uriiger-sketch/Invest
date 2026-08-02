@@ -224,3 +224,118 @@ def test_select_diversified_backfills_when_pool_small():
     picked = select_diversified(rows, n=6, max_per_sector=3)
     # Cap admits 3, but with nothing else available the rest backfill by score.
     assert len(picked) == 6
+
+
+def test_select_diversified_backfill_preserves_rank_monotonicity():
+    """A backfilled (capped-out) name can score HIGHER than a diversified
+    pick from a still-open sector. Appending backfill at the end of `picked`
+    in scan order used to display it at a WORSE rank than its score
+    deserved; the final list must be sorted by score regardless of which
+    pass (diversified vs backfill) contributed each row."""
+    from invest.pipeline.rank import select_diversified
+
+    rows = [
+        {"ticker": "A10", "sector": "Semis", "blended_score": 10},
+        {"ticker": "A9", "sector": "Semis", "blended_score": 9},
+        {"ticker": "A8", "sector": "Semis", "blended_score": 8},
+        {"ticker": "A7", "sector": "Semis", "blended_score": 7},
+        {"ticker": "A6", "sector": "Semis", "blended_score": 6},
+        {"ticker": "B1", "sector": "Financials", "blended_score": 1},
+        {"ticker": "A5", "sector": "Semis", "blended_score": 5},
+        {"ticker": "A4", "sector": "Semis", "blended_score": 4},
+        {"ticker": "A3", "sector": "Semis", "blended_score": 3},
+    ]
+    picked = select_diversified(rows, n=9, max_per_sector=5)
+    scores = [r["blended_score"] for r in picked]
+    assert scores == sorted(scores, reverse=True), (
+        f"picked list is not sorted by score: {[(r['ticker'], r['blended_score']) for r in picked]}"
+    )
+    assert len(picked) == 9
+
+
+def test_weights_sum_to_one():
+    """Every horizon's WEIGHTS row must sum to 1.0 so composite_score is on a
+    comparable scale across horizons. Previously hours=0.95 and
+    weekly=1.10 — harmless within a horizon (re-z-scored downstream) but the
+    persisted, displayed composite_score was on an incomparable per-horizon
+    scale."""
+    from invest.config import WEIGHTS
+
+    for horizon, weights in WEIGHTS.items():
+        total = sum(weights.values())
+        assert abs(total - 1.0) < 1e-9, f"{horizon} weights sum to {total}, expected 1.0"
+
+
+def test_horizons_use_distinct_dominant_momentum_windows():
+    """Each horizon must have a nonzero weight on a momentum window some
+    OTHER horizon zeroes out — otherwise every horizon is just a linear
+    recombination of the same signals and rankings collapse together
+    (measured on live data: hours vs daily Spearman rho = 0.958, 11/13
+    top-13 overlap, because both leaned on the same single 21-day window)."""
+    from invest.config import WEIGHTS
+
+    assert WEIGHTS["hours"]["price_mom_5d"] > 0
+    assert WEIGHTS["hours"]["price_mom_63d"] == 0
+    assert WEIGHTS["monthly"]["price_mom_63d"] > 0
+    assert WEIGHTS["monthly"]["price_mom_5d"] == 0
+    # hours and monthly must not share a nonzero momentum window at all.
+    hours_mom = {k for k in ("price_mom_5d", "price_mom_21d", "price_mom_63d") if WEIGHTS["hours"][k] > 0}
+    monthly_mom = {k for k in ("price_mom_5d", "price_mom_21d", "price_mom_63d") if WEIGHTS["monthly"][k] > 0}
+    assert not (hours_mom & monthly_mom), (
+        f"hours and monthly share a momentum window: {hours_mom & monthly_mom}"
+    )
+
+
+def test_zscore_pool_mask_ignores_excluded_rows():
+    """Rows outside `pool_mask` must not influence the median/MAD used to
+    z-score the rows that ARE in the pool. Without this, ~100 gated-out
+    tickers carrying a fabricated `fillna(0)` for a column they have no real
+    data for skewed the reference population for the ~200 survivors that DO
+    have real data."""
+    from invest.pipeline.score import _zscore
+
+    # Pool values cluster tightly around 10; excluded values are all 0
+    # (simulating a fillna(0) placeholder). If the mask works, the pool's
+    # own tight spread drives the z-scores, not the fabricated zeros.
+    s = pd.Series([10.0, 10.5, 9.5, 11.0, 9.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    pool_mask = pd.Series([True] * 5 + [False] * 5)
+    z = _zscore(s, pool_mask)
+    # The pool median is 10.0; a pool value near it must be near 0.
+    assert abs(z.iloc[0]) < 0.5
+    # An excluded (masked-out) row is still transformed using pool stats,
+    # just not used to CALCULATE them — it should look like a strong outlier
+    # relative to the pool (~10), not like the "average" of the whole column
+    # (which naive unmasked stats would have made it look close to).
+    assert z.iloc[5] < -3
+
+
+def test_ml_score_persists_feature_snapshots_for_training():
+    """rank_all must persist a feature snapshot every run, or the `features`
+    table stays empty forever, `ml_rank.train()`'s cold-start check never
+    clears, and `ml_score` silently equals `composite_score` for every row —
+    the composite+ML blend the app is supposed to compute is composite-only.
+    This was previously dead code: `compute_and_persist`/
+    `persist_feature_snapshot` had zero callers outside their own module."""
+    from datetime import date, timedelta
+
+    from invest.db import session_scope
+    from invest.models import Consensus, FeatureSnapshot, Price, Stock
+    from invest.pipeline.rank import rank_all
+
+    with session_scope() as s:
+        s.add(Stock(ticker="MLTEST", name="ML Test Inc", sector="Technology", in_universe=True))
+        price = 100.0
+        for i in range(120):
+            s.add(Price(ticker="MLTEST", date=date.today() - timedelta(days=120 - i),
+                        close=price, adj_close=price, volume=5_000_000))
+        s.add(Consensus(ticker="MLTEST", as_of_date=date.today(), source="yfinance",
+                        strong_buy=15, buy=6, hold=4, sell=0, strong_sell=0,
+                        mean_target=price * 1.2, high_target=price * 1.4,
+                        low_target=price, num_analysts=25))
+
+    rank_all(["MLTEST"])
+
+    with session_scope() as s:
+        snap = s.get(FeatureSnapshot, ("MLTEST", date.today()))
+    assert snap is not None, "rank_all must call persist_feature_snapshot"
+    assert snap.feature_json, "persisted snapshot must not be empty"

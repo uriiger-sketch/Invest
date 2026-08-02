@@ -4,7 +4,6 @@ from __future__ import annotations
 import logging
 from datetime import date
 
-import numpy as np
 import pandas as pd
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
@@ -12,7 +11,7 @@ from ..config import HORIZONS, get_settings
 from ..db import session_scope
 from ..models import Score
 from . import ml_rank, score
-from .features import build_features
+from .features import build_features, persist_feature_snapshot
 
 logger = logging.getLogger(__name__)
 
@@ -37,8 +36,16 @@ class InsufficientAnalystDataError(RuntimeError):
 
 
 def _zscore_group(df: pd.DataFrame, col: str) -> pd.Series:
-    g = df.groupby("horizon")[col]
-    return (df[col] - g.transform("mean")) / g.transform("std").replace(0, np.nan)
+    """Per-horizon z-score, robust median/MAD (via score._zscore) rather than
+    mean/std. `score.py` deliberately avoids mean/std because a single
+    outlier inflates the std and squashes every legitimate value toward
+    zero — the same argument applies here, since `composite_score` and
+    `ml_score` both inherit whatever tails survive the upstream feature
+    clipping. Every row in `df` has already passed the quality gates (it
+    only exists here because `composite_scores` emitted it), so no
+    stats-pool restriction is needed — unlike `score._zscore`'s callers.
+    """
+    return df.groupby("horizon")[col].transform(lambda s: score._zscore(s))
 
 
 def _assert_analyst_data_present(features: pd.DataFrame, min_covered_pct: float = 0.10) -> None:
@@ -78,6 +85,16 @@ def rank_all(tickers: list[str]) -> pd.DataFrame:
     if features.empty:
         logger.warning("no features built; nothing to rank")
         return pd.DataFrame()
+
+    # Persist today's feature snapshot for future ML training. This was
+    # previously dead code (nothing called it), so the `features` table
+    # stayed empty forever, `ml_rank.train()` never cleared its cold-start
+    # check, and `ml_score` was silently identical to `composite_score` for
+    # every row ever persisted — the composite+ML blend was composite-only.
+    try:
+        persist_feature_snapshot(features)
+    except Exception:  # noqa: BLE001
+        logger.exception("persist_feature_snapshot failed; ranking continues without it")
 
     _assert_analyst_data_present(features)
 
@@ -169,6 +186,15 @@ def select_diversified(rows: list[dict], n: int, max_per_sector: int | None = No
                 break
             if r["ticker"] not in chosen:
                 picked.append(r)
+        # The backfill above appends capped-out names in their ORIGINAL scan
+        # order, which is only correct if it happens to land after every
+        # diversified pick. It doesn't in general: a capped-out name can
+        # score higher than a later diversified pick from a still-open
+        # sector, so appending it at the end displayed it at a WORSE rank
+        # than its score deserved. Re-sorting by score after backfill fixes
+        # display order without touching which names got selected (the cap
+        # logic above already decided that).
+        picked.sort(key=lambda r: -(r.get("blended_score") or 0.0))
     return picked
 
 

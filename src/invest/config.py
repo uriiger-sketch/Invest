@@ -108,56 +108,77 @@ class Settings(BaseSettings):
     history_show_days: int = 14      # render the last N days in the by-date section
 
 
-# Weight matrix per horizon. Rows must sum to ~1 (negative entries allowed).
+# Weight matrix per horizon. Every row sums to EXACTLY 1.0 (verified by
+# test_scoring.py::test_weights_sum_to_one) so composite_score is on a
+# comparable scale across horizons.
+#
+# Each horizon leans on a DIFFERENT momentum window (price_mom_5d /
+# price_mom_21d / price_mom_63d) rather than sharing one window with only the
+# weight vector to differentiate them. Sharing a single 21-day window across
+# all four horizons made "hours" and "daily" rank near-identically (measured
+# Spearman rho = 0.958, 11/13 top-13 overlap on live data) — there was no
+# feature in the whole pipeline that actually varied on a sub-21-day or
+# multi-month timescale. Now the dominant momentum window genuinely differs
+# per horizon, in addition to the weights.
 WEIGHTS: dict[Horizon, dict[str, float]] = {
     "hours": {
-        # Fastest horizon — leans on short-term momentum + recent rating changes
-        # BUT still respects analyst consensus + upside so a single high-quality
-        # name can plausibly top this list AND the longer horizons. Pure-momentum
-        # weights made ★★★★ cross-horizon agreement effectively impossible.
-        "consensus_z": 0.15,
-        "upside_z": 0.10,
-        "rating_mom_7d": 0.25,
-        "rating_mom_30d": 0.05,
+        # Fastest horizon — dominated by 5-day price momentum + very recent
+        # rating changes, but still respects consensus/upside so a
+        # high-quality name can plausibly top this list AND the longer ones.
+        "consensus_z": 0.12,
+        "upside_z": 0.08,
+        "rating_mom_7d": 0.22,
+        "rating_mom_30d": 0.03,
         "target_revision_30d": 0.05,
         "inst_flow_13f": 0.00,
         "insider_net_buy_90d": 0.05,
-        "price_mom_21d": 0.20,
+        "price_mom_5d": 0.30,
+        "price_mom_21d": 0.05,
+        "price_mom_63d": 0.00,
         "risk_penalty": 0.10,
     },
     "daily": {
-        # ~5 trading days. Same flavour as "hours" but with a bit more weight on
-        # the consensus snapshot and 30-day rating momentum.
+        # ~5 trading days. Blends short (5d) and medium (21d) momentum.
         "consensus_z": 0.10,
         "upside_z": 0.05,
-        "rating_mom_7d": 0.25,
-        "rating_mom_30d": 0.10,
+        "rating_mom_7d": 0.20,
+        "rating_mom_30d": 0.08,
         "target_revision_30d": 0.05,
         "inst_flow_13f": 0.00,
         "insider_net_buy_90d": 0.05,
-        "price_mom_21d": 0.25,
+        "price_mom_5d": 0.15,
+        "price_mom_21d": 0.17,
+        "price_mom_63d": 0.00,
         "risk_penalty": 0.15,
     },
     "weekly": {
-        "consensus_z": 0.20,
-        "upside_z": 0.20,
-        "rating_mom_7d": 0.10,
-        "rating_mom_30d": 0.15,
-        "target_revision_30d": 0.10,
+        # ~1 month. Medium momentum + a touch of the 63-day window; rating
+        # momentum shifts to the slower 30-day window.
+        "consensus_z": 0.18,
+        "upside_z": 0.15,
+        "rating_mom_7d": 0.05,
+        "rating_mom_30d": 0.12,
+        "target_revision_30d": 0.08,
         "inst_flow_13f": 0.05,
-        "insider_net_buy_90d": 0.10,
-        "price_mom_21d": 0.10,
+        "insider_net_buy_90d": 0.08,
+        "price_mom_5d": 0.00,
+        "price_mom_21d": 0.14,
+        "price_mom_63d": 0.05,
         "risk_penalty": 0.10,
     },
     "monthly": {
-        "consensus_z": 0.30,
-        "upside_z": 0.25,
+        # ~1 quarter. Dominated by consensus/upside + 63-day momentum +
+        # institutional flow; no weight on short-term (5d/7d) noise.
+        "consensus_z": 0.25,
+        "upside_z": 0.20,
         "rating_mom_7d": 0.00,
-        "rating_mom_30d": 0.05,
-        "target_revision_30d": 0.10,
-        "inst_flow_13f": 0.15,
-        "insider_net_buy_90d": 0.10,
-        "price_mom_21d": -0.05,
+        "rating_mom_30d": 0.03,
+        "target_revision_30d": 0.08,
+        "inst_flow_13f": 0.12,
+        "insider_net_buy_90d": 0.08,
+        "price_mom_5d": 0.00,
+        "price_mom_21d": 0.00,
+        "price_mom_63d": 0.14,
         "risk_penalty": 0.10,
     },
 }

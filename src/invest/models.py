@@ -137,6 +137,23 @@ class InsiderTrade(Base):
     price: Mapped[float | None] = mapped_column(Float)
     date: Mapped[date] = mapped_column(Date, index=True)
 
+    __table_args__ = (
+        # Each Form 4 filing's ATOM feed entry is re-fetched on every crawl
+        # (the feed is a rolling recent-filings window, not a one-time
+        # event), so without this constraint the same real transaction would
+        # be re-inserted every ~30 minutes and insider_net_buy_90d would
+        # inflate by however many times it was re-crawled within the 90-day
+        # window. NULL shares/price (the coarse "something happened"
+        # fallback row for filings we couldn't parse in detail) are exempt
+        # from SQL unique-constraint matching by design — harmless here
+        # since those rows always contribute a net-zero signal.
+        Index(
+            "uq_insider_trades_identity",
+            "ticker", "filer", "date", "action", "shares", "price",
+            unique=True,
+        ),
+    )
+
 
 class FeatureSnapshot(Base):
     __tablename__ = "features"

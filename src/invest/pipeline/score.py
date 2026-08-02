@@ -7,7 +7,7 @@ import pandas as pd
 from ..config import FEATURE_NAMES, HORIZONS, WEIGHTS, Horizon, get_settings
 
 
-def _zscore(s: pd.Series) -> pd.Series:
+def _zscore(s: pd.Series, pool_mask: pd.Series | None = None) -> pd.Series:
     """Robust z-score using median / MAD instead of mean / std.
 
     Mean/std z-scores are hostage to outliers: one ticker with a broken
@@ -19,17 +19,29 @@ def _zscore(s: pd.Series) -> pd.Series:
     column's std is ~1e-17, not exactly 0) and falls back to mean/std
     when MAD is 0 but the column still varies (e.g. >50 % identical
     values with a few distinct ones).
+
+    `pool_mask` restricts which rows the median/MAD are COMPUTED from,
+    while the transform is still applied to every row. Without it, tickers
+    that failed the liquidity/data-quality gates (and so carry a `fillna(0)`
+    placeholder for columns they have no real data for) still count toward
+    the population statistics — e.g. ~100 gated-out tickers contributing a
+    fabricated `risk_penalty = 0` (the best possible value) drags the median
+    for the ~200 survivors that DO have real volatility data, understating
+    how good the genuinely low-risk survivors look. Pass a mask of tickers
+    with trustworthy data (liquid + not data-quality-excluded) to keep the
+    reference population honest.
     """
     x = pd.to_numeric(s, errors="coerce")
-    if x.nunique(dropna=True) < 2:
+    pool = x if pool_mask is None else x[pool_mask.to_numpy()]
+    if pool.nunique(dropna=True) < 2:
         return pd.Series(np.zeros(len(s)), index=s.index)
-    med = x.median(skipna=True)
-    mad = (x - med).abs().median(skipna=True)
+    med = pool.median(skipna=True)
+    mad = (pool - med).abs().median(skipna=True)
     if mad and not np.isnan(mad) and mad > 1e-12:
         return (x - med) / (1.4826 * mad)
     # MAD == 0 but the column varies: fall back to classic z-score.
-    mu = x.mean(skipna=True)
-    sd = x.std(skipna=True)
+    mu = pool.mean(skipna=True)
+    sd = pool.std(skipna=True)
     if not sd or np.isnan(sd) or sd < 1e-12:
         return pd.Series(np.zeros(len(s)), index=s.index)
     return (x - mu) / sd
@@ -151,9 +163,23 @@ def quality_mask(features: pd.DataFrame) -> pd.Series:
     return liquidity_mask(features) & outlook_mask(features) & data_quality_mask(features)
 
 
+def _stats_pool_mask(features: pd.DataFrame) -> pd.Series:
+    """Tickers whose data is trustworthy enough to anchor z-score statistics.
+
+    Liquidity + data-quality survivors only — NOT the outlook gate, since
+    outlook itself is evaluated on these same raw (pre-z-score) columns, so
+    excluding on outlook first would be circular. This still excludes stale
+    prices, absurd upside and illiquid names, which is what keeps fabricated
+    `fillna(0)` placeholders for those tickers out of the reference
+    population used to compute every other ticker's z-score.
+    """
+    return liquidity_mask(features) & data_quality_mask(features)
+
+
 def composite_scores(features: pd.DataFrame) -> pd.DataFrame:
     """Return DataFrame[ticker, horizon, composite_score] covering all horizons."""
     settings = get_settings()
+    pool_mask = _stats_pool_mask(features)
     z = pd.DataFrame({"ticker": features["ticker"]})
     for col in FEATURE_NAMES:
         if col in features.columns:
@@ -162,7 +188,7 @@ def composite_scores(features: pd.DataFrame) -> pd.DataFrame:
                 # Cap the raw upside used for scoring so one 90 % outlier
                 # (often stale target data) can't dominate the whole rank.
                 raw = pd.to_numeric(raw, errors="coerce").clip(upper=settings.upside_cap)
-            z[col] = _zscore(raw).clip(-5, 5)
+            z[col] = _zscore(raw, pool_mask).clip(-5, 5)
         else:
             z[col] = 0.0
 
@@ -183,11 +209,24 @@ def composite_scores(features: pd.DataFrame) -> pd.DataFrame:
 
 
 def per_feature_contributions(features: pd.DataFrame, horizon: Horizon) -> pd.DataFrame:
-    """Return DataFrame[ticker, feature, z, weight, contribution] for explainability."""
+    """Return DataFrame[ticker, feature, z, weight, contribution] for explainability.
+
+    Must mirror `composite_scores` exactly (same upside cap, same z-score
+    stats pool) or the per-feature breakdown can't be summed to reproduce the
+    composite score it's supposed to explain.
+    """
+    settings = get_settings()
+    pool_mask = _stats_pool_mask(features)
     w = WEIGHTS[horizon]
     out: list[dict] = []
     for col in FEATURE_NAMES:
-        zs = _zscore(features[col]).clip(-5, 5) if col in features.columns else pd.Series(0.0, index=features.index)
+        if col not in features.columns:
+            zs = pd.Series(0.0, index=features.index)
+        else:
+            raw = features[col]
+            if col == "upside_z":
+                raw = pd.to_numeric(raw, errors="coerce").clip(upper=settings.upside_cap)
+            zs = _zscore(raw, pool_mask).clip(-5, 5)
         for ticker, z in zip(features["ticker"], zs):
             out.append(
                 {

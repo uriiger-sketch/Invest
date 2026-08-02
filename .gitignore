@@ -13,4 +13,8 @@ dist/
 build/
 *.egg-info/
 .streamlit/
-models/*.lgb
+# NOTE: data/models/*.txt (trained LightGBM models) is intentionally
+# COMMITTED, same rationale as data/invest.db above — a model that only ever
+# lives on one ephemeral runner is a model that never survives to be used.
+# (The old "models/*.lgb" rule below was already stale/dead: models are
+# actually saved to data/models/*.txt, a path this rule never matched.)

@@ -412,7 +412,17 @@ def _recs_summary_to_counts(df: pd.DataFrame | None) -> dict[str, int] | None:
     cols = {c.lower(): c for c in df.columns}
     needed = {"strongbuy", "buy", "hold", "sell", "strongsell"}
     if needed.issubset(set(cols)):
-        latest = df.iloc[0] if "period" not in df.columns else df[df["period"] == "0m"].iloc[0]
+        # `df` is guaranteed non-empty by the guard above, but filtering to
+        # period == "0m" can legitimately come back empty (e.g. a feed with
+        # only historical -1m/-2m/-3m rows and no current snapshot yet) — an
+        # unguarded `.iloc[0]` there raised IndexError, which was NOT a
+        # TransientSourceError, so it propagated out of the per-ticker loop
+        # in `ingest_coverage`/`ingest_consensus` and aborted the sweep for
+        # every remaining ticker in the batch. Fall back to the first row of
+        # the full frame (still real data, just not guaranteed "current")
+        # rather than crash.
+        current = df[df["period"] == "0m"] if "period" in df.columns else df
+        latest = current.iloc[0] if not current.empty else df.iloc[0]
         return {
             "strongBuy": int(latest[cols["strongbuy"]] or 0),
             "buy": int(latest[cols["buy"]] or 0),
@@ -438,7 +448,16 @@ _ACTION_MAP = {
     "up": "upgrade",
     "upgrade": "upgrade",
     "main": "reiterate",
+    # "reit" and "reiterated" both appear across different yfinance schema
+    # vintages for the same concept. Without mapping both to the same
+    # canonical string, the SAME real analyst note landed under two
+    # different `action` values on different crawls, and since `action` is
+    # part of the AnalystAction unique index (ticker, firm_key, date,
+    # action, source), that meant it bypassed dedup and was counted as two
+    # separate rating events instead of one.
+    "reit": "reiterate",
     "reiterated": "reiterate",
+    "reiterate": "reiterate",
     "down": "downgrade",
     "downgrade": "downgrade",
     "init": "init",

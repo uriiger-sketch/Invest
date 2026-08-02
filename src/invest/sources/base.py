@@ -17,7 +17,7 @@ from tenacity import (
 )
 
 from ..db import session_scope
-from ..models import AnalystAction, RunLog
+from ..models import AnalystAction, InsiderTrade, RunLog
 
 logger = logging.getLogger(__name__)
 
@@ -33,8 +33,18 @@ class TokenBucket:
         self._lock = threading.Lock()
 
     def take(self, n: float = 1.0) -> None:
-        with self._lock:
-            while True:
+        """Block until `n` tokens are available.
+
+        The lock is held only while checking/updating the bucket, then
+        released before sleeping. Previously `time.sleep` sat after an
+        unbroken `while True:` still inside the `with self._lock:` block, so
+        it was unreachable dead code — the loop busy-spun at 100 % CPU,
+        holding the lock the entire time (blocking every other thread that
+        shares this bucket) until enough wall-clock time passed for tokens to
+        refill on their own.
+        """
+        while True:
+            with self._lock:
                 now = time.monotonic()
                 self.tokens = min(self.capacity, self.tokens + (now - self.last) * self.rate)
                 self.last = now
@@ -42,8 +52,7 @@ class TokenBucket:
                     self.tokens -= n
                     return
                 needed = (n - self.tokens) / self.rate
-            # unreachable
-        time.sleep(needed)  # pragma: no cover
+            time.sleep(needed)
 
 
 class TransientSourceError(Exception):
@@ -128,6 +137,29 @@ def upsert_analyst_actions(rows: list[dict]) -> int:
         )
         s.execute(stmt)
     return len(usable)
+
+
+def upsert_insider_trades(rows: list[dict]) -> int:
+    """Insert InsiderTrade rows, upserting on (ticker, filer, date, action,
+    shares, price) so re-crawling the SAME historical Form 4 transaction
+    (the SEC atom feed is a rolling recent-filings window, not a one-time
+    event) doesn't create a duplicate. Rows with no real transaction detail
+    (NULL shares/price — a filing we couldn't parse individually) are NOT
+    deduplicated by this constraint (SQLite treats NULL as never equal to
+    another NULL), but that's fine: they always contribute a net-zero
+    signal to `insider_net_buy_90d` regardless of how many accumulate.
+    """
+    from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+
+    if not rows:
+        return 0
+    with session_scope() as s:
+        stmt = sqlite_insert(InsiderTrade).values(rows)
+        stmt = stmt.on_conflict_do_nothing(
+            index_elements=["ticker", "filer", "date", "action", "shares", "price"],
+        )
+        s.execute(stmt)
+    return len(rows)
 
 
 class BaseSource(ABC):

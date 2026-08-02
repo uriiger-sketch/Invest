@@ -108,14 +108,50 @@ def test_parse_form4_transactions_handles_garbage_input():
 def test_atom_feed_entries_extract_accession_and_issuer_cik():
     """The issuer's numeric CIK must come from the archive URL, not the
     ticker/CIK we searched with (browse-edgar accepts either, but Archives
-    paths always use the real numeric CIK)."""
+    paths always use the real numeric CIK).
+
+    `accession` must come back with DASHES STRIPPED. This was wrong once
+    already: the atom `<id>` gives the accession WITH dashes
+    ("0000320193-26-000123"), but SEC's archive folder naming convention is
+    the no-dash form ("000032019326000123") — every document-download URL
+    built from the dashed form 404s. Confirmed live: the first deployment
+    of Form 4 detail parsing downloaded ZERO documents across 1,320
+    attempts, silently (a 404 doesn't raise, so nothing logged) falling
+    back to the coarse placeholder for every single filing, because this
+    exact test asserted the WRONG (dashed) value and so didn't catch it.
+    """
     src = EdgarSource()
     entries = src._parse_form4_entries(_ATOM_FEED)
     # The third entry has no <link>/<id> and must be dropped, not crash.
     assert len(entries) == 2
-    assert entries[0]["accession"] == "0000320193-26-000123"
+    assert entries[0]["accession"] == "000032019326000123"
     assert entries[0]["issuer_cik"] == "320193"
-    assert entries[1]["accession"] == "0000320193-26-000099"
+    assert entries[1]["accession"] == "000032019326000099"
+    assert "-" not in entries[0]["accession"], "accession must be dash-free for the archive URL"
+
+
+def test_download_url_uses_dash_free_accession(monkeypatch):
+    """End-to-end: an accession parsed from the atom feed must produce a
+    dash-free URL when handed to the document downloader. This is the
+    exact seam where the bug lived — `_parse_form4_entries` and
+    `_download_form4_primary_doc` were both individually "correct" in
+    isolation (and individually tested), but the value handed between them
+    had dashes the downstream URL-building code never expected."""
+    src = EdgarSource()
+    entries = src._parse_form4_entries(_ATOM_FEED)
+    requested_urls = []
+
+    def _fake_get_json(url):
+        requested_urls.append(url)
+        return None  # doesn't matter for this test — we only check the URL
+
+    monkeypatch.setattr(src, "_get_json", _fake_get_json)
+    src._download_form4_primary_doc(entries[0]["issuer_cik"], entries[0]["accession"])
+    assert requested_urls, "the downloader never called _get_json"
+    assert "/000032019326000123/" in requested_urls[0]
+    assert "-" not in requested_urls[0].split("/data/")[1], (
+        f"accession in URL still has dashes: {requested_urls[0]}"
+    )
 
 
 def test_top_filers_have_no_duplicate_ciks():

@@ -510,6 +510,19 @@ class EdgarSource(BaseSource):
     def _parse_form4_entries(self, feed: str) -> list[dict[str, Any]]:
         """Atom feed -> [{"date", "accession", "issuer_cik"}, ...].
 
+        `accession` is stored with dashes STRIPPED (SEC's archive folder
+        naming convention is the no-dash form,
+        e.g. .../data/320193/000032019326000123/, not
+        .../data/320193/0000320193-26-000123/) — the same normalisation
+        `_latest_13f_for` already does for 13F accession numbers
+        (`acc.replace("-", "")`). Missing this here meant every single
+        Form 4 document URL this session's real-parsing feature built was
+        malformed and 404'd: confirmed live (entries_seen=4717,
+        index_json_empty=1320 — 100% of attempted downloads), with zero
+        exceptions raised (a 404 isn't a TransientSourceError, so
+        `_get_json` just returns None) and therefore zero warnings logged
+        until the diagnostic counters added right after were shipped.
+
         Entries missing any of the three fields are dropped from the
         returned list (the caller falls back to a coarse placeholder for
         those, keyed only by date, so a malformed entry never means losing
@@ -526,7 +539,13 @@ class EdgarSource(BaseSource):
                 d = datetime.fromisoformat(m_date.group(1).replace("Z", "+00:00")).date()
             except Exception:  # noqa: BLE001
                 continue
-            out.append({"date": d, "accession": m_acc.group(1), "issuer_cik": m_cik.group(1)})
+            out.append(
+                {
+                    "date": d,
+                    "accession": m_acc.group(1).replace("-", ""),
+                    "issuer_cik": m_cik.group(1),
+                }
+            )
         return out
 
     def _download_form4_primary_doc(

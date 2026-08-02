@@ -9,7 +9,7 @@
 | 7 | **GRAB** | Grab Holdings Limited | Technology | **+67.9%** | 3.50 | 5.88 | 1.97 | ··WM | 26 | 47 |
 | 8 | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | **+18.5%** | 271.58 | 321.95 | 1.97 | HD·· | 62 | 65 |
 | 9 | **REGN** | Regeneron Pharmaceuticals, Inc. | Healthcare | **+9.3%** | 762.63 | 833.54 | 1.97 | HD·· | 27 | 46 |
-| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+72.4%** | 13.00 | 22.41 | 1.95 | ··WM | 26 | 35 |
+| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+72.5%** | 13.00 | 22.43 | 1.95 | ··WM | 26 | 35 |
 | 11 | **SAP** | SAP SE | Technology | **+32.3%** | 183.62 | 242.92 | 1.95 | HD·· | 16 | 30 |
 | 12 | **BLK** | BlackRock, Inc. | Financial Services | **+20.5%** | 1090.39 | 1313.50 | 1.94 | ·DW· | 17 | 34 |
 | 13 | **TEVA** | Teva Pharmaceutical Industries Lim | Healthcare | **+17.7%** | 35.01 | 41.20 | 1.92 | HD·· | 12 | 32 |
@@ -23,7 +23,7 @@
 | 21 | **UBER** | Uber Technologies, Inc. | Technology | **+47.7%** | 70.36 | 103.89 | 0.97 | ···M | 51 | 73 |
 | 22 | **DASH** | DoorDash, Inc. | Consumer Cyclical | **+25.0%** | 196.16 | 245.20 | 0.96 | H··· | 44 | 69 |
 | 23 | **DELL** | Dell Technologies Inc. | Technology | **+24.0%** | 405.37 | 502.78 | 0.96 | ···M | 27 | 46 |
-| 24 | **NIO** | NIO Inc. | Consumer Cyclical | **+51.1%** | 4.88 | 7.37 | 0.96 | ··W· | 24 | 35 |
+| 24 | **NIO** | NIO Inc. | Consumer Cyclical | **+51.2%** | 4.88 | 7.38 | 0.96 | ··W· | 24 | 35 |
 | 25 | **GOOG** | Alphabet Inc. | Communication Servic | **+18.3%** | 356.65 | 421.79 | 0.96 | H··· | 63 | 67 |
 | 26 | **T** | AT&T Inc. | Communication Servic | **+23.5%** | 23.25 | 28.71 | 0.95 | ··W· | 25 | 43 |
 | 27 | **GOOGL** | Alphabet Inc. | Communication Servic | **+19.9%** | 356.13 | 426.95 | 0.95 | H··· | 64 | 93 |

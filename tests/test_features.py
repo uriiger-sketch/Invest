@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import date, timedelta
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from invest.db import session_scope
@@ -238,3 +239,30 @@ def test_historic_consensus_uses_cross_source_median():
     out = _historic_consensus(["HIST"], days_ago=30).set_index("ticker")
     # median(100, 104, 999) = 104 — the broken 999 outlier is ignored.
     assert out.loc["HIST", "mean_target"] == 104.0
+
+
+def test_null_close_price_row_falls_back_to_last_good_close():
+    """A NULL-close row on the MOST RECENT date must not poison last_close.
+
+    Live-observed: yfinance returned a row for PRX.AS with a real date but
+    no close price. `last_close = closes[-1]` then became NaN, which made
+    `upside_z = mean_target / NaN = NaN`, which the outlook gate silently
+    zeroed via `fillna(0.0)` and excluded as "not profitable enough" — a
+    real, well-covered, gate-passing stock vanished from the ranking because
+    of one bad price tick, not because its outlook was actually bad.
+    """
+    from invest.models import Price
+
+    today = date.today()
+    with session_scope() as s:
+        s.add(Stock(ticker="NULLCLOSE", name="NULLCLOSE", sector="Tech", in_universe=True))
+        for i in range(63):
+            s.add(Price(ticker="NULLCLOSE", date=today - timedelta(days=63 - i),
+                        close=100.0, adj_close=100.0, volume=1_000_000))
+        # The MOST RECENT row has a real date but no close — the exact shape
+        # of the live data gap.
+        s.add(Price(ticker="NULLCLOSE", date=today, close=None, adj_close=None,
+                    volume=None))
+    df = build_features(["NULLCLOSE"]).set_index("ticker")
+    assert df.loc["NULLCLOSE", "last_close"] == 100.0
+    assert not pd.isna(df.loc["NULLCLOSE", "last_close"])

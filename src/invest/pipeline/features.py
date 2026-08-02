@@ -24,10 +24,26 @@ logger = logging.getLogger(__name__)
 
 
 def _load_prices(tickers: list[str], window_days: int = 180) -> pd.DataFrame:
+    """Load recent price history, excluding rows with a NULL close.
+
+    yfinance occasionally returns a row for a date with no real close for a
+    given ticker (observed live for PRX.AS, a European ADR) — the date
+    exists but `close` is None. Left in, that row becomes NaN at whatever
+    position it lands in the closes array, and since `last_close =
+    closes[-1]`, a NULL on the MOST RECENT date poisons upside_z (mean_target
+    / NaN = NaN), which the outlook gate then silently zeroes via
+    `fillna(0.0)` and excludes for looking unprofitable — a real, gated,
+    well-covered stock disappears from the ranking because of one bad price
+    tick, not because its outlook is actually bad. Dropping NULL-close rows
+    treats that day as if no data arrived at all, so `closes[-1]` falls back
+    to the most recent GOOD close instead.
+    """
     cutoff = date.today() - timedelta(days=window_days)
     with session_scope() as s:
         rows = s.execute(
-            select(Price).where(Price.date >= cutoff, Price.ticker.in_(tickers))
+            select(Price).where(
+                Price.date >= cutoff, Price.ticker.in_(tickers), Price.close.isnot(None)
+            )
         ).scalars().all()
     if not rows:
         return pd.DataFrame(columns=["ticker", "date", "close", "volume"])

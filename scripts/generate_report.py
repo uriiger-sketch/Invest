@@ -221,11 +221,16 @@ def _enrichment_for(tickers: list[str]) -> dict[str, dict]:
     out: dict[str, dict] = {t: {} for t in tickers}
 
     with session_scope() as s:
-        # Last close per ticker.
+        # Last close per ticker. Excludes NULL-close rows (yfinance
+        # occasionally has a date with no real close for a given ticker,
+        # observed live for PRX.AS) — without this, the report displayed
+        # "—" for Price/Upside on a stock that had a perfectly good score,
+        # target and gate-passing history, just because its single most
+        # recent price row happened to be a data gap.
         for t in tickers:
             row = (
                 s.query(Price.close, Price.date)
-                .filter(Price.ticker == t)
+                .filter(Price.ticker == t, Price.close.isnot(None))
                 .order_by(Price.date.desc())
                 .first()
             )

@@ -258,6 +258,32 @@ def test_report_source_count_matches_the_gate():
     assert report_counts["BARE"] == 20, "consensus-only coverage must still count"
 
 
+def test_report_enrichment_skips_null_close_rows():
+    """Live-observed: PRX.AS's most recent Price row had a real date but a
+    NULL close (a yfinance data gap on a European ADR). The report's "latest
+    price" lookup had no filter for this, so it displayed "—" for Price and
+    Upside on a stock that had a perfectly good score, target and gate-
+    passing history — just because its single most recent price row
+    happened to be a data gap."""
+    with session_scope() as s:
+        s.add(Stock(ticker="GAPPY", name="Gappy Inc", sector="Technology", in_universe=True))
+        s.add(Price(ticker="GAPPY", date=date.today() - timedelta(days=1),
+                    close=50.0, adj_close=50.0, volume=1_000_000))
+        # Most recent row: real date, no close.
+        s.add(Price(ticker="GAPPY", date=date.today(), close=None, adj_close=None,
+                    volume=None))
+        s.add(Consensus(ticker="GAPPY", as_of_date=date.today(), source="yfinance",
+                        strong_buy=10, buy=5, hold=2, sell=0, strong_sell=0,
+                        mean_target=60.0, high_target=70.0, low_target=55.0,
+                        num_analysts=17))
+
+    extras = _load_report_module()._enrichment_for(["GAPPY"])
+    assert extras["GAPPY"].get("last_close") == 50.0, (
+        "must fall back to the last GOOD close, not None/NaN from the gap row"
+    )
+    assert extras["GAPPY"].get("upside_pct") is not None
+
+
 def test_coverage_sweep_is_not_capped_below_the_universe():
     """The hourly sweep must be able to reach every ticker.
 

@@ -136,8 +136,6 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Always rebase to account for other runs that may have committed.
-          git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
           # data/invest.db is committed so state survives between runs.
           git add REPORT.md docs/index.html docs/history.jsonl data/invest.db
           # data/models only exists after a deep run's Train step; commit it
@@ -148,14 +146,59 @@ jobs:
             echo "no report changes"
           else
             git commit -m "chore(report): refresh $(date -u +%Y-%m-%dT%H:%MZ) [skip ci]"
-            # Retry push once in case of a race with another run.
-            for i in 1 2 3; do
+            # Commit LOCALLY first, then push — do NOT `git pull --rebase
+            # --autostash` before committing. That used to stash this run's
+            # freshly-generated data/invest.db, fast-forward onto whatever a
+            # concurrently-landed run had just pushed, then try to reapply
+            # the stash. A 30-minute fast cadence made a fast run landing
+            # mid-deep-run common, and stashing/reapplying a BINARY file
+            # (SQLite) that both runs modified is not a real merge — git
+            # reported "Applying autostash resulted in conflicts" and left
+            # data/invest.db as whatever was already on origin, and the
+            # follow-up `git add` + `git commit` silently accepted that as
+            # "resolved". The entire deep run's EDGAR/13F/Form4/ML work
+            # (10+ minutes of ingest) was discarded without the workflow
+            # ever failing or logging an error.
+            #
+            # Rebasing onto origin AFTER committing, with `-X theirs`, is
+            # deterministic instead: on any conflicting hunk — including
+            # whole-file conflicts on binaries, which `-X ours`/`-X theirs`
+            # explicitly supports — this run's own commit wins outright.
+            # That's the correct call here: this run's data/invest.db is a
+            # superset of (deep) or no worse than (fast vs fast) whatever a
+            # concurrent run wrote, and any prices it's missing get
+            # refreshed again on the very next 30-minute tick regardless.
+            #
+            # NOTE the flag is `-X theirs`, NOT `-X ours`, and this is
+            # load-bearing: `git rebase`'s ours/theirs are the OPPOSITE of
+            # `git merge`'s, because rebase works by checking out the
+            # upstream target and replaying your commits onto it one at a
+            # time — from inside that replay, "ours" means the upstream
+            # branch being rebased ONTO (origin, i.e. the OTHER run) and
+            # "theirs" means the commit being replayed (THIS run's own
+            # work). `-X ours` was verified against a local simulation to
+            # silently resolve every conflicting hunk in favour of origin,
+            # making the rebased commit a no-op ("patch contents already
+            # upstream") that git drops entirely — reintroducing the exact
+            # silent-data-loss bug this rewrite exists to fix, but with no
+            # "conflicts" message at all this time to notice it by.
+            pushed=false
+            for i in 1 2 3 4; do
               if git push; then
+                pushed=true
                 break
               fi
-              git pull --rebase --autostash origin "${GITHUB_REF_NAME}" || true
+              git fetch origin "${GITHUB_REF_NAME}" || true
+              if ! git rebase -X theirs "origin/${GITHUB_REF_NAME}"; then
+                git rebase --abort
+                echo "::warning::rebase -X theirs failed on attempt $i; retrying"
+              fi
               sleep 2
             done
+            if [ "$pushed" != "true" ]; then
+              echo "::error::failed to push report after retries — this run's ingest work was NOT published"
+              exit 1
+            fi
           fi
 
       - name: Upload Pages artifact

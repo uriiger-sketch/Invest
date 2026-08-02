@@ -4,7 +4,7 @@
 | 2 | **GM** | General Motors Company | Consumer Cyclical | **+12.6%** | 88.86 | 100.04 | 2.99 | HDW· | 28 | 46 |
 | 3 | **F** | Ford Motor Company | Consumer Cyclical | **+7.5%** | 14.68 | 15.78 | 2.96 | HDW· | 22 | 40 |
 | 4 | **ORCL** | Oracle Corporation | Technology | **+91.1%** | 129.87 | 248.15 | 2.90 | H·WM | 44 | 63 |
-| 5 | **MDT** | Medtronic plc. | Healthcare | **+15.3%** | 85.39 | 98.44 | 2.89 | HDW· | 29 | 47 |
+| 5 | **MDT** | Medtronic plc | Healthcare | **+15.3%** | 85.39 | 98.44 | 2.89 | HDW· | 29 | 47 |
 | 6 | **MA** | Mastercard Incorporated | Financial Services | **+15.2%** | 573.10 | 660.34 | 2.84 | ·DWM | 41 | 62 |
 | 7 | **GRAB** | Grab Holdings Limited | Technology | **+67.9%** | 3.50 | 5.88 | 1.98 | ··WM | 26 | 44 |
 | 8 | **NVDA** | NVIDIA Corporation | Technology | **+50.8%** | 200.75 | 302.83 | 1.98 | ··WM | 61 | 85 |
@@ -13,7 +13,7 @@
 | 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+72.4%** | 13.00 | 22.41 | 1.95 | ··WM | 26 | 35 |
 | 12 | **SAP** | SAP SE | Technology | **+32.3%** | 183.62 | 242.92 | 1.95 | HD·· | 16 | 30 |
 | 13 | **BLK** | BlackRock, Inc. | Financial Services | **+20.5%** | 1090.39 | 1313.50 | 1.94 | ·DW· | 17 | 34 |
-| 14 | **ICE** | Intercontinental Exchange Inc. | Financial Services | **+19.5%** | 152.48 | 182.23 | 1.92 | ·DW· | 14 | 32 |
+| 14 | **ICE** | Intercontinental Exchange, Inc. | Financial Services | **+19.5%** | 152.48 | 182.23 | 1.92 | ·DW· | 14 | 32 |
 | 15 | **TEVA** | Teva Pharmaceutical Industries Lim | Healthcare | **+17.7%** | 35.01 | 41.20 | 1.92 | HD·· | 12 | 30 |
 | 16 | **GOOG** | Alphabet Inc. | Communication Servic | **+18.3%** | 356.65 | 421.79 | 1.90 | HD·· | 63 | 64 |
 | 17 | **MU** | Micron Technology, Inc. | Technology | **+85.0%** | 823.03 | 1522.26 | 1.00 | ···M | 45 | 66 |

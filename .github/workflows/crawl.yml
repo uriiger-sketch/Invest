@@ -63,7 +63,13 @@ jobs:
           && 'deep' || 'fast'
         }}
       cancel-in-progress: true
-    timeout-minutes: 50
+    # Raised 50 -> 70: real Form 4 document downloads (fixed this session —
+    # a URL-construction bug meant every one of them 404'd instantly before,
+    # so this budget was never actually tested against real network work)
+    # pushed one live deep run's ingest step past 35 minutes; killed by the
+    # timeout, the whole run was lost with nothing committed. See the
+    # "Ingest (deep...)" step timeout note below for the specific fix.
+    timeout-minutes: 70
     env:
       INVEST_DB_URL: sqlite:///data/invest.db
       UNIVERSE_MAX: ${{ inputs.universe_max || '0' }}
@@ -108,7 +114,15 @@ jobs:
 
       - name: Ingest (deep — fundamentals + Finnhub + EDGAR 13F + Form 4)
         if: ${{ env.DEEP_RUN == 'true' }}
-        timeout-minutes: 35
+        # Raised 35 -> 55: with the accession-number bug fixed, Form 4
+        # detailed downloads across ~300 tickers do real network work
+        # (previously every request 404'd instantly, so this timeout was
+        # never really exercised). One live run at 6 filings/ticker hit
+        # exactly 35:12 and was killed, losing the whole run. Also lowered
+        # `_FORM4_MAX_DETAILED_PER_TICKER` 6 -> 3 and raised EdgarSource's
+        # throttle 300 -> 480/min (SEC allows ~600/min) to cut the realistic
+        # runtime directly rather than relying on the timeout alone.
+        timeout-minutes: 55
         run: python -m invest.cli ingest
 
       # No continue-on-error: if ranking produces nothing the run MUST fail

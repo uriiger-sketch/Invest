@@ -168,7 +168,7 @@ TOP_FILERS: tuple[tuple[str, str], ...] = (
 
 class EdgarSource(BaseSource):
     name = "edgar"
-    rate_per_minute = 300.0  # SEC asks for < 10 req/s; we stay well below
+    rate_per_minute = 480.0  # SEC allows < 10 req/s (600/min); stay comfortably under
 
     def __init__(self) -> None:
         super().__init__()
@@ -496,9 +496,20 @@ class EdgarSource(BaseSource):
 
     # Cap the number of individual Form 4 filings we download+parse per
     # ticker per run. A per-ticker cap bounds the extra request volume this
-    # adds (each filing needs its own fetch); filings beyond it still get a
-    # coarse placeholder row so we don't silently lose that they happened.
-    _FORM4_MAX_DETAILED_PER_TICKER = 6
+    # adds (each filing needs its own fetch: index.json + the xml document);
+    # filings beyond it still get a coarse placeholder row so we don't
+    # silently lose that they happened.
+    #
+    # CALIBRATION NOTE: this was 6 when the accession-number bug (see
+    # `_parse_form4_entries`) made every single detailed fetch 404 instantly
+    # — cheap to attempt, so the cap's cost was never actually exercised.
+    # The moment that bug was fixed, real downloads across ~300 tickers x up
+    # to 6 filings each (≈1,800 filings x 2 requests) pushed the deep
+    # ingest step past its 35-minute timeout and the whole run was killed
+    # with nothing committed. Lowered to 3 to keep worst-case request volume
+    # roughly in check; `rate_per_minute` was also raised (SEC allows up to
+    # 600/min) since throttling, not request volume, was the smaller factor.
+    _FORM4_MAX_DETAILED_PER_TICKER = 3
 
     # SEC transaction codes for actual open-market conviction: P = purchase,
     # S = sale. Every other code (A=grant, M=option exercise, G=gift,

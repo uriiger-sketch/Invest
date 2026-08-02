@@ -529,7 +529,9 @@ class EdgarSource(BaseSource):
             out.append({"date": d, "accession": m_acc.group(1), "issuer_cik": m_cik.group(1)})
         return out
 
-    def _download_form4_primary_doc(self, issuer_cik: str, accession_no_dash: str) -> bytes | None:
+    def _download_form4_primary_doc(
+        self, issuer_cik: str, accession_no_dash: str, diag: dict[str, Any] | None = None
+    ) -> bytes | None:
         """Fetch one filing's primary XML document.
 
         Modern (post-2003) Form 3/4/5 filings are XML-only and SEC names the
@@ -537,11 +539,19 @@ class EdgarSource(BaseSource):
         top-level `.xml` file for the rare filing that doesn't follow that
         convention, mirroring the same index.json + directory-listing
         approach `_download_13f_infotable` already uses for 13F filings.
+
+        `diag`, when passed, records WHY a filing produced no document —
+        this path returning None silently (no exception, hence no log line)
+        for every single filing in a run, with zero visibility into which
+        of "index.json empty" / "no .xml found" / "download failed" was
+        responsible, is exactly what happened the first time this shipped.
         """
         cik_int = str(int(issuer_cik))
         index_url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{accession_no_dash}/index.json"
         idx = self._get_json(index_url)
         if not idx:
+            if diag is not None:
+                diag["index_json_empty"] = diag.get("index_json_empty", 0) + 1
             return None
         names = [item.get("name", "") for item in idx.get("directory", {}).get("item", [])]
         target = next((n for n in names if n.lower() == "primary_doc.xml"), None)
@@ -550,7 +560,17 @@ class EdgarSource(BaseSource):
                 (n for n in names if n.lower().endswith(".xml") and "index" not in n.lower()), None
             )
         if target is None:
+            if diag is not None:
+                n = diag.get("no_xml_candidate", 0)
+                diag["no_xml_candidate"] = n + 1
+                if n < 3:
+                    logger.warning(
+                        "edgar form4: no .xml candidate in %s — directory listing: %s",
+                        index_url, names,
+                    )
             return None
+        if diag is not None:
+            diag["xml_found"] = diag.get("xml_found", 0) + 1
         url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{accession_no_dash}/{target}"
         self.throttle()
         try:
@@ -644,6 +664,13 @@ class EdgarSource(BaseSource):
 
         cutoff = date.today() - timedelta(days=lookback_days)
         written = 0
+        # Diagnostic counters for the whole run — see the docstring on
+        # `_download_form4_primary_doc` for why this exists: the detailed
+        # path can fail 100% of the time with zero exceptions and zero log
+        # output, which is exactly what happened the first time this
+        # shipped and left no trace to debug from.
+        diag: dict[str, Any] = {}
+        xml_dumped = 0
         for t in tickers:
             try:
                 feed = self._insider_feed(t)
@@ -653,6 +680,7 @@ class EdgarSource(BaseSource):
             if not feed:
                 continue
             entries = [e for e in self._parse_form4_entries(feed) if e["date"] >= cutoff]
+            diag["entries_seen"] = diag.get("entries_seen", 0) + len(entries)
             if not entries:
                 continue
             entries.sort(key=lambda e: e["date"], reverse=True)
@@ -660,10 +688,24 @@ class EdgarSource(BaseSource):
             for entry in entries[: self._FORM4_MAX_DETAILED_PER_TICKER]:
                 txns: list[dict[str, Any]] = []
                 try:
-                    xml = self._download_form4_primary_doc(entry["issuer_cik"], entry["accession"])
+                    xml = self._download_form4_primary_doc(
+                        entry["issuer_cik"], entry["accession"], diag=diag
+                    )
                     if xml:
                         txns = self._parse_form4_transactions(xml)
+                        if txns:
+                            diag["txns_ok"] = diag.get("txns_ok", 0) + 1
+                        else:
+                            diag["xml_zero_txns"] = diag.get("xml_zero_txns", 0) + 1
+                            if xml_dumped < 2:
+                                logger.warning(
+                                    "edgar form4 %s/%s: xml downloaded but yielded 0 "
+                                    "transactions; first 600 bytes: %r",
+                                    t, entry["accession"], xml[:600],
+                                )
+                                xml_dumped += 1
                 except TransientSourceError as e:
+                    diag["download_exception"] = diag.get("download_exception", 0) + 1
                     logger.warning(
                         "edgar form4 doc %s/%s failed: %s", t, entry["accession"], e
                     )
@@ -686,6 +728,14 @@ class EdgarSource(BaseSource):
                     }
                 )
             written += upsert_insider_trades(rows)
+        logger.info(
+            "edgar form4 detailed-parse summary: entries_seen=%d xml_found=%d "
+            "txns_ok=%d xml_zero_txns=%d index_json_empty=%d no_xml_candidate=%d "
+            "download_exception=%d",
+            diag.get("entries_seen", 0), diag.get("xml_found", 0), diag.get("txns_ok", 0),
+            diag.get("xml_zero_txns", 0), diag.get("index_json_empty", 0),
+            diag.get("no_xml_candidate", 0), diag.get("download_exception", 0),
+        )
         return written
 
     # ------------------------------ run ------------------------------

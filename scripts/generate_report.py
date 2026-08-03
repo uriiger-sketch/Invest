@@ -878,13 +878,23 @@ def _heartbeat_badge() -> str:
     )
 
 
-# Repo this report is generated for — used only to link the "Refresh now"
-# button at the GitHub Actions run page. A static page can't safely trigger
-# a workflow_dispatch itself (that needs an authenticated API call, and
-# embedding a token in a public page would let anyone steal and abuse it),
-# so the button opens the Actions UI where a logged-in maintainer can click
-# "Run workflow" directly.
-_REPO_ACTIONS_URL = "https://github.com/uriiger-sketch/Invest/actions/workflows/crawl.yml"
+# Repo/workflow this report is generated for — used by the "Refresh now"
+# button. Triggering workflow_dispatch needs an authenticated GitHub API
+# call; a public static page can never ship that credential itself (anyone
+# viewing the page could steal and abuse it — spam-trigger runs, or worse
+# if the token's scope is broader than intended). Instead the button's
+# inline JS asks whoever CLICKS it to paste their own GitHub personal
+# access token once, keeps it only in that browser's localStorage, and
+# calls the GitHub API directly from the browser. No secret ever ships in
+# the page; a visitor with no token literally cannot trigger anything.
+#
+# NOTE: `_DEPLOY_REF` must match whichever branch's copy of the workflow
+# should run — update it if the deploy branch ever changes.
+_REPO_OWNER = "uriiger-sketch"
+_REPO_NAME = "Invest"
+_WORKFLOW_FILE = "crawl.yml"
+_DEPLOY_REF = "claude/stock-crawler-planning-WaaeO"
+_REPO_ACTIONS_URL = f"https://github.com/{_REPO_OWNER}/{_REPO_NAME}/actions/workflows/{_WORKFLOW_FILE}"
 
 
 def _build_html(as_of: date, n: int) -> str:
@@ -968,17 +978,23 @@ def _build_html(as_of: date, n: int) -> str:
   ul.intl-picks {{ margin: 0.5rem 0 0 0; padding-left: 1.2rem; line-height: 1.7; }}
   .refresh-btn {{ display: inline-block; margin-left: 0.6rem; padding: 0.2rem 0.7rem;
                    border-radius: 5px; background: var(--accent); color: #fff;
-                   text-decoration: none; font-size: 0.85rem; font-weight: 600;
-                   vertical-align: middle; }}
+                   border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600;
+                   vertical-align: middle; font-family: inherit; }}
   .refresh-btn:hover {{ opacity: 0.85; }}
+  .refresh-btn:disabled {{ opacity: 0.6; cursor: default; }}
+  .refresh-status {{ margin-left: 0.6rem; font-size: 0.85rem; vertical-align: middle; }}
+  .refresh-fallback {{ font-size: 0.78rem; margin-left: 0.4rem; }}
 </style>
 </head>
 <body>
 <h1>Invest — Top {len(rows)} {heartbeat}
-<a class="refresh-btn" href="{_REPO_ACTIONS_URL}" target="_blank" rel="noopener"
-   title="Opens GitHub Actions — click &quot;Run workflow&quot; there for an immediate refresh (needs repo login).">
+<button type="button" class="refresh-btn" id="refresh-btn"
+        title="Triggers an immediate crawl. Asks for a GitHub token the first click; stored only in this browser.">
   🔄 Refresh now
-</a></h1>
+</button>
+<span class="refresh-status" id="refresh-status"></span>
+<a class="refresh-fallback" href="{_REPO_ACTIONS_URL}" target="_blank" rel="noopener"
+   title="No GitHub token handy? Trigger it manually from the Actions page instead.">(or open Actions manually)</a></h1>
 <p class="meta">Generated: <span class="live-ago" data-iso="{generated_iso}" title="{generated}">
 <span class="ago">just now</span></span> · Scores as of: <strong>{as_of.isoformat()}</strong>
  · page auto-refreshes every 2 min · pipeline runs every 30 min via GitHub Actions.</p>
@@ -1015,6 +1031,78 @@ def _build_html(as_of: date, n: int) -> str:
   }}
   refresh();
   setInterval(refresh, 60000);
+}})();
+</script>
+<script>
+(function () {{
+  // Triggers workflow_dispatch directly from the browser. No token is ever
+  // shipped in this page — the FIRST click prompts whoever is clicking to
+  // paste their own GitHub personal access token, which is then kept only
+  // in this browser's localStorage and sent straight to GitHub's API, never
+  // anywhere else. A visitor with no token of their own literally cannot
+  // trigger anything; this is not a "public button", it's a "remember my
+  // own credential locally" convenience for whoever legitimately can.
+  var OWNER = {_REPO_OWNER!r}, REPO = {_REPO_NAME!r}, WORKFLOW = {_WORKFLOW_FILE!r}, REF = {_DEPLOY_REF!r};
+  var TOKEN_KEY = "invest_gh_token";
+  var btn = document.getElementById("refresh-btn");
+  var status = document.getElementById("refresh-status");
+  if (!btn || !status) return;
+
+  function setStatus(msg, color) {{
+    status.textContent = msg;
+    status.style.color = color;
+  }}
+
+  function trigger(token) {{
+    btn.disabled = true;
+    setStatus("Triggering…", "#666");
+    fetch(
+      "https://api.github.com/repos/" + OWNER + "/" + REPO + "/actions/workflows/" + WORKFLOW + "/dispatches",
+      {{
+        method: "POST",
+        headers: {{
+          "Authorization": "Bearer " + token,
+          "Accept": "application/vnd.github+json",
+          "Content-Type": "application/json"
+        }},
+        body: JSON.stringify({{ ref: REF }})
+      }}
+    ).then(function (r) {{
+      btn.disabled = false;
+      if (r.status === 204) {{
+        setStatus("✓ Crawl triggered — takes a few minutes; this page will pick it up on its next refresh.", "#2f855a");
+      }} else if (r.status === 401 || r.status === 403) {{
+        localStorage.removeItem(TOKEN_KEY);
+        setStatus("✗ Token rejected (expired / wrong scope) — click again to re-enter it.", "#c53030");
+      }} else {{
+        r.text().then(function (t) {{
+          setStatus("✗ GitHub returned " + r.status + ": " + t.slice(0, 150), "#c53030");
+        }});
+      }}
+    }}).catch(function (e) {{
+      btn.disabled = false;
+      setStatus("✗ Request failed: " + e.message, "#c53030");
+    }});
+  }}
+
+  btn.addEventListener("click", function () {{
+    var token = localStorage.getItem(TOKEN_KEY);
+    if (!token) {{
+      token = window.prompt(
+        "Paste a GitHub personal access token to trigger a crawl.\\n\\n" +
+        "Create one at github.com/settings/personal-access-tokens — a " +
+        "fine-grained token scoped ONLY to the " + REPO + " repo with " +
+        "'Actions: Read and write' permission is the safest choice.\\n\\n" +
+        "Stored only in THIS browser (localStorage) — never sent anywhere " +
+        "except directly to api.github.com."
+      );
+      if (!token) return;
+      token = token.trim();
+      if (!token) return;
+      localStorage.setItem(TOKEN_KEY, token);
+    }}
+    trigger(token);
+  }});
 }})();
 </script>
 </body>

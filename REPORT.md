@@ -8,7 +8,7 @@
 | 6 | **NVDA** | NVIDIA Corporation | Technology | **+46.5%** | 206.64 | 302.83 | 1.99 | ··WM | 61 | 85 |
 | 7 | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | **+13.4%** | 284.02 | 321.95 | 1.99 | HD·· | 62 | 65 |
 | 8 | **ETN** | Eaton Corporation, PLC | Industrials | **+4.5%** | 438.23 | 457.75 | 1.97 | HD·· | 27 | 46 |
-| 9 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.3%** | 12.37 | 22.43 | 1.96 | ··WM | 26 | 35 |
+| 9 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.1%** | 12.37 | 22.41 | 1.96 | ··WM | 26 | 35 |
 | 10 | **GM** | General Motors Company | Consumer Cyclical | **+14.1%** | 87.68 | 100.04 | 1.94 | ·DW· | 28 | 48 |
 | 11 | **BLK** | BlackRock, Inc. | Financial Services | **+16.6%** | 1126.63 | 1313.50 | 1.94 | ·DW· | 17 | 34 |
 | 12 | **NIO** | NIO Inc. | Consumer Cyclical | **+53.4%** | 4.81 | 7.38 | 1.93 | ··WM | 24 | 35 |

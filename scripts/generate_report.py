@@ -301,34 +301,6 @@ def _enrichment_for(tickers: list[str]) -> dict[str, dict]:
     return out
 
 
-def _recent_runs(limit: int = 20) -> list[dict]:
-    with session_scope() as s:
-        rows = (
-            s.query(RunLog)
-            .order_by(RunLog.started_at.desc())
-            .limit(limit)
-            .all()
-        )
-    return [
-        {
-            "job": r.job,
-            "status": r.status,
-            "rows": r.rows_written,
-            "started": r.started_at,
-            "finished": r.finished_at,
-            "error": (r.error or "")[:120],
-        }
-        for r in rows
-    ]
-
-
-def _recent_runs_safe(limit: int = 20) -> list[dict]:
-    try:
-        return _recent_runs(limit)
-    except Exception:
-        return []
-
-
 # ------------------------------- Markdown --------------------------------
 
 
@@ -626,7 +598,12 @@ def main_table_rows(by_h: dict[str, list[dict]]) -> list[dict]:
     A ticker's strength is how many horizons rank it and how well: we sum
     its per-horizon percentile so a name that only tops the 'hours' list
     can't outrank one that every horizon likes. Ties break on upside.
-    Returns rows sorted best-first.
+    Returns rows sorted best-first, capped to `settings.main_table_size`.
+
+    Unioning four independently-diversified horizon lists produces however
+    many DISTINCT tickers that union happens to contain, not a fixed
+    number — observed 27 on one live run. The cap makes the row count
+    predictable regardless of how much the four lists overlap.
     """
     agg: dict[str, dict] = {}
     for h in HORIZONS:
@@ -659,6 +636,7 @@ def main_table_rows(by_h: dict[str, list[dict]]) -> list[dict]:
     rows.sort(
         key=lambda r: (-(r["score"]), -(r.get("upside_pct") or 0.0), r["best_rank"])
     )
+    rows = rows[: get_settings().main_table_size]
     for i, r in enumerate(rows, start=1):
         r["rank"] = i
     return rows
@@ -866,31 +844,6 @@ def _main_table_html(rows: list[dict], by_h: dict[str, list[dict]]) -> str:
     return f"<table class='top'>{head}<tbody>{''.join(body)}</tbody></table>"
 
 
-def _html_runs_table(rows: list[dict]) -> str:
-    if not rows:
-        return "<p><em>(no runs logged)</em></p>"
-    body_rows = []
-    for r in rows:
-        started = r["started"].strftime("%Y-%m-%d %H:%M:%SZ") if r["started"] else ""
-        cls = "ok" if r["status"] == "ok" else "err" if r["status"] == "error" else ""
-        body_rows.append(
-            f"<tr class='{cls}'>"
-            f"<td>{_html_escape(r['job'])}</td>"
-            f"<td>{_html_escape(r['status'])}</td>"
-            f"<td class='num'>{r['rows']}</td>"
-            f"<td>{started}</td>"
-            f"<td>{_html_escape(r['error'] or '')}</td>"
-            "</tr>"
-        )
-    head = (
-        "<thead><tr><th>Job</th><th>Status</th><th>Rows</th>"
-        "<th>Started (UTC)</th><th>Error</th></tr></thead>"
-    )
-    return f"<table>{head}<tbody>{''.join(body_rows)}</tbody></table>"
-
-
-
-
 def _heartbeat_badge() -> str:
     """Return an HTML badge that the client will keep updating from a
     machine-readable ISO timestamp. Server side we just emit the bones —
@@ -925,54 +878,13 @@ def _heartbeat_badge() -> str:
     )
 
 
-def _source_breadth_html() -> str:
-    """One-line badge enumerating every data source and its last-success time.
-    Stops the "we only use Yahoo" misconception cold."""
-    sources_seen = {
-        "yfinance": "Yahoo Finance",
-        "finnhub": "Finnhub",
-        "fmp": "Financial Modeling Prep",
-        "stooq": "stooq",
-        "edgar.13f": "SEC EDGAR (13F)",
-        "edgar.form4": "SEC EDGAR (Form 4)",
-    }
-    try:
-        with session_scope() as s:
-            rows = s.execute(
-                select(RunLog.job, RunLog.status, RunLog.finished_at)
-                .where(RunLog.finished_at.isnot(None))
-                .order_by(RunLog.finished_at.desc())
-                .limit(500)
-            ).all()
-    except Exception:
-        rows = []
-    # Most recent success per source prefix.
-    last_ok: dict[str, datetime] = {}
-    for job, status, finished in rows:
-        if status != "ok":
-            continue
-        for prefix in sources_seen:
-            if job and job.startswith(prefix) and prefix not in last_ok:
-                last_ok[prefix] = finished
-                break
-    parts: list[str] = []
-    for prefix, pretty in sources_seen.items():
-        finished = last_ok.get(prefix)
-        if finished is not None:
-            iso = finished.isoformat(timespec="seconds") + "Z"
-            # `.live-ago` is the hook the inline JS uses to keep the age fresh.
-            parts.append(
-                f"<span class='src-badge ok live-ago' data-iso='{iso}' "
-                f"title='Last ok: {iso}'>"
-                f"<strong>{pretty}</strong> ✓ <span class='ago'>—</span></span>"
-            )
-        else:
-            parts.append(
-                "<span class='src-badge none' "
-                "title='No successful run yet — key may be missing'>"
-                f"{pretty} ⚠</span>"
-            )
-    return "<p class='src-breadth'>Sources this run: " + " · ".join(parts) + "</p>"
+# Repo this report is generated for — used only to link the "Refresh now"
+# button at the GitHub Actions run page. A static page can't safely trigger
+# a workflow_dispatch itself (that needs an authenticated API call, and
+# embedding a token in a public page would let anyone steal and abuse it),
+# so the button opens the Actions UI where a logged-in maintainer can click
+# "Run workflow" directly.
+_REPO_ACTIONS_URL = "https://github.com/uriiger-sketch/Invest/actions/workflows/crawl.yml"
 
 
 def _build_html(as_of: date, n: int) -> str:
@@ -980,8 +892,8 @@ def _build_html(as_of: date, n: int) -> str:
     generated = now.strftime("%Y-%m-%d %H:%M UTC")
     generated_iso = now.replace(microsecond=0).isoformat() + "Z"
     heartbeat = _heartbeat_badge()
-    source_breadth_html = _source_breadth_html()
     by_h = _collect_top_by_horizon(as_of, n)
+    rows = main_table_rows(by_h)
     sections: list[str] = []
     banner = _staleness_banner_md(as_of)
     if banner:
@@ -997,14 +909,13 @@ def _build_html(as_of: date, n: int) -> str:
         "Upside is the consensus price target vs the current price; H/D/W/M "
         "shows which timeframes rank the name. Click a row for that stock's "
         "recent analyst actions.</p>"
-        f"{_main_table_html(main_table_rows(by_h), by_h)}</section>"
+        f"{_main_table_html(rows, by_h)}</section>"
     )
-    runs_html = _html_runs_table(_recent_runs_safe())
     return f"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Invest — Top {n}</title>
+<title>Invest — Top {len(rows)}</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -1034,7 +945,6 @@ def _build_html(as_of: date, n: int) -> str:
   dl.columns dt {{ font-weight: 600; color: var(--accent); }}
   dl.columns dd {{ margin: 0; color: #444; }}
   tr.err td {{ color: #b00; }}
-  footer {{ margin-top: 3rem; color: #777; font-size: 0.85rem; }}
   details > summary {{ cursor: pointer; font-weight: 600; }}
   .badge {{ display: inline-block; padding: 0.15rem 0.5rem; border-radius: 4px;
             font-size: 0.82rem; font-weight: 600; color: #fff; margin-left: 0.5rem; }}
@@ -1056,29 +966,25 @@ def _build_html(as_of: date, n: int) -> str:
   .stale-banner {{ background: #fff4e5; border-left: 4px solid #d97706;
                    padding: 0.75rem 1rem; border-radius: 4px; color: #7c2d12; }}
   ul.intl-picks {{ margin: 0.5rem 0 0 0; padding-left: 1.2rem; line-height: 1.7; }}
-  .src-breadth {{ font-size: 0.88rem; margin: 0.4rem 0 1rem 0; color: #444; }}
-  .src-badge {{ display: inline-block; padding: 0.12rem 0.5rem; border-radius: 4px;
-                margin-right: 0.2rem; }}
-  .src-badge.ok {{ background: rgba(47,133,90,0.15); color: #1e5d3d; }}
-  .src-badge.none {{ background: rgba(127,127,127,0.15); color: #888; }}
+  .refresh-btn {{ display: inline-block; margin-left: 0.6rem; padding: 0.2rem 0.7rem;
+                   border-radius: 5px; background: var(--accent); color: #fff;
+                   text-decoration: none; font-size: 0.85rem; font-weight: 600;
+                   vertical-align: middle; }}
+  .refresh-btn:hover {{ opacity: 0.85; }}
 </style>
 </head>
 <body>
-<h1>Invest — Top {n} {heartbeat}</h1>
+<h1>Invest — Top {len(rows)} {heartbeat}
+<a class="refresh-btn" href="{_REPO_ACTIONS_URL}" target="_blank" rel="noopener"
+   title="Opens GitHub Actions — click &quot;Run workflow&quot; there for an immediate refresh (needs repo login).">
+  🔄 Refresh now
+</a></h1>
 <p class="meta">Generated: <span class="live-ago" data-iso="{generated_iso}" title="{generated}">
 <span class="ago">just now</span></span> · Scores as of: <strong>{as_of.isoformat()}</strong>
- · page auto-refreshes every 2 min · pipeline runs every 2 hours via GitHub Actions.</p>
-{source_breadth_html}
+ · page auto-refreshes every 2 min · pipeline runs every 30 min via GitHub Actions.</p>
 
 {"".join(sections)}
 
-<section><h2>Recent pipeline runs</h2>{runs_html}</section>
-
-<footer>
-  Data: yfinance (prices, consensus, price targets, rating actions), stooq (price backfill),
-  SEC EDGAR (13F-HR holdings from ~40 top institutional filers, Form 4 insider activity),
-  Finnhub (optional, when an API key is configured).
-</footer>
 <script>
 (function () {{
   function fmt(mins) {{
@@ -1120,13 +1026,19 @@ def _placeholder() -> tuple[str, str]:
     generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
     md = "_(awaiting first crawl)_\n"
     _ = generated  # used only in the HTML placeholder below
-    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — Top 13</title>
+    html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — awaiting first crawl</title>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <meta http-equiv="refresh" content="60"></head>
 <body style="font-family: -apple-system, Helvetica, sans-serif; max-width: 800px; margin: 3rem auto;">
-<h1>Invest — awaiting first crawl</h1>
+<h1>Invest — awaiting first crawl
+<a href="{_REPO_ACTIONS_URL}" target="_blank" rel="noopener"
+   style="margin-left:0.6rem; padding:0.2rem 0.7rem; border-radius:5px; background:#2b6cb0;
+          color:#fff; text-decoration:none; font-size:0.85rem; font-weight:600; vertical-align:middle;">
+  🔄 Refresh now
+</a></h1>
 <p>Generated: <strong>{generated}</strong>. The pipeline has not yet produced any scores.
-The GitHub Actions workflow runs every 2 hours — refresh this page later.</p>
+The GitHub Actions workflow runs every 30 minutes — refresh this page later, or click
+"Refresh now" above to trigger it immediately (requires GitHub login with repo access).</p>
 </body></html>
 """
     return md, html

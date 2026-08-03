@@ -389,3 +389,32 @@ def test_stalest_tickers_orders_by_consensus_age():
     assert picks[0] == "NEVER"
     assert picks[1] == "OLD"
     assert "FRESH" not in picks
+
+
+def test_main_table_capped_to_configured_size():
+    """The merged main table unions each horizon's own top-N diversified
+    picks, so its row count is however many DISTINCT tickers that union
+    happens to produce — observed 27 on one live run, not a fixed number.
+    `main_table_size` caps the FINAL table regardless of how much the four
+    horizon lists overlap."""
+    from invest.pipeline.rank import HORIZONS
+
+    report = _load_report_module()
+    settings = get_settings()
+    # 30 distinct tickers per horizon, all identical across horizons, so the
+    # union is exactly 30 — comfortably above main_table_size (25).
+    by_h = {
+        h: [
+            {
+                "ticker": f"T{i:02d}", "name": f"T{i:02d} Inc", "sector": "Technology",
+                "upside_pct": 0.10, "last_close": 100.0, "mean_target": 110.0,
+                "analysts": 20, "percentile": 1.0 - i / 30, "rank": i + 1,
+            }
+            for i in range(30)
+        ]
+        for h in HORIZONS
+    }
+    rows = report.main_table_rows(by_h)
+    assert len(rows) == settings.main_table_size == 25
+    # Best-scoring tickers (lowest i, highest percentile) must survive the cap.
+    assert {r["ticker"] for r in rows} == {f"T{i:02d}" for i in range(25)}

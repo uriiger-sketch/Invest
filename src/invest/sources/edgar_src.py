@@ -213,8 +213,15 @@ class EdgarSource(BaseSource):
     def _filer_submissions(self, cik: str) -> dict[str, Any] | None:
         return self._get_json(f"https://data.sec.gov/submissions/CIK{cik}.json")
 
+    # Forms that carry a holdings information table. "13F-HR/A" is an
+    # AMENDMENT — filers restate a quarter surprisingly often, and a filer
+    # whose most recent submission is an amendment was previously skipped
+    # entirely (exact `== "13F-HR"` match), losing that filer for the quarter.
+    _13F_FORMS = ("13F-HR", "13F-HR/A")
+
     def _latest_13f_for(self, cik: str) -> tuple[str, date] | None:
-        """Return (accession_no_no_dashes, filing_date) of the most recent 13F-HR."""
+        """Return (accession_no_no_dashes, filing_date) of the most recent
+        13F-HR or 13F-HR/A."""
         subs = self._filer_submissions(cik)
         if not subs:
             return None
@@ -223,7 +230,7 @@ class EdgarSource(BaseSource):
         dates = recent.get("filingDate", [])
         accs = recent.get("accessionNumber", [])
         for form, d, acc in zip(forms, dates, accs):
-            if form == "13F-HR":
+            if form in self._13F_FORMS:
                 try:
                     return acc.replace("-", ""), datetime.strptime(d, "%Y-%m-%d").date()
                 except Exception:  # noqa: BLE001
@@ -378,12 +385,22 @@ class EdgarSource(BaseSource):
         return None
 
     def ingest_13f(self, tickers: list[str]) -> int:
-        """Pull latest 13F-HR for each tracked filer. Holdings are matched to our
-        universe via issuer-name fuzzy match against Stock.name.
+        """Pull the latest 13F-HR for each tracked filer and match holdings to
+        our universe.
 
-        We defensively (re)seed the stocks table from the static universe before
-        building the lookup, so the match works even if yfinance fundamentals
-        haven't been ingested yet.
+        Runs in TWO passes so CUSIP matching actually works. `Stock.cusip`
+        starts empty and stays empty — yfinance has no CUSIP field, so the
+        CUSIP-first matcher added earlier was matching against an empty map
+        for every ticker (verified live: 0 of 301 stocks had a CUSIP) and
+        every holding fell through to the weak name matcher.
+
+        But the infotables themselves carry BOTH `cusip` and `nameOfIssuer`.
+        So: pass 1 downloads every filer's infotable and name-matches what it
+        can, learning `{cusip: ticker}` from each success. Pass 2 re-matches
+        the same in-memory rows with the learned map, which picks up every
+        holding whose issuer name we can't parse but whose CUSIP another
+        filer already taught us. Learned CUSIPs are persisted to `Stock.cusip`
+        so subsequent runs start pass 1 already knowing them.
         """
         from ..universe import seed_stocks_table
 
@@ -393,47 +410,105 @@ class EdgarSource(BaseSource):
             logger.warning("seed_stocks_table failed: %s", e)
         lookup = self._build_name_to_ticker(tickers)
         cusip_lookup = self._build_cusip_to_ticker(tickers)
-        written = 0
-        filers_with_data = 0
+        universe = set(tickers)
+
+        # Per-filer outcome counters. 87 of 115 tracked filers were landing
+        # nothing with no indication of why — including Berkshire and
+        # Vanguard, whose CIKs are definitely correct — and every failure
+        # path here is a silent `continue`.
+        diag: dict[str, int] = {}
+
+        def bump(k: str) -> None:
+            diag[k] = diag.get(k, 0) + 1
+
+        # Pass 1 — fetch every filer once, keep the parsed rows in memory.
+        fetched: list[tuple[str, str, str, date, list[dict]]] = []
         for name, cik in TOP_FILERS:
             try:
                 latest = self._latest_13f_for(cik)
                 if not latest:
+                    bump("no_13f_filing_found")
+                    logger.info("edgar 13F: no 13F-HR filing found for %s (CIK %s)", name, cik)
                     continue
                 acc, filing_date = latest
                 xml = self._download_13f_infotable(cik, acc)
                 if not xml:
+                    bump("infotable_missing")
+                    logger.info("edgar 13F: no infotable in %s filing %s", name, acc)
                     continue
                 rows = self._parse_infotable(xml)
-                quarter = self._quarter_label(filing_date)
-                batch: list[dict] = []
-                for r in rows:
-                    # CUSIP is the authoritative security identifier and is
-                    # already in every infoTable entry. Name matching is a
-                    # last resort: 13F legal names ("AMAZON COM INC") rarely
-                    # equal Yahoo's ("Amazon.com, Inc."), so it silently
-                    # dropped almost everything.
-                    t = self._cusip_to_ticker(r.get("cusip"), cusip_lookup) or (
-                        self._issuer_to_ticker(r.get("name_of_issuer") or "", lookup)
-                    )
-                    if not t:
-                        continue
-                    batch.append(
-                        {
-                            "filer_cik": cik,
-                            "filer_name": name,
-                            "ticker": t,
-                            "shares": r.get("shares"),
-                            "value_usd": r.get("value_usd"),
-                            "quarter": quarter,
-                            "filing_date": filing_date,
-                        }
-                    )
-                if batch:
-                    written += self._upsert_holdings(batch)
-                    filers_with_data += 1
+                if not rows:
+                    bump("infotable_parsed_zero")
+                    continue
+                bump("fetched_ok")
+                fetched.append((name, cik, acc, filing_date, rows))
             except TransientSourceError as e:
+                bump("transient_error")
                 logger.warning("edgar 13F %s failed: %s", name, e)
+
+        # Learn {cusip: ticker} from every name match we can make.
+        learned: dict[str, str] = {}
+        for _name, _cik, _acc, _fd, rows in fetched:
+            for r in rows:
+                cusip = (r.get("cusip") or "").strip().upper()
+                if not cusip or cusip in cusip_lookup or cusip in learned:
+                    continue
+                t = self._issuer_to_ticker(r.get("name_of_issuer") or "", lookup)
+                if t and t in universe:
+                    learned[cusip] = t
+        if learned:
+            self._persist_learned_cusips(learned)
+            for cusip, t in learned.items():
+                cusip_lookup.setdefault(cusip, t)
+                if len(cusip) >= 6:
+                    cusip_lookup.setdefault(cusip[:6], t)
+        logger.info(
+            "edgar 13F: learned %d new cusip->ticker mappings from filing data",
+            len(learned),
+        )
+
+        # Pass 2 — match everything with the enriched CUSIP map.
+        written = 0
+        filers_with_data = 0
+        for name, cik, _acc, filing_date, rows in fetched:
+            quarter = self._quarter_label(filing_date)
+            batch: list[dict] = []
+            for r in rows:
+                t = self._cusip_to_ticker(r.get("cusip"), cusip_lookup) or (
+                    self._issuer_to_ticker(r.get("name_of_issuer") or "", lookup)
+                )
+                if not t or t not in universe:
+                    continue
+                batch.append(
+                    {
+                        "filer_cik": cik,
+                        "filer_name": name,
+                        "ticker": t,
+                        "shares": r.get("shares"),
+                        "value_usd": r.get("value_usd"),
+                        "quarter": quarter,
+                        "filing_date": filing_date,
+                    }
+                )
+            if batch:
+                written += self._upsert_holdings(batch)
+                filers_with_data += 1
+            else:
+                bump("matched_zero_of_universe")
+                logger.info(
+                    "edgar 13F: %s returned %d holdings but none matched our universe",
+                    name, len(rows),
+                )
+
+        logger.info(
+            "edgar 13F summary: tracked=%d fetched_ok=%d with_universe_holdings=%d | "
+            "no_13f_filing_found=%d infotable_missing=%d infotable_parsed_zero=%d "
+            "matched_zero_of_universe=%d transient_error=%d learned_cusips=%d",
+            len(TOP_FILERS), diag.get("fetched_ok", 0), filers_with_data,
+            diag.get("no_13f_filing_found", 0), diag.get("infotable_missing", 0),
+            diag.get("infotable_parsed_zero", 0), diag.get("matched_zero_of_universe", 0),
+            diag.get("transient_error", 0), len(learned),
+        )
         if not filers_with_data:
             # Every filer returned nothing. Almost always a blanket SEC 403
             # (placeholder SEC_USER_AGENT) rather than 120 empty portfolios —
@@ -444,6 +519,25 @@ class EdgarSource(BaseSource):
                 "SEC_USER_AGENT is set to a real contact address.",
                 len(TOP_FILERS),
             )
+        return written
+
+    @staticmethod
+    def _persist_learned_cusips(learned: dict[str, str]) -> int:
+        """Write CUSIPs learned from 13F filings onto their Stock rows.
+
+        Only fills BLANKS — never overwrites a CUSIP already on record, so a
+        single mis-parsed issuer name can't relabel a security that was
+        previously identified correctly.
+        """
+        from ..models import Stock
+
+        written = 0
+        with session_scope() as s:
+            for cusip, ticker in learned.items():
+                stock = s.get(Stock, ticker)
+                if stock is not None and not stock.cusip:
+                    stock.cusip = cusip[:12]
+                    written += 1
         return written
 
     @staticmethod

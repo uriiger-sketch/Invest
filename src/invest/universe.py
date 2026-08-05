@@ -221,6 +221,42 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("TSM", "Taiwan Semiconductor", "Technology", "US-L"),
     ("MRVL", "Marvell Technology", "Technology", "US-L"),
     ("ASTS", "AST SpaceMobile", "Communication Services", "US-S"),
+    # Quantum-adjacent beyond the pure plays above: post-quantum cryptography
+    # and quantum-safe silicon. Deliberately NOT included: Quantum Corp
+    # (QMCO, tape storage) and Quantum-Si (QSI, protein sequencing) — both
+    # merely have "Quantum" in the name and would pollute the theme set.
+    ("ARQQ", "Arqit Quantum Inc.", "Technology", "US-S"),
+    ("LAES", "SEALSQ Corp", "Technology", "US-S"),
+    # --- US semiconductors & equipment ---------------------------------------
+    ("TER", "Teradyne Inc.", "Technology", "US-L"),
+    ("MPWR", "Monolithic Power Systems", "Technology", "US-L"),
+    ("MCHP", "Microchip Technology", "Technology", "US-L"),
+    ("NXPI", "NXP Semiconductors", "Technology", "US-L"),
+    ("KEYS", "Keysight Technologies", "Technology", "US-L"),
+    ("GFS", "GlobalFoundries Inc.", "Technology", "US-L"),
+    ("SWKS", "Skyworks Solutions", "Technology", "US-L"),
+    ("QRVO", "Qorvo Inc.", "Technology", "US-S"),
+    ("ONTO", "Onto Innovation", "Technology", "US-S"),
+    ("FORM", "FormFactor Inc.", "Technology", "US-S"),
+    ("COHR", "Coherent Corp.", "Technology", "US-L"),
+    ("LITE", "Lumentum Holdings", "Technology", "US-S"),
+    ("SLAB", "Silicon Laboratories", "Technology", "US-S"),
+    ("SITM", "SiTime Corporation", "Technology", "US-S"),
+    ("RMBS", "Rambus Inc.", "Technology", "US-S"),
+    ("POWI", "Power Integrations", "Technology", "US-S"),
+    ("NVTS", "Navitas Semiconductor", "Technology", "US-S"),
+    ("ALAB", "Astera Labs Inc.", "Technology", "US-S"),
+    ("WOLF", "Wolfspeed Inc.", "Technology", "US-S"),
+    ("ACLS", "Axcelis Technologies", "Technology", "US-S"),
+    # --- US enterprise software / data ---------------------------------------
+    ("SNOW", "Snowflake Inc.", "Technology", "US-L"),
+    ("WDAY", "Workday Inc.", "Technology", "US-L"),
+    ("TEAM", "Atlassian Corporation", "Technology", "US-L"),
+    ("HUBS", "HubSpot Inc.", "Technology", "US-L"),
+    ("AKAM", "Akamai Technologies", "Technology", "US-L"),
+    ("ESTC", "Elastic N.V.", "Technology", "US-S"),
+    ("GTLB", "GitLab Inc.", "Technology", "US-S"),
+    ("CFLT", "Confluent Inc.", "Technology", "US-S"),
     # --- Israel (mostly US-listed) -------------------------------------------
     ("TEVA", "Teva Pharmaceutical Industries", "Health Care", "IL"),
     ("CHKP", "Check Point Software Technologies", "Technology", "IL"),
@@ -265,6 +301,59 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("INVZ", "Innoviz Technologies", "Technology", "IL"),
     ("ORMP", "Oramed Pharmaceuticals", "Health Care", "IL"),
     ("EVGN", "Evogene", "Health Care", "IL"),
+    ("PLTK", "Playtika Holding Corp.", "Communication Services", "IL"),
+    ("SSYS", "Stratasys Ltd.", "Technology", "IL"),
+    ("NNDM", "Nano Dimension Ltd.", "Technology", "IL"),
+    ("CLBT", "Cellebrite DI Ltd.", "Technology", "IL"),
+    ("PGY", "Pagaya Technologies Ltd.", "Financials", "IL"),
+    ("SILC", "Silicom Ltd.", "Technology", "IL"),
+    ("ODD", "Oddity Tech Ltd.", "Consumer Discretionary", "IL"),
+    ("MDWD", "MediWound Ltd.", "Health Care", "IL"),
+    ("TATT", "TAT Technologies Ltd.", "Industrials", "IL"),
+    ("ENLV", "Enlivex Therapeutics Ltd.", "Health Care", "IL"),
+    # --- Israel (Tel Aviv Stock Exchange, yfinance ".TA" suffix) -------------
+    # TASE-ONLY names: every ticker here has no US listing, so none of them
+    # duplicate an ADR already in the IL block above (a dual listing would
+    # double-count the same company, and the US line is the one that carries
+    # sell-side coverage).
+    #
+    # EXPECTATION: yfinance reliably serves prices for .TA lines but rarely
+    # serves analyst consensus or price targets for them. Names without
+    # coverage will be correctly excluded by the min_firms / min_total_sources
+    # gates rather than ranked on thin data — these broaden real Israeli
+    # market coverage, they do not all become picks.
+    ("POLI.TA", "Bank Hapoalim", "Financials", "IL"),
+    ("LUMI.TA", "Bank Leumi", "Financials", "IL"),
+    ("MZTF.TA", "Mizrahi Tefahot Bank", "Financials", "IL"),
+    ("DSCT.TA", "Israel Discount Bank", "Financials", "IL"),
+    ("FIBI.TA", "First International Bank of Israel", "Financials", "IL"),
+    ("PHOE.TA", "Phoenix Financial", "Financials", "IL"),
+    ("HARL.TA", "Harel Insurance Investments", "Financials", "IL"),
+    ("MGDL.TA", "Migdal Insurance", "Financials", "IL"),
+    ("CLIS.TA", "Clal Insurance Enterprises", "Financials", "IL"),
+    ("AZRG.TA", "Azrieli Group", "Real Estate", "IL"),
+    ("MLSR.TA", "Melisron Ltd.", "Real Estate", "IL"),
+    ("ALHE.TA", "Alony Hetz Properties", "Real Estate", "IL"),
+    ("ARPT.TA", "Airport City Ltd.", "Real Estate", "IL"),
+    ("BEZQ.TA", "Bezeq Israeli Telecommunication", "Communication Services", "IL"),
+    ("PTNR.TA", "Partner Communications", "Communication Services", "IL"),
+    ("CEL.TA", "Cellcom Israel", "Communication Services", "IL"),
+    ("ENLT.TA", "Enlight Renewable Energy", "Utilities", "IL"),
+    ("ELAL.TA", "El Al Israel Airlines", "Industrials", "IL"),
+    ("SPEN.TA", "Shapir Engineering and Industry", "Industrials", "IL"),
+    ("SKBN.TA", "Shikun & Binui", "Industrials", "IL"),
+    ("ELCO.TA", "Elco Ltd.", "Industrials", "IL"),
+    ("MTRX.TA", "Matrix IT Ltd.", "Technology", "IL"),
+    ("ONE.TA", "One Software Technologies", "Technology", "IL"),
+    ("FORTY.TA", "Formula Systems", "Technology", "IL"),
+    ("STRS.TA", "Strauss Group", "Consumer Staples", "IL"),
+    ("SAE.TA", "Shufersal Ltd.", "Consumer Staples", "IL"),
+    ("DELT.TA", "Delta Galil Industries", "Consumer Discretionary", "IL"),
+    ("FOX.TA", "Fox Wizel Ltd.", "Consumer Discretionary", "IL"),
+    ("ORL.TA", "Bazan Oil Refineries", "Energy", "IL"),
+    ("PZOL.TA", "Paz Retail and Energy", "Energy", "IL"),
+    ("NWMD.TA", "NewMed Energy", "Energy", "IL"),
+    ("ILCO.TA", "Israel Corporation", "Materials", "IL"),
     # --- Europe (US ADRs where available; LSE/EU suffixes otherwise) ---------
     ("ASML", "ASML Holding", "Technology", "EU"),
     ("NVO", "Novo Nordisk", "Health Care", "EU"),
@@ -341,6 +430,28 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("AIQUY", "Air Liquide S.A.", "Materials", "EU"),
     ("IDEXY", "Industria de Diseno Textil (Inditex)", "Consumer Discretionary", "EU"),
 )
+
+
+# Frontier deep-tech: quantum computing / post-quantum security pure plays
+# and the AI-infrastructure silicon they depend on. These get a slightly
+# larger scoring tilt than the broad Technology sector (see
+# `settings.theme_tilt_frontier`).
+#
+# Membership rule: the company's PRIMARY business must be quantum or
+# AI-infrastructure. Companies merely containing "Quantum" in their name
+# (Quantum Corp — tape storage; Quantum-Si — protein sequencing) are
+# deliberately excluded, as are mega-caps with a quantum research arm but a
+# diversified revenue base (IBM, Alphabet, Honeywell) — tilting those would
+# be tilting the whole index, not the theme.
+FRONTIER_TECH: frozenset[str] = frozenset({
+    # Quantum computing / post-quantum cryptography
+    "IONQ", "RGTI", "QBTS", "QUBT", "ARQQ", "LAES",
+    # AI-infrastructure silicon and interconnect
+    "NVDA", "AVGO", "AMD", "ARM", "ALAB", "CRDO", "MRVL", "ANET", "SMCI",
+    "TSM", "ASML", "KLAC", "LRCX", "AMAT", "MU", "VRT",
+    # Israeli semiconductor / AI-adjacent
+    "NVMI", "CAMT", "TSEM", "MBLY",
+})
 
 
 def static_universe_entries() -> list[tuple[str, str, str, str]]:

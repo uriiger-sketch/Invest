@@ -78,6 +78,38 @@ def _assert_analyst_data_present(features: pd.DataFrame, min_covered_pct: float 
     )
 
 
+def _theme_tilts(tickers: list[str]) -> dict[str, float]:
+    """{ticker: additive tilt} — a small bias toward technology.
+
+    Frontier deep-tech (quantum / AI-infrastructure pure plays) gets the
+    larger tilt; any other Technology-sector name gets the smaller one. The
+    two never compound: a frontier name gets `theme_tilt_frontier`, not
+    frontier + tech.
+
+    Sector comes from the `stocks` table, which `seed_stocks_table()`
+    populates from the static universe on every run, so this works even
+    before yfinance fundamentals have landed.
+    """
+    from ..models import Stock
+    from ..universe import FRONTIER_TECH
+
+    settings = get_settings()
+    if not settings.theme_tilt_tech and not settings.theme_tilt_frontier:
+        return {}
+    with session_scope() as s:
+        rows = s.query(Stock.ticker, Stock.sector).filter(Stock.ticker.in_(tickers)).all()
+    sectors = {t: (sec or "") for t, sec in rows}
+    out: dict[str, float] = {}
+    for t in tickers:
+        if t in FRONTIER_TECH:
+            out[t] = settings.theme_tilt_frontier
+        elif sectors.get(t, "").strip().lower() == "technology":
+            out[t] = settings.theme_tilt_tech
+        else:
+            out[t] = 0.0
+    return out
+
+
 def rank_all(tickers: list[str]) -> pd.DataFrame:
     """End-to-end: build features, score (composite + ML), blend, persist, return frame."""
     settings = get_settings()
@@ -127,6 +159,13 @@ def rank_all(tickers: list[str]) -> pd.DataFrame:
         settings.blend_composite_weight * merged["composite_z"]
         + settings.blend_ml_weight * merged["ml_z"]
     )
+    # fillna(0.0) is load-bearing: `_theme_tilts` returns {} when the tilt is
+    # switched off in config, and `.map({})` yields all-NaN — without the
+    # fill, disabling the tilt would silently NaN out every blended_score.
+    merged["theme_tilt"] = (
+        merged["ticker"].map(_theme_tilts(merged["ticker"].tolist())).fillna(0.0)
+    )
+    merged["blended_score"] = merged["blended_score"] + merged["theme_tilt"]
 
     merged["percentile"] = merged.groupby("horizon")["blended_score"].rank(pct=True)
     merged["as_of"] = date.today()

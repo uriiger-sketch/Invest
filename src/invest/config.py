@@ -82,6 +82,20 @@ class Settings(BaseSettings):
     blend_ml_weight: float = 0.4
     top_n: int = 13
 
+    # Theme tilt — a deliberate, small thumb on the scale toward technology,
+    # applied to `blended_score` (which is in z-score units, so typical spread
+    # across the ranked pool is roughly ±2). These values are intentionally
+    # tiny: they act as a TIEBREAKER between names of comparable quality, and
+    # are far too small to drag a gate-failing or negative-outlook stock into
+    # the table — the quality gates run first and are untouched by this.
+    #   theme_tilt_tech     — any Technology-sector name
+    #   theme_tilt_frontier — quantum / AI-infrastructure pure plays
+    #                         (universe.FRONTIER_TECH); replaces, not adds to,
+    #                         the tech tilt so it can't compound.
+    # Set both to 0.0 to disable the tilt entirely.
+    theme_tilt_tech: float = 0.10
+    theme_tilt_frontier: float = 0.20
+
     # The report's single merged table unions each horizon's own top `top_n`
     # diversified picks, so its row count is however many DISTINCT tickers
     # that union produces — not `top_n` itself, and not fixed run to run

@@ -9,10 +9,10 @@
 | 7 | **GRAB** | Grab Holdings Limited | Technology | **+57.6%** | 3.72 | 5.86 | 1.99 | ··WM | 26 | 47 |
 | 8 | **ETN** | Eaton Corporation, PLC | Industrials | **+4.5%** | 444.77 | 464.59 | 1.97 | HD·· | 27 | 46 |
 | 9 | **CRWV** | CoreWeave, Inc. | Technology | **+50.6%** | 91.90 | 138.40 | 1.97 | HD·· | 38 | 54 |
-| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+83.2%** | 12.05 | 22.08 | 1.95 | ··WM | 26 | 35 |
+| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+83.1%** | 12.05 | 22.06 | 1.95 | ··WM | 26 | 35 |
 | 11 | **UBER** | Uber Technologies, Inc. | Technology | **+44.3%** | 71.99 | 103.89 | 1.95 | ··WM | 51 | 73 |
 | 12 | **SNAP** | Snap Inc. | Communication Servic | **+24.6%** | 5.79 | 7.21 | 1.93 | HD·· | 43 | 63 |
-| 13 | **NIO** | NIO Inc. | Consumer Cyclical | **+54.4%** | 4.76 | 7.35 | 1.93 | ··WM | 24 | 35 |
+| 13 | **NIO** | NIO Inc. | Consumer Cyclical | **+54.3%** | 4.76 | 7.34 | 1.93 | ··WM | 24 | 35 |
 | 14 | **BLK** | BlackRock, Inc. | Financial Services | **+16.1%** | 1131.13 | 1313.50 | 1.92 | ·DW· | 17 | 34 |
 | 15 | **TMUS** | T-Mobile US, Inc. | Communication Servic | **+37.2%** | 177.21 | 243.08 | 1.87 | ··WM | 27 | 45 |
 | 16 | **REGN** | Regeneron Pharmaceuticals, Inc. | Healthcare | **+9.6%** | 760.66 | 833.54 | 1.84 | HD·· | 27 | 46 |

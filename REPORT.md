@@ -9,15 +9,15 @@
 | 7 | **LITE** | Lumentum Holdings Inc. | Technology | **+33.7%** | 826.26 | 1104.89 | 1.97 | HD·· | 25 | 44 |
 | 8 | **PGY** | Pagaya Technologies Ltd. | Technology | **+30.7%** | 21.80 | 28.50 | 1.96 | HD·· | 10 | 26 |
 | 9 | **UBER** | Uber Technologies, Inc. | Technology | **+52.2%** | 68.18 | 103.76 | 1.95 | ··WM | 51 | 73 |
-| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+87.7%** | 11.75 | 22.06 | 1.94 | ··WM | 26 | 35 |
+| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+87.7%** | 11.75 | 22.05 | 1.94 | ··WM | 26 | 35 |
 | 11 | **NIO** | NIO Inc. | Consumer Cyclical | **+57.9%** | 4.65 | 7.34 | 1.94 | ··WM | 24 | 35 |
 | 12 | **BLK** | BlackRock, Inc. | Financial Services | **+15.9%** | 1133.58 | 1313.50 | 1.94 | ·DW· | 17 | 34 |
 | 13 | **WCC** | WESCO International, Inc. | Industrials | **+6.4%** | 373.08 | 397.09 | 1.89 | HD·· | 11 | 30 |
 | 14 | **GM** | General Motors Company | Consumer Cyclical | **+12.2%** | 89.16 | 100.04 | 1.88 | ·DW· | 28 | 49 |
-| 15 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+29.9%** | 165.45 | 214.98 | 1.85 | HD·· | 22 | 39 |
-| 16 | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | **+18.6%** | 272.65 | 323.29 | 1.81 | HD·· | 62 | 88 |
-| 17 | **PLD** | Prologis, Inc. | Real Estate | **+12.2%** | 140.76 | 157.93 | 1.79 | HD·· | 18 | 36 |
-| 18 | **UAL** | United Airlines Holdings, Inc. | Industrials | **+22.1%** | 132.76 | 162.15 | 1.76 | H··M | 25 | 29 |
+| 15 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+29.9%** | 165.45 | 214.98 | 1.84 | HD·· | 22 | 39 |
+| 16 | **PLD** | Prologis, Inc. | Real Estate | **+12.2%** | 140.76 | 157.93 | 1.80 | HD·· | 18 | 36 |
+| 17 | **UAL** | United Airlines Holdings, Inc. | Industrials | **+22.1%** | 132.76 | 162.15 | 1.76 | H··M | 25 | 29 |
+| 18 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+9.5%** | 255.25 | 279.42 | 1.72 | HD·· | 21 | 39 |
 | 19 | **MU** | Micron Technology, Inc. | Technology | **+68.8%** | 893.19 | 1507.79 | 1.00 | ···M | 46 | 69 |
 | 20 | **COHR** | Coherent Corp. | Technology | **+19.3%** | 328.22 | 391.45 | 0.99 | H··· | 22 | 40 |
 | 21 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+60.1%** | 21.76 | 34.84 | 0.97 | ···M | 36 | 55 |

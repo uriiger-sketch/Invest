@@ -11,7 +11,7 @@
 | 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.6%** | 4.60 | 7.34 | 1.94 | ··WM | 24 | 35 |
 | 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+89.9%** | 11.68 | 22.18 | 1.93 | ··WM | 26 | 35 |
 | 11 | **BLK** | BlackRock, Inc. | Financial Services | **+16.3%** | 1129.30 | 1313.50 | 1.93 | ·DW· | 17 | 34 |
-| 12 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+28.0%** | 167.92 | 214.98 | 1.89 | HD·· | 22 | 39 |
+| 12 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+28.0%** | 167.92 | 214.98 | 1.88 | HD·· | 22 | 39 |
 | 13 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+10.3%** | 253.37 | 279.42 | 1.88 | HD·· | 21 | 39 |
 | 14 | **DIS** | The Walt Disney Company | Communication Servic | **+20.9%** | 104.68 | 126.51 | 1.87 | HD·· | 31 | 32 |
 | 15 | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | **+18.7%** | 272.26 | 323.24 | 1.87 | HD·· | 62 | 88 |
@@ -20,8 +20,8 @@
 | 18 | **COHR** | Coherent Corp. | Technology | **+17.1%** | 334.22 | 391.45 | 0.99 | H··· | 22 | 40 |
 | 19 | **SAP** | SAP SE | Technology | **+21.8%** | 199.46 | 242.92 | 0.98 | ·D·· | 16 | 30 |
 | 20 | **UBER** | Uber Technologies, Inc. | Technology | **+47.2%** | 70.47 | 103.76 | 0.98 | ···M | 51 | 73 |
-| 21 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+57.1%** | 22.17 | 34.84 | 0.97 | ···M | 36 | 55 |
-| 22 | **TEAM** | Atlassian Corporation | Technology | **+27.4%** | 110.17 | 140.33 | 0.97 | ··W· | 32 | 52 |
+| 21 | **TEAM** | Atlassian Corporation | Technology | **+30.1%** | 110.17 | 143.33 | 0.98 | ··W· | 32 | 52 |
+| 22 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+56.9%** | 22.17 | 34.78 | 0.97 | ···M | 36 | 55 |
 | 23 | **VRT** | Vertiv Holdings Co | Industrials | **+22.7%** | 275.17 | 337.50 | 0.97 | H··· | 28 | 47 |
 | 24 | **APP** | AppLovin Corporation | Communication Servic | **+95.5%** | 335.67 | 656.20 | 0.95 | ···M | 32 | 53 |
 | 25 | **UAL** | United Airlines Holdings, Inc. | Industrials | **+25.6%** | 129.12 | 162.15 | 0.95 | ···M | 25 | 29 |

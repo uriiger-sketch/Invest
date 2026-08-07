@@ -401,20 +401,22 @@ def test_main_table_capped_to_configured_size():
 
     report = _load_report_module()
     settings = get_settings()
-    # 30 distinct tickers per horizon, all identical across horizons, so the
-    # union is exactly 30 — comfortably above main_table_size (25).
+    cap = settings.main_table_size
+    pool = cap + 10  # comfortably above the cap, whatever it's currently set to
+    # `pool` distinct tickers per horizon, all identical across horizons, so
+    # the union is exactly `pool` — bigger than main_table_size either way.
     by_h = {
         h: [
             {
                 "ticker": f"T{i:02d}", "name": f"T{i:02d} Inc", "sector": "Technology",
                 "upside_pct": 0.10, "last_close": 100.0, "mean_target": 110.0,
-                "analysts": 20, "percentile": 1.0 - i / 30, "rank": i + 1,
+                "analysts": 20, "percentile": 1.0 - i / pool, "rank": i + 1,
             }
-            for i in range(30)
+            for i in range(pool)
         ]
         for h in HORIZONS
     }
     rows = report.main_table_rows(by_h)
-    assert len(rows) == settings.main_table_size == 25
+    assert len(rows) == cap
     # Best-scoring tickers (lowest i, highest percentile) must survive the cap.
-    assert {r["ticker"] for r in rows} == {f"T{i:02d}" for i in range(25)}
+    assert {r["ticker"] for r in rows} == {f"T{i:02d}" for i in range(cap)}

@@ -102,7 +102,7 @@ class Settings(BaseSettings):
     # (observed live: 27 rows on one run). This caps the FINAL merged table
     # to a fixed, predictable size, independent of `top_n` (which still
     # controls each horizon's own candidate pool).
-    main_table_size: int = 25
+    main_table_size: int = 30
 
     # Hourly coverage sweep: consensus + price targets + named rating actions,
     # walked stalest-first over the whole universe.

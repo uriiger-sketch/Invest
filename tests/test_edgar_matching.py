@@ -7,6 +7,8 @@ regressions here mean the `Insts` column in the report stays at zero.
 """
 from __future__ import annotations
 
+from datetime import date
+
 from invest.sources.edgar_src import EdgarSource
 from invest.universe import seed_stocks_table, static_universe_entries
 
@@ -157,3 +159,90 @@ def test_amendment_forms_are_accepted():
     that filer for the quarter. Restatements are common."""
     assert "13F-HR/A" in EdgarSource._13F_FORMS
     assert "13F-HR" in EdgarSource._13F_FORMS
+
+
+def test_infotable_download_uses_content_not_filename(monkeypatch):
+    """Filers choose their own filename for the information table document;
+    only the cover page is the fixed `primary_doc.xml`. Filtering candidates
+    on "infotable" as a filename substring missed it for 27 of 115 tracked
+    filers live — including Berkshire Hathaway, Vanguard, Fidelity,
+    Renaissance, Millennium, JPMorgan, Morgan Stanley, Bank of America and
+    Wells Fargo, whose CIKs and filings are unambiguously real. This builds
+    a filing laid out exactly like theirs: a cover page named
+    `primary_doc.xml` plus a holdings document with an arbitrary,
+    non-hinting filename, and asserts content-based detection finds it.
+    """
+    src = EdgarSource()
+    directory = {
+        "directory": {
+            "item": [
+                {"name": "primary_doc.xml"},
+                {"name": "0001234567_form13f.xml"},  # arbitrary — no "infotable" hint
+                {"name": "primary_doc.htm"},
+            ]
+        }
+    }
+    responses = {
+        "primary_doc.xml": b"<edgarSubmission><coverPage>not the holdings</coverPage></edgarSubmission>",
+        "0001234567_form13f.xml": b"<informationTable><infoTable><cusip>X</cusip></infoTable></informationTable>",
+    }
+
+    def fake_get_json(url):
+        return directory
+
+    class FakeResp:
+        def __init__(self, content):
+            self.status_code = 200
+            self.content = content
+
+    def fake_get(url, timeout=30):
+        name = url.rsplit("/", 1)[-1]
+        return FakeResp(responses.get(name, b""))
+
+    monkeypatch.setattr(src, "_get_json", fake_get_json)
+    monkeypatch.setattr(src.session, "get", fake_get)
+
+    xml = src._download_13f_infotable("0001234567", "000123456726000001")
+    assert xml == responses["0001234567_form13f.xml"], (
+        "must find the real holdings document by content, not skip it for "
+        "lacking 'infotable' in its filename"
+    )
+
+
+def test_latest_13f_falls_back_to_paginated_submission_pages(monkeypatch):
+    """`filings.recent` holds only the newest ~1000 filings across EVERY
+    form type a filer has submitted. A high-volume filer (many Form 4s, 13Ds,
+    fund registrations) can push a merely-quarterly 13F-HR out of that
+    window even though it's still their most recent one. This was the
+    single largest live failure bucket (57 of 115 tracked filers showed
+    `no_13f_filing_found`) — checking the paginated `filings.files` pages is
+    a real fix for genuinely high-volume filers, not a guess that their CIK
+    is wrong.
+    """
+    src = EdgarSource()
+    submissions = {
+        "https://data.sec.gov/submissions/CIK0009999999.json": {
+            "filings": {
+                "recent": {  # newest 1000 filings, none of them a 13F-HR
+                    "form": ["4", "4", "SC 13D"],
+                    "filingDate": ["2026-07-01", "2026-06-15", "2026-05-01"],
+                    "accessionNumber": ["0009999999-26-000099", "0009999999-26-000098",
+                                        "0009999999-26-000097"],
+                },
+                "files": [{"name": "CIK0009999999-submissions-001.json"}],
+            }
+        },
+        "https://data.sec.gov/submissions/CIK0009999999-submissions-001.json": {
+            "form": ["13F-HR", "4"],
+            "filingDate": ["2026-04-15", "2026-04-01"],
+            "accessionNumber": ["0009999999-26-000050", "0009999999-26-000049"],
+        },
+    }
+
+    def fake_get_json(url):
+        return submissions.get(url)
+
+    monkeypatch.setattr(src, "_get_json", fake_get_json)
+
+    result = src._latest_13f_for("0009999999")
+    assert result == ("000999999926000050", date(2026, 4, 15))

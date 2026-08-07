@@ -219,44 +219,102 @@ class EdgarSource(BaseSource):
     # entirely (exact `== "13F-HR"` match), losing that filer for the quarter.
     _13F_FORMS = ("13F-HR", "13F-HR/A")
 
-    def _latest_13f_for(self, cik: str) -> tuple[str, date] | None:
-        """Return (accession_no_no_dashes, filing_date) of the most recent
-        13F-HR or 13F-HR/A."""
-        subs = self._filer_submissions(cik)
-        if not subs:
-            return None
-        recent = subs.get("filings", {}).get("recent", {})
-        forms = recent.get("form", [])
-        dates = recent.get("filingDate", [])
-        accs = recent.get("accessionNumber", [])
+    @staticmethod
+    def _first_13f_in(forms: list, dates: list, accs: list) -> tuple[str, date] | None:
         for form, d, acc in zip(forms, dates, accs):
-            if form in self._13F_FORMS:
+            if form in EdgarSource._13F_FORMS:
                 try:
                     return acc.replace("-", ""), datetime.strptime(d, "%Y-%m-%d").date()
                 except Exception:  # noqa: BLE001
                     continue
         return None
 
+    # How many additional (older) submission pages to check beyond
+    # `filings.recent` before giving up on a filer.
+    _MAX_SUBMISSION_PAGES = 3
+
+    def _latest_13f_for(self, cik: str) -> tuple[str, date] | None:
+        """Return (accession_no_no_dashes, filing_date) of the most recent
+        13F-HR or 13F-HR/A.
+
+        `submissions/CIK{cik}.json`'s `filings.recent` holds only the
+        newest ~1000 filings of EVERY type that filer has ever submitted —
+        for a filer that also files many Form 4s, 13Ds, or fund
+        registration statements, a merely-quarterly 13F-HR can age out of
+        that window even though it is still their most recent one. Older
+        filings are paginated under `filings.files`, each a separate JSON
+        page with the same parallel-array shape at its top level. This
+        showed up live: `no_13f_filing_found` was the single largest
+        failure bucket (57 of 115 tracked filers) — checking a few
+        additional pages is a real fix for genuinely high-volume filers,
+        as opposed to guessing that their tracked CIK is simply wrong.
+        """
+        subs = self._filer_submissions(cik)
+        if not subs:
+            return None
+        recent = subs.get("filings", {}).get("recent", {})
+        found = self._first_13f_in(
+            recent.get("form", []), recent.get("filingDate", []), recent.get("accessionNumber", [])
+        )
+        if found:
+            return found
+        for page in subs.get("filings", {}).get("files", [])[: self._MAX_SUBMISSION_PAGES]:
+            name = page.get("name")
+            if not name:
+                continue
+            page_json = self._get_json(f"https://data.sec.gov/submissions/{name}")
+            if not page_json:
+                continue
+            found = self._first_13f_in(
+                page_json.get("form", []), page_json.get("filingDate", []),
+                page_json.get("accessionNumber", []),
+            )
+            if found:
+                return found
+        return None
+
     def _download_13f_infotable(self, cik: str, accession_no_dash: str) -> bytes | None:
-        """Fetch the informationTable.xml inside the filing."""
-        acc = accession_no_dash
-        # Folder path: /Archives/edgar/data/<cik_int>/<acc>/<acc>-index.json
+        """Fetch the information-table XML inside a 13F-HR filing.
+
+        Filers choose their own filename for the information table document
+        (only the COVER PAGE is the fixed `primary_doc.xml`) — the SEC-
+        recommended "informationTable.xml" naming is a convention, not an
+        enforced rule. Filtering candidates on "infotable" as a filename
+        substring missed it for 27 of 115 tracked filers on a live run,
+        including Berkshire Hathaway, Vanguard, Fidelity, Renaissance
+        Technologies, Millennium, JPMorgan, Morgan Stanley, Bank of America
+        and Wells Fargo — filers whose CIKs and 13F-HR filings are
+        unambiguously real, so the filename guess was simply wrong for them.
+
+        Content-based detection is robust to this: try every `.xml`
+        candidate (favoring ones that DO hint "infotable" first, to save a
+        request in the common case), and accept the first one that actually
+        contains an `<infoTable>`/`<informationTable>` element rather than
+        guessing from the name alone. `primary_doc.xml` (the cover page)
+        naturally fails this check and is skipped.
+        """
         cik_int = str(int(cik))
-        index_url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{acc}/index.json"
+        index_url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{accession_no_dash}/index.json"
         idx = self._get_json(index_url)
         if not idx:
             return None
-        for item in idx.get("directory", {}).get("item", []):
-            name = item.get("name", "")
-            if name.endswith(".xml") and "infotable" in name.lower():
-                url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{acc}/{name}"
-                self.throttle()
-                try:
-                    r = self.session.get(url, timeout=30)
-                except requests.RequestException as e:
-                    raise TransientSourceError(str(e)) from e
-                if r.status_code < 400:
-                    return r.content
+        names = [
+            item.get("name", "")
+            for item in idx.get("directory", {}).get("item", [])
+            if item.get("name", "").lower().endswith(".xml")
+        ]
+        names.sort(key=lambda n: 0 if "infotable" in n.lower() else 1)
+        for name in names:
+            url = f"https://www.sec.gov/Archives/edgar/data/{cik_int}/{accession_no_dash}/{name}"
+            self.throttle()
+            try:
+                r = self.session.get(url, timeout=30)
+            except requests.RequestException as e:
+                raise TransientSourceError(str(e)) from e
+            if r.status_code >= 400:
+                continue
+            if b"infoTable" in r.content or b"informationTable" in r.content:
+                return r.content
         return None
 
     @staticmethod

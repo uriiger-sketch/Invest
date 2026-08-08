@@ -1,6 +1,6 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+10.7%** | 214.42 | 237.36 | 3.79 | HDWM | 38 | 72 |
+| 1 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+10.7%** | 214.42 | 237.36 | 3.80 | HDWM | 38 | 72 |
 | 2 | **SOUN** | SoundHound AI, Inc. | Technology | **+60.3%** | 8.02 | 12.86 | 2.98 | HDW· | 7 | 32 |
 | 3 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+82.1%** | 12.13 | 22.08 | 2.00 | ··WM | 26 | 44 |
 | 4 | **PLTR** | Palantir Technologies Inc. | Technology | **+10.4%** | 172.01 | 189.90 | 2.00 | HD·· | 32 | 67 |
@@ -14,8 +14,8 @@
 | 12 | **ETN** | Eaton Corporation plc | Industrials | **+5.1%** | 448.68 | 471.47 | 1.92 | HD·· | 27 | 59 |
 | 13 | **W** | Wayfair Inc. | Consumer Cyclical | **+12.6%** | 106.60 | 120.04 | 1.89 | HD·· | 32 | 63 |
 | 14 | **CRH** | CRH plc | Basic Materials | **+38.0%** | 100.48 | 138.65 | 1.88 | ··WM | 21 | 56 |
-| 15 | **BLK** | BlackRock, Inc. | Financial Services | **+15.6%** | 1136.39 | 1313.50 | 1.84 | ·DW· | 17 | 49 |
-| 16 | **DIS** | The Walt Disney Company | Communication Servic | **+21.7%** | 104.91 | 127.72 | 1.83 | HD·· | 32 | 67 |
+| 15 | **BLK** | BlackRock, Inc. | Financial Services | **+15.6%** | 1136.39 | 1313.50 | 1.85 | ·DW· | 17 | 49 |
+| 16 | **DIS** | The Walt Disney Company | Communication Servic | **+21.7%** | 104.91 | 127.72 | 1.84 | HD·· | 32 | 67 |
 | 17 | **ASML** | ASML Holding N.V. | Technology | **+25.1%** | 1740.99 | 2178.04 | 0.99 | ···M | 44 | 75 |
 | 18 | **SITM** | SiTime Corporation | Technology | **+19.2%** | 725.28 | 864.38 | 0.99 | H··· | 8 | 39 |
 | 19 | **CRWV** | CoreWeave, Inc. | Technology | **+52.6%** | 90.67 | 138.37 | 0.98 | H··· | 38 | 67 |
@@ -29,4 +29,4 @@
 | 27 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+38.6%** | 8.73 | 12.10 | 0.94 | ···M | 28 | 53 |
 | 28 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+20.6%** | 75.25 | 90.77 | 0.93 | ···M | 34 | 63 |
 | 29 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+8.9%** | 256.69 | 279.42 | 0.93 | ·D·· | 21 | 53 |
-| 30 | **DEO** | Diageo plc | Consumer Defensive | **+5.3%** | 96.35 | 101.43 | 0.93 | ·D·· | 8 | 33 |
+| 30 | **DEO** | Diageo plc | Consumer Defensive | **+5.3%** | 96.35 | 101.43 | 0.92 | ·D·· | 8 | 33 |

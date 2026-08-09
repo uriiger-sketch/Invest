@@ -10,11 +10,11 @@
 | 8 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+20.2%** | 178.82 | 214.98 | 1.96 | HD·· | 22 | 50 |
 | 9 | **MSFT** | Microsoft Corporation | Technology | **+12.7%** | 499.99 | 563.35 | 1.95 | ·DW· | 56 | 99 |
 | 10 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+125.2%** | 3.22 | 7.25 | 1.93 | ··WM | 7 | 36 |
-| 11 | **ETN** | Eaton Corporation plc | Industrials | **+5.1%** | 448.68 | 471.47 | 1.92 | HD·· | 27 | 59 |
+| 11 | **ETN** | Eaton Corporation, PLC | Industrials | **+5.1%** | 448.68 | 471.47 | 1.92 | HD·· | 27 | 59 |
 | 12 | **W** | Wayfair Inc. | Consumer Cyclical | **+12.6%** | 106.60 | 120.04 | 1.89 | HD·· | 32 | 63 |
-| 13 | **CRH** | CRH plc | Basic Materials | **+38.0%** | 100.48 | 138.65 | 1.88 | ··WM | 21 | 56 |
+| 13 | **CRH** | CRH PLC | Basic Materials | **+38.0%** | 100.48 | 138.65 | 1.88 | ··WM | 21 | 56 |
 | 14 | **BLK** | BlackRock, Inc. | Financial Services | **+15.6%** | 1136.39 | 1313.50 | 1.86 | ·DW· | 17 | 49 |
-| 15 | **DIS** | The Walt Disney Company | Communication Servic | **+21.7%** | 104.91 | 127.72 | 1.84 | HD·· | 32 | 67 |
+| 15 | **DIS** | Walt Disney Company (The) | Communication Servic | **+21.7%** | 104.91 | 127.72 | 1.84 | HD·· | 32 | 67 |
 | 16 | **ASML** | ASML Holding N.V. | Technology | **+25.1%** | 1740.99 | 2178.04 | 0.99 | ···M | 44 | 75 |
 | 17 | **SITM** | SiTime Corporation | Technology | **+19.2%** | 725.28 | 864.38 | 0.99 | H··· | 8 | 39 |
 | 18 | **CRWV** | CoreWeave, Inc. | Technology | **+52.6%** | 90.67 | 138.37 | 0.98 | H··· | 38 | 67 |

@@ -1,7 +1,7 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+10.7%** | 214.42 | 237.36 | 3.81 | HDWM | 38 | 72 |
-| 2 | **SOUN** | SoundHound AI, Inc. | Technology | **+58.5%** | 8.02 | 12.71 | 2.96 | HDW· | 8 | 33 |
+| 1 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+10.7%** | 214.42 | 237.36 | 3.80 | HDWM | 38 | 72 |
+| 2 | **SOUN** | SoundHound AI, Inc. | Technology | **+58.5%** | 8.02 | 12.71 | 2.97 | HDW· | 8 | 33 |
 | 3 | **SHOP** | Shopify Inc. | Technology | **+9.5%** | 151.57 | 165.91 | 2.95 | HDW· | 52 | 80 |
 | 4 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.8%** | 12.13 | 22.05 | 2.00 | ··WM | 26 | 44 |
 | 5 | **PLTR** | Palantir Technologies Inc. | Technology | **+10.4%** | 172.01 | 189.90 | 2.00 | HD·· | 32 | 67 |
@@ -23,8 +23,8 @@
 | 21 | **SAP** | SAP SE | Technology | **+17.8%** | 206.16 | 242.92 | 0.98 | ·D·· | 16 | 40 |
 | 22 | **NVDA** | NVIDIA Corporation | Technology | **+35.2%** | 223.96 | 302.83 | 0.97 | ··W· | 61 | 101 |
 | 23 | **RGTI** | Rigetti Computing, Inc. | Technology | **+65.2%** | 17.94 | 29.65 | 0.97 | ···M | 13 | 42 |
-| 24 | **GRAB** | Grab Holdings Limited | Technology | **+61.0%** | 3.66 | 5.89 | 0.96 | ···M | 26 | 61 |
-| 25 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+47.7%** | 42.48 | 62.76 | 0.96 | ··W· | 17 | 17 |
+| 24 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+47.7%** | 42.48 | 62.76 | 0.96 | ··W· | 17 | 17 |
+| 25 | **AKAM** | Akamai Technologies, Inc. | Technology | **+44.7%** | 110.54 | 159.91 | 0.96 | ···M | 25 | 55 |
 | 26 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+31.9%** | 23.53 | 31.05 | 0.95 | ··W· | 25 | 54 |
 | 27 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+38.6%** | 8.73 | 12.10 | 0.94 | ···M | 28 | 53 |
 | 28 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+20.6%** | 75.25 | 90.77 | 0.93 | ···M | 34 | 63 |

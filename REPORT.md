@@ -1,7 +1,7 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+10.7%** | 214.42 | 237.36 | 3.80 | HDWM | 38 | 72 |
-| 2 | **SOUN** | SoundHound AI, Inc. | Technology | **+60.3%** | 8.02 | 12.86 | 2.98 | HDW· | 7 | 32 |
+| 2 | **SOUN** | SoundHound AI, Inc. | Technology | **+58.5%** | 8.02 | 12.71 | 2.97 | HDW· | 8 | 33 |
 | 3 | **SHOP** | Shopify Inc. | Technology | **+9.5%** | 151.57 | 165.91 | 2.95 | HDW· | 52 | 80 |
 | 4 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.8%** | 12.13 | 22.05 | 2.00 | ··WM | 26 | 44 |
 | 5 | **PLTR** | Palantir Technologies Inc. | Technology | **+10.4%** | 172.01 | 189.90 | 2.00 | HD·· | 32 | 67 |

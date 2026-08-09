@@ -4,11 +4,11 @@
 | 2 | **TEAM** | Atlassian Corporation | Technology | **+25.3%** | 149.07 | 186.83 | 3.95 | HDWM | 32 | 66 |
 | 3 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+10.9%** | 214.42 | 237.81 | 3.77 | HDWM | 38 | 72 |
 | 4 | **SOUN** | SoundHound AI, Inc. | Technology | **+58.5%** | 8.02 | 12.71 | 2.95 | HDW· | 8 | 33 |
-| 5 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.8%** | 12.13 | 22.05 | 1.99 | ··WM | 26 | 44 |
+| 5 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+82.1%** | 12.13 | 22.08 | 1.99 | ··WM | 26 | 44 |
 | 6 | **PLTR** | Palantir Technologies Inc. | Technology | **+10.4%** | 172.01 | 189.90 | 1.99 | HD·· | 32 | 67 |
 | 7 | **SHOP** | Shopify Inc. | Technology | **+10.2%** | 151.57 | 167.02 | 1.97 | HD·· | 52 | 80 |
 | 8 | **UBER** | Uber Technologies, Inc. | Technology | **+35.2%** | 75.02 | 101.39 | 1.96 | ··WM | 50 | 86 |
-| 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+54.9%** | 4.74 | 7.34 | 1.95 | ··WM | 24 | 45 |
+| 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+55.1%** | 4.74 | 7.35 | 1.95 | ··WM | 24 | 45 |
 | 10 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+20.2%** | 178.82 | 214.98 | 1.94 | HD·· | 22 | 50 |
 | 11 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+125.2%** | 3.22 | 7.25 | 1.92 | ··WM | 7 | 36 |
 | 12 | **ETN** | Eaton Corporation, PLC | Industrials | **+5.1%** | 448.68 | 471.47 | 1.90 | HD·· | 27 | 59 |

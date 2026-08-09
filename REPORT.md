@@ -17,7 +17,7 @@
 | 15 | **BLK** | BlackRock, Inc. | Financial Services | **+15.6%** | 1136.39 | 1313.50 | 1.84 | ·DW· | 17 | 49 |
 | 16 | **DIS** | Walt Disney Company (The) | Communication Servic | **+21.7%** | 104.91 | 127.72 | 1.82 | HD·· | 32 | 67 |
 | 17 | **FROG** | JFrog Ltd. | Technology | **+24.6%** | 89.52 | 111.55 | 1.00 | ···M | 21 | 51 |
-| 18 | **ASML** | ASML Holding N.V. | Technology | **+25.1%** | 1740.99 | 2178.54 | 0.97 | ···M | 44 | 75 |
+| 18 | **ASML** | ASML Holding N.V. | Technology | **+25.1%** | 1740.99 | 2177.53 | 0.97 | ···M | 44 | 75 |
 | 19 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+44.3%** | 24.03 | 34.67 | 0.97 | ···M | 36 | 68 |
 | 20 | **MSFT** | Microsoft Corporation | Technology | **+12.8%** | 499.99 | 563.84 | 0.97 | ··W· | 56 | 99 |
 | 21 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+47.7%** | 42.48 | 62.76 | 0.95 | ··W· | 17 | 17 |

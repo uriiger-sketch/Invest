@@ -8,7 +8,7 @@
 | 6 | **PLTR** | Palantir Technologies Inc. | Technology | **+10.4%** | 172.01 | 189.90 | 1.99 | HD·· | 32 | 67 |
 | 7 | **SHOP** | Shopify Inc. | Technology | **+10.2%** | 151.57 | 167.02 | 1.97 | HD·· | 52 | 80 |
 | 8 | **UBER** | Uber Technologies, Inc. | Technology | **+35.2%** | 75.02 | 101.39 | 1.96 | ··WM | 50 | 86 |
-| 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+54.8%** | 4.74 | 7.34 | 1.95 | ··WM | 24 | 45 |
+| 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+54.9%** | 4.74 | 7.34 | 1.95 | ··WM | 24 | 45 |
 | 10 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+20.2%** | 178.82 | 214.98 | 1.94 | HD·· | 22 | 50 |
 | 11 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+125.2%** | 3.22 | 7.25 | 1.92 | ··WM | 7 | 36 |
 | 12 | **ETN** | Eaton Corporation, PLC | Industrials | **+5.1%** | 448.68 | 471.47 | 1.90 | HD·· | 27 | 59 |

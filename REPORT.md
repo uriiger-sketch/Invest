@@ -3,10 +3,10 @@
 | 1 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+10.7%** | 214.42 | 237.36 | 3.80 | HDWM | 38 | 72 |
 | 2 | **SOUN** | SoundHound AI, Inc. | Technology | **+60.3%** | 8.02 | 12.86 | 2.98 | HDW· | 7 | 32 |
 | 3 | **SHOP** | Shopify Inc. | Technology | **+9.5%** | 151.57 | 165.91 | 2.95 | HDW· | 52 | 80 |
-| 4 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+82.1%** | 12.13 | 22.08 | 2.00 | ··WM | 26 | 44 |
+| 4 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.8%** | 12.13 | 22.05 | 2.00 | ··WM | 26 | 44 |
 | 5 | **PLTR** | Palantir Technologies Inc. | Technology | **+10.4%** | 172.01 | 189.90 | 2.00 | HD·· | 32 | 67 |
 | 6 | **UBER** | Uber Technologies, Inc. | Technology | **+35.4%** | 75.02 | 101.61 | 1.98 | ··WM | 50 | 86 |
-| 7 | **NIO** | NIO Inc. | Consumer Cyclical | **+55.1%** | 4.74 | 7.35 | 1.97 | ··WM | 24 | 45 |
+| 7 | **NIO** | NIO Inc. | Consumer Cyclical | **+54.8%** | 4.74 | 7.34 | 1.97 | ··WM | 24 | 45 |
 | 8 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+20.2%** | 178.82 | 214.98 | 1.96 | HD·· | 22 | 50 |
 | 9 | **MSFT** | Microsoft Corporation | Technology | **+12.7%** | 499.99 | 563.35 | 1.95 | ·DW· | 56 | 99 |
 | 10 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+125.2%** | 3.22 | 7.25 | 1.93 | ··WM | 7 | 36 |

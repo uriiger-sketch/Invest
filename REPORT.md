@@ -27,6 +27,6 @@
 | 25 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+47.7%** | 42.48 | 62.76 | 0.96 | ··W· | 17 | 17 |
 | 26 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+31.9%** | 23.53 | 31.05 | 0.95 | ··W· | 25 | 54 |
 | 27 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+38.6%** | 8.73 | 12.10 | 0.94 | ···M | 28 | 53 |
-| 28 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+20.6%** | 75.25 | 90.77 | 0.93 | ···M | 34 | 63 |
-| 29 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+8.9%** | 256.69 | 279.42 | 0.93 | ·D·· | 21 | 53 |
+| 28 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+8.9%** | 256.69 | 279.42 | 0.93 | ·D·· | 21 | 53 |
+| 29 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+20.6%** | 75.25 | 90.77 | 0.93 | ···M | 34 | 63 |
 | 30 | **DEO** | Diageo plc | Consumer Defensive | **+5.3%** | 96.35 | 101.43 | 0.92 | ·D·· | 8 | 33 |

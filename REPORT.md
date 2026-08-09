@@ -8,7 +8,7 @@
 | 6 | **UBER** | Uber Technologies, Inc. | Technology | **+35.4%** | 75.02 | 101.61 | 1.98 | ··WM | 50 | 86 |
 | 7 | **NIO** | NIO Inc. | Consumer Cyclical | **+54.8%** | 4.74 | 7.34 | 1.97 | ··WM | 24 | 45 |
 | 8 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+20.2%** | 178.82 | 214.98 | 1.96 | HD·· | 22 | 50 |
-| 9 | **MSFT** | Microsoft Corporation | Technology | **+12.7%** | 499.99 | 563.35 | 1.95 | ·DW· | 56 | 99 |
+| 9 | **MSFT** | Microsoft Corporation | Technology | **+12.8%** | 499.99 | 563.84 | 1.95 | ·DW· | 56 | 99 |
 | 10 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+125.2%** | 3.22 | 7.25 | 1.94 | ··WM | 7 | 36 |
 | 11 | **ETN** | Eaton Corporation, PLC | Industrials | **+5.1%** | 448.68 | 471.47 | 1.92 | HD·· | 27 | 59 |
 | 12 | **W** | Wayfair Inc. | Consumer Cyclical | **+12.6%** | 106.60 | 120.04 | 1.89 | HD·· | 32 | 63 |

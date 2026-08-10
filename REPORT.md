@@ -17,9 +17,9 @@
 | 15 | **DIS** | The Walt Disney Company | Communication Servic | **+21.7%** | 104.91 | 127.72 | 1.82 | HD·· | 32 | 67 |
 | 16 | **FROG** | JFrog Ltd. | Technology | **+24.6%** | 89.52 | 111.55 | 1.00 | ···M | 21 | 51 |
 | 17 | **MSFT** | Microsoft Corporation | Technology | **+12.8%** | 499.99 | 563.84 | 0.98 | ··W· | 56 | 99 |
-| 18 | **ASML** | ASML Holding N.V. | Technology | **+25.1%** | 1740.99 | 2178.04 | 0.97 | ···M | 44 | 75 |
+| 18 | **ASML** | ASML Holding N.V. | Technology | **+25.1%** | 1740.99 | 2177.28 | 0.97 | ···M | 44 | 75 |
 | 19 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+44.3%** | 24.03 | 34.67 | 0.97 | ···M | 36 | 68 |
-| 20 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+49.1%** | 42.10 | 62.76 | 0.95 | ··W· | 17 | 17 |
+| 20 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+48.8%** | 42.17 | 62.76 | 0.95 | ··W· | 17 | 17 |
 | 21 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+31.9%** | 23.53 | 31.05 | 0.95 | ··W· | 25 | 54 |
 | 22 | **CRH** | CRH plc | Basic Materials | **+38.0%** | 100.48 | 138.65 | 0.94 | ···M | 21 | 56 |
 | 23 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+38.6%** | 8.73 | 12.10 | 0.93 | ···M | 28 | 53 |

@@ -4,16 +4,16 @@
 | 2 | **U** | Unity Software Inc. | Technology | **+10.1%** | 43.10 | 47.45 | 3.00 | HDW· | 26 | 60 |
 | 3 | **TEAM** | Atlassian Corporation | Technology | **+23.0%** | 151.87 | 186.83 | 2.94 | HDW· | 32 | 66 |
 | 4 | **BSX** | Boston Scientific Corporation | Healthcare | **+24.2%** | 50.46 | 62.69 | 2.87 | HDW· | 31 | 69 |
-| 5 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.2%** | 12.00 | 22.10 | 2.00 | ··WM | 26 | 44 |
-| 6 | **NIO** | NIO Inc. | Consumer Cyclical | **+52.6%** | 4.82 | 7.36 | 1.98 | ··WM | 24 | 45 |
-| 7 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+19.1%** | 180.48 | 214.98 | 1.98 | HD·· | 22 | 50 |
-| 8 | **PLTR** | Palantir Technologies Inc. | Technology | **+8.4%** | 175.23 | 189.90 | 1.98 | HD·· | 32 | 68 |
-| 9 | **SHOP** | Shopify Inc. | Technology | **+7.6%** | 155.18 | 167.02 | 1.98 | HD·· | 52 | 80 |
-| 10 | **UBER** | Uber Technologies, Inc. | Technology | **+29.9%** | 78.03 | 101.39 | 1.97 | ··WM | 50 | 86 |
+| 5 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.1%** | 12.00 | 22.10 | 2.00 | ··WM | 26 | 44 |
+| 6 | **PLTR** | Palantir Technologies Inc. | Technology | **+8.4%** | 175.23 | 189.90 | 1.98 | HD·· | 32 | 68 |
+| 7 | **SHOP** | Shopify Inc. | Technology | **+7.6%** | 155.18 | 167.02 | 1.98 | HD·· | 52 | 80 |
+| 8 | **NIO** | NIO Inc. | Consumer Cyclical | **+52.6%** | 4.82 | 7.36 | 1.98 | ··WM | 24 | 45 |
+| 9 | **UBER** | Uber Technologies, Inc. | Technology | **+29.9%** | 78.03 | 101.39 | 1.97 | ··WM | 50 | 86 |
+| 10 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+19.1%** | 180.48 | 214.98 | 1.97 | HD·· | 22 | 50 |
 | 11 | **SNY** | Sanofi | Healthcare | **+24.3%** | 43.48 | 54.06 | 1.95 | ··WM | 10 | 33 |
 | 12 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+6.8%** | 523.91 | 559.28 | 1.92 | HD·· | 29 | 61 |
 | 13 | **PFE** | Pfizer, Inc. | Healthcare | **+5.9%** | 27.05 | 28.64 | 1.91 | HD·· | 28 | 62 |
-| 14 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+50.9%** | 41.58 | 62.76 | 1.87 | ··WM | 17 | 17 |
+| 14 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+51.0%** | 41.56 | 62.76 | 1.87 | ··WM | 17 | 17 |
 | 15 | **DEO** | Diageo plc | Consumer Defensive | **+7.1%** | 97.11 | 104.00 | 1.87 | HD·· | 8 | 33 |
 | 16 | **ASML** | ASML Holding N.V. | Technology | **+25.4%** | 1733.48 | 2174.27 | 0.99 | ···M | 44 | 75 |
 | 17 | **CRWV** | CoreWeave, Inc. | Technology | **+56.9%** | 88.19 | 138.37 | 0.98 | ···M | 38 | 67 |
@@ -27,6 +27,6 @@
 | 25 | **DIS** | Walt Disney Company (The) | Communication Servic | **+23.8%** | 103.18 | 127.72 | 0.95 | ·D·· | 32 | 67 |
 | 26 | **ORA** | Ormat Technologies, Inc. | Utilities | **+19.3%** | 111.70 | 133.25 | 0.95 | H··· | 13 | 42 |
 | 27 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+37.4%** | 22.59 | 31.05 | 0.94 | ··W· | 25 | 54 |
-| 28 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+5.9%** | 263.78 | 279.42 | 0.94 | ·D·· | 21 | 53 |
-| 29 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+18.4%** | 47.59 | 56.37 | 0.94 | ···M | 17 | 41 |
+| 28 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+18.4%** | 47.59 | 56.37 | 0.94 | ···M | 17 | 41 |
+| 29 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+7.8%** | 263.78 | 284.32 | 0.94 | ·D·· | 21 | 53 |
 | 30 | **T** | AT&T Inc. | Communication Servic | **+19.4%** | 24.05 | 28.71 | 0.93 | ··W· | 25 | 55 |

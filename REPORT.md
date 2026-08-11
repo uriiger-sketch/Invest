@@ -14,7 +14,7 @@
 | 12 | **SNY** | Sanofi | Healthcare | **+24.3%** | 43.48 | 54.06 | 1.95 | ··WM | 10 | 33 |
 | 13 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+6.8%** | 523.91 | 559.28 | 1.92 | HD·· | 29 | 61 |
 | 14 | **PFE** | Pfizer, Inc. | Healthcare | **+5.9%** | 27.05 | 28.64 | 1.91 | HD·· | 28 | 62 |
-| 15 | **ASML** | ASML Holding N.V. | Technology | **+25.5%** | 1733.48 | 2175.52 | 0.99 | ···M | 44 | 75 |
+| 15 | **ASML** | ASML Holding N.V. | Technology | **+25.5%** | 1733.48 | 2174.77 | 0.99 | ···M | 44 | 75 |
 | 16 | **CRWV** | CoreWeave, Inc. | Technology | **+56.9%** | 88.19 | 138.37 | 0.98 | ···M | 38 | 67 |
 | 17 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+38.3%** | 8.75 | 12.10 | 0.97 | ···M | 28 | 53 |
 | 18 | **TEM** | Tempus AI, Inc. | Healthcare | **+13.8%** | 55.06 | 62.64 | 0.97 | H··· | 16 | 38 |

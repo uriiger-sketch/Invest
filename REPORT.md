@@ -13,20 +13,20 @@
 | 11 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+6.3%** | 529.65 | 563.12 | 1.93 | HD·· | 29 | 61 |
 | 12 | **DIS** | Walt Disney Company (The) | Communication Servic | **+23.4%** | 103.53 | 127.72 | 1.88 | HD·· | 32 | 67 |
 | 13 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.7%** | 212.87 | 237.81 | 1.87 | HD·· | 38 | 72 |
-| 14 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+52.7%** | 41.09 | 62.76 | 1.87 | ··WM | 17 | 17 |
+| 14 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.2%** | 22.47 | 31.05 | 1.87 | ··WM | 25 | 54 |
 | 15 | **DEO** | Diageo plc | Consumer Defensive | **+12.1%** | 94.94 | 106.43 | 1.87 | HD·· | 8 | 33 |
-| 16 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.2%** | 22.47 | 31.05 | 1.86 | ··WM | 25 | 54 |
-| 17 | **ASML** | ASML Holding N.V. | Technology | **+20.8%** | 1799.38 | 2172.82 | 0.99 | ···M | 44 | 75 |
-| 18 | **SAP** | SAP SE | Technology | **+15.9%** | 209.68 | 242.92 | 0.98 | ·D·· | 16 | 40 |
-| 19 | **TEM** | Tempus AI, Inc. | Healthcare | **+12.5%** | 55.69 | 62.64 | 0.98 | H··· | 16 | 38 |
-| 20 | **CRWV** | CoreWeave, Inc. | Technology | **+53.4%** | 90.32 | 138.51 | 0.97 | ···M | 38 | 67 |
-| 21 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+29.6%** | 422.06 | 547.09 | 0.97 | ··W· | 19 | 63 |
-| 22 | **ORA** | Ormat Technologies, Inc. | Utilities | **+16.1%** | 114.46 | 132.83 | 0.97 | H··· | 13 | 42 |
-| 23 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+116.4%** | 3.35 | 7.25 | 0.97 | ···M | 7 | 36 |
-| 24 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+36.4%** | 8.87 | 12.10 | 0.96 | ···M | 28 | 53 |
-| 25 | **DOCN** | DigitalOcean Holdings, Inc. | Technology | **+45.0%** | 120.86 | 175.21 | 0.96 | ···M | 16 | 44 |
-| 26 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+18.3%** | 76.71 | 90.77 | 0.95 | ···M | 34 | 63 |
-| 27 | **PFE** | Pfizer, Inc. | Healthcare | **+7.6%** | 26.62 | 28.64 | 0.95 | ·D·· | 28 | 62 |
-| 28 | **T** | AT&T Inc. | Communication Servic | **+17.2%** | 24.50 | 28.71 | 0.95 | ·D·· | 25 | 55 |
-| 29 | **F** | Ford Motor Company | Consumer Cyclical | **+12.8%** | 13.98 | 15.78 | 0.95 | ··W· | 22 | 53 |
-| 30 | **BLK** | BlackRock, Inc. | Financial Services | **+14.4%** | 1148.84 | 1314.44 | 0.91 | ··W· | 17 | 49 |
+| 16 | **ASML** | ASML Holding N.V. | Technology | **+20.8%** | 1799.38 | 2172.82 | 0.99 | ···M | 44 | 75 |
+| 17 | **SAP** | SAP SE | Technology | **+15.9%** | 209.68 | 242.92 | 0.98 | ·D·· | 16 | 40 |
+| 18 | **TEM** | Tempus AI, Inc. | Healthcare | **+12.5%** | 55.69 | 62.64 | 0.98 | H··· | 16 | 38 |
+| 19 | **CRWV** | CoreWeave, Inc. | Technology | **+53.4%** | 90.32 | 138.51 | 0.97 | ···M | 38 | 67 |
+| 20 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+29.6%** | 422.06 | 547.09 | 0.97 | ··W· | 19 | 63 |
+| 21 | **ORA** | Ormat Technologies, Inc. | Utilities | **+16.1%** | 114.46 | 132.83 | 0.97 | H··· | 13 | 42 |
+| 22 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+116.4%** | 3.35 | 7.25 | 0.97 | ···M | 7 | 36 |
+| 23 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+36.4%** | 8.87 | 12.10 | 0.96 | ···M | 28 | 53 |
+| 24 | **DOCN** | DigitalOcean Holdings, Inc. | Technology | **+45.0%** | 120.86 | 175.21 | 0.96 | ···M | 16 | 44 |
+| 25 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+18.3%** | 76.71 | 90.77 | 0.95 | ···M | 34 | 63 |
+| 26 | **PFE** | Pfizer, Inc. | Healthcare | **+7.6%** | 26.62 | 28.64 | 0.95 | ·D·· | 28 | 62 |
+| 27 | **T** | AT&T Inc. | Communication Servic | **+17.2%** | 24.50 | 28.71 | 0.95 | ·D·· | 25 | 55 |
+| 28 | **F** | Ford Motor Company | Consumer Cyclical | **+12.8%** | 13.98 | 15.78 | 0.95 | ··W· | 22 | 53 |
+| 29 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+48.9%** | 42.15 | 62.76 | 0.94 | ··W· | 17 | 17 |
+| 30 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+13.6%** | 49.62 | 56.37 | 0.92 | ···M | 17 | 41 |

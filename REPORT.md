@@ -5,17 +5,17 @@
 | 3 | **TEAM** | Atlassian Corporation | Technology | **+22.1%** | 154.08 | 188.21 | 2.95 | HDW· | 32 | 66 |
 | 4 | **UBER** | Uber Technologies, Inc. | Technology | **+29.2%** | 78.54 | 101.50 | 2.93 | H·WM | 50 | 86 |
 | 5 | **BSX** | Boston Scientific Corporation | Healthcare | **+22.5%** | 51.19 | 62.69 | 2.90 | HDW· | 31 | 69 |
-| 6 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+85.9%** | 11.88 | 22.09 | 2.00 | ··WM | 26 | 44 |
+| 6 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+85.7%** | 11.88 | 22.06 | 2.00 | ··WM | 26 | 44 |
 | 7 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+18.3%** | 181.75 | 214.98 | 1.99 | HD·· | 22 | 50 |
 | 8 | **SHOP** | Shopify Inc. | Technology | **+10.0%** | 152.61 | 167.89 | 1.98 | HD·· | 52 | 80 |
-| 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.1%** | 4.62 | 7.35 | 1.98 | ··WM | 24 | 45 |
+| 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+58.9%** | 4.62 | 7.34 | 1.98 | ··WM | 24 | 45 |
 | 10 | **SNY** | Sanofi | Healthcare | **+23.3%** | 43.56 | 53.72 | 1.94 | ··WM | 10 | 33 |
 | 11 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+6.3%** | 529.65 | 563.12 | 1.93 | HD·· | 29 | 61 |
 | 12 | **DIS** | Walt Disney Company (The) | Communication Servic | **+23.4%** | 103.53 | 127.72 | 1.88 | HD·· | 32 | 67 |
 | 13 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.7%** | 212.87 | 237.81 | 1.87 | HD·· | 38 | 72 |
 | 14 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.2%** | 22.47 | 31.05 | 1.87 | ··WM | 25 | 54 |
 | 15 | **DEO** | Diageo plc | Consumer Defensive | **+12.1%** | 94.94 | 106.43 | 1.87 | HD·· | 8 | 33 |
-| 16 | **ASML** | ASML Holding N.V. | Technology | **+20.8%** | 1799.38 | 2172.82 | 0.99 | ···M | 44 | 75 |
+| 16 | **ASML** | ASML Holding N.V. | Technology | **+20.8%** | 1799.38 | 2173.07 | 0.99 | ···M | 44 | 75 |
 | 17 | **SAP** | SAP SE | Technology | **+15.9%** | 209.68 | 242.92 | 0.98 | ·D·· | 16 | 40 |
 | 18 | **TEM** | Tempus AI, Inc. | Healthcare | **+12.5%** | 55.69 | 62.64 | 0.98 | H··· | 16 | 38 |
 | 19 | **CRWV** | CoreWeave, Inc. | Technology | **+53.4%** | 90.32 | 138.51 | 0.97 | ···M | 38 | 67 |

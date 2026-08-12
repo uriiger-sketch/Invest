@@ -8,14 +8,14 @@
 | 6 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+85.7%** | 11.88 | 22.06 | 2.00 | ··WM | 26 | 44 |
 | 7 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+18.3%** | 181.75 | 214.98 | 1.99 | HD·· | 22 | 50 |
 | 8 | **SHOP** | Shopify Inc. | Technology | **+10.0%** | 152.61 | 167.89 | 1.98 | HD·· | 52 | 80 |
-| 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+58.9%** | 4.62 | 7.34 | 1.98 | ··WM | 24 | 45 |
+| 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.1%** | 4.62 | 7.35 | 1.98 | ··WM | 24 | 45 |
 | 10 | **SNY** | Sanofi | Healthcare | **+23.3%** | 43.56 | 53.72 | 1.94 | ··WM | 10 | 33 |
 | 11 | **ORA** | Ormat Technologies, Inc. | Utilities | **+16.1%** | 114.46 | 132.83 | 1.93 | HD·· | 13 | 42 |
 | 12 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+6.3%** | 529.65 | 563.12 | 1.93 | HD·· | 29 | 61 |
 | 13 | **DIS** | Walt Disney Company (The) | Communication Servic | **+23.4%** | 103.53 | 127.72 | 1.88 | HD·· | 32 | 67 |
-| 14 | **DEO** | Diageo plc | Consumer Defensive | **+12.1%** | 94.94 | 106.43 | 1.87 | HD·· | 8 | 33 |
-| 15 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.2%** | 22.47 | 31.05 | 1.87 | ··WM | 25 | 54 |
-| 16 | **ASML** | ASML Holding N.V. | Technology | **+20.8%** | 1799.38 | 2173.32 | 0.99 | ···M | 44 | 75 |
+| 14 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.2%** | 22.47 | 31.05 | 1.87 | ··WM | 25 | 54 |
+| 15 | **DEO** | Diageo plc | Consumer Defensive | **+12.1%** | 94.94 | 106.43 | 1.87 | HD·· | 8 | 33 |
+| 16 | **ASML** | ASML Holding N.V. | Technology | **+20.7%** | 1799.38 | 2172.07 | 0.99 | ···M | 44 | 75 |
 | 17 | **SAP** | SAP SE | Technology | **+15.9%** | 209.68 | 242.92 | 0.98 | ·D·· | 16 | 40 |
 | 18 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+116.4%** | 3.35 | 7.25 | 0.98 | ···M | 7 | 36 |
 | 19 | **TEM** | Tempus AI, Inc. | Healthcare | **+12.5%** | 55.69 | 62.64 | 0.98 | H··· | 16 | 38 |

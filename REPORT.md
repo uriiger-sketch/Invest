@@ -12,9 +12,9 @@
 | 10 | **SNY** | Sanofi | Healthcare | **+23.3%** | 43.56 | 53.72 | 1.94 | ··WM | 10 | 33 |
 | 11 | **ORA** | Ormat Technologies, Inc. | Utilities | **+16.1%** | 114.46 | 132.83 | 1.93 | HD·· | 13 | 42 |
 | 12 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+6.3%** | 529.65 | 563.12 | 1.93 | HD·· | 29 | 61 |
-| 13 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+59.9%** | 39.26 | 62.76 | 1.90 | ··WM | 17 | 17 |
+| 13 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+59.0%** | 39.47 | 62.76 | 1.90 | ··WM | 17 | 17 |
 | 14 | **DIS** | Walt Disney Company (The) | Communication Servic | **+23.4%** | 103.53 | 127.72 | 1.88 | HD·· | 32 | 67 |
-| 15 | **ASML** | ASML Holding N.V. | Technology | **+20.7%** | 1799.38 | 2171.82 | 0.99 | ···M | 44 | 75 |
+| 15 | **ASML** | ASML Holding N.V. | Technology | **+20.8%** | 1799.38 | 2172.82 | 0.99 | ···M | 44 | 75 |
 | 16 | **SAP** | SAP SE | Technology | **+15.9%** | 209.68 | 242.92 | 0.98 | ·D·· | 16 | 40 |
 | 17 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+116.4%** | 3.35 | 7.25 | 0.98 | ···M | 7 | 36 |
 | 18 | **TEM** | Tempus AI, Inc. | Healthcare | **+12.5%** | 55.69 | 62.64 | 0.98 | H··· | 16 | 38 |

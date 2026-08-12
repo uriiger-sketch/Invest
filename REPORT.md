@@ -15,7 +15,7 @@
 | 13 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+14.5%** | 49.25 | 56.37 | 1.86 | ··WM | 17 | 41 |
 | 14 | **BLK** | BlackRock, Inc. | Financial Services | **+13.2%** | 1160.91 | 1314.44 | 1.86 | ·DW· | 17 | 49 |
 | 15 | **COP** | ConocoPhillips | Energy | **+13.0%** | 127.30 | 143.83 | 1.85 | HD·· | 25 | 57 |
-| 16 | **ASML** | ASML Holding N.V. | Technology | **+19.9%** | 1810.07 | 2169.81 | 0.99 | ···M | 44 | 75 |
+| 16 | **ASML** | ASML Holding N.V. | Technology | **+19.9%** | 1810.07 | 2170.06 | 0.99 | ···M | 44 | 75 |
 | 17 | **ONTO** | Onto Innovation Inc. | Technology | **+14.8%** | 337.35 | 387.30 | 0.99 | H··· | 10 | 39 |
 | 18 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+120.4%** | 3.29 | 7.25 | 0.98 | ···M | 7 | 36 |
 | 19 | **SAP** | SAP SE | Technology | **+19.0%** | 204.15 | 242.92 | 0.97 | ·D·· | 16 | 40 |

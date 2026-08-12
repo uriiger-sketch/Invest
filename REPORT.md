@@ -3,19 +3,19 @@
 | 1 | **TEAM** | Atlassian Corporation | Technology | **+21.2%** | 155.24 | 188.21 | 3.93 | HDWM | 32 | 66 |
 | 2 | **SOUN** | SoundHound AI, Inc. | Technology | **+71.8%** | 7.40 | 12.71 | 3.91 | HDWM | 8 | 33 |
 | 3 | **U** | Unity Software Inc. | Technology | **+7.7%** | 44.53 | 47.97 | 3.00 | HDW· | 26 | 60 |
-| 4 | **CRWV** | CoreWeave, Inc. | Technology | **+28.6%** | 107.73 | 138.51 | 2.97 | HDW· | 38 | 67 |
-| 5 | **BSX** | Boston Scientific Corporation | Healthcare | **+21.9%** | 51.42 | 62.69 | 2.94 | HDW· | 31 | 69 |
-| 6 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+87.8%** | 11.75 | 22.07 | 1.99 | ··WM | 26 | 44 |
-| 7 | **NIO** | NIO Inc. | Consumer Cyclical | **+61.8%** | 4.54 | 7.34 | 1.96 | ··WM | 24 | 45 |
+| 4 | **CRWV** | CoreWeave, Inc. | Technology | **+31.7%** | 107.73 | 141.83 | 2.98 | HDW· | 38 | 67 |
+| 5 | **BSX** | Boston Scientific Corporation | Healthcare | **+21.9%** | 51.42 | 62.69 | 2.93 | HDW· | 31 | 69 |
+| 6 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.0%** | 11.75 | 22.09 | 1.99 | ··WM | 26 | 44 |
+| 7 | **NIO** | NIO Inc. | Consumer Cyclical | **+61.9%** | 4.54 | 7.35 | 1.96 | ··WM | 24 | 45 |
 | 8 | **UBER** | Uber Technologies, Inc. | Technology | **+34.7%** | 75.36 | 101.50 | 1.96 | ··WM | 50 | 86 |
 | 9 | **SNY** | Sanofi | Healthcare | **+22.9%** | 43.71 | 53.72 | 1.93 | ··WM | 10 | 33 |
 | 10 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+16.1%** | 185.18 | 214.98 | 1.93 | HD·· | 22 | 50 |
 | 11 | **ORA** | Ormat Technologies, Inc. | Utilities | **+17.1%** | 113.40 | 132.83 | 1.91 | HD·· | 13 | 42 |
 | 12 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+62.3%** | 38.66 | 62.76 | 1.90 | ··WM | 17 | 17 |
-| 13 | **BLK** | BlackRock, Inc. | Financial Services | **+13.2%** | 1160.91 | 1314.44 | 1.86 | ·DW· | 17 | 49 |
-| 14 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+7.1%** | 525.73 | 563.12 | 1.86 | HD·· | 29 | 61 |
+| 13 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+7.1%** | 525.73 | 563.12 | 1.86 | HD·· | 29 | 61 |
+| 14 | **BLK** | BlackRock, Inc. | Financial Services | **+13.2%** | 1160.91 | 1314.44 | 1.86 | ·DW· | 17 | 49 |
 | 15 | **COP** | ConocoPhillips | Energy | **+13.0%** | 127.30 | 143.83 | 1.84 | HD·· | 25 | 57 |
-| 16 | **ASML** | ASML Holding N.V. | Technology | **+19.9%** | 1810.07 | 2169.56 | 0.99 | ···M | 44 | 75 |
+| 16 | **ASML** | ASML Holding N.V. | Technology | **+19.8%** | 1810.07 | 2169.31 | 0.99 | ···M | 44 | 75 |
 | 17 | **ONTO** | Onto Innovation Inc. | Technology | **+14.8%** | 337.35 | 387.30 | 0.99 | H··· | 10 | 39 |
 | 18 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+120.4%** | 3.29 | 7.25 | 0.98 | ···M | 7 | 36 |
 | 19 | **SAP** | SAP SE | Technology | **+19.0%** | 204.15 | 242.92 | 0.97 | ·D·· | 16 | 40 |

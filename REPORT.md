@@ -10,9 +10,9 @@
 | 8 | **SMCI** | Super Micro Computer, Inc. | Technology | **-3.4%** | 39.16 | 37.81 | 1.96 | HD·· | 19 | 51 |
 | 9 | **UBER** | Uber Technologies, Inc. | Technology | **+33.8%** | 75.88 | 101.50 | 1.96 | ··WM | 50 | 86 |
 | 10 | **SOUN** | SoundHound AI, Inc. | Technology | **+70.0%** | 7.48 | 12.71 | 1.95 | ··WM | 8 | 33 |
-| 11 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+64.7%** | 38.10 | 62.76 | 1.92 | ··WM | 17 | 17 |
-| 12 | **NIO** | NIO Inc. | Consumer Cyclical | **+63.4%** | 4.50 | 7.35 | 1.91 | ··WM | 24 | 45 |
-| 13 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+11.0%** | 412.29 | 457.54 | 1.90 | ··WM | 14 | 40 |
+| 11 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+62.3%** | 38.66 | 62.76 | 1.93 | ··WM | 17 | 17 |
+| 12 | **NIO** | NIO Inc. | Consumer Cyclical | **+63.2%** | 4.50 | 7.35 | 1.91 | ··WM | 24 | 45 |
+| 13 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+11.0%** | 412.29 | 457.65 | 1.91 | ··WM | 14 | 40 |
 | 14 | **ABBV** | AbbVie Inc. | Healthcare | **+9.8%** | 250.82 | 275.39 | 1.90 | HD·· | 31 | 62 |
 | 15 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+19.2%** | 180.36 | 214.98 | 1.89 | HD·· | 22 | 50 |
 | 16 | **T** | AT&T Inc. | Communication Servic | **+16.8%** | 24.58 | 28.71 | 1.87 | ·DW· | 25 | 55 |

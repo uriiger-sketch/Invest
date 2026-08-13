@@ -7,7 +7,7 @@
 | 5 | **SAP** | SAP SE | Technology | **+19.0%** | 204.15 | 242.92 | 2.96 | ·DWM | 16 | 40 |
 | 6 | **BSX** | Boston Scientific Corporation | Healthcare | **+21.9%** | 51.42 | 62.69 | 2.93 | HDW· | 31 | 69 |
 | 7 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.9%** | 22.35 | 31.05 | 1.98 | ··WM | 25 | 54 |
-| 8 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+12.3%** | 407.21 | 457.33 | 1.94 | ··WM | 14 | 40 |
+| 8 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+12.3%** | 407.21 | 457.43 | 1.94 | ··WM | 14 | 40 |
 | 9 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+16.1%** | 185.18 | 214.98 | 1.93 | HD·· | 22 | 50 |
 | 10 | **ORA** | Ormat Technologies, Inc. | Utilities | **+17.1%** | 113.40 | 132.83 | 1.91 | HD·· | 13 | 42 |
 | 11 | **NIO** | NIO Inc. | Consumer Cyclical | **+61.8%** | 4.54 | 7.34 | 1.91 | ··WM | 24 | 45 |
@@ -24,7 +24,7 @@
 | 22 | **MCHP** | Microchip Technology Incorporated | Technology | **+37.5%** | 79.44 | 109.21 | 0.96 | ···M | 25 | 57 |
 | 23 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+36.4%** | 25.51 | 34.79 | 0.96 | H··· | 36 | 68 |
 | 24 | **T** | AT&T Inc. | Communication Servic | **+18.4%** | 24.25 | 28.71 | 0.96 | ·D·· | 25 | 55 |
-| 25 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+87.8%** | 11.75 | 22.06 | 0.93 | ··W· | 26 | 44 |
-| 26 | **TEM** | Tempus AI, Inc. | Healthcare | **+14.7%** | 54.61 | 62.64 | 0.93 | H··· | 16 | 38 |
+| 25 | **TEM** | Tempus AI, Inc. | Healthcare | **+14.7%** | 54.61 | 62.64 | 0.93 | H··· | 16 | 38 |
+| 26 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+87.8%** | 11.75 | 22.06 | 0.93 | ··W· | 26 | 44 |
 | 27 | **TMUS** | T-Mobile US, Inc. | Communication Servic | **+37.2%** | 177.13 | 243.08 | 0.91 | ···M | 27 | 61 |
 | 28 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+18.9%** | 401.27 | 477.25 | 0.90 | H··· | 33 | 72 |

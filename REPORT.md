@@ -9,8 +9,8 @@
 | 7 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.2%** | 22.46 | 31.05 | 1.97 | ··WM | 25 | 55 |
 | 8 | **TEAM** | Atlassian Corporation | Technology | **+13.2%** | 165.98 | 187.93 | 1.97 | HD·· | 32 | 66 |
 | 9 | **SOUN** | SoundHound AI, Inc. | Technology | **+70.0%** | 7.48 | 12.71 | 1.96 | ··WM | 8 | 34 |
-| 10 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+65.6%** | 37.76 | 62.52 | 1.93 | ··WM | 17 | 17 |
-| 11 | **NIO** | NIO Inc. | Consumer Cyclical | **+63.3%** | 4.50 | 7.35 | 1.93 | ··WM | 24 | 45 |
+| 10 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+65.7%** | 37.88 | 62.76 | 1.93 | ··WM | 17 | 17 |
+| 11 | **NIO** | NIO Inc. | Consumer Cyclical | **+63.5%** | 4.50 | 7.36 | 1.93 | ··WM | 24 | 45 |
 | 12 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+87.3%** | 11.78 | 22.07 | 1.91 | ··WM | 26 | 44 |
 | 13 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+19.2%** | 180.36 | 214.98 | 1.87 | HD·· | 22 | 50 |
 | 14 | **T** | AT&T Inc. | Communication Servic | **+16.8%** | 24.58 | 28.71 | 1.87 | ·DW· | 25 | 56 |

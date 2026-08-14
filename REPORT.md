@@ -8,9 +8,9 @@
 | 6 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.98 | ··WM | 25 | 55 |
 | 7 | **SAP** | SAP SE | Technology | **+16.8%** | 207.97 | 242.92 | 1.97 | ··WM | 16 | 40 |
 | 8 | **SOUN** | SoundHound AI, Inc. | Technology | **+71.1%** | 7.43 | 12.71 | 1.97 | ··WM | 8 | 34 |
-| 9 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.2%** | 37.40 | 62.52 | 1.94 | ··WM | 17 | 17 |
-| 10 | **NIO** | NIO Inc. | Consumer Cyclical | **+62.7%** | 4.52 | 7.36 | 1.94 | ··WM | 24 | 45 |
-| 11 | **ABBV** | AbbVie Inc. | Healthcare | **+10.4%** | 249.46 | 275.39 | 1.94 | HD·· | 31 | 62 |
+| 9 | **NIO** | NIO Inc. | Consumer Cyclical | **+62.7%** | 4.52 | 7.36 | 1.94 | ··WM | 24 | 45 |
+| 10 | **ABBV** | AbbVie Inc. | Healthcare | **+10.4%** | 249.46 | 275.39 | 1.94 | HD·· | 31 | 62 |
+| 11 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+64.1%** | 38.10 | 62.52 | 1.94 | ··WM | 17 | 17 |
 | 12 | **ABT** | Abbott Laboratories | Healthcare | **+6.4%** | 111.25 | 118.42 | 1.92 | HD·· | 27 | 62 |
 | 13 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.3%** | 186.46 | 214.98 | 1.92 | HD·· | 22 | 50 |
 | 14 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.9%** | 11.70 | 22.10 | 1.91 | ··WM | 26 | 44 |

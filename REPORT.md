@@ -13,8 +13,8 @@
 | 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.9%** | 11.70 | 22.10 | 1.95 | ··WM | 26 | 45 |
 | 12 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+21.0%** | 394.51 | 477.25 | 1.95 | HD·· | 33 | 72 |
 | 13 | **NOK** | Nokia Corporation Sponsored | Technology | **+39.6%** | 10.76 | 15.02 | 1.94 | HD·· | 11 | 36 |
-| 14 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.93 | ··WM | 16 | 44 |
-| 15 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.93 | ··WM | 25 | 56 |
+| 14 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.93 | ··WM | 25 | 56 |
+| 15 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.93 | ··WM | 16 | 44 |
 | 16 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.3%** | 186.46 | 214.98 | 1.93 | ·DW· | 22 | 50 |
 | 17 | **GRAB** | Grab Holdings Limited | Technology | **+61.9%** | 3.62 | 5.86 | 0.97 | ···M | 26 | 61 |
 | 18 | **AKAM** | Akamai Technologies, Inc. | Technology | **+25.1%** | 124.99 | 156.30 | 0.97 | H··· | 25 | 57 |

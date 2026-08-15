@@ -17,7 +17,7 @@
 | 15 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.93 | ··WM | 16 | 44 |
 | 16 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.3%** | 186.46 | 214.98 | 1.93 | ·DW· | 22 | 50 |
 | 17 | **GRAB** | Grab Holdings Limited | Technology | **+61.9%** | 3.62 | 5.86 | 0.97 | ···M | 26 | 61 |
-| 18 | **AKAM** | Akamai Technologies, Inc. | Technology | **+25.1%** | 124.99 | 156.30 | 0.97 | H··· | 25 | 57 |
+| 18 | **AKAM** | Akamai Technologies, Inc. | Technology | **+26.0%** | 124.99 | 157.43 | 0.97 | H··· | 25 | 57 |
 | 19 | **TEAM** | Atlassian Corporation | Technology | **+16.0%** | 162.22 | 188.21 | 0.97 | ·D·· | 32 | 66 |
 | 20 | **T** | AT&T Inc. | Communication Servic | **+15.3%** | 24.89 | 28.71 | 0.96 | ·D·· | 25 | 56 |
 | 21 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+12.1%** | 212.06 | 237.81 | 0.96 | ···M | 38 | 73 |

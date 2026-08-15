@@ -13,8 +13,8 @@
 | 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.9%** | 11.70 | 22.10 | 1.95 | ··WM | 26 | 45 |
 | 12 | **NOK** | Nokia Corporation Sponsored | Technology | **+39.6%** | 10.76 | 15.02 | 1.95 | HD·· | 11 | 36 |
 | 13 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+21.0%** | 394.51 | 477.25 | 1.95 | HD·· | 33 | 72 |
-| 14 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.94 | ··WM | 16 | 44 |
-| 15 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.94 | ··WM | 25 | 56 |
+| 14 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.94 | ··WM | 25 | 56 |
+| 15 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.93 | ··WM | 16 | 44 |
 | 16 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.3%** | 186.46 | 214.98 | 1.93 | ·DW· | 22 | 50 |
 | 17 | **GRAB** | Grab Holdings Limited | Technology | **+61.9%** | 3.62 | 5.86 | 0.97 | ···M | 26 | 61 |
 | 18 | **AKAM** | Akamai Technologies, Inc. | Technology | **+25.1%** | 124.99 | 156.30 | 0.97 | H··· | 25 | 57 |
@@ -22,10 +22,10 @@
 | 20 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+12.1%** | 212.06 | 237.81 | 0.97 | ···M | 38 | 73 |
 | 21 | **CRH** | CRH PLC | Basic Materials | **+42.7%** | 97.15 | 138.65 | 0.96 | ···M | 21 | 56 |
 | 22 | **T** | AT&T Inc. | Communication Servic | **+15.3%** | 24.89 | 28.71 | 0.96 | ·D·· | 25 | 56 |
-| 23 | **COP** | ConocoPhillips | Energy | **+13.5%** | 126.78 | 143.83 | 0.96 | H··· | 25 | 59 |
-| 24 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+129.4%** | 3.16 | 7.25 | 0.95 | ···M | 7 | 38 |
+| 23 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+129.4%** | 3.16 | 7.25 | 0.96 | ···M | 7 | 38 |
+| 24 | **COP** | ConocoPhillips | Energy | **+13.5%** | 126.78 | 143.83 | 0.96 | H··· | 25 | 59 |
 | 25 | **VRT** | Vertiv Holdings Co | Industrials | **+15.1%** | 293.84 | 338.15 | 0.95 | H··· | 28 | 62 |
 | 26 | **SPGI** | S&P Global Inc. | Financial Services | **+23.4%** | 418.80 | 516.95 | 0.94 | ···M | 24 | 58 |
 | 27 | **BLK** | BlackRock, Inc. | Financial Services | **+12.0%** | 1173.73 | 1314.44 | 0.94 | ·D·· | 17 | 50 |
-| 28 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.1%** | 26.14 | 34.79 | 0.94 | H··· | 36 | 68 |
+| 28 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.3%** | 26.14 | 34.84 | 0.94 | H··· | 36 | 68 |
 | 29 | **ELV** | Elevance Health, Inc. | Healthcare | **+12.2%** | 400.32 | 449.10 | 0.93 | ··W· | 22 | 59 |

@@ -9,7 +9,7 @@
 | 7 | **SMCI** | Super Micro Computer, Inc. | Technology | **+4.8%** | 39.84 | 41.75 | 1.97 | HD·· | 19 | 52 |
 | 8 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.97 | HD·· | 27 | 62 |
 | 9 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+64.7%** | 38.10 | 62.76 | 1.96 | ··WM | 17 | 17 |
-| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.6%** | 11.70 | 22.07 | 1.96 | ··WM | 26 | 45 |
+| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.9%** | 11.70 | 22.10 | 1.96 | ··WM | 26 | 45 |
 | 11 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+28.3%** | 426.35 | 547.09 | 1.96 | ··WM | 19 | 63 |
 | 12 | **NOK** | Nokia Corporation Sponsored | Technology | **+39.6%** | 10.76 | 15.02 | 1.94 | HD·· | 11 | 36 |
 | 13 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+21.2%** | 394.51 | 478.01 | 1.94 | HD·· | 33 | 72 |
@@ -24,8 +24,8 @@
 | 22 | **TEAM** | Atlassian Corporation | Technology | **+15.9%** | 162.22 | 187.93 | 0.96 | ·D·· | 32 | 66 |
 | 23 | **T** | AT&T Inc. | Communication Servic | **+15.3%** | 24.89 | 28.71 | 0.96 | ·D·· | 25 | 56 |
 | 24 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+12.1%** | 212.06 | 237.81 | 0.96 | ···M | 38 | 73 |
-| 25 | **NVDA** | NVIDIA Corporation | Technology | **+34.5%** | 225.16 | 302.83 | 0.95 | ···M | 61 | 101 |
+| 25 | **NIO** | NIO Inc. | Consumer Cyclical | **+62.7%** | 4.52 | 7.36 | 0.95 | ···M | 24 | 46 |
 | 26 | **VRT** | Vertiv Holdings Co | Industrials | **+15.1%** | 293.84 | 338.15 | 0.95 | H··· | 28 | 62 |
-| 27 | **NIO** | NIO Inc. | Consumer Cyclical | **+62.5%** | 4.52 | 7.35 | 0.94 | ···M | 24 | 46 |
+| 27 | **NVDA** | NVIDIA Corporation | Technology | **+34.5%** | 225.16 | 302.83 | 0.94 | ···M | 61 | 101 |
 | 28 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.1%** | 26.14 | 34.79 | 0.93 | H··· | 36 | 68 |
 | 29 | **ELV** | Elevance Health, Inc. | Healthcare | **+12.2%** | 400.32 | 449.10 | 0.93 | ··W· | 22 | 59 |

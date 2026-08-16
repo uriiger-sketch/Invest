@@ -7,7 +7,7 @@
 | 5 | **ABBV** | AbbVie Inc. | Healthcare | **+10.7%** | 249.46 | 276.24 | 2.91 | HDW· | 31 | 62 |
 | 6 | **SOUN** | SoundHound AI, Inc. | Technology | **+71.1%** | 7.43 | 12.71 | 1.98 | ··WM | 8 | 35 |
 | 7 | **SMCI** | Super Micro Computer, Inc. | Technology | **+6.4%** | 39.84 | 42.38 | 1.97 | HD·· | 19 | 52 |
-| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.8%** | 37.40 | 62.76 | 1.96 | ··WM | 17 | 17 |
+| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.2%** | 37.40 | 62.52 | 1.96 | ··WM | 17 | 17 |
 | 9 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.96 | HD·· | 27 | 62 |
 | 10 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+28.3%** | 426.35 | 547.09 | 1.96 | ··WM | 19 | 63 |
 | 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.6%** | 11.70 | 22.06 | 1.95 | ··WM | 26 | 45 |

@@ -9,9 +9,9 @@
 | 7 | **U** | Unity Software Inc. | Technology | **+5.5%** | 45.45 | 47.97 | 1.99 | ·DW· | 26 | 60 |
 | 8 | **LITE** | Lumentum Holdings Inc. | Technology | **+18.5%** | 968.90 | 1148.30 | 1.98 | HD·· | 24 | 59 |
 | 9 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+26.9%** | 430.97 | 547.09 | 1.97 | ··WM | 19 | 63 |
-| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.2%** | 12.20 | 22.10 | 1.96 | ··WM | 26 | 45 |
+| 10 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+80.9%** | 12.20 | 22.07 | 1.96 | ··WM | 26 | 45 |
 | 11 | **SOUN** | SoundHound AI, Inc. | Technology | **+80.6%** | 7.04 | 12.71 | 1.96 | ··WM | 8 | 35 |
-| 12 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+68.4%** | 37.12 | 62.52 | 1.96 | ··WM | 17 | 17 |
+| 12 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.2%** | 37.40 | 62.52 | 1.95 | ··WM | 17 | 17 |
 | 13 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+40.3%** | 22.13 | 31.05 | 1.93 | ··WM | 25 | 56 |
 | 14 | **ABT** | Abbott Laboratories | Healthcare | **+8.2%** | 110.37 | 119.40 | 1.93 | HD·· | 27 | 62 |
 | 15 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+22.5%** | 390.33 | 478.01 | 1.89 | HD·· | 33 | 72 |

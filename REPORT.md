@@ -7,10 +7,10 @@
 | 5 | **ABBV** | AbbVie Inc. | Healthcare | **+10.7%** | 249.46 | 276.24 | 2.90 | HDW· | 31 | 62 |
 | 6 | **SOUN** | SoundHound AI, Inc. | Technology | **+71.1%** | 7.43 | 12.71 | 1.98 | ··WM | 8 | 35 |
 | 7 | **SMCI** | Super Micro Computer, Inc. | Technology | **+6.4%** | 39.84 | 42.38 | 1.97 | HD·· | 19 | 52 |
-| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+66.4%** | 37.58 | 62.52 | 1.97 | ··WM | 17 | 17 |
+| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+65.6%** | 37.75 | 62.52 | 1.97 | ··WM | 17 | 17 |
 | 9 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.97 | HD·· | 27 | 62 |
 | 10 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+28.3%** | 426.35 | 547.09 | 1.96 | ··WM | 19 | 63 |
-| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.7%** | 11.70 | 22.08 | 1.95 | ··WM | 26 | 45 |
+| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+89.0%** | 11.70 | 22.12 | 1.95 | ··WM | 26 | 45 |
 | 12 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+21.2%** | 394.51 | 478.01 | 1.94 | HD·· | 33 | 72 |
 | 13 | **NOK** | Nokia Corporation Sponsored | Technology | **+39.6%** | 10.76 | 15.02 | 1.94 | HD·· | 11 | 36 |
 | 14 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.93 | ··WM | 16 | 44 |
@@ -18,7 +18,7 @@
 | 16 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.3%** | 186.46 | 214.98 | 1.92 | ·DW· | 22 | 50 |
 | 17 | **COP** | ConocoPhillips | Energy | **+14.0%** | 126.78 | 144.50 | 1.89 | HD·· | 25 | 59 |
 | 18 | **GRAB** | Grab Holdings Limited | Technology | **+61.9%** | 3.62 | 5.86 | 0.97 | ···M | 26 | 61 |
-| 19 | **AKAM** | Akamai Technologies, Inc. | Technology | **+26.0%** | 124.99 | 157.43 | 0.97 | H··· | 25 | 57 |
+| 19 | **AKAM** | Akamai Technologies, Inc. | Technology | **+26.0%** | 124.99 | 157.43 | 0.96 | H··· | 25 | 57 |
 | 20 | **TEAM** | Atlassian Corporation | Technology | **+15.9%** | 162.22 | 187.93 | 0.96 | ·D·· | 32 | 66 |
 | 21 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+12.1%** | 212.06 | 237.81 | 0.96 | ···M | 38 | 73 |
 | 22 | **CRH** | CRH PLC | Basic Materials | **+42.4%** | 97.15 | 138.38 | 0.96 | ···M | 21 | 56 |

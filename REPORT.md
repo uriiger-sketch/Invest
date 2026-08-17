@@ -12,8 +12,8 @@
 | 10 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.96 | HD·· | 27 | 62 |
 | 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.6%** | 11.70 | 22.07 | 1.95 | ··WM | 26 | 45 |
 | 12 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+21.2%** | 394.51 | 478.01 | 1.94 | HD·· | 33 | 72 |
-| 13 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.94 | ··WM | 16 | 44 |
-| 14 | **NOK** | Nokia Corporation Sponsored | Technology | **+39.6%** | 10.76 | 15.02 | 1.94 | HD·· | 11 | 36 |
+| 13 | **NOK** | Nokia Corporation Sponsored | Technology | **+39.6%** | 10.76 | 15.02 | 1.94 | HD·· | 11 | 36 |
+| 14 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.93 | ··WM | 16 | 44 |
 | 15 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.93 | ··WM | 25 | 56 |
 | 16 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.3%** | 186.46 | 214.98 | 1.92 | ·DW· | 22 | 50 |
 | 17 | **COP** | ConocoPhillips | Energy | **+14.0%** | 126.78 | 144.50 | 1.89 | HD·· | 25 | 59 |
@@ -22,7 +22,7 @@
 | 20 | **CRH** | CRH PLC | Basic Materials | **+42.4%** | 97.15 | 138.38 | 0.96 | ···M | 21 | 56 |
 | 21 | **TEAM** | Atlassian Corporation | Technology | **+15.9%** | 162.22 | 187.93 | 0.96 | ·D·· | 32 | 66 |
 | 22 | **T** | AT&T Inc. | Communication Servic | **+15.3%** | 24.89 | 28.71 | 0.96 | ·D·· | 25 | 56 |
-| 23 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+12.1%** | 212.06 | 237.81 | 0.95 | ···M | 38 | 73 |
+| 23 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+12.1%** | 212.06 | 237.81 | 0.96 | ···M | 38 | 73 |
 | 24 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+129.4%** | 3.16 | 7.25 | 0.95 | ···M | 7 | 38 |
 | 25 | **VRT** | Vertiv Holdings Co | Industrials | **+15.1%** | 293.84 | 338.15 | 0.95 | H··· | 28 | 62 |
 | 26 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.3%** | 26.14 | 34.84 | 0.93 | H··· | 36 | 68 |

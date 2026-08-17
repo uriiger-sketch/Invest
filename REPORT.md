@@ -10,7 +10,7 @@
 | 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.2%** | 37.40 | 62.52 | 1.96 | ··WM | 17 | 17 |
 | 9 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+28.3%** | 426.35 | 547.09 | 1.96 | ··WM | 19 | 63 |
 | 10 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.96 | HD·· | 27 | 62 |
-| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.6%** | 11.70 | 22.07 | 1.95 | ··WM | 26 | 45 |
+| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.7%** | 11.70 | 22.08 | 1.95 | ··WM | 26 | 45 |
 | 12 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+21.2%** | 394.51 | 478.01 | 1.94 | HD·· | 33 | 72 |
 | 13 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.94 | ··WM | 16 | 44 |
 | 14 | **NOK** | Nokia Corporation Sponsored | Technology | **+39.6%** | 10.76 | 15.02 | 1.94 | HD·· | 11 | 36 |

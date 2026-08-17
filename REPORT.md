@@ -4,17 +4,17 @@
 | 2 | **BSX** | Boston Scientific Corporation | Healthcare | **+21.0%** | 51.83 | 62.69 | 3.87 | HDWM | 31 | 69 |
 | 3 | **KRNT** | Kornit Digital Ltd. | Industrials | **+38.6%** | 18.04 | 25.00 | 3.82 | HDWM | 5 | 28 |
 | 4 | **CRWV** | CoreWeave, Inc. | Technology | **+36.1%** | 105.26 | 143.26 | 2.98 | HDW· | 38 | 70 |
-| 5 | **ABBV** | AbbVie Inc. | Healthcare | **+10.7%** | 249.46 | 276.24 | 2.91 | HDW· | 31 | 62 |
+| 5 | **ABBV** | AbbVie Inc. | Healthcare | **+10.7%** | 249.46 | 276.24 | 2.90 | HDW· | 31 | 62 |
 | 6 | **SOUN** | SoundHound AI, Inc. | Technology | **+71.1%** | 7.43 | 12.71 | 1.98 | ··WM | 8 | 35 |
 | 7 | **SMCI** | Super Micro Computer, Inc. | Technology | **+6.4%** | 39.84 | 42.38 | 1.97 | HD·· | 19 | 52 |
-| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+65.3%** | 37.83 | 62.52 | 1.97 | ··WM | 17 | 17 |
-| 9 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+28.3%** | 426.35 | 547.09 | 1.96 | ··WM | 19 | 63 |
-| 10 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.96 | HD·· | 27 | 62 |
+| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+65.7%** | 37.74 | 62.52 | 1.97 | ··WM | 17 | 17 |
+| 9 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.97 | HD·· | 27 | 62 |
+| 10 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+28.3%** | 426.35 | 547.09 | 1.96 | ··WM | 19 | 63 |
 | 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.7%** | 11.70 | 22.08 | 1.95 | ··WM | 26 | 45 |
 | 12 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+21.2%** | 394.51 | 478.01 | 1.94 | HD·· | 33 | 72 |
 | 13 | **NOK** | Nokia Corporation Sponsored | Technology | **+39.6%** | 10.76 | 15.02 | 1.94 | HD·· | 11 | 36 |
-| 14 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.93 | ··WM | 25 | 56 |
-| 15 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.93 | ··WM | 16 | 44 |
+| 14 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.93 | ··WM | 16 | 44 |
+| 15 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.93 | ··WM | 25 | 56 |
 | 16 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.3%** | 186.46 | 214.98 | 1.92 | ·DW· | 22 | 50 |
 | 17 | **COP** | ConocoPhillips | Energy | **+14.0%** | 126.78 | 144.50 | 1.89 | HD·· | 25 | 59 |
 | 18 | **GRAB** | Grab Holdings Limited | Technology | **+61.9%** | 3.62 | 5.86 | 0.97 | ···M | 26 | 61 |

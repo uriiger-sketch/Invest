@@ -75,12 +75,29 @@ class Settings(BaseSettings):
     consensus_shrinkage_k: float = 10.0
 
     # Diversification: cap how many names from one sector can occupy a single
-    # horizon's top list (0 = no cap). Prevents an all-semis top-13.
-    max_per_sector: int = 5
+    # horizon's top list (0 = no cap). Prevents an all-semis top list.
+    # Scaled with `top_n` below: 8 of 30 keeps any one sector under ~27 % of a
+    # horizon while leaving room for the technology emphasis the theme tilt
+    # applies. (Counter-intuitively a TIGHTER cap yields a LARGER cross-horizon
+    # union — it forces each horizon deeper into other sectors — but at the
+    # cost of pushing out genuinely strong same-sector names.)
+    max_per_sector: int = 8
 
     blend_composite_weight: float = 0.6
     blend_ml_weight: float = 0.4
-    top_n: int = 13
+    # Per-horizon depth. This is the real driver of how many distinct names
+    # reach the merged table, because that table is the UNION of the four
+    # horizons' lists, and the union is what `main_table_size` caps.
+    #
+    # Measured against five consecutive days of live scores (229 tickers
+    # clearing the gates per horizon), union size is very stable and lands
+    # around 1.85x top_n:
+    #     top_n=13 -> ~28   (why the "top 30" table never actually hit 30)
+    #     top_n=30 -> 56-59 (only ~14 % over a 50-row table)
+    #     top_n=35 -> 65-67 (~30 % headroom — what we use)
+    # Keep enough margin that a day with heavier cross-horizon overlap still
+    # fills the table from real selections rather than scraping its tail.
+    top_n: int = 35
 
     # Theme tilt — a deliberate, small thumb on the scale toward technology,
     # applied to `blended_score` (which is in z-score units, so typical spread
@@ -102,7 +119,11 @@ class Settings(BaseSettings):
     # (observed live: 27 rows on one run). This caps the FINAL merged table
     # to a fixed, predictable size, independent of `top_n` (which still
     # controls each horizon's own candidate pool).
-    main_table_size: int = 30
+    #
+    # This must stay comfortably BELOW the union `top_n` produces, otherwise
+    # the tail of the table is whatever happened to be left rather than a
+    # real selection. See the `top_n` note above for the measured union size.
+    main_table_size: int = 50
 
     # Hourly coverage sweep: consensus + price targets + named rating actions,
     # walked stalest-first over the whole universe.

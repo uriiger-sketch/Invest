@@ -826,8 +826,14 @@ def _main_table_html(rows: list[dict], by_h: dict[str, list[dict]]) -> str:
             if drawer_rows
             else ""
         )
+        # data-ticker / data-name drive the find-a-stock box. Matching against
+        # explicit attributes rather than scraping cell text keeps the search
+        # working regardless of markup inside the cells (the name column is
+        # truncated to 40 chars for display, so the full name lives here).
         body.append(
-            f"<tr class='row-main'{toggle} style='cursor:pointer'>"
+            f"<tr class='row-main'{toggle} style='cursor:pointer'"
+            f" data-ticker='{_html_escape(r['ticker']).lower()}'"
+            f" data-name='{_html_escape(r['name'] or '').lower()}'>"
             f"<td>{r['rank']}</td>"
             f"<td><strong>{_html_escape(r['ticker'])}</strong></td>"
             f"<td>{_html_escape((r['name'] or '')[:40])}</td>"
@@ -984,6 +990,17 @@ def _build_html(as_of: date, n: int) -> str:
   .refresh-btn:disabled {{ opacity: 0.6; cursor: default; }}
   .refresh-status {{ margin-left: 0.6rem; font-size: 0.85rem; vertical-align: middle; }}
   .refresh-fallback {{ font-size: 0.78rem; margin-left: 0.4rem; }}
+  .finder {{ margin: 0.75rem 0 0.25rem 0; }}
+  .finder input {{ width: 15rem; max-width: 60vw; padding: 0.3rem 0.55rem;
+                    font-size: 0.9rem; font-family: inherit; border-radius: 5px;
+                    border: 1px solid rgba(127,127,127,0.45); background: transparent;
+                    color: inherit; }}
+  .finder input:focus {{ outline: 2px solid var(--accent); outline-offset: 1px; }}
+  .finder-msg {{ margin-left: 0.6rem; font-size: 0.85rem; color: #666; }}
+  /* Search hit. Uses a left border + tinted background so it stays legible
+     in both light and dark colour schemes, and outranks the .star row tint. */
+  tr.row-main.hit td {{ background: rgba(43,108,176,0.18) !important; }}
+  tr.row-main.hit td:first-child {{ box-shadow: inset 3px 0 0 var(--accent); }}
 </style>
 </head>
 <body>
@@ -999,8 +1016,59 @@ def _build_html(as_of: date, n: int) -> str:
 <span class="ago">just now</span></span> · Scores as of: <strong>{as_of.isoformat()}</strong>
  · page auto-refreshes every 2 min · pipeline runs every 30 min via GitHub Actions.</p>
 
+<div class="finder">
+  <input type="search" id="finder-input" autocomplete="off" spellcheck="false"
+         placeholder="Find a stock — ticker or name"
+         aria-label="Find a stock in the table by ticker or company name">
+  <span class="finder-msg" id="finder-msg"></span>
+</div>
+
 {"".join(sections)}
 
+<script>
+(function () {{
+  // Find-a-stock: highlight matching rows and scroll the first one into view.
+  // Searches the whole table (all {len(rows)} rows), matching ticker OR
+  // company name, case-insensitively, as a substring.
+  var input = document.getElementById("finder-input");
+  var msg = document.getElementById("finder-msg");
+  if (!input || !msg) return;
+  var rows = [].slice.call(document.querySelectorAll("tr.row-main"));
+
+  function clear() {{
+    for (var i = 0; i < rows.length; i++) rows[i].classList.remove("hit");
+  }}
+
+  function run() {{
+    var q = input.value.trim().toLowerCase();
+    clear();
+    if (!q) {{ msg.textContent = ""; return; }}
+    var hits = rows.filter(function (r) {{
+      return (r.getAttribute("data-ticker") || "").indexOf(q) !== -1
+          || (r.getAttribute("data-name") || "").indexOf(q) !== -1;
+    }});
+    if (!hits.length) {{
+      msg.textContent = "Not in the top " + rows.length + ".";
+      return;
+    }}
+    for (var i = 0; i < hits.length; i++) hits[i].classList.add("hit");
+    msg.textContent = hits.length === 1
+      ? "Rank " + (hits[0].cells[0] ? hits[0].cells[0].textContent.trim() : "?")
+      : hits.length + " matches";
+    // Only auto-scroll once the query is specific enough to be meaningful —
+    // jumping the page on every single keystroke is disorienting.
+    if (q.length >= 2) {{
+      hits[0].scrollIntoView({{ behavior: "smooth", block: "center" }});
+    }}
+  }}
+
+  input.addEventListener("input", run);
+  input.addEventListener("search", run);   // fires on the native clear "x"
+  input.addEventListener("keydown", function (e) {{
+    if (e.key === "Escape") {{ input.value = ""; run(); }}
+  }});
+}})();
+</script>
 <script>
 (function () {{
   function fmt(mins) {{

@@ -10,7 +10,7 @@
 | 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.2%** | 37.40 | 62.52 | 1.97 | ··WM | 17 | 17 |
 | 9 | **SMWB** | Similarweb Ltd. | Technology | **+21.5%** | 8.89 | 10.80 | 1.97 | HD·· | 8 | 33 |
 | 10 | **SMCI** | Super Micro Computer, Inc. | Technology | **+6.4%** | 39.84 | 42.38 | 1.97 | HD·· | 19 | 52 |
-| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.5%** | 11.70 | 22.06 | 1.96 | ··WM | 26 | 45 |
+| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.6%** | 11.70 | 22.07 | 1.96 | ··WM | 26 | 45 |
 | 12 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+28.3%** | 426.35 | 547.09 | 1.96 | ··WM | 19 | 63 |
 | 13 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.96 | HD·· | 27 | 62 |
 | 14 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.95 | ··WM | 16 | 44 |

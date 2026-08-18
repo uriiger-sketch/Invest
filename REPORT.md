@@ -6,7 +6,7 @@
 | 4 | **ABBV** | AbbVie Inc. | Healthcare | **+10.4%** | 250.33 | 276.41 | 2.90 | HDW· | 31 | 62 |
 | 5 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+13.9%** | 188.78 | 214.98 | 2.82 | HDW· | 22 | 50 |
 | 6 | **U** | Unity Software Inc. | Technology | **+5.5%** | 45.45 | 47.97 | 1.99 | ·DW· | 26 | 60 |
-| 7 | **LITE** | Lumentum Holdings Inc. | Technology | **+16.2%** | 968.90 | 1125.93 | 1.98 | HD·· | 24 | 59 |
+| 7 | **LITE** | Lumentum Holdings Inc. | Technology | **+18.5%** | 968.90 | 1148.30 | 1.98 | HD·· | 24 | 59 |
 | 8 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+80.8%** | 12.20 | 22.06 | 1.98 | ··WM | 26 | 45 |
 | 9 | **SOUN** | SoundHound AI, Inc. | Technology | **+80.6%** | 7.04 | 12.71 | 1.97 | ··WM | 8 | 35 |
 | 10 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.2%** | 37.40 | 62.52 | 1.97 | ··WM | 17 | 17 |
@@ -18,7 +18,7 @@
 | 16 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+22.5%** | 390.33 | 478.01 | 1.91 | HD·· | 33 | 72 |
 | 17 | **W** | Wayfair Inc. | Consumer Cyclical | **+19.6%** | 103.08 | 123.25 | 1.84 | HD·· | 32 | 67 |
 | 18 | **NOK** | Nokia Oyj | Technology | **+39.4%** | 10.78 | 15.02 | 0.99 | H··· | 11 | 36 |
-| 19 | **ONTO** | Onto Innovation Inc. | Technology | **+10.3%** | 351.16 | 387.30 | 0.99 | H··· | 10 | 40 |
+| 19 | **ONTO** | Onto Innovation Inc. | Technology | **+10.6%** | 351.16 | 388.45 | 0.99 | H··· | 11 | 41 |
 | 20 | **MU** | Micron Technology, Inc. | Technology | **+48.5%** | 1011.75 | 1501.98 | 0.98 | H··· | 46 | 84 |
 | 21 | **SMCI** | Super Micro Computer, Inc. | Technology | **+10.7%** | 38.28 | 42.38 | 0.98 | ·D·· | 19 | 52 |
 | 22 | **GRAB** | Grab Holdings Limited | Technology | **+63.7%** | 3.58 | 5.86 | 0.97 | ···M | 26 | 61 |

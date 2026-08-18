@@ -13,7 +13,7 @@
 | 11 | **NVDA** | NVIDIA Corporation | Technology | **+37.8%** | 219.74 | 302.83 | 2.84 | ·DWM | 61 | 101 |
 | 12 | **ABT** | Abbott Laboratories | Healthcare | **+6.0%** | 112.68 | 119.40 | 2.81 | HDW· | 27 | 62 |
 | 13 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.2%** | 11.74 | 22.09 | 2.79 | H·WM | 26 | 45 |
-| 14 | **T** | AT&T Inc. | Communication Servic | **+15.2%** | 24.91 | 28.71 | 2.71 | HDW· | 25 | 56 |
+| 14 | **T** | AT&T Inc. | Communication Servic | **+15.3%** | 24.90 | 28.71 | 2.71 | HDW· | 25 | 56 |
 | 15 | **SPGI** | S&P Global Inc. | Financial Services | **+23.7%** | 418.04 | 516.95 | 2.65 | H·WM | 24 | 58 |
 | 16 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+6.6%** | 528.19 | 563.12 | 2.62 | ·DWM | 29 | 61 |
 | 17 | **BAC** | Bank of America Corporation | Financial Services | **+7.1%** | 64.23 | 68.77 | 2.54 | ·DWM | 24 | 60 |
@@ -40,13 +40,13 @@
 | 38 | **VZ** | Verizon Communications Inc. | Communication Servic | **+6.2%** | 48.54 | 51.56 | 1.76 | HD·· | 26 | 60 |
 | 39 | **EQIX** | Equinix, Inc. | Real Estate | **+13.7%** | 1085.09 | 1233.52 | 1.75 | HD·· | 32 | 70 |
 | 40 | **NFLX** | Netflix, Inc. | Communication Servic | **+20.1%** | 77.77 | 93.42 | 1.74 | HD·· | 51 | 91 |
-| 41 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+1.8%** | 165.62 | 168.55 | 1.74 | HD·· | 25 | 26 |
+| 41 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+1.8%** | 165.56 | 168.55 | 1.74 | HD·· | 25 | 26 |
 | 42 | **TATT** | TAT Technologies Ltd. | Industrials | **+51.7%** | 40.02 | 60.71 | 1.72 | H··M | 6 | 27 |
 | 43 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+17.9%** | 244.47 | 288.35 | 1.70 | ··WM | 22 | 56 |
 | 44 | **ICE** | Intercontinental Exchange, Inc. | Financial Services | **+19.0%** | 156.18 | 185.93 | 1.70 | HD·· | 15 | 54 |
 | 45 | **EOG** | EOG Resources, Inc. | Energy | **+6.7%** | 148.70 | 158.67 | 1.70 | HD·· | 30 | 61 |
 | 46 | **CRWV** | CoreWeave, Inc. | Technology | **+53.8%** | 93.17 | 143.26 | 0.99 | ··W· | 38 | 70 |
-| 47 | **NOK** | Nokia Oyj | Technology | **+44.7%** | 10.39 | 15.02 | 0.98 | H··· | 11 | 36 |
+| 47 | **NOK** | Nokia Oyj | Technology | **+44.6%** | 10.39 | 15.02 | 0.98 | H··· | 11 | 36 |
 | 48 | **GRAB** | Grab Holdings Limited | Technology | **+69.8%** | 3.45 | 5.86 | 0.97 | ···M | 26 | 61 |
 | 49 | **LITE** | Lumentum Holdings Inc. | Technology | **+31.5%** | 873.31 | 1148.30 | 0.96 | H··· | 24 | 59 |
 | 50 | **TEAM** | Atlassian Corporation | Technology | **+15.3%** | 163.00 | 187.93 | 0.96 | ·D·· | 32 | 66 |

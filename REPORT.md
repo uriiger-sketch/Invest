@@ -3,7 +3,7 @@
 | 1 | **BSX** | Boston Scientific Corporation | Healthcare | **+21.9%** | 51.43 | 62.69 | 3.79 | HDWM | 31 | 69 |
 | 2 | **KRNT** | Kornit Digital Ltd. | Industrials | **+41.2%** | 17.70 | 25.00 | 3.76 | HDWM | 5 | 28 |
 | 3 | **CRWV** | CoreWeave, Inc. | Technology | **+35.1%** | 106.00 | 143.26 | 3.00 | HDW· | 38 | 70 |
-| 4 | **ABBV** | AbbVie Inc. | Healthcare | **+10.4%** | 250.33 | 276.24 | 2.89 | HDW· | 31 | 62 |
+| 4 | **ABBV** | AbbVie Inc. | Healthcare | **+10.4%** | 250.33 | 276.41 | 2.89 | HDW· | 31 | 62 |
 | 5 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+13.9%** | 188.78 | 214.98 | 2.81 | HDW· | 22 | 50 |
 | 6 | **U** | Unity Software Inc. | Technology | **+5.5%** | 45.45 | 47.97 | 1.99 | ·DW· | 26 | 60 |
 | 7 | **LITE** | Lumentum Holdings Inc. | Technology | **+16.2%** | 968.90 | 1125.93 | 1.98 | HD·· | 24 | 59 |

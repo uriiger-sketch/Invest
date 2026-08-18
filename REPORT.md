@@ -7,10 +7,10 @@
 | 5 | **AKAM** | Akamai Technologies, Inc. | Technology | **+26.0%** | 124.99 | 157.43 | 2.00 | HD·· | 25 | 57 |
 | 6 | **U** | Unity Software Inc. | Technology | **+3.7%** | 46.25 | 47.97 | 1.99 | ·DW· | 26 | 60 |
 | 7 | **SOUN** | SoundHound AI, Inc. | Technology | **+71.1%** | 7.43 | 12.71 | 1.99 | ··WM | 8 | 35 |
-| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+69.8%** | 36.81 | 62.52 | 1.98 | ··WM | 17 | 17 |
+| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+69.2%** | 36.94 | 62.52 | 1.98 | ··WM | 17 | 17 |
 | 9 | **SMWB** | Similarweb Ltd. | Technology | **+21.5%** | 8.89 | 10.80 | 1.97 | HD·· | 8 | 33 |
 | 10 | **SMCI** | Super Micro Computer, Inc. | Technology | **+6.4%** | 39.84 | 42.38 | 1.97 | HD·· | 19 | 52 |
-| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.6%** | 11.70 | 22.06 | 1.96 | ··WM | 26 | 45 |
+| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.6%** | 11.70 | 22.07 | 1.96 | ··WM | 26 | 45 |
 | 12 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.96 | HD·· | 27 | 62 |
 | 13 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+28.3%** | 426.35 | 547.09 | 1.95 | ··WM | 19 | 63 |
 | 14 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.95 | ··WM | 16 | 44 |
@@ -26,5 +26,5 @@
 | 24 | **T** | AT&T Inc. | Communication Servic | **+15.3%** | 24.89 | 28.71 | 0.95 | ·D·· | 25 | 56 |
 | 25 | **VRT** | Vertiv Holdings Co | Industrials | **+15.1%** | 293.84 | 338.15 | 0.95 | H··· | 28 | 62 |
 | 26 | **NVDA** | NVIDIA Corporation | Technology | **+34.5%** | 225.16 | 302.83 | 0.95 | ···M | 61 | 101 |
-| 27 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.3%** | 26.14 | 34.84 | 0.93 | H··· | 36 | 68 |
-| 28 | **ELV** | Elevance Health, Inc. | Healthcare | **+12.2%** | 400.32 | 449.10 | 0.93 | ··W· | 22 | 59 |
+| 27 | **ELV** | Elevance Health, Inc. | Healthcare | **+12.2%** | 400.32 | 449.10 | 0.93 | ··W· | 22 | 59 |
+| 28 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.3%** | 26.14 | 34.84 | 0.93 | H··· | 36 | 68 |

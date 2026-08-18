@@ -7,14 +7,14 @@
 | 5 | **AKAM** | Akamai Technologies, Inc. | Technology | **+26.0%** | 124.99 | 157.43 | 2.00 | HD·· | 25 | 57 |
 | 6 | **SOUN** | SoundHound AI, Inc. | Technology | **+71.1%** | 7.43 | 12.71 | 1.99 | ··WM | 8 | 35 |
 | 7 | **U** | Unity Software Inc. | Technology | **+4.3%** | 46.25 | 48.22 | 1.98 | ·DW· | 27 | 61 |
-| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+69.1%** | 36.99 | 62.52 | 1.97 | ··WM | 17 | 17 |
+| 8 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+69.0%** | 37.00 | 62.52 | 1.97 | ··WM | 17 | 17 |
 | 9 | **SMWB** | Similarweb Ltd. | Technology | **+21.5%** | 8.89 | 10.80 | 1.96 | HD·· | 8 | 33 |
 | 10 | **SMCI** | Super Micro Computer, Inc. | Technology | **+6.4%** | 39.84 | 42.38 | 1.96 | HD·· | 19 | 52 |
 | 11 | **ABT** | Abbott Laboratories | Healthcare | **+7.3%** | 111.25 | 119.40 | 1.96 | HD·· | 27 | 62 |
-| 12 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.9%** | 11.70 | 22.10 | 1.96 | ··WM | 26 | 45 |
+| 12 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.6%** | 11.70 | 22.06 | 1.96 | ··WM | 26 | 45 |
 | 13 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+28.3%** | 426.35 | 547.09 | 1.95 | ··WM | 19 | 63 |
 | 14 | **QBTS** | D-Wave Quantum Inc. | Technology | **+66.5%** | 21.17 | 35.25 | 1.94 | ··WM | 16 | 44 |
-| 15 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.93 | ··WM | 25 | 56 |
+| 15 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+38.5%** | 22.42 | 31.05 | 1.94 | ··WM | 25 | 56 |
 | 16 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+21.2%** | 394.51 | 478.01 | 1.93 | HD·· | 33 | 72 |
 | 17 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.3%** | 186.46 | 214.98 | 1.91 | ·DW· | 22 | 50 |
 | 18 | **COP** | ConocoPhillips | Energy | **+14.0%** | 126.78 | 144.50 | 1.89 | HD·· | 25 | 59 |

@@ -18,7 +18,7 @@
 | 16 | **NIO** | NIO Inc. | Consumer Cyclical | **+60.9%** | 4.58 | 7.37 | 2.73 | H·WM | 24 | 46 |
 | 17 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+2.0%** | 552.06 | 563.12 | 2.70 | ·DWM | 29 | 61 |
 | 18 | **BLK** | BlackRock, Inc. | Financial Services | **+13.4%** | 1158.92 | 1314.44 | 2.68 | ·DWM | 17 | 50 |
-| 19 | **UNP** | Union Pacific Corporation | Industrials | **+9.1%** | 301.80 | 329.25 | 2.46 | HDW· | 25 | 63 |
+| 19 | **UNP** | Union Pacific Corporation | Industrials | **+9.1%** | 301.80 | 329.25 | 2.47 | HDW· | 25 | 63 |
 | 20 | **ABBV** | AbbVie Inc. | Healthcare | **+3.9%** | 265.97 | 276.41 | 2.00 | HD·· | 31 | 63 |
 | 21 | **W** | Wayfair Inc. | Consumer Cyclical | **+14.3%** | 107.80 | 123.25 | 1.99 | HD·· | 32 | 67 |
 | 22 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+20.2%** | 397.72 | 478.01 | 1.98 | HD·· | 33 | 72 |
@@ -31,10 +31,10 @@
 | 29 | **CRM** | Salesforce, Inc. | Technology | **+17.8%** | 206.09 | 242.74 | 1.92 | HD·· | 53 | 89 |
 | 30 | **INTU** | Intuit Inc. | Technology | **+23.9%** | 362.47 | 449.20 | 1.91 | HD·· | 35 | 66 |
 | 31 | **CRH** | CRH PLC | Basic Materials | **+45.6%** | 94.74 | 137.97 | 1.89 | ··WM | 20 | 55 |
-| 32 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.71 | 56.43 | 1.87 | ··WM | 17 | 44 |
-| 33 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.12 | 1.87 | HD·· | 14 | 41 |
+| 32 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.71 | 56.43 | 1.88 | ··WM | 17 | 44 |
+| 33 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.06 | 1.87 | HD·· | 14 | 41 |
 | 34 | **NFLX** | Netflix, Inc. | Communication Servic | **+16.4%** | 80.22 | 93.42 | 1.85 | HD·· | 51 | 91 |
-| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.30 | 1.83 | HD·· | 41 | 79 |
+| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.3%** | 533.37 | 615.23 | 1.83 | HD·· | 41 | 79 |
 | 36 | **VZ** | Verizon Communications Inc. | Communication Servic | **+4.4%** | 49.36 | 51.56 | 1.83 | HD·· | 26 | 60 |
 | 37 | **AKAM** | Akamai Technologies, Inc. | Technology | **+39.5%** | 112.84 | 157.43 | 1.82 | HD·· | 25 | 57 |
 | 38 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.6%** | 213.00 | 237.81 | 1.81 | ··WM | 38 | 74 |

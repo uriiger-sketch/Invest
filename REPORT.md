@@ -1,7 +1,7 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | **NVDA** | NVIDIA Corporation | Technology | **+37.8%** | 219.74 | 302.83 | 3.79 | HDWM | 61 | 101 |
-| 2 | **BSX** | Boston Scientific Corporation | Healthcare | **+24.2%** | 50.47 | 62.69 | 3.77 | HDWM | 31 | 68 |
+| 2 | **BSX** | Boston Scientific Corporation | Healthcare | **+24.2%** | 50.47 | 62.69 | 3.76 | HDWM | 31 | 68 |
 | 3 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+34.8%** | 23.04 | 31.05 | 3.71 | HDWM | 25 | 56 |
 | 4 | **SNY** | Sanofi | Healthcare | **+19.5%** | 44.97 | 53.72 | 3.70 | HDWM | 10 | 35 |
 | 5 | **PFE** | Pfizer, Inc. | Healthcare | **+5.0%** | 27.25 | 28.61 | 3.68 | HDWM | 28 | 64 |
@@ -10,7 +10,7 @@
 | 8 | **SMCI** | Super Micro Computer, Inc. | Technology | **+13.3%** | 37.41 | 42.38 | 2.94 | HDW· | 19 | 52 |
 | 9 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.0%** | 186.94 | 214.98 | 2.89 | HDW· | 22 | 50 |
 | 10 | **ABT** | Abbott Laboratories | Healthcare | **+6.0%** | 112.68 | 119.40 | 2.81 | HDW· | 27 | 62 |
-| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.4%** | 11.74 | 22.12 | 2.81 | H·WM | 26 | 45 |
+| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.1%** | 11.74 | 22.08 | 2.81 | H·WM | 26 | 45 |
 | 12 | **T** | AT&T Inc. | Communication Servic | **+15.3%** | 24.90 | 28.71 | 2.73 | HDW· | 25 | 56 |
 | 13 | **SPGI** | S&P Global Inc. | Financial Services | **+23.7%** | 418.04 | 516.95 | 2.65 | H·WM | 24 | 58 |
 | 14 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+6.6%** | 528.19 | 563.12 | 2.62 | ·DWM | 29 | 61 |
@@ -20,7 +20,7 @@
 | 18 | **SMWB** | Similarweb Ltd. | Technology | **+26.0%** | 8.57 | 10.80 | 1.99 | HD·· | 8 | 32 |
 | 19 | **ABBV** | AbbVie Inc. | Healthcare | **+6.8%** | 258.92 | 276.41 | 1.99 | HD·· | 31 | 63 |
 | 20 | **U** | Unity Software Inc. | Technology | **+3.2%** | 46.74 | 48.22 | 1.99 | ·DW· | 27 | 61 |
-| 21 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+68.0%** | 37.12 | 62.38 | 1.98 | ··WM | 17 | 17 |
+| 21 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.9%** | 37.15 | 62.38 | 1.98 | ··WM | 17 | 17 |
 | 22 | **SOUN** | SoundHound AI, Inc. | Technology | **+81.9%** | 6.99 | 12.71 | 1.97 | ··WM | 8 | 35 |
 | 23 | **KRNT** | Kornit Digital Ltd. | Industrials | **+46.0%** | 17.12 | 25.00 | 1.95 | ··WM | 5 | 28 |
 | 24 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+32.3%** | 413.41 | 547.09 | 1.95 | ··WM | 19 | 63 |

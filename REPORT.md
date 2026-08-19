@@ -32,9 +32,9 @@
 | 30 | **INTU** | Intuit Inc. | Technology | **+23.9%** | 362.47 | 449.20 | 1.91 | HD·· | 35 | 66 |
 | 31 | **CRH** | CRH PLC | Basic Materials | **+45.6%** | 94.74 | 137.97 | 1.89 | ··WM | 20 | 55 |
 | 32 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.71 | 56.43 | 1.87 | ··WM | 17 | 44 |
-| 33 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.23 | 1.87 | HD·· | 14 | 41 |
+| 33 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.17 | 1.87 | HD·· | 14 | 41 |
 | 34 | **NFLX** | Netflix, Inc. | Communication Servic | **+16.4%** | 80.22 | 93.42 | 1.85 | HD·· | 51 | 91 |
-| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.52 | 1.83 | HD·· | 41 | 79 |
+| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.37 | 1.83 | HD·· | 41 | 79 |
 | 36 | **VZ** | Verizon Communications Inc. | Communication Servic | **+4.4%** | 49.36 | 51.56 | 1.83 | HD·· | 26 | 60 |
 | 37 | **AKAM** | Akamai Technologies, Inc. | Technology | **+39.5%** | 112.84 | 157.43 | 1.82 | HD·· | 25 | 57 |
 | 38 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.6%** | 213.00 | 237.81 | 1.81 | ··WM | 38 | 74 |

@@ -18,23 +18,23 @@
 | 16 | **NIO** | NIO Inc. | Consumer Cyclical | **+60.9%** | 4.58 | 7.37 | 2.73 | H·WM | 24 | 46 |
 | 17 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+2.0%** | 552.06 | 563.12 | 2.70 | ·DWM | 29 | 61 |
 | 18 | **BLK** | BlackRock, Inc. | Financial Services | **+13.4%** | 1158.92 | 1314.44 | 2.68 | ·DWM | 17 | 50 |
-| 19 | **UNP** | Union Pacific Corporation | Industrials | **+9.1%** | 301.80 | 329.25 | 2.47 | HDW· | 25 | 63 |
+| 19 | **UNP** | Union Pacific Corporation | Industrials | **+9.1%** | 301.80 | 329.25 | 2.46 | HDW· | 25 | 63 |
 | 20 | **ABBV** | AbbVie Inc. | Healthcare | **+3.9%** | 265.97 | 276.41 | 2.00 | HD·· | 31 | 63 |
-| 21 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+64.6%** | 37.90 | 62.38 | 1.99 | ··WM | 17 | 17 |
-| 22 | **W** | Wayfair Inc. | Consumer Cyclical | **+14.3%** | 107.80 | 123.25 | 1.99 | HD·· | 32 | 67 |
-| 23 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+20.2%** | 397.72 | 478.01 | 1.98 | HD·· | 33 | 72 |
-| 24 | **QBTS** | D-Wave Quantum Inc. | Technology | **+82.5%** | 19.32 | 35.25 | 1.97 | ··WM | 16 | 44 |
-| 25 | **SOUN** | SoundHound AI, Inc. | Technology | **+77.6%** | 7.16 | 12.71 | 1.96 | ··WM | 8 | 35 |
+| 21 | **W** | Wayfair Inc. | Consumer Cyclical | **+14.3%** | 107.80 | 123.25 | 1.99 | HD·· | 32 | 67 |
+| 22 | **ISRG** | Intuitive Surgical, Inc. | Healthcare | **+20.2%** | 397.72 | 478.01 | 1.98 | HD·· | 33 | 72 |
+| 23 | **QBTS** | D-Wave Quantum Inc. | Technology | **+82.5%** | 19.32 | 35.25 | 1.98 | ··WM | 16 | 44 |
+| 24 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+68.8%** | 36.96 | 62.38 | 1.98 | ··WM | 17 | 17 |
+| 25 | **SOUN** | SoundHound AI, Inc. | Technology | **+77.6%** | 7.16 | 12.71 | 1.97 | ··WM | 8 | 35 |
 | 26 | **TEAM** | Atlassian Corporation | Technology | **+7.9%** | 174.23 | 187.93 | 1.96 | HD·· | 32 | 66 |
 | 27 | **KRNT** | Kornit Digital Ltd. | Industrials | **+48.9%** | 16.79 | 25.00 | 1.95 | ··WM | 5 | 28 |
 | 28 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+32.8%** | 412.09 | 547.09 | 1.95 | ··WM | 19 | 63 |
 | 29 | **CRM** | Salesforce, Inc. | Technology | **+17.8%** | 206.09 | 242.74 | 1.92 | HD·· | 53 | 89 |
 | 30 | **INTU** | Intuit Inc. | Technology | **+23.9%** | 362.47 | 449.20 | 1.91 | HD·· | 35 | 66 |
 | 31 | **CRH** | CRH PLC | Basic Materials | **+45.6%** | 94.74 | 137.97 | 1.89 | ··WM | 20 | 55 |
-| 32 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.71 | 56.43 | 1.88 | ··WM | 17 | 44 |
-| 33 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.0%** | 425.18 | 463.33 | 1.87 | HD·· | 14 | 41 |
+| 32 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.71 | 56.43 | 1.87 | ··WM | 17 | 44 |
+| 33 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.23 | 1.87 | HD·· | 14 | 41 |
 | 34 | **NFLX** | Netflix, Inc. | Communication Servic | **+16.4%** | 80.22 | 93.42 | 1.85 | HD·· | 51 | 91 |
-| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.59 | 1.83 | HD·· | 41 | 79 |
+| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.52 | 1.83 | HD·· | 41 | 79 |
 | 36 | **VZ** | Verizon Communications Inc. | Communication Servic | **+4.4%** | 49.36 | 51.56 | 1.83 | HD·· | 26 | 60 |
 | 37 | **AKAM** | Akamai Technologies, Inc. | Technology | **+39.5%** | 112.84 | 157.43 | 1.82 | HD·· | 25 | 57 |
 | 38 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.6%** | 213.00 | 237.81 | 1.81 | ··WM | 38 | 74 |

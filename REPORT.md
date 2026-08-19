@@ -10,9 +10,9 @@
 | 8 | **SMCI** | Super Micro Computer, Inc. | Technology | **+13.3%** | 37.41 | 42.38 | 2.94 | HDW· | 19 | 52 |
 | 9 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+15.0%** | 186.94 | 214.98 | 2.89 | HDW· | 22 | 50 |
 | 10 | **ABT** | Abbott Laboratories | Healthcare | **+6.0%** | 112.68 | 119.40 | 2.81 | HDW· | 27 | 62 |
-| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+87.9%** | 11.74 | 22.06 | 2.78 | H·WM | 26 | 45 |
+| 11 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+88.3%** | 11.74 | 22.10 | 2.78 | H·WM | 26 | 45 |
 | 12 | **T** | AT&T Inc. | Communication Servic | **+15.3%** | 24.90 | 28.71 | 2.74 | HDW· | 25 | 56 |
-| 13 | **SPGI** | S&P Global Inc. | Financial Services | **+23.7%** | 418.04 | 516.95 | 2.67 | H·WM | 24 | 58 |
+| 13 | **SPGI** | S&P Global Inc. | Financial Services | **+23.7%** | 418.04 | 516.95 | 2.66 | H·WM | 24 | 58 |
 | 14 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+6.6%** | 528.19 | 563.12 | 2.63 | ·DWM | 29 | 61 |
 | 15 | **BAC** | Bank of America Corporation | Financial Services | **+7.1%** | 64.23 | 68.77 | 2.56 | ·DWM | 24 | 60 |
 | 16 | **C** | Citigroup Inc. | Financial Services | **+12.2%** | 137.65 | 154.50 | 2.55 | HDW· | 21 | 54 |
@@ -35,7 +35,7 @@
 | 33 | **CRH** | CRH PLC | Basic Materials | **+48.0%** | 93.25 | 137.97 | 1.87 | ··WM | 20 | 55 |
 | 34 | **CME** | CME Group Inc. | Financial Services | **+4.6%** | 271.54 | 284.13 | 1.85 | HD·· | 16 | 51 |
 | 35 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+19.3%** | 47.30 | 56.43 | 1.85 | ··WM | 17 | 44 |
-| 36 | **NIO** | NIO Inc. | Consumer Cyclical | **+62.2%** | 4.53 | 7.35 | 1.81 | ··WM | 24 | 46 |
+| 36 | **NIO** | NIO Inc. | Consumer Cyclical | **+62.4%** | 4.53 | 7.36 | 1.81 | ··WM | 24 | 46 |
 | 37 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+14.2%** | 208.25 | 237.81 | 1.81 | ··WM | 38 | 74 |
 | 38 | **COP** | ConocoPhillips | Energy | **+11.4%** | 129.72 | 144.50 | 1.78 | HD·· | 25 | 59 |
 | 39 | **VZ** | Verizon Communications Inc. | Communication Servic | **+6.2%** | 48.54 | 51.56 | 1.77 | HD·· | 26 | 60 |

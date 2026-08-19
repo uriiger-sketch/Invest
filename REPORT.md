@@ -31,7 +31,7 @@
 | 29 | **CRM** | Salesforce, Inc. | Technology | **+17.8%** | 206.09 | 242.74 | 1.92 | HD·· | 53 | 89 |
 | 30 | **INTU** | Intuit Inc. | Technology | **+23.9%** | 362.47 | 449.20 | 1.91 | HD·· | 35 | 66 |
 | 31 | **CRH** | CRH PLC | Basic Materials | **+45.6%** | 94.74 | 137.97 | 1.89 | ··WM | 20 | 55 |
-| 32 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.23 | 1.88 | HD·· | 14 | 41 |
+| 32 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.0%** | 425.18 | 463.28 | 1.88 | HD·· | 14 | 41 |
 | 33 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.71 | 56.43 | 1.87 | ··WM | 17 | 44 |
 | 34 | **NFLX** | Netflix, Inc. | Communication Servic | **+16.4%** | 80.22 | 93.42 | 1.85 | HD·· | 51 | 91 |
 | 35 | **AKAM** | Akamai Technologies, Inc. | Technology | **+39.5%** | 112.84 | 157.43 | 1.83 | HD·· | 25 | 57 |

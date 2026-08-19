@@ -7,7 +7,7 @@
 | 5 | **PFE** | Pfizer, Inc. | Healthcare | **+1.3%** | 28.24 | 28.61 | 3.69 | HDWM | 28 | 64 |
 | 6 | **SPGI** | S&P Global Inc. | Financial Services | **+21.2%** | 426.66 | 516.95 | 3.64 | HDWM | 24 | 58 |
 | 7 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+3.5%** | 207.72 | 214.98 | 2.96 | HDW· | 22 | 50 |
-| 8 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.4%** | 11.99 | 22.11 | 2.93 | H·WM | 26 | 45 |
+| 8 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.6%** | 11.99 | 22.14 | 2.93 | H·WM | 26 | 45 |
 | 9 | **SAP** | SAP SE | Technology | **+12.7%** | 215.60 | 242.92 | 2.90 | HDW· | 16 | 42 |
 | 10 | **U** | Unity Software Inc. | Technology | **+2.4%** | 47.11 | 48.22 | 2.88 | HDW· | 27 | 61 |
 | 11 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+106.2%** | 3.50 | 7.22 | 2.87 | H·WM | 7 | 38 |
@@ -15,7 +15,7 @@
 | 13 | **NVDA** | NVIDIA Corporation | Technology | **+39.2%** | 217.56 | 302.83 | 2.81 | ·DWM | 61 | 101 |
 | 14 | **T** | AT&T Inc. | Communication Servic | **+14.3%** | 25.12 | 28.71 | 2.77 | HDW· | 25 | 56 |
 | 15 | **F** | Ford Motor Company | Consumer Cyclical | **+8.8%** | 14.50 | 15.78 | 2.74 | HDW· | 22 | 54 |
-| 16 | **NIO** | NIO Inc. | Consumer Cyclical | **+60.7%** | 4.58 | 7.36 | 2.73 | H·WM | 24 | 46 |
+| 16 | **NIO** | NIO Inc. | Consumer Cyclical | **+60.9%** | 4.58 | 7.37 | 2.73 | H·WM | 24 | 46 |
 | 17 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+2.0%** | 552.06 | 563.12 | 2.70 | ·DWM | 29 | 61 |
 | 18 | **BLK** | BlackRock, Inc. | Financial Services | **+13.4%** | 1158.92 | 1314.44 | 2.68 | ·DWM | 17 | 50 |
 | 19 | **UNP** | Union Pacific Corporation | Industrials | **+9.1%** | 301.80 | 329.25 | 2.47 | HDW· | 25 | 63 |
@@ -32,9 +32,9 @@
 | 30 | **INTU** | Intuit Inc. | Technology | **+23.9%** | 362.47 | 449.20 | 1.91 | HD·· | 35 | 66 |
 | 31 | **CRH** | CRH PLC | Basic Materials | **+45.6%** | 94.74 | 137.97 | 1.89 | ··WM | 20 | 55 |
 | 32 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.71 | 56.43 | 1.88 | ··WM | 17 | 44 |
-| 33 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.23 | 1.87 | HD·· | 14 | 41 |
+| 33 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.0%** | 425.18 | 463.33 | 1.87 | HD·· | 14 | 41 |
 | 34 | **NFLX** | Netflix, Inc. | Communication Servic | **+16.4%** | 80.22 | 93.42 | 1.85 | HD·· | 51 | 91 |
-| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.45 | 1.83 | HD·· | 41 | 79 |
+| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.59 | 1.83 | HD·· | 41 | 79 |
 | 36 | **VZ** | Verizon Communications Inc. | Communication Servic | **+4.4%** | 49.36 | 51.56 | 1.83 | HD·· | 26 | 60 |
 | 37 | **AKAM** | Akamai Technologies, Inc. | Technology | **+39.5%** | 112.84 | 157.43 | 1.82 | HD·· | 25 | 57 |
 | 38 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.6%** | 213.00 | 237.81 | 1.81 | ··WM | 38 | 74 |

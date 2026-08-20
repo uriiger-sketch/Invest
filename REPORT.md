@@ -5,7 +5,7 @@
 | 3 | **SNY** | Sanofi | Healthcare | **+17.2%** | 45.83 | 53.72 | 3.78 | HDWM | 10 | 35 |
 | 4 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+106.2%** | 3.50 | 7.22 | 3.77 | HDWM | 7 | 38 |
 | 5 | **SPGI** | S&P Global Inc. | Financial Services | **+21.2%** | 426.66 | 516.95 | 3.65 | HDWM | 24 | 58 |
-| 6 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.8%** | 11.99 | 22.16 | 2.94 | H·WM | 26 | 45 |
+| 6 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.5%** | 11.99 | 22.12 | 2.94 | H·WM | 26 | 45 |
 | 7 | **ABT** | Abbott Laboratories | Healthcare | **+4.3%** | 114.43 | 119.40 | 2.91 | HDW· | 27 | 62 |
 | 8 | **SAP** | SAP SE | Technology | **+12.7%** | 215.60 | 242.92 | 2.91 | HDW· | 16 | 42 |
 | 9 | **TEAM** | Atlassian Corporation | Technology | **+7.9%** | 174.23 | 187.93 | 2.89 | HDW· | 32 | 66 |
@@ -30,11 +30,11 @@
 | 28 | **INTU** | Intuit Inc. | Technology | **+23.9%** | 362.47 | 449.20 | 1.92 | HD·· | 35 | 66 |
 | 29 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+32.8%** | 412.09 | 547.09 | 1.91 | ··WM | 19 | 63 |
 | 30 | **CRH** | CRH PLC | Basic Materials | **+45.6%** | 94.74 | 137.97 | 1.90 | ··WM | 20 | 55 |
-| 31 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.12 | 1.88 | HD·· | 14 | 41 |
+| 31 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.23 | 1.88 | HD·· | 14 | 41 |
 | 32 | **QUBT** | Quantum Computing Inc. | Technology | **+117.7%** | 8.42 | 18.33 | 1.87 | ··WM | 6 | 34 |
 | 33 | **NFLX** | Netflix, Inc. | Communication Servic | **+16.4%** | 80.22 | 93.42 | 1.86 | HD·· | 51 | 91 |
 | 34 | **VZ** | Verizon Communications Inc. | Communication Servic | **+4.4%** | 49.36 | 51.56 | 1.84 | HD·· | 26 | 61 |
-| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.30 | 1.82 | HD·· | 41 | 79 |
+| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.37 | 1.82 | HD·· | 41 | 79 |
 | 36 | **GILD** | Gilead Sciences, Inc. | Healthcare | **+6.6%** | 147.60 | 157.41 | 1.82 | HD·· | 29 | 65 |
 | 37 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.6%** | 213.00 | 237.81 | 1.80 | ··WM | 38 | 74 |
 | 38 | **MDLZ** | Mondelez International, Inc. | Consumer Defensive | **+7.7%** | 64.16 | 69.13 | 1.79 | HD·· | 24 | 55 |

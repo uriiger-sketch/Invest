@@ -1,19 +1,19 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+28.3%** | 23.99 | 30.77 | 3.88 | HDWM | 26 | 57 |
-| 2 | **BSX** | Boston Scientific Corporation | Healthcare | **+20.5%** | 52.01 | 62.69 | 3.87 | HDWM | 31 | 68 |
+| 1 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+28.3%** | 23.99 | 30.77 | 3.89 | HDWM | 26 | 57 |
+| 2 | **BSX** | Boston Scientific Corporation | Healthcare | **+20.5%** | 52.01 | 62.69 | 3.86 | HDWM | 31 | 68 |
 | 3 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+106.2%** | 3.50 | 7.22 | 3.78 | HDWM | 7 | 38 |
 | 4 | **SNY** | Sanofi | Healthcare | **+17.2%** | 45.83 | 53.72 | 3.77 | HDWM | 10 | 35 |
-| 5 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+65.1%** | 37.77 | 62.38 | 3.71 | HDWM | 17 | 17 |
+| 5 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+65.3%** | 37.72 | 62.38 | 3.69 | HDWM | 17 | 17 |
 | 6 | **SPGI** | S&P Global Inc. | Financial Services | **+21.2%** | 426.66 | 516.95 | 3.63 | HDWM | 24 | 58 |
 | 7 | **U** | Unity Software Inc. | Technology | **+4.2%** | 47.11 | 49.10 | 2.93 | HDW· | 26 | 60 |
-| 8 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.9%** | 11.99 | 22.16 | 2.92 | H·WM | 26 | 45 |
+| 8 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.8%** | 11.99 | 22.16 | 2.92 | H·WM | 26 | 45 |
 | 9 | **ABT** | Abbott Laboratories | Healthcare | **+4.3%** | 114.43 | 119.40 | 2.91 | HDW· | 27 | 62 |
 | 10 | **SAP** | SAP SE | Technology | **+12.7%** | 215.60 | 242.92 | 2.90 | HDW· | 16 | 42 |
 | 11 | **AKAM** | Akamai Technologies, Inc. | Technology | **+39.5%** | 112.84 | 157.43 | 2.83 | HD·M | 25 | 57 |
 | 12 | **NVDA** | NVIDIA Corporation | Technology | **+39.2%** | 217.56 | 302.83 | 2.80 | ·DWM | 61 | 101 |
 | 13 | **T** | AT&T Inc. | Communication Servic | **+14.3%** | 25.12 | 28.71 | 2.78 | HDW· | 25 | 56 |
-| 14 | **NIO** | NIO Inc. | Consumer Cyclical | **+61.1%** | 4.58 | 7.38 | 2.74 | H·WM | 24 | 46 |
+| 14 | **NIO** | NIO Inc. | Consumer Cyclical | **+60.9%** | 4.58 | 7.37 | 2.73 | H·WM | 24 | 46 |
 | 15 | **F** | Ford Motor Company | Consumer Cyclical | **+8.8%** | 14.50 | 15.78 | 2.71 | HDW· | 22 | 54 |
 | 16 | **DHR** | Danaher Corporation | Healthcare | **+7.8%** | 211.50 | 227.96 | 2.68 | HDW· | 26 | 61 |
 | 17 | **BLK** | BlackRock, Inc. | Financial Services | **+13.4%** | 1158.92 | 1314.44 | 2.67 | ·DWM | 17 | 50 |
@@ -31,14 +31,14 @@
 | 29 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+32.8%** | 412.09 | 547.09 | 1.90 | ··WM | 19 | 63 |
 | 30 | **CRH** | CRH PLC | Basic Materials | **+46.1%** | 94.74 | 138.38 | 1.90 | ··WM | 21 | 56 |
 | 31 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.71 | 56.43 | 1.88 | ··WM | 17 | 44 |
-| 32 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.1%** | 425.18 | 463.88 | 1.87 | HD·· | 14 | 41 |
+| 32 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.0%** | 425.18 | 463.44 | 1.87 | HD·· | 14 | 41 |
 | 33 | **QUBT** | Quantum Computing Inc. | Technology | **+117.7%** | 8.42 | 18.33 | 1.86 | ··WM | 6 | 34 |
 | 34 | **NFLX** | Netflix, Inc. | Communication Servic | **+16.4%** | 80.22 | 93.42 | 1.86 | HD·· | 51 | 91 |
 | 35 | **VZ** | Verizon Communications Inc. | Communication Servic | **+4.4%** | 49.36 | 51.56 | 1.83 | HD·· | 26 | 61 |
-| 36 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.6%** | 533.37 | 616.31 | 1.81 | HD·· | 41 | 79 |
+| 36 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.37 | 615.73 | 1.81 | HD·· | 41 | 79 |
 | 37 | **GILD** | Gilead Sciences, Inc. | Healthcare | **+6.6%** | 147.60 | 157.41 | 1.80 | HD·· | 29 | 65 |
 | 38 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.6%** | 213.00 | 237.81 | 1.80 | ··WM | 38 | 74 |
-| 39 | **MDLZ** | Mondelez International, Inc. | Consumer Defensive | **+7.7%** | 64.16 | 69.13 | 1.78 | HD·· | 24 | 55 |
+| 39 | **MDLZ** | Mondelez International, Inc. | Consumer Defensive | **+7.7%** | 64.16 | 69.13 | 1.79 | HD·· | 24 | 55 |
 | 40 | **PGR** | The Progressive Corporation | Financial Services | **+5.8%** | 217.27 | 229.78 | 1.77 | HD·· | 25 | 30 |
 | 41 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+33.1%** | 9.10 | 12.11 | 1.71 | H·W· | 28 | 53 |
 | 42 | **DIS** | Walt Disney Company (The) | Communication Servic | **+19.4%** | 106.93 | 127.72 | 1.71 | HD·· | 32 | 69 |

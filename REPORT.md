@@ -7,11 +7,11 @@
 | 5 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+4.2%** | 540.26 | 563.12 | 3.67 | HDWM | 29 | 61 |
 | 6 | **SPGI** | S&P Global Inc. | Financial Services | **+19.6%** | 432.16 | 516.95 | 3.58 | HDWM | 24 | 58 |
 | 7 | **ELV** | Elevance Health, Inc. | Healthcare | **+13.3%** | 396.28 | 449.10 | 3.57 | HDWM | 22 | 59 |
-| 8 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.4%** | 12.00 | 22.13 | 2.95 | H·WM | 26 | 45 |
+| 8 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.6%** | 12.00 | 22.15 | 2.95 | H·WM | 26 | 45 |
 | 9 | **SAP** | SAP SE | Technology | **+11.9%** | 217.09 | 242.92 | 2.94 | HDW· | 16 | 42 |
 | 10 | **ABT** | Abbott Laboratories | Healthcare | **+4.6%** | 114.14 | 119.40 | 2.93 | HDW· | 27 | 62 |
 | 11 | **U** | Unity Software Inc. | Technology | **+5.5%** | 46.54 | 49.10 | 2.91 | ·DWM | 26 | 60 |
-| 12 | **NIO** | NIO Inc. | Consumer Cyclical | **+62.6%** | 4.53 | 7.37 | 2.79 | H·WM | 24 | 46 |
+| 12 | **NIO** | NIO Inc. | Consumer Cyclical | **+62.8%** | 4.53 | 7.37 | 2.79 | H·WM | 24 | 46 |
 | 13 | **DHR** | Danaher Corporation | Healthcare | **+5.6%** | 215.91 | 227.96 | 2.79 | HDW· | 26 | 61 |
 | 14 | **ABBV** | AbbVie Inc. | Healthcare | **+5.6%** | 261.83 | 276.59 | 2.79 | HDW· | 31 | 63 |
 | 15 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+33.3%** | 416.00 | 554.45 | 2.77 | H·WM | 19 | 63 |
@@ -27,13 +27,13 @@
 | 25 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+116.1%** | 3.34 | 7.22 | 1.92 | ··WM | 7 | 38 |
 | 26 | **NVDA** | NVIDIA Corporation | Technology | **+40.2%** | 216.85 | 304.12 | 1.92 | ··WM | 61 | 101 |
 | 27 | **CRH** | CRH PLC | Basic Materials | **+48.7%** | 93.09 | 138.38 | 1.90 | ··WM | 21 | 56 |
-| 28 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.7%** | 428.37 | 465.45 | 1.90 | HD·· | 14 | 41 |
+| 28 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.6%** | 428.37 | 465.34 | 1.90 | HD·· | 14 | 41 |
 | 29 | **TEAM** | Atlassian Corporation | Technology | **+7.4%** | 174.91 | 187.93 | 1.89 | ·DW· | 32 | 66 |
 | 30 | **EOG** | EOG Resources, Inc. | Energy | **+4.4%** | 152.19 | 158.93 | 1.86 | HD·· | 30 | 61 |
 | 31 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+17.1%** | 48.19 | 56.43 | 1.85 | ··WM | 17 | 44 |
 | 32 | **PGR** | The Progressive Corporation | Financial Services | **+4.2%** | 220.34 | 229.68 | 1.83 | HD·· | 25 | 30 |
 | 33 | **CRM** | Salesforce, Inc. | Technology | **+18.3%** | 205.43 | 243.08 | 1.82 | HD·· | 51 | 87 |
-| 34 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.5%** | 533.13 | 615.59 | 1.81 | HD·· | 41 | 79 |
+| 34 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.13 | 615.45 | 1.81 | HD·· | 41 | 79 |
 | 35 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+13.3%** | 209.87 | 237.81 | 1.81 | ··WM | 38 | 74 |
 | 36 | **SHEL** | Shell plc | Energy | **+4.7%** | 93.65 | 98.03 | 1.78 | HD·· | 16 | 44 |
 | 37 | **BP** | BP p.l.c. | Energy | **+5.5%** | 45.14 | 47.63 | 1.75 | HD·· | 19 | 46 |

@@ -25,7 +25,7 @@
 | 23 | **SOUN** | SoundHound AI, Inc. | Technology | **+82.4%** | 6.97 | 12.71 | 1.94 | ··WM | 8 | 35 |
 | 24 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+116.1%** | 3.34 | 7.22 | 1.92 | ··WM | 7 | 38 |
 | 25 | **NVDA** | NVIDIA Corporation | Technology | **+40.2%** | 216.85 | 304.12 | 1.92 | ··WM | 61 | 101 |
-| 26 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.6%** | 428.37 | 465.34 | 1.90 | HD·· | 14 | 41 |
+| 26 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.6%** | 428.37 | 465.40 | 1.90 | HD·· | 14 | 41 |
 | 27 | **CRH** | CRH PLC | Basic Materials | **+48.7%** | 93.09 | 138.38 | 1.90 | ··WM | 21 | 56 |
 | 28 | **TEAM** | Atlassian Corporation | Technology | **+7.4%** | 174.91 | 187.93 | 1.88 | ·DW· | 32 | 66 |
 | 29 | **EOG** | EOG Resources, Inc. | Energy | **+4.4%** | 152.19 | 158.93 | 1.86 | HD·· | 30 | 61 |
@@ -35,7 +35,7 @@
 | 33 | **PGR** | The Progressive Corporation | Financial Services | **+4.2%** | 220.34 | 229.68 | 1.83 | HD·· | 25 | 30 |
 | 34 | **CRM** | Salesforce, Inc. | Technology | **+18.3%** | 205.43 | 243.08 | 1.82 | HD·· | 51 | 87 |
 | 35 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+13.3%** | 209.87 | 237.81 | 1.82 | ··WM | 38 | 74 |
-| 36 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.4%** | 533.13 | 615.45 | 1.82 | HD·· | 41 | 79 |
+| 36 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.5%** | 533.13 | 615.52 | 1.82 | HD·· | 41 | 79 |
 | 37 | **SHEL** | Shell plc | Energy | **+4.7%** | 93.65 | 98.03 | 1.77 | HD·· | 16 | 44 |
 | 38 | **BP** | BP p.l.c. | Energy | **+5.5%** | 45.14 | 47.63 | 1.76 | HD·· | 19 | 46 |
 | 39 | **BLK** | BlackRock, Inc. | Financial Services | **+15.4%** | 1139.82 | 1315.81 | 1.74 | ··WM | 17 | 50 |

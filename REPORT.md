@@ -5,14 +5,14 @@
 | 3 | **SNY** | Sanofi | Healthcare | **+17.2%** | 45.83 | 53.72 | 3.78 | HDWM | 10 | 35 |
 | 4 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+106.2%** | 3.50 | 7.22 | 3.78 | HDWM | 7 | 38 |
 | 5 | **SPGI** | S&P Global Inc. | Financial Services | **+21.2%** | 426.66 | 516.95 | 3.64 | HDWM | 24 | 58 |
-| 6 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.6%** | 11.99 | 22.13 | 2.94 | H·WM | 26 | 45 |
+| 6 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+84.5%** | 11.99 | 22.12 | 2.94 | H·WM | 26 | 45 |
 | 7 | **ABT** | Abbott Laboratories | Healthcare | **+4.3%** | 114.43 | 119.40 | 2.92 | HDW· | 27 | 62 |
 | 8 | **SAP** | SAP SE | Technology | **+12.7%** | 215.60 | 242.92 | 2.91 | HDW· | 16 | 42 |
 | 9 | **TEAM** | Atlassian Corporation | Technology | **+7.9%** | 174.23 | 187.93 | 2.89 | HDW· | 32 | 66 |
 | 10 | **AKAM** | Akamai Technologies, Inc. | Technology | **+39.5%** | 112.84 | 157.43 | 2.83 | HD·M | 25 | 57 |
 | 11 | **NVDA** | NVIDIA Corporation | Technology | **+39.2%** | 217.56 | 302.83 | 2.82 | ·DWM | 61 | 101 |
 | 12 | **T** | AT&T Inc. | Communication Servic | **+14.3%** | 25.12 | 28.71 | 2.79 | HDW· | 25 | 56 |
-| 13 | **NIO** | NIO Inc. | Consumer Cyclical | **+60.9%** | 4.58 | 7.37 | 2.75 | H·WM | 24 | 46 |
+| 13 | **NIO** | NIO Inc. | Consumer Cyclical | **+61.1%** | 4.58 | 7.38 | 2.76 | H·WM | 24 | 46 |
 | 14 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.71 | 56.43 | 2.72 | ·DWM | 17 | 44 |
 | 15 | **F** | Ford Motor Company | Consumer Cyclical | **+8.8%** | 14.50 | 15.78 | 2.72 | HDW· | 22 | 54 |
 | 16 | **DHR** | Danaher Corporation | Healthcare | **+7.8%** | 211.50 | 227.96 | 2.69 | HDW· | 26 | 61 |
@@ -29,7 +29,7 @@
 | 27 | **INTU** | Intuit Inc. | Technology | **+23.9%** | 362.47 | 449.20 | 1.92 | HD·· | 35 | 66 |
 | 28 | **CRH** | CRH PLC | Basic Materials | **+45.6%** | 94.74 | 137.97 | 1.90 | ··WM | 20 | 55 |
 | 29 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+32.8%** | 412.09 | 547.09 | 1.90 | ··WM | 19 | 63 |
-| 30 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.12 | 1.88 | HD·· | 14 | 41 |
+| 30 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 425.18 | 463.06 | 1.88 | HD·· | 14 | 41 |
 | 31 | **QUBT** | Quantum Computing Inc. | Technology | **+117.7%** | 8.42 | 18.33 | 1.87 | ··WM | 6 | 34 |
 | 32 | **NFLX** | Netflix, Inc. | Communication Servic | **+16.4%** | 80.22 | 93.42 | 1.86 | HD·· | 51 | 91 |
 | 33 | **VZ** | Verizon Communications Inc. | Communication Servic | **+4.4%** | 49.36 | 51.56 | 1.84 | HD·· | 26 | 61 |
@@ -47,6 +47,6 @@
 | 45 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+17.9%** | 77.33 | 91.20 | 1.70 | H··M | 34 | 66 |
 | 46 | **EOG** | EOG Resources, Inc. | Energy | **+6.1%** | 149.48 | 158.67 | 1.67 | HD·· | 30 | 61 |
 | 47 | **BAC** | Bank of America Corporation | Financial Services | **+8.9%** | 63.17 | 68.77 | 1.64 | ··WM | 24 | 60 |
-| 48 | **C** | Citigroup Inc. | Financial Services | **+16.3%** | 132.89 | 154.50 | 1.59 | ··WM | 21 | 54 |
+| 48 | **C** | Citigroup Inc. | Financial Services | **+16.3%** | 132.89 | 154.50 | 1.58 | ··WM | 21 | 54 |
 | 49 | **WFC** | Wells Fargo & Company | Financial Services | **+16.6%** | 85.94 | 100.24 | 1.53 | ··WM | 26 | 60 |
 | 50 | **CRWV** | CoreWeave, Inc. | Technology | **+57.7%** | 90.87 | 143.26 | 0.96 | ··W· | 38 | 70 |

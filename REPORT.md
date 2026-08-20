@@ -27,14 +27,14 @@
 | 25 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+116.1%** | 3.34 | 7.22 | 1.92 | ··WM | 7 | 38 |
 | 26 | **NVDA** | NVIDIA Corporation | Technology | **+40.2%** | 216.85 | 304.12 | 1.92 | ··WM | 61 | 101 |
 | 27 | **CRH** | CRH PLC | Basic Materials | **+48.7%** | 93.09 | 138.38 | 1.90 | ··WM | 21 | 56 |
-| 28 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.7%** | 428.37 | 465.56 | 1.90 | HD·· | 14 | 41 |
+| 28 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.7%** | 428.37 | 465.72 | 1.90 | HD·· | 14 | 41 |
 | 29 | **TEAM** | Atlassian Corporation | Technology | **+7.4%** | 174.91 | 187.93 | 1.89 | ·DW· | 32 | 66 |
 | 30 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+17.1%** | 48.19 | 56.43 | 1.85 | ··WM | 17 | 44 |
 | 31 | **EOG** | EOG Resources, Inc. | Energy | **+4.4%** | 152.19 | 158.93 | 1.85 | HD·· | 30 | 61 |
 | 32 | **CRM** | Salesforce, Inc. | Technology | **+18.3%** | 205.43 | 243.08 | 1.83 | HD·· | 51 | 87 |
 | 33 | **PGR** | The Progressive Corporation | Financial Services | **+4.2%** | 220.34 | 229.68 | 1.83 | HD·· | 25 | 30 |
 | 34 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+13.3%** | 209.87 | 237.81 | 1.81 | ··WM | 38 | 74 |
-| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.5%** | 533.13 | 615.73 | 1.80 | HD·· | 41 | 79 |
+| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.5%** | 533.13 | 615.95 | 1.80 | HD·· | 41 | 79 |
 | 36 | **SHEL** | Shell plc | Energy | **+4.7%** | 93.65 | 98.03 | 1.78 | HD·· | 16 | 44 |
 | 37 | **BP** | BP p.l.c. | Energy | **+5.5%** | 45.14 | 47.63 | 1.75 | HD·· | 19 | 46 |
 | 38 | **BLK** | BlackRock, Inc. | Financial Services | **+15.4%** | 1139.82 | 1315.81 | 1.74 | ··WM | 17 | 50 |

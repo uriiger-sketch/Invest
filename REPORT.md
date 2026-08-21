@@ -23,14 +23,14 @@
 | 21 | **COP** | ConocoPhillips | Energy | **+7.0%** | 134.89 | 144.29 | 1.96 | HD·· | 25 | 59 |
 | 22 | **KRNT** | Kornit Digital Ltd. | Industrials | **+52.1%** | 16.44 | 25.00 | 1.95 | ··WM | 5 | 28 |
 | 23 | **SOUN** | SoundHound AI, Inc. | Technology | **+82.4%** | 6.97 | 12.71 | 1.93 | ··WM | 8 | 35 |
-| 24 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.8%** | 428.37 | 465.89 | 1.92 | HD·· | 14 | 41 |
+| 24 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.8%** | 428.37 | 466.05 | 1.92 | HD·· | 14 | 41 |
 | 25 | **NVDA** | NVIDIA Corporation | Technology | **+40.2%** | 216.85 | 304.12 | 1.91 | ··WM | 61 | 101 |
 | 26 | **CRH** | CRH plc | Basic Materials | **+48.7%** | 93.09 | 138.38 | 1.89 | ··WM | 21 | 56 |
 | 27 | **EOG** | EOG Resources, Inc. | Energy | **+4.4%** | 152.19 | 158.93 | 1.88 | HD·· | 30 | 61 |
 | 28 | **PGR** | The Progressive Corporation | Financial Services | **+4.2%** | 220.34 | 229.68 | 1.87 | HD·· | 25 | 30 |
 | 29 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+17.1%** | 48.19 | 56.43 | 1.85 | ··WM | 17 | 44 |
 | 30 | **NOW** | ServiceNow, Inc. | Technology | **+9.6%** | 129.75 | 142.23 | 1.83 | HD·· | 49 | 85 |
-| 31 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.6%** | 533.13 | 616.09 | 1.83 | HD·· | 41 | 79 |
+| 31 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.6%** | 533.13 | 616.31 | 1.83 | HD·· | 41 | 79 |
 | 32 | **AZN** | AstraZeneca PLC | Healthcare | **+29.7%** | 164.95 | 213.99 | 1.80 | HD·· | 10 | 35 |
 | 33 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+13.3%** | 209.87 | 237.81 | 1.80 | ··WM | 38 | 74 |
 | 34 | **SHEL** | Shell plc | Energy | **+4.7%** | 93.65 | 98.03 | 1.80 | HD·· | 16 | 44 |

@@ -3,11 +3,11 @@
 | 1 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+28.1%** | 24.02 | 30.77 | 3.92 | HDWM | 26 | 57 |
 | 2 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+106.2%** | 3.50 | 7.22 | 3.85 | HDWM | 7 | 38 |
 | 3 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+62.9%** | 38.29 | 62.38 | 3.83 | HDWM | 17 | 17 |
-| 4 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.6%** | 12.19 | 22.13 | 3.81 | HDWM | 26 | 45 |
+| 4 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.8%** | 12.19 | 22.16 | 3.81 | HDWM | 26 | 45 |
 | 5 | **BSX** | Boston Scientific Corporation | Healthcare | **+24.5%** | 50.37 | 62.69 | 3.81 | HDWM | 31 | 68 |
 | 6 | **SNY** | Sanofi | Healthcare | **+17.2%** | 45.85 | 53.72 | 3.72 | HDWM | 10 | 35 |
 | 7 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+2.7%** | 548.05 | 563.12 | 3.68 | HDWM | 29 | 61 |
-| 8 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.2%** | 4.63 | 7.37 | 3.65 | HDWM | 24 | 46 |
+| 8 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.4%** | 4.63 | 7.38 | 3.65 | HDWM | 24 | 46 |
 | 9 | **SPGI** | S&P Global Inc. | Financial Services | **+19.9%** | 431.29 | 516.95 | 3.60 | HDWM | 24 | 58 |
 | 10 | **U** | Unity Software Inc. | Technology | **+4.6%** | 46.93 | 49.10 | 2.93 | ·DWM | 26 | 60 |
 | 11 | **SAP** | SAP SE | Technology | **+11.1%** | 218.68 | 242.92 | 2.93 | HDW· | 16 | 42 |

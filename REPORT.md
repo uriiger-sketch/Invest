@@ -1,9 +1,9 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+64.1%** | 38.01 | 62.38 | 3.88 | HDWM | 17 | 17 |
+| 1 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+63.8%** | 38.07 | 62.38 | 3.88 | HDWM | 17 | 17 |
 | 2 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+28.9%** | 23.88 | 30.77 | 3.88 | HDWM | 26 | 57 |
 | 3 | **U** | Unity Software Inc. | Technology | **+5.5%** | 46.54 | 49.10 | 3.79 | HDWM | 26 | 60 |
-| 4 | **BSX** | Boston Scientific Corporation | Healthcare | **+27.0%** | 49.37 | 62.69 | 3.75 | HDWM | 31 | 68 |
+| 4 | **BSX** | Boston Scientific Corporation | Healthcare | **+27.0%** | 49.37 | 62.69 | 3.76 | HDWM | 31 | 68 |
 | 5 | **SNY** | Sanofi | Healthcare | **+19.0%** | 45.15 | 53.72 | 3.74 | HDWM | 10 | 35 |
 | 6 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+4.2%** | 540.26 | 563.12 | 3.68 | HDWM | 29 | 61 |
 | 7 | **SPGI** | S&P Global Inc. | Financial Services | **+19.6%** | 432.16 | 516.95 | 3.58 | HDWM | 24 | 58 |
@@ -24,17 +24,17 @@
 | 22 | **KRNT** | Kornit Digital Ltd. | Industrials | **+52.1%** | 16.44 | 25.00 | 1.95 | ··WM | 5 | 28 |
 | 23 | **SOUN** | SoundHound AI, Inc. | Technology | **+82.4%** | 6.97 | 12.71 | 1.93 | ··WM | 8 | 35 |
 | 24 | **NVDA** | NVIDIA Corporation | Technology | **+40.2%** | 216.85 | 304.12 | 1.91 | ··WM | 61 | 101 |
-| 25 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.9%** | 428.37 | 466.49 | 1.91 | HD·· | 14 | 41 |
+| 25 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+8.8%** | 428.37 | 466.16 | 1.91 | HD·· | 14 | 41 |
 | 26 | **CRH** | CRH plc | Basic Materials | **+48.7%** | 93.09 | 138.38 | 1.89 | ··WM | 21 | 56 |
 | 27 | **EOG** | EOG Resources, Inc. | Energy | **+4.4%** | 152.19 | 158.93 | 1.87 | HD·· | 30 | 61 |
 | 28 | **PGR** | The Progressive Corporation | Financial Services | **+4.2%** | 220.34 | 229.68 | 1.86 | HD·· | 25 | 30 |
 | 29 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+17.1%** | 48.19 | 56.43 | 1.85 | ··WM | 17 | 44 |
-| 30 | **NOW** | ServiceNow, Inc. | Technology | **+9.6%** | 129.75 | 142.23 | 1.85 | HD·· | 49 | 85 |
-| 31 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.7%** | 533.13 | 616.96 | 1.83 | HD·· | 41 | 79 |
+| 30 | **NOW** | ServiceNow, Inc. | Technology | **+9.6%** | 129.75 | 142.23 | 1.84 | HD·· | 49 | 85 |
+| 31 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+15.7%** | 533.13 | 616.60 | 1.83 | HD·· | 41 | 79 |
 | 32 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+13.3%** | 209.87 | 237.81 | 1.81 | ··WM | 38 | 74 |
 | 33 | **AZN** | AstraZeneca PLC | Healthcare | **+30.1%** | 164.49 | 213.99 | 1.80 | HD·· | 10 | 35 |
 | 34 | **SHEL** | Shell plc | Energy | **+4.7%** | 93.65 | 98.03 | 1.78 | HD·· | 16 | 44 |
-| 35 | **BP** | BP p.l.c. | Energy | **+5.5%** | 45.14 | 47.63 | 1.77 | HD·· | 19 | 46 |
+| 35 | **BP** | BP p.l.c. | Energy | **+5.5%** | 45.14 | 47.63 | 1.76 | HD·· | 19 | 46 |
 | 36 | **BLK** | BlackRock, Inc. | Financial Services | **+15.4%** | 1139.82 | 1315.81 | 1.75 | ··WM | 17 | 50 |
 | 37 | **ABT** | Abbott Laboratories | Healthcare | **+4.6%** | 114.14 | 119.40 | 1.73 | ·DW· | 27 | 62 |
 | 38 | **VZ** | Verizon Communications Inc. | Communication Servic | **+4.8%** | 49.19 | 51.56 | 1.71 | HD·· | 26 | 61 |

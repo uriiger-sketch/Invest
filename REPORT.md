@@ -34,7 +34,7 @@
 | 32 | **PGR** | The Progressive Corporation | Financial Services | **+4.7%** | 219.28 | 229.68 | 1.83 | HD·· | 25 | 30 |
 | 33 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+13.4%** | 209.62 | 237.81 | 1.81 | ··WM | 38 | 74 |
 | 34 | **UNP** | Union Pacific Corporation | Industrials | **+6.9%** | 308.05 | 329.25 | 1.78 | HD·· | 25 | 63 |
-| 35 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+18.8%** | 242.24 | 287.85 | 1.70 | ··WM | 22 | 56 |
+| 35 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+18.9%** | 242.24 | 288.10 | 1.70 | ··WM | 22 | 56 |
 | 36 | **F** | Ford Motor Company | Consumer Cyclical | **+9.1%** | 14.41 | 15.73 | 1.70 | ·DW· | 22 | 54 |
 | 37 | **MDT** | Medtronic plc | Healthcare | **+5.5%** | 93.35 | 98.44 | 1.69 | ·DW· | 29 | 64 |
 | 38 | **BAC** | Bank of America Corporation | Financial Services | **+11.5%** | 61.69 | 68.77 | 1.69 | ··WM | 24 | 60 |

@@ -26,7 +26,7 @@
 | 24 | **COIN** | Coinbase Global, Inc. | Financial Services | **+4.5%** | 186.49 | 194.97 | 1.93 | HD·· | 34 | 67 |
 | 25 | **QBTS** | D-Wave Quantum Inc. | Technology | **+72.9%** | 20.39 | 35.25 | 1.93 | ··WM | 16 | 44 |
 | 26 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+6.6%** | 436.54 | 465.24 | 1.93 | HD·· | 14 | 41 |
-| 27 | **NVDA** | NVIDIA Corporation | Technology | **+41.6%** | 214.72 | 304.12 | 1.92 | ··WM | 61 | 101 |
+| 27 | **NVDA** | NVIDIA Corporation | Technology | **+41.9%** | 214.72 | 304.73 | 1.92 | ··WM | 62 | 102 |
 | 28 | **INTU** | Intuit Inc. | Technology | **+21.5%** | 367.00 | 446.02 | 1.90 | HD·· | 35 | 66 |
 | 29 | **CRH** | CRH plc | Basic Materials | **+45.6%** | 95.07 | 138.38 | 1.90 | ··WM | 21 | 56 |
 | 30 | **NOW** | ServiceNow, Inc. | Technology | **+10.7%** | 128.48 | 142.23 | 1.88 | HD·· | 49 | 85 |

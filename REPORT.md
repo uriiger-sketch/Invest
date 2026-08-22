@@ -5,7 +5,7 @@
 | 3 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.8%** | 12.19 | 22.16 | 3.84 | HDWM | 26 | 45 |
 | 4 | **BSX** | Boston Scientific Corporation | Healthcare | **+24.5%** | 50.37 | 62.69 | 3.81 | HDWM | 31 | 68 |
 | 5 | **SNY** | Sanofi | Healthcare | **+17.2%** | 45.85 | 53.72 | 3.73 | HDWM | 10 | 35 |
-| 6 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.4%** | 4.63 | 7.38 | 3.67 | HDWM | 24 | 46 |
+| 6 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.4%** | 4.63 | 7.38 | 3.68 | HDWM | 24 | 46 |
 | 7 | **SPGI** | S&P Global Inc. | Financial Services | **+19.9%** | 431.29 | 516.95 | 3.61 | HDWM | 24 | 58 |
 | 8 | **ELV** | Elevance Health, Inc. | Healthcare | **+12.1%** | 400.54 | 449.10 | 3.56 | HDWM | 22 | 59 |
 | 9 | **ZTS** | Zoetis Inc. | Healthcare | **+29.5%** | 77.73 | 100.62 | 3.43 | HDWM | 19 | 53 |
@@ -46,7 +46,7 @@
 | 44 | **TEAM** | Atlassian Corporation | Technology | **+9.4%** | 171.81 | 187.93 | 0.95 | ·D·· | 32 | 67 |
 | 45 | **SHOP** | Shopify Inc. | Technology | **+14.0%** | 149.25 | 170.17 | 0.94 | ··W· | 53 | 81 |
 | 46 | **HOOD** | Robinhood Markets, Inc. | Financial Services | **+10.9%** | 108.13 | 119.93 | 0.93 | H··· | 28 | 66 |
-| 47 | **AKAM** | Akamai Technologies, Inc. | Technology | **+42.6%** | 110.42 | 157.43 | 0.93 | ···M | 25 | 57 |
-| 48 | **RIVN** | Rivian Automotive, Inc. | Consumer Cyclical | **+13.3%** | 16.97 | 19.23 | 0.93 | H··· | 25 | 58 |
+| 47 | **RIVN** | Rivian Automotive, Inc. | Consumer Cyclical | **+13.3%** | 16.97 | 19.23 | 0.93 | H··· | 25 | 58 |
+| 48 | **AKAM** | Akamai Technologies, Inc. | Technology | **+42.6%** | 110.42 | 157.43 | 0.92 | ···M | 25 | 57 |
 | 49 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.1%** | 26.17 | 34.84 | 0.92 | ···M | 36 | 69 |
 | 50 | **QUBT** | Quantum Computing Inc. | Technology | **+105.5%** | 8.92 | 18.33 | 0.92 | ···M | 6 | 34 |

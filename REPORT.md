@@ -16,7 +16,7 @@
 | 14 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+32.3%** | 418.95 | 554.45 | 2.81 | H·WM | 19 | 63 |
 | 15 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+34.1%** | 9.03 | 12.11 | 2.75 | HDW· | 28 | 53 |
 | 16 | **DHR** | Danaher Corporation | Healthcare | **+4.2%** | 218.85 | 227.96 | 2.72 | HDW· | 26 | 61 |
-| 17 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+14.3%** | 49.39 | 56.43 | 2.70 | ·DWM | 17 | 44 |
+| 17 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+14.3%** | 49.39 | 56.43 | 2.69 | ·DWM | 17 | 44 |
 | 18 | **BLK** | BlackRock, Inc. | Financial Services | **+14.2%** | 1156.55 | 1320.81 | 2.64 | ·DWM | 17 | 50 |
 | 19 | **T** | AT&T Inc. | Communication Servic | **+13.5%** | 25.29 | 28.71 | 2.63 | HDW· | 25 | 56 |
 | 20 | **AZN** | AstraZeneca PLC | Healthcare | **+28.9%** | 165.98 | 213.99 | 2.57 | HDW· | 10 | 35 |
@@ -24,7 +24,7 @@
 | 22 | **ADI** | Analog Devices, Inc. | Technology | **+24.2%** | 373.09 | 463.22 | 1.99 | HD·· | 34 | 69 |
 | 23 | **SOUN** | SoundHound AI, Inc. | Technology | **+73.7%** | 7.32 | 12.71 | 1.98 | ··WM | 8 | 35 |
 | 24 | **COIN** | Coinbase Global, Inc. | Financial Services | **+4.5%** | 186.49 | 194.97 | 1.93 | HD·· | 34 | 67 |
-| 25 | **QBTS** | D-Wave Quantum Inc. | Technology | **+72.9%** | 20.39 | 35.25 | 1.93 | ··WM | 16 | 44 |
+| 25 | **QBTS** | D-Wave Quantum Inc. | Technology | **+72.8%** | 20.39 | 35.24 | 1.93 | ··WM | 17 | 45 |
 | 26 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+6.6%** | 436.54 | 465.24 | 1.93 | HD·· | 14 | 41 |
 | 27 | **NVDA** | NVIDIA Corporation | Technology | **+41.9%** | 214.72 | 304.73 | 1.92 | ··WM | 62 | 102 |
 | 28 | **INTU** | Intuit Inc. | Technology | **+21.5%** | 367.00 | 446.02 | 1.90 | HD·· | 35 | 66 |
@@ -43,7 +43,7 @@
 | 41 | **TMUS** | T-Mobile US, Inc. | Communication Servic | **+33.0%** | 183.04 | 243.38 | 1.62 | H·W· | 27 | 61 |
 | 42 | **WFC** | Wells Fargo & Company | Financial Services | **+19.6%** | 83.84 | 100.24 | 1.54 | ··WM | 26 | 60 |
 | 43 | **GRAB** | Grab Holdings Limited | Technology | **+68.4%** | 3.48 | 5.86 | 0.96 | ···M | 26 | 61 |
-| 44 | **TEAM** | Atlassian Corporation | Technology | **+9.4%** | 171.81 | 187.93 | 0.95 | ·D·· | 32 | 67 |
+| 44 | **TEAM** | Atlassian Corporation | Technology | **+9.9%** | 171.81 | 188.77 | 0.95 | ·D·· | 32 | 67 |
 | 45 | **AKAM** | Akamai Technologies, Inc. | Technology | **+42.6%** | 110.42 | 157.43 | 0.94 | ···M | 25 | 57 |
 | 46 | **SHOP** | Shopify Inc. | Technology | **+14.7%** | 149.25 | 171.15 | 0.94 | ··W· | 53 | 81 |
 | 47 | **HOOD** | Robinhood Markets, Inc. | Financial Services | **+10.9%** | 108.13 | 119.93 | 0.93 | H··· | 28 | 66 |

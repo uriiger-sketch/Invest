@@ -38,7 +38,7 @@
 | 36 | **F** | Ford Motor Company | Consumer Cyclical | **+9.1%** | 14.41 | 15.73 | 1.70 | ·DW· | 22 | 54 |
 | 37 | **MDT** | Medtronic plc | Healthcare | **+5.5%** | 93.35 | 98.44 | 1.69 | ·DW· | 29 | 64 |
 | 38 | **BAC** | Bank of America Corporation | Financial Services | **+11.5%** | 61.69 | 68.77 | 1.69 | ··WM | 24 | 60 |
-| 39 | **UL** | Unilever PLC | Consumer Defensive | **+16.2%** | 64.14 | 74.56 | 1.68 | HD·· | 5 | 32 |
+| 39 | **UL** | Unilever PLC | Consumer Defensive | **+16.2%** | 64.14 | 74.56 | 1.67 | HD·· | 5 | 32 |
 | 40 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+18.4%** | 77.03 | 91.20 | 1.63 | ··WM | 34 | 66 |
 | 41 | **TMUS** | T-Mobile US, Inc. | Communication Servic | **+33.0%** | 183.04 | 243.38 | 1.62 | H·W· | 27 | 61 |
 | 42 | **WFC** | Wells Fargo & Company | Financial Services | **+19.6%** | 83.84 | 100.24 | 1.54 | ··WM | 26 | 60 |

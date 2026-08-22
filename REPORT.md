@@ -2,14 +2,14 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | 1 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+28.1%** | 24.02 | 30.77 | 3.92 | HDWM | 26 | 57 |
 | 2 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+106.2%** | 3.50 | 7.22 | 3.88 | HDWM | 7 | 38 |
-| 3 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.6%** | 12.19 | 22.13 | 3.84 | HDWM | 26 | 45 |
+| 3 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.8%** | 12.19 | 22.16 | 3.84 | HDWM | 26 | 45 |
 | 4 | **BSX** | Boston Scientific Corporation | Healthcare | **+24.5%** | 50.37 | 62.69 | 3.81 | HDWM | 31 | 68 |
 | 5 | **SNY** | Sanofi | Healthcare | **+17.2%** | 45.85 | 53.72 | 3.73 | HDWM | 10 | 35 |
-| 6 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.2%** | 4.63 | 7.37 | 3.67 | HDWM | 24 | 46 |
+| 6 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.4%** | 4.63 | 7.38 | 3.68 | HDWM | 24 | 46 |
 | 7 | **SPGI** | S&P Global Inc. | Financial Services | **+19.9%** | 431.29 | 516.95 | 3.61 | HDWM | 24 | 58 |
 | 8 | **ELV** | Elevance Health, Inc. | Healthcare | **+12.1%** | 400.54 | 449.10 | 3.56 | HDWM | 22 | 59 |
 | 9 | **ZTS** | Zoetis Inc. | Healthcare | **+29.5%** | 77.73 | 100.62 | 3.43 | HDWM | 19 | 53 |
-| 10 | **SAP** | SAP SE | Technology | **+11.1%** | 218.68 | 242.92 | 2.93 | HDW· | 16 | 42 |
+| 10 | **SAP** | SAP SE | Technology | **+12.2%** | 218.68 | 245.33 | 2.94 | HDW· | 16 | 42 |
 | 11 | **U** | Unity Software Inc. | Technology | **+4.6%** | 46.93 | 49.10 | 2.93 | ·DWM | 26 | 60 |
 | 12 | **CRM** | Salesforce, Inc. | Technology | **+16.2%** | 209.17 | 243.08 | 2.92 | HDW· | 51 | 87 |
 | 13 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+65.8%** | 37.62 | 62.38 | 2.85 | H·WM | 17 | 17 |
@@ -46,7 +46,7 @@
 | 44 | **TEAM** | Atlassian Corporation | Technology | **+9.4%** | 171.81 | 187.93 | 0.95 | ·D·· | 32 | 67 |
 | 45 | **SHOP** | Shopify Inc. | Technology | **+14.0%** | 149.25 | 170.17 | 0.94 | ··W· | 53 | 81 |
 | 46 | **HOOD** | Robinhood Markets, Inc. | Financial Services | **+10.9%** | 108.13 | 119.93 | 0.93 | H··· | 28 | 66 |
-| 47 | **AKAM** | Akamai Technologies, Inc. | Technology | **+42.6%** | 110.42 | 157.43 | 0.93 | ···M | 25 | 57 |
-| 48 | **RIVN** | Rivian Automotive, Inc. | Consumer Cyclical | **+13.3%** | 16.97 | 19.23 | 0.93 | H··· | 25 | 58 |
+| 47 | **RIVN** | Rivian Automotive, Inc. | Consumer Cyclical | **+13.3%** | 16.97 | 19.23 | 0.93 | H··· | 25 | 58 |
+| 48 | **AKAM** | Akamai Technologies, Inc. | Technology | **+42.6%** | 110.42 | 157.43 | 0.92 | ···M | 25 | 57 |
 | 49 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.4%** | 26.17 | 34.92 | 0.92 | ···M | 36 | 69 |
 | 50 | **QUBT** | Quantum Computing Inc. | Technology | **+105.5%** | 8.92 | 18.33 | 0.92 | ···M | 6 | 34 |

@@ -48,5 +48,5 @@
 | 46 | **HOOD** | Robinhood Markets, Inc. | Financial Services | **+10.9%** | 108.13 | 119.93 | 0.93 | H··· | 28 | 66 |
 | 47 | **AKAM** | Akamai Technologies, Inc. | Technology | **+42.6%** | 110.42 | 157.43 | 0.93 | ···M | 25 | 57 |
 | 48 | **RIVN** | Rivian Automotive, Inc. | Consumer Cyclical | **+13.3%** | 16.97 | 19.23 | 0.93 | H··· | 25 | 58 |
-| 49 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.1%** | 26.17 | 34.84 | 0.92 | ···M | 36 | 69 |
+| 49 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+33.4%** | 26.17 | 34.92 | 0.92 | ···M | 36 | 69 |
 | 50 | **QUBT** | Quantum Computing Inc. | Technology | **+105.5%** | 8.92 | 18.33 | 0.92 | ···M | 6 | 34 |

@@ -23,7 +23,7 @@
 | 21 | **COIN** | Coinbase Global, Inc. | Financial Services | **+4.5%** | 186.49 | 194.97 | 1.93 | HD·· | 34 | 67 |
 | 22 | **QBTS** | D-Wave Quantum Inc. | Technology | **+72.8%** | 20.39 | 35.24 | 1.93 | ··WM | 17 | 45 |
 | 23 | **NVDA** | NVIDIA Corporation | Technology | **+41.9%** | 214.72 | 304.73 | 1.92 | ··WM | 62 | 102 |
-| 24 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+6.6%** | 436.54 | 465.34 | 1.92 | HD·· | 14 | 41 |
+| 24 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+6.6%** | 436.54 | 465.40 | 1.92 | HD·· | 14 | 41 |
 | 25 | **CRH** | CRH plc | Basic Materials | **+45.6%** | 95.07 | 138.38 | 1.90 | ··WM | 21 | 56 |
 | 26 | **INTU** | Intuit Inc. | Technology | **+21.5%** | 367.00 | 446.02 | 1.89 | HD·· | 35 | 66 |
 | 27 | **NOW** | ServiceNow, Inc. | Technology | **+10.7%** | 128.48 | 142.23 | 1.88 | HD·· | 49 | 85 |
@@ -36,7 +36,7 @@
 | 34 | **F** | Ford Motor Company | Consumer Cyclical | **+9.1%** | 14.41 | 15.73 | 1.70 | ·DW· | 22 | 54 |
 | 35 | **MDT** | Medtronic plc | Healthcare | **+5.5%** | 93.35 | 98.44 | 1.69 | ·DW· | 29 | 64 |
 | 36 | **BAC** | Bank of America Corporation | Financial Services | **+11.5%** | 61.69 | 68.77 | 1.68 | ··WM | 24 | 60 |
-| 37 | **UL** | Unilever PLC | Consumer Defensive | **+16.3%** | 64.14 | 74.57 | 1.67 | HD·· | 5 | 32 |
+| 37 | **UL** | Unilever PLC | Consumer Defensive | **+16.3%** | 64.14 | 74.58 | 1.67 | HD·· | 5 | 32 |
 | 38 | **HIPO** | Hippo Holdings Inc. | Financial Services | **+24.2%** | 33.12 | 41.12 | 1.67 | ·DW· | 5 | 30 |
 | 39 | **SHEL** | Shell plc | Energy | **+5.0%** | 93.33 | 98.03 | 1.65 | HD·· | 16 | 44 |
 | 40 | **T** | AT&T Inc. | Communication Servic | **+13.5%** | 25.29 | 28.71 | 1.64 | ·DW· | 25 | 56 |

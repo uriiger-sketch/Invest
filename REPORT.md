@@ -3,10 +3,10 @@
 | 1 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+28.1%** | 24.02 | 30.77 | 3.92 | HDWM | 26 | 57 |
 | 2 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+106.2%** | 3.50 | 7.22 | 3.87 | HDWM | 7 | 38 |
 | 3 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+62.9%** | 38.29 | 62.38 | 3.85 | HDWM | 17 | 17 |
-| 4 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.8%** | 12.19 | 22.16 | 3.83 | HDWM | 26 | 45 |
+| 4 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.6%** | 12.19 | 22.13 | 3.83 | HDWM | 26 | 45 |
 | 5 | **BSX** | Boston Scientific Corporation | Healthcare | **+24.5%** | 50.37 | 62.69 | 3.81 | HDWM | 31 | 68 |
 | 6 | **SNY** | Sanofi | Healthcare | **+17.2%** | 45.85 | 53.72 | 3.73 | HDWM | 10 | 35 |
-| 7 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.4%** | 4.63 | 7.38 | 3.68 | HDWM | 24 | 46 |
+| 7 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.2%** | 4.63 | 7.37 | 3.67 | HDWM | 24 | 46 |
 | 8 | **SPGI** | S&P Global Inc. | Financial Services | **+19.9%** | 431.29 | 516.95 | 3.61 | HDWM | 24 | 58 |
 | 9 | **ELV** | Elevance Health, Inc. | Healthcare | **+12.1%** | 400.54 | 449.10 | 3.55 | HDWM | 22 | 59 |
 | 10 | **ZTS** | Zoetis Inc. | Healthcare | **+29.5%** | 77.73 | 100.62 | 3.42 | HDWM | 19 | 53 |

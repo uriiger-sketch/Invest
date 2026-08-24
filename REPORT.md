@@ -37,7 +37,7 @@
 | 35 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+18.9%** | 242.24 | 288.10 | 1.70 | ··WM | 22 | 56 |
 | 36 | **F** | Ford Motor Company | Consumer Cyclical | **+9.1%** | 14.41 | 15.73 | 1.70 | ·DW· | 22 | 54 |
 | 37 | **BAC** | Bank of America Corporation | Financial Services | **+11.5%** | 61.69 | 68.77 | 1.67 | ··WM | 24 | 60 |
-| 38 | **UL** | Unilever PLC | Consumer Defensive | **+16.3%** | 64.14 | 74.60 | 1.67 | HD·· | 5 | 32 |
+| 38 | **UL** | Unilever PLC | Consumer Defensive | **+16.3%** | 64.14 | 74.59 | 1.67 | HD·· | 5 | 32 |
 | 39 | **SHEL** | Shell plc | Energy | **+5.0%** | 93.33 | 98.03 | 1.64 | HD·· | 16 | 44 |
 | 40 | **T** | AT&T Inc. | Communication Servic | **+13.5%** | 25.29 | 28.71 | 1.63 | ·DW· | 25 | 56 |
 | 41 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+18.4%** | 77.03 | 91.20 | 1.63 | ··WM | 34 | 66 |

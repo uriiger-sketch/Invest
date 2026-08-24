@@ -32,7 +32,7 @@
 | 30 | **DASH** | DoorDash, Inc. | Consumer Cyclical | **+10.1%** | 229.06 | 252.30 | 1.84 | HD·· | 44 | 83 |
 | 31 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.5%** | 424.44 | 464.86 | 1.79 | HD·· | 14 | 41 |
 | 32 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.69 | 56.43 | 1.78 | ··WM | 17 | 44 |
-| 33 | **UL** | Unilever PLC | Consumer Defensive | **+14.0%** | 65.32 | 74.50 | 1.78 | HD·· | 5 | 32 |
+| 33 | **UL** | Unilever PLC | Consumer Defensive | **+14.1%** | 65.32 | 74.50 | 1.78 | HD·· | 5 | 32 |
 | 34 | **ETSY** | Etsy, Inc. | Consumer Cyclical | **+0.0%** | 87.03 | 87.04 | 1.77 | HD·· | 31 | 71 |
 | 35 | **MA** | Mastercard Incorporated | Financial Services | **+11.2%** | 599.86 | 667.30 | 1.76 | HD·· | 40 | 80 |
 | 36 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+14.3%** | 537.84 | 614.57 | 1.76 | HD·· | 41 | 79 |

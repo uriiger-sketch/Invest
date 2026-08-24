@@ -30,12 +30,12 @@
 | 28 | **QBTS** | D-Wave Quantum Inc. | Technology | **+88.6%** | 18.68 | 35.24 | 1.89 | ··WM | 17 | 45 |
 | 29 | **CRH** | CRH PLC | Basic Materials | **+44.5%** | 95.79 | 138.38 | 1.87 | ··WM | 21 | 56 |
 | 30 | **DASH** | DoorDash, Inc. | Consumer Cyclical | **+10.1%** | 229.06 | 252.30 | 1.84 | HD·· | 44 | 83 |
-| 31 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.5%** | 424.44 | 464.75 | 1.80 | HD·· | 14 | 41 |
+| 31 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.5%** | 424.44 | 464.64 | 1.80 | HD·· | 14 | 41 |
 | 32 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.69 | 56.43 | 1.78 | ··WM | 17 | 44 |
-| 33 | **UL** | Unilever PLC | Consumer Defensive | **+14.0%** | 65.32 | 74.49 | 1.78 | HD·· | 5 | 32 |
+| 33 | **UL** | Unilever PLC | Consumer Defensive | **+14.0%** | 65.32 | 74.46 | 1.78 | HD·· | 5 | 32 |
 | 34 | **ETSY** | Etsy, Inc. | Consumer Cyclical | **+0.0%** | 87.03 | 87.04 | 1.77 | HD·· | 31 | 71 |
 | 35 | **MA** | Mastercard Incorporated | Financial Services | **+11.2%** | 599.86 | 667.30 | 1.77 | HD·· | 40 | 80 |
-| 36 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+14.2%** | 537.84 | 614.42 | 1.76 | HD·· | 41 | 79 |
+| 36 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+14.2%** | 537.84 | 614.28 | 1.76 | HD·· | 41 | 79 |
 | 37 | **PGR** | The Progressive Corporation | Financial Services | **+3.1%** | 223.92 | 230.83 | 1.75 | HD·· | 25 | 30 |
 | 38 | **MDT** | Medtronic plc. | Healthcare | **+6.0%** | 92.90 | 98.44 | 1.72 | ·DW· | 29 | 64 |
 | 39 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+21.8%** | 236.45 | 288.10 | 1.71 | ··WM | 22 | 56 |

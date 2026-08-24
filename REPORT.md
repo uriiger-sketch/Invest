@@ -19,13 +19,13 @@
 | 17 | **T** | AT&T Inc. | Communication Servic | **+11.7%** | 25.69 | 28.71 | 2.45 | HDW· | 25 | 56 |
 | 18 | **ADI** | Analog Devices, Inc. | Technology | **+26.7%** | 371.17 | 470.25 | 2.00 | HD·· | 34 | 69 |
 | 19 | **SOUN** | SoundHound AI, Inc. | Technology | **+81.6%** | 7.00 | 12.71 | 1.97 | ··WM | 8 | 35 |
-| 20 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+98.5%** | 11.15 | 22.13 | 1.96 | ··WM | 26 | 45 |
+| 20 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+98.8%** | 11.15 | 22.16 | 1.96 | ··WM | 26 | 45 |
 | 21 | **NVDA** | NVIDIA Corporation | Technology | **+46.2%** | 208.48 | 304.73 | 1.96 | ··WM | 62 | 102 |
 | 22 | **SAP** | SAP SE | Technology | **+12.2%** | 218.66 | 245.33 | 1.95 | HD·· | 16 | 42 |
 | 23 | **NOW** | ServiceNow, Inc. | Technology | **+11.1%** | 128.05 | 142.23 | 1.95 | HD·· | 49 | 85 |
 | 24 | **SHOP** | Shopify Inc. | Technology | **+14.3%** | 149.80 | 171.15 | 1.92 | ·DW· | 53 | 81 |
 | 25 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+35.2%** | 410.12 | 554.45 | 1.91 | ··WM | 19 | 63 |
-| 26 | **NIO** | NIO Inc. | Consumer Cyclical | **+69.0%** | 4.36 | 7.37 | 1.91 | ··WM | 24 | 46 |
+| 26 | **NIO** | NIO Inc. | Consumer Cyclical | **+69.2%** | 4.36 | 7.38 | 1.91 | ··WM | 24 | 46 |
 | 27 | **OKTA** | Okta, Inc. | Technology | **+11.7%** | 130.97 | 146.34 | 1.90 | HD·· | 44 | 78 |
 | 28 | **QBTS** | D-Wave Quantum Inc. | Technology | **+88.6%** | 18.68 | 35.24 | 1.89 | ··WM | 17 | 45 |
 | 29 | **CRH** | CRH PLC | Basic Materials | **+44.5%** | 95.79 | 138.38 | 1.87 | ··WM | 21 | 56 |

@@ -4,37 +4,37 @@
 | 2 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+106.2%** | 3.50 | 7.22 | 3.87 | HDWM | 7 | 38 |
 | 3 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+81.5%** | 12.19 | 22.13 | 3.84 | HDWM | 26 | 45 |
 | 4 | **BSX** | Boston Scientific Corporation | Healthcare | **+24.5%** | 50.37 | 62.69 | 3.83 | HDWM | 31 | 68 |
-| 5 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+66.7%** | 37.41 | 62.38 | 3.79 | HDWM | 17 | 17 |
+| 5 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.4%** | 37.27 | 62.38 | 3.77 | HDWM | 17 | 17 |
 | 6 | **SNY** | Sanofi | Healthcare | **+17.2%** | 45.85 | 53.72 | 3.73 | HDWM | 10 | 35 |
-| 7 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.1%** | 4.63 | 7.37 | 3.68 | HDWM | 24 | 46 |
+| 7 | **NIO** | NIO Inc. | Consumer Cyclical | **+59.4%** | 4.63 | 7.38 | 3.68 | HDWM | 24 | 46 |
 | 8 | **SPGI** | S&P Global Inc. | Financial Services | **+19.9%** | 431.29 | 516.95 | 3.63 | HDWM | 24 | 58 |
 | 9 | **ELV** | Elevance Health, Inc. | Healthcare | **+12.1%** | 400.54 | 449.10 | 3.58 | HDWM | 22 | 59 |
 | 10 | **ZTS** | Zoetis Inc. | Healthcare | **+29.5%** | 77.73 | 100.62 | 3.39 | HDWM | 19 | 53 |
 | 11 | **SAP** | SAP SE | Technology | **+12.2%** | 218.68 | 245.33 | 2.94 | HDW· | 16 | 42 |
-| 12 | **U** | Unity Software Inc. | Technology | **+4.6%** | 46.93 | 49.10 | 2.92 | ·DWM | 26 | 60 |
-| 13 | **CRM** | Salesforce, Inc. | Technology | **+16.6%** | 209.17 | 243.98 | 2.92 | HDW· | 53 | 89 |
+| 12 | **CRM** | Salesforce, Inc. | Technology | **+16.6%** | 209.17 | 243.98 | 2.92 | HDW· | 53 | 89 |
+| 13 | **U** | Unity Software Inc. | Technology | **+4.6%** | 46.93 | 49.10 | 2.92 | ·DWM | 26 | 60 |
 | 14 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+32.3%** | 418.95 | 554.45 | 2.78 | H·WM | 19 | 63 |
 | 15 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+34.1%** | 9.03 | 12.11 | 2.74 | HDW· | 28 | 53 |
-| 16 | **DHR** | Danaher Corporation | Healthcare | **+4.2%** | 218.85 | 227.96 | 2.71 | HDW· | 26 | 61 |
+| 16 | **DHR** | Danaher Corporation | Healthcare | **+4.2%** | 218.85 | 227.96 | 2.70 | HDW· | 26 | 61 |
 | 17 | **BLK** | BlackRock, Inc. | Financial Services | **+14.2%** | 1156.55 | 1320.81 | 2.65 | ·DWM | 17 | 50 |
 | 18 | **AZN** | AstraZeneca PLC | Healthcare | **+28.9%** | 165.98 | 213.99 | 2.58 | HDW· | 10 | 35 |
 | 19 | **HIPO** | Hippo Holdings Inc. | Financial Services | **+24.2%** | 33.12 | 41.12 | 2.47 | ·DWM | 5 | 30 |
 | 20 | **T** | AT&T Inc. | Communication Servic | **+13.5%** | 25.29 | 28.71 | 2.47 | HDW· | 25 | 56 |
 | 21 | **ADI** | Analog Devices, Inc. | Technology | **+24.2%** | 373.09 | 463.22 | 1.99 | HD·· | 34 | 69 |
-| 22 | **SOUN** | SoundHound AI, Inc. | Technology | **+73.7%** | 7.32 | 12.71 | 1.98 | ··WM | 8 | 35 |
+| 22 | **SOUN** | SoundHound AI, Inc. | Technology | **+73.7%** | 7.32 | 12.71 | 1.97 | ··WM | 8 | 35 |
 | 23 | **COIN** | Coinbase Global, Inc. | Financial Services | **+4.5%** | 186.49 | 194.97 | 1.94 | HD·· | 34 | 67 |
 | 24 | **QBTS** | D-Wave Quantum Inc. | Technology | **+72.8%** | 20.39 | 35.24 | 1.93 | ··WM | 17 | 45 |
-| 25 | **NVDA** | NVIDIA Corporation | Technology | **+41.9%** | 214.72 | 304.73 | 1.93 | ··WM | 62 | 102 |
-| 26 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+6.5%** | 436.54 | 464.86 | 1.93 | HD·· | 14 | 41 |
-| 27 | **CRH** | CRH PLC | Basic Materials | **+45.6%** | 95.07 | 138.38 | 1.90 | ··WM | 21 | 56 |
-| 28 | **INTU** | Intuit Inc. | Technology | **+21.5%** | 367.00 | 446.02 | 1.89 | HD·· | 35 | 66 |
+| 25 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+6.5%** | 436.54 | 464.75 | 1.93 | HD·· | 14 | 41 |
+| 26 | **NVDA** | NVIDIA Corporation | Technology | **+41.9%** | 214.72 | 304.73 | 1.92 | ··WM | 62 | 102 |
+| 27 | **INTU** | Intuit Inc. | Technology | **+21.5%** | 367.00 | 446.02 | 1.90 | HD·· | 35 | 66 |
+| 28 | **CRH** | CRH PLC | Basic Materials | **+45.6%** | 95.07 | 138.38 | 1.90 | ··WM | 21 | 56 |
 | 29 | **NOW** | ServiceNow, Inc. | Technology | **+10.7%** | 128.48 | 142.23 | 1.88 | HD·· | 49 | 85 |
-| 30 | **OKTA** | Okta, Inc. | Technology | **+8.2%** | 135.14 | 146.23 | 1.87 | HD·· | 44 | 78 |
+| 30 | **OKTA** | Okta, Inc. | Technology | **+8.2%** | 135.14 | 146.23 | 1.88 | HD·· | 44 | 78 |
 | 31 | **QUBT** | Quantum Computing Inc. | Technology | **+105.5%** | 8.92 | 18.33 | 1.85 | ··WM | 6 | 34 |
 | 32 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+14.3%** | 49.39 | 56.43 | 1.84 | ··WM | 17 | 44 |
 | 33 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+13.4%** | 209.62 | 237.81 | 1.82 | ··WM | 38 | 74 |
 | 34 | **UNP** | Union Pacific Corporation | Industrials | **+6.9%** | 308.05 | 329.25 | 1.77 | HD·· | 25 | 63 |
-| 35 | **PGR** | The Progressive Corporation | Financial Services | **+5.3%** | 219.28 | 230.83 | 1.75 | HD·· | 25 | 30 |
+| 35 | **PGR** | The Progressive Corporation | Financial Services | **+5.3%** | 219.28 | 230.83 | 1.76 | HD·· | 25 | 30 |
 | 36 | **MDT** | Medtronic plc. | Healthcare | **+5.5%** | 93.35 | 98.44 | 1.74 | ·DW· | 29 | 64 |
 | 37 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+18.9%** | 242.24 | 288.10 | 1.70 | ··WM | 22 | 56 |
 | 38 | **F** | Ford Motor Company | Consumer Cyclical | **+9.1%** | 14.41 | 15.73 | 1.70 | ·DW· | 22 | 54 |

@@ -13,7 +13,7 @@
 | 11 | **CRH** | CRH plc | Basic Materials | **+44.5%** | 95.79 | 138.38 | 2.70 | H·WM | 21 | 56 |
 | 12 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.5%** | 213.36 | 237.81 | 2.61 | ·DWM | 38 | 74 |
 | 13 | **ZTS** | Zoetis Inc. | Healthcare | **+30.4%** | 77.17 | 100.62 | 2.56 | H·WM | 19 | 53 |
-| 14 | **AZN** | AstraZeneca PLC | Healthcare | **+28.4%** | 166.71 | 213.99 | 2.54 | HDW· | 10 | 35 |
+| 14 | **AZN** | AstraZeneca PLC | Healthcare | **+27.5%** | 166.71 | 212.54 | 2.55 | HDW· | 11 | 36 |
 | 15 | **T** | AT&T Inc. | Communication Servic | **+11.7%** | 25.69 | 28.71 | 2.48 | HDW· | 25 | 56 |
 | 16 | **DEO** | Diageo plc | Consumer Defensive | **+10.8%** | 96.07 | 106.43 | 2.46 | HDW· | 8 | 34 |
 | 17 | **UNP** | Union Pacific Corporation | Industrials | **+6.3%** | 309.86 | 329.25 | 2.32 | ·DWM | 25 | 63 |
@@ -30,10 +30,10 @@
 | 28 | **QBTS** | D-Wave Quantum Inc. | Technology | **+88.6%** | 18.68 | 35.24 | 1.89 | ··WM | 17 | 45 |
 | 29 | **DIS** | The Walt Disney Company | Communication Servic | **+15.5%** | 110.61 | 127.72 | 1.85 | HD·· | 32 | 70 |
 | 30 | **DASH** | DoorDash, Inc. | Consumer Cyclical | **+10.1%** | 229.06 | 252.30 | 1.84 | HD·· | 44 | 85 |
-| 31 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.5%** | 424.44 | 464.80 | 1.81 | HD·· | 14 | 41 |
-| 32 | **UL** | Unilever PLC | Consumer Defensive | **+14.0%** | 65.32 | 74.49 | 1.81 | HD·· | 5 | 32 |
+| 31 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.5%** | 424.44 | 464.64 | 1.81 | HD·· | 14 | 41 |
+| 32 | **UL** | Unilever PLC | Consumer Defensive | **+14.0%** | 65.32 | 74.45 | 1.81 | HD·· | 5 | 32 |
 | 33 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.69 | 56.43 | 1.79 | ··WM | 17 | 44 |
-| 34 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+14.3%** | 537.84 | 614.50 | 1.78 | HD·· | 41 | 79 |
+| 34 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+14.2%** | 537.84 | 614.21 | 1.77 | HD·· | 41 | 79 |
 | 35 | **MA** | Mastercard Incorporated | Financial Services | **+11.2%** | 599.86 | 667.30 | 1.77 | HD·· | 40 | 80 |
 | 36 | **MCD** | McDonald's Corporation | Consumer Cyclical | **+16.0%** | 272.54 | 316.06 | 1.73 | HD·· | 34 | 69 |
 | 37 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+21.8%** | 236.45 | 288.10 | 1.72 | ··WM | 22 | 56 |

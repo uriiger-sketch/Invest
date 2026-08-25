@@ -20,14 +20,14 @@
 | 18 | **CLS** | Celestica Inc. | Technology | **+54.6%** | 306.86 | 474.44 | 1.96 | HD·· | 20 | 52 |
 | 19 | **AMD** | Advanced Micro Devices, Inc. | Technology | **+27.9%** | 479.18 | 613.09 | 1.96 | HD·· | 53 | 95 |
 | 20 | **NVDA** | NVIDIA Corporation | Technology | **+43.0%** | 213.05 | 304.73 | 1.96 | ··WM | 62 | 102 |
-| 21 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+85.6%** | 11.60 | 21.53 | 1.95 | ··WM | 26 | 45 |
+| 21 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+85.9%** | 11.60 | 21.56 | 1.95 | ··WM | 26 | 45 |
 | 22 | **SOUN** | SoundHound AI, Inc. | Technology | **+80.3%** | 7.05 | 12.71 | 1.95 | ··WM | 8 | 35 |
 | 23 | **KRNT** | Kornit Digital Ltd. | Industrials | **+49.3%** | 16.74 | 25.00 | 1.95 | ··WM | 5 | 28 |
 | 24 | **SNAP** | Snap Inc. | Communication Servic | **+24.7%** | 5.92 | 7.38 | 1.94 | HD·· | 43 | 79 |
 | 25 | **HOOD** | Robinhood Markets, Inc. | Financial Services | **+7.1%** | 112.09 | 120.08 | 1.94 | HD·· | 28 | 66 |
 | 26 | **PGY** | Pagaya Technologies Ltd. | Technology | **+31.2%** | 22.26 | 29.20 | 1.93 | HD·· | 10 | 39 |
 | 27 | **COIN** | Coinbase Global, Inc. | Financial Services | **+5.0%** | 187.16 | 196.55 | 1.93 | HD·· | 34 | 67 |
-| 28 | **NIO** | NIO Inc. | Consumer Cyclical | **+65.6%** | 4.45 | 7.37 | 1.90 | ··WM | 24 | 46 |
+| 28 | **NIO** | NIO Inc. | Consumer Cyclical | **+65.8%** | 4.45 | 7.38 | 1.90 | ··WM | 24 | 46 |
 | 29 | **CRWV** | CoreWeave, Inc. | Technology | **+64.1%** | 88.04 | 144.46 | 1.88 | ··WM | 38 | 70 |
 | 30 | **DIS** | The Walt Disney Company | Communication Servic | **+14.8%** | 111.25 | 127.72 | 1.88 | HD·· | 32 | 70 |
 | 31 | **DASH** | DoorDash, Inc. | Consumer Cyclical | **+8.1%** | 233.50 | 252.30 | 1.82 | HD·· | 44 | 85 |
@@ -39,8 +39,8 @@
 | 37 | **PLTK** | Playtika Holding Corp. | Communication Servic | **+100.0%** | 2.45 | 4.90 | 1.72 | H··M | 11 | 36 |
 | 38 | **ABT** | Abbott Laboratories | Healthcare | **+3.5%** | 116.13 | 120.20 | 1.71 | ·DW· | 27 | 62 |
 | 39 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+23.8%** | 232.67 | 288.10 | 1.70 | ··WM | 22 | 56 |
-| 40 | **UL** | Unilever PLC | Consumer Defensive | **+14.4%** | 65.15 | 74.56 | 1.70 | HD·· | 5 | 32 |
-| 41 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+11.3%** | 552.57 | 615.07 | 1.69 | HD·· | 41 | 79 |
+| 40 | **UL** | Unilever PLC | Consumer Defensive | **+14.5%** | 65.15 | 74.57 | 1.70 | HD·· | 5 | 32 |
+| 41 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+11.3%** | 552.57 | 615.21 | 1.69 | HD·· | 41 | 79 |
 | 42 | **BAC** | Bank of America Corporation | Financial Services | **+10.2%** | 62.43 | 68.77 | 1.68 | ··WM | 24 | 60 |
 | 43 | **V** | Visa Inc. | Financial Services | **+8.9%** | 384.14 | 418.22 | 1.64 | HD·· | 39 | 83 |
 | 44 | **T** | AT&T Inc. | Communication Servic | **+11.4%** | 25.77 | 28.71 | 1.56 | ·DW· | 25 | 56 |

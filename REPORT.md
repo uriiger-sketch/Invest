@@ -31,10 +31,10 @@
 | 29 | **QBTS** | D-Wave Quantum Inc. | Technology | **+88.6%** | 18.68 | 35.24 | 1.89 | ··WM | 17 | 45 |
 | 30 | **DIS** | The Walt Disney Company | Communication Servic | **+15.5%** | 110.61 | 127.72 | 1.86 | HD·· | 32 | 70 |
 | 31 | **DASH** | DoorDash, Inc. | Consumer Cyclical | **+10.1%** | 229.06 | 252.30 | 1.85 | HD·· | 44 | 85 |
-| 32 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.4%** | 424.44 | 464.48 | 1.81 | HD·· | 14 | 41 |
-| 33 | **UL** | Unilever PLC | Consumer Defensive | **+14.0%** | 65.32 | 74.44 | 1.80 | HD·· | 5 | 32 |
+| 32 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.4%** | 424.44 | 464.42 | 1.81 | HD·· | 14 | 41 |
+| 33 | **UL** | Unilever PLC | Consumer Defensive | **+13.9%** | 65.32 | 74.43 | 1.80 | HD·· | 5 | 32 |
 | 34 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.69 | 56.43 | 1.77 | ··WM | 17 | 44 |
-| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+14.2%** | 537.84 | 614.07 | 1.77 | HD·· | 41 | 79 |
+| 35 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+14.2%** | 537.84 | 613.99 | 1.77 | HD·· | 41 | 79 |
 | 36 | **MA** | Mastercard Incorporated | Financial Services | **+11.2%** | 599.86 | 667.30 | 1.77 | HD·· | 40 | 80 |
 | 37 | **MCD** | McDonald's Corporation | Consumer Cyclical | **+16.0%** | 272.54 | 316.06 | 1.72 | HD·· | 34 | 69 |
 | 38 | **V** | Visa Inc. | Financial Services | **+9.4%** | 382.41 | 418.22 | 1.72 | HD·· | 39 | 83 |

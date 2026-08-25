@@ -39,8 +39,8 @@
 | 37 | **PLTK** | Playtika Holding Corp. | Communication Servic | **+100.0%** | 2.45 | 4.90 | 1.72 | H··M | 11 | 36 |
 | 38 | **ABT** | Abbott Laboratories | Healthcare | **+3.5%** | 116.13 | 120.20 | 1.71 | ·DW· | 27 | 62 |
 | 39 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+23.8%** | 232.67 | 288.10 | 1.70 | ··WM | 22 | 56 |
-| 40 | **UL** | Unilever PLC | Consumer Defensive | **+14.4%** | 65.15 | 74.56 | 1.70 | HD·· | 5 | 32 |
-| 41 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+11.3%** | 552.57 | 615.14 | 1.69 | HD·· | 41 | 79 |
+| 40 | **UL** | Unilever PLC | Consumer Defensive | **+14.4%** | 65.15 | 74.55 | 1.70 | HD·· | 5 | 32 |
+| 41 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+11.3%** | 552.57 | 615.00 | 1.69 | HD·· | 41 | 79 |
 | 42 | **BAC** | Bank of America Corporation | Financial Services | **+10.2%** | 62.43 | 68.77 | 1.68 | ··WM | 24 | 60 |
 | 43 | **V** | Visa Inc. | Financial Services | **+8.9%** | 384.14 | 418.22 | 1.64 | HD·· | 39 | 83 |
 | 44 | **T** | AT&T Inc. | Communication Servic | **+11.4%** | 25.77 | 28.71 | 1.56 | ·DW· | 25 | 56 |

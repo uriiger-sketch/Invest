@@ -34,13 +34,13 @@
 | 32 | **PGR** | The Progressive Corporation | Financial Services | **+3.9%** | 222.09 | 230.81 | 1.81 | HD·· | 25 | 31 |
 | 33 | **ZTS** | Zoetis Inc. | Healthcare | **+30.2%** | 77.29 | 100.62 | 1.77 | H··M | 19 | 53 |
 | 34 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+11.2%** | 213.78 | 237.81 | 1.77 | ··WM | 38 | 74 |
-| 35 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+35.4%** | 25.79 | 34.92 | 1.75 | H··M | 36 | 69 |
+| 35 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+35.6%** | 25.79 | 34.98 | 1.75 | H··M | 36 | 69 |
 | 36 | **DE** | Deere & Company | Industrials | **+5.5%** | 630.66 | 665.35 | 1.74 | HD·· | 24 | 57 |
 | 37 | **PLTK** | Playtika Holding Corp. | Communication Servic | **+100.0%** | 2.45 | 4.90 | 1.72 | H··M | 11 | 36 |
 | 38 | **ABT** | Abbott Laboratories | Healthcare | **+3.5%** | 116.13 | 120.20 | 1.71 | ·DW· | 27 | 62 |
 | 39 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+23.8%** | 232.67 | 288.10 | 1.70 | ··WM | 22 | 56 |
-| 40 | **UL** | Unilever PLC | Consumer Defensive | **+14.5%** | 65.15 | 74.57 | 1.70 | HD·· | 5 | 32 |
-| 41 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+11.3%** | 552.57 | 615.21 | 1.69 | HD·· | 41 | 79 |
+| 40 | **UL** | Unilever PLC | Consumer Defensive | **+14.4%** | 65.15 | 74.56 | 1.70 | HD·· | 5 | 32 |
+| 41 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+11.3%** | 552.57 | 615.14 | 1.69 | HD·· | 41 | 79 |
 | 42 | **BAC** | Bank of America Corporation | Financial Services | **+10.2%** | 62.43 | 68.77 | 1.68 | ··WM | 24 | 60 |
 | 43 | **V** | Visa Inc. | Financial Services | **+8.9%** | 384.14 | 418.22 | 1.64 | HD·· | 39 | 83 |
 | 44 | **T** | AT&T Inc. | Communication Servic | **+11.4%** | 25.77 | 28.71 | 1.56 | ·DW· | 25 | 56 |

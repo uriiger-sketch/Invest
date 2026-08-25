@@ -19,21 +19,21 @@
 | 17 | **UNP** | Union Pacific Corporation | Industrials | **+6.3%** | 309.86 | 329.25 | 2.32 | ·DWM | 25 | 63 |
 | 18 | **ADI** | Analog Devices, Inc. | Technology | **+26.7%** | 371.17 | 470.25 | 2.00 | HD·· | 34 | 69 |
 | 19 | **SOUN** | SoundHound AI, Inc. | Technology | **+81.6%** | 7.00 | 12.71 | 1.96 | ··WM | 8 | 35 |
-| 20 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+98.8%** | 11.15 | 22.16 | 1.96 | ··WM | 26 | 45 |
+| 20 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+93.0%** | 11.15 | 21.52 | 1.96 | ··WM | 26 | 45 |
 | 21 | **NVDA** | NVIDIA Corporation | Technology | **+46.2%** | 208.48 | 304.73 | 1.95 | ··WM | 62 | 102 |
 | 22 | **SAP** | SAP SE | Technology | **+12.2%** | 218.66 | 245.33 | 1.95 | HD·· | 16 | 42 |
 | 23 | **NOW** | ServiceNow, Inc. | Technology | **+11.1%** | 128.05 | 142.23 | 1.95 | HD·· | 49 | 85 |
 | 24 | **INTU** | Intuit Inc. | Technology | **+20.2%** | 369.92 | 444.50 | 1.94 | HD·· | 35 | 66 |
-| 25 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+35.2%** | 410.12 | 554.45 | 1.93 | ··WM | 19 | 63 |
+| 25 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+35.2%** | 410.12 | 554.45 | 1.94 | ··WM | 19 | 63 |
 | 26 | **SHOP** | Shopify Inc. | Technology | **+14.3%** | 149.80 | 171.15 | 1.92 | ·DW· | 53 | 81 |
-| 27 | **NIO** | NIO Inc. | Consumer Cyclical | **+69.2%** | 4.36 | 7.38 | 1.91 | ··WM | 24 | 46 |
+| 27 | **NIO** | NIO Inc. | Consumer Cyclical | **+69.0%** | 4.36 | 7.37 | 1.90 | ··WM | 24 | 46 |
 | 28 | **QBTS** | D-Wave Quantum Inc. | Technology | **+88.6%** | 18.68 | 35.24 | 1.89 | ··WM | 17 | 45 |
 | 29 | **DIS** | The Walt Disney Company | Communication Servic | **+15.5%** | 110.61 | 127.72 | 1.85 | HD·· | 32 | 70 |
 | 30 | **DASH** | DoorDash, Inc. | Consumer Cyclical | **+10.1%** | 229.06 | 252.30 | 1.84 | HD·· | 44 | 85 |
-| 31 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.5%** | 424.44 | 464.91 | 1.81 | HD·· | 14 | 41 |
-| 32 | **UL** | Unilever PLC | Consumer Defensive | **+14.1%** | 65.32 | 74.51 | 1.81 | HD·· | 5 | 32 |
+| 31 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.5%** | 424.44 | 464.80 | 1.81 | HD·· | 14 | 41 |
+| 32 | **UL** | Unilever PLC | Consumer Defensive | **+14.0%** | 65.32 | 74.49 | 1.81 | HD·· | 5 | 32 |
 | 33 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+15.9%** | 48.69 | 56.43 | 1.79 | ··WM | 17 | 44 |
-| 34 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+14.3%** | 537.84 | 614.64 | 1.78 | HD·· | 41 | 79 |
+| 34 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+14.3%** | 537.84 | 614.50 | 1.78 | HD·· | 41 | 79 |
 | 35 | **MA** | Mastercard Incorporated | Financial Services | **+11.2%** | 599.86 | 667.30 | 1.77 | HD·· | 40 | 80 |
 | 36 | **MCD** | McDonald's Corporation | Consumer Cyclical | **+16.0%** | 272.54 | 316.06 | 1.73 | HD·· | 34 | 69 |
 | 37 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+21.8%** | 236.45 | 288.10 | 1.72 | ··WM | 22 | 56 |

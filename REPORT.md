@@ -31,7 +31,7 @@
 | 29 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+4.2%** | 206.25 | 214.98 | 1.87 | ·DW· | 22 | 50 |
 | 30 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+116.1%** | 3.34 | 7.22 | 1.86 | ··WM | 7 | 38 |
 | 31 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+26.1%** | 228.49 | 288.10 | 1.85 | ··WM | 22 | 56 |
-| 32 | **NIO** | NIO Inc. | Consumer Cyclical | **+68.6%** | 4.37 | 7.37 | 1.84 | ··WM | 24 | 46 |
+| 32 | **NIO** | NIO Inc. | Consumer Cyclical | **+68.5%** | 4.37 | 7.36 | 1.84 | ··WM | 24 | 46 |
 | 33 | **SLB** | SLB N.V. | Energy | **+8.0%** | 57.33 | 61.93 | 1.78 | HD·· | 30 | 62 |
 | 34 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+31.3%** | 23.26 | 30.55 | 1.75 | ··WM | 26 | 57 |
 | 35 | **HIPO** | Hippo Holdings Inc. | Financial Services | **+23.9%** | 33.18 | 41.12 | 1.72 | ··WM | 5 | 30 |
@@ -44,7 +44,7 @@
 | 42 | **C** | Citigroup Inc. | Financial Services | **+16.3%** | 132.90 | 154.50 | 1.61 | HD·· | 21 | 54 |
 | 43 | **UPS** | United Parcel Service, Inc. | Industrials | **+10.2%** | 105.33 | 116.08 | 1.56 | HD·· | 29 | 62 |
 | 44 | **LIN** | Linde plc | Basic Materials | **+11.8%** | 489.51 | 547.24 | 1.53 | HD·· | 27 | 62 |
-| 45 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.8%** | 420.54 | 461.62 | 1.53 | ·DW· | 14 | 41 |
+| 45 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.8%** | 420.54 | 461.57 | 1.53 | ·DW· | 14 | 41 |
 | 46 | **ETSY** | Etsy, Inc. | Consumer Cyclical | **+4.1%** | 83.59 | 87.04 | 1.52 | HD·· | 31 | 72 |
 | 47 | **CLS** | Celestica Inc. | Technology | **+59.8%** | 298.70 | 477.22 | 0.99 | H··· | 20 | 52 |
 | 48 | **SMCI** | Super Micro Computer, Inc. | Technology | **+14.3%** | 37.08 | 42.38 | 0.98 | ··W· | 19 | 52 |

@@ -44,7 +44,7 @@
 | 42 | **C** | Citigroup Inc. | Financial Services | **+16.3%** | 132.90 | 154.50 | 1.61 | HD·· | 21 | 54 |
 | 43 | **UPS** | United Parcel Service, Inc. | Industrials | **+10.2%** | 105.33 | 116.08 | 1.56 | HD·· | 29 | 62 |
 | 44 | **LIN** | Linde plc | Basic Materials | **+11.8%** | 489.51 | 547.24 | 1.53 | HD·· | 27 | 62 |
-| 45 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.8%** | 420.54 | 461.57 | 1.53 | ·DW· | 14 | 41 |
+| 45 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+9.7%** | 420.54 | 461.52 | 1.53 | ·DW· | 14 | 41 |
 | 46 | **ETSY** | Etsy, Inc. | Consumer Cyclical | **+4.1%** | 83.59 | 87.04 | 1.52 | HD·· | 31 | 72 |
 | 47 | **CLS** | Celestica Inc. | Technology | **+59.8%** | 298.70 | 477.22 | 0.99 | H··· | 20 | 52 |
 | 48 | **SMCI** | Super Micro Computer, Inc. | Technology | **+14.3%** | 37.08 | 42.38 | 0.98 | ··W· | 19 | 52 |

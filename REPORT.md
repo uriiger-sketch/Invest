@@ -8,7 +8,7 @@
 | 6 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+4.3%** | 546.12 | 569.54 | 3.64 | HDWM | 30 | 62 |
 | 7 | **SPGI** | S&P Global Inc. | Financial Services | **+17.1%** | 443.51 | 519.30 | 3.55 | HDWM | 24 | 58 |
 | 8 | **SNY** | Sanofi | Healthcare | **+21.4%** | 44.24 | 53.72 | 3.41 | HDWM | 10 | 35 |
-| 9 | **BAC** | Bank of America Corporation | Financial Services | **+9.7%** | 62.68 | 68.77 | 3.21 | HDWM | 24 | 60 |
+| 9 | **BAC** | Bank of America Corporation | Financial Services | **+9.7%** | 62.68 | 68.77 | 3.22 | HDWM | 24 | 60 |
 | 10 | **GTLB** | GitLab Inc. | Technology | **+7.5%** | 49.83 | 53.57 | 3.00 | HDW· | 27 | 60 |
 | 11 | **NVDA** | NVIDIA Corporation | Technology | **+42.0%** | 230.36 | 327.13 | 2.90 | HD·M | 60 | 102 |
 | 12 | **CRWV** | CoreWeave, Inc. | Technology | **+61.7%** | 89.36 | 144.46 | 2.88 | H·WM | 38 | 70 |
@@ -16,7 +16,7 @@
 | 14 | **ELV** | Elevance Health, Inc. | Healthcare | **+10.2%** | 407.50 | 449.10 | 2.67 | HDW· | 22 | 59 |
 | 15 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+26.3%** | 228.41 | 288.43 | 2.58 | H·WM | 23 | 57 |
 | 16 | **SHEL** | Shell plc | Energy | **+7.4%** | 92.95 | 99.81 | 2.54 | HDW· | 16 | 44 |
-| 17 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+7.2%** | 159.47 | 170.91 | 2.46 | HDW· | 25 | 26 |
+| 17 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+7.2%** | 159.47 | 170.91 | 2.47 | HDW· | 25 | 26 |
 | 18 | **ORA** | Ormat Technologies, Inc. | Utilities | **+25.6%** | 105.45 | 132.42 | 1.99 | HD·· | 13 | 43 |
 | 19 | **CRM** | Salesforce, Inc. | Technology | **+4.5%** | 259.23 | 270.84 | 1.99 | ·DW· | 56 | 93 |
 | 20 | **U** | Unity Software Inc. | Technology | **+18.6%** | 41.66 | 49.39 | 1.98 | ··WM | 26 | 61 |

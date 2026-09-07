@@ -5,9 +5,9 @@
 | 3 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+98.8%** | 3.63 | 7.22 | 3.85 | HDWM | 7 | 38 |
 | 4 | **BSX** | Boston Scientific Corporation | Healthcare | **+31.1%** | 47.80 | 62.69 | 3.81 | HDWM | 31 | 69 |
 | 5 | **KRNT** | Kornit Digital Ltd. | Industrials | **+51.1%** | 16.55 | 25.00 | 3.77 | HDWM | 5 | 28 |
-| 6 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+4.3%** | 546.12 | 569.54 | 3.63 | HDWM | 30 | 62 |
-| 7 | **SPGI** | S&P Global Inc. | Financial Services | **+17.3%** | 443.51 | 520.30 | 3.57 | HDWM | 24 | 58 |
-| 8 | **SNY** | Sanofi | Healthcare | **+21.4%** | 44.24 | 53.72 | 3.41 | HDWM | 10 | 35 |
+| 6 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+4.3%** | 546.12 | 569.54 | 3.64 | HDWM | 30 | 62 |
+| 7 | **SPGI** | S&P Global Inc. | Financial Services | **+17.3%** | 443.51 | 520.30 | 3.58 | HDWM | 24 | 58 |
+| 8 | **SNY** | Sanofi | Healthcare | **+21.4%** | 44.24 | 53.72 | 3.42 | HDWM | 10 | 35 |
 | 9 | **BAC** | Bank of America Corporation | Financial Services | **+9.7%** | 62.68 | 68.77 | 3.21 | HDWM | 24 | 60 |
 | 10 | **AKAM** | Akamai Technologies, Inc. | Technology | **+47.4%** | 105.22 | 155.13 | 2.94 | HDW· | 25 | 57 |
 | 11 | **SMCI** | Super Micro Computer, Inc. | Technology | **+7.0%** | 39.59 | 42.38 | 2.91 | HDW· | 19 | 52 |
@@ -18,8 +18,8 @@
 | 16 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+4.8%** | 204.73 | 214.62 | 2.59 | ·DWM | 22 | 50 |
 | 17 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+26.3%** | 228.41 | 288.43 | 2.55 | H·WM | 23 | 57 |
 | 18 | **SHEL** | Shell plc | Energy | **+7.4%** | 92.95 | 99.81 | 2.51 | HDW· | 16 | 44 |
-| 19 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+28.1%** | 23.66 | 30.32 | 2.44 | H·WM | 26 | 57 |
-| 20 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+7.2%** | 159.47 | 170.91 | 2.44 | HDW· | 25 | 26 |
+| 19 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+7.2%** | 159.47 | 170.91 | 2.44 | HDW· | 25 | 26 |
+| 20 | **CHWY** | Chewy, Inc. | Consumer Cyclical | **+28.1%** | 23.66 | 30.32 | 2.44 | H·WM | 26 | 57 |
 | 21 | **CRM** | Salesforce, Inc. | Technology | **+5.0%** | 259.23 | 272.13 | 1.99 | ·DW· | 56 | 93 |
 | 22 | **DELL** | Dell Technologies Inc. | Technology | **+7.7%** | 524.14 | 564.46 | 1.97 | HD·· | 28 | 61 |
 | 23 | **AVGO** | Broadcom Inc. | Technology | **+49.0%** | 357.90 | 533.41 | 1.96 | HD·· | 49 | 91 |
@@ -40,7 +40,7 @@
 | 38 | **CVX** | Chevron Corporation | Energy | **+6.0%** | 208.60 | 221.21 | 1.70 | HD·· | 25 | 64 |
 | 39 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+37.2%** | 72.35 | 99.23 | 1.68 | ··WM | 34 | 69 |
 | 40 | **NEE** | NextEra Energy, Inc. | Utilities | **+17.9%** | 83.43 | 98.39 | 1.68 | HD·· | 20 | 55 |
-| 41 | **DEO** | Diageo plc | Consumer Defensive | **+19.2%** | 89.19 | 106.29 | 1.64 | ··WM | 8 | 34 |
+| 41 | **DEO** | Diageo plc | Consumer Defensive | **+19.2%** | 89.19 | 106.29 | 1.65 | ··WM | 8 | 34 |
 | 42 | **T** | AT&T Inc. | Communication Servic | **+11.8%** | 25.68 | 28.71 | 1.64 | ·DW· | 25 | 56 |
 | 43 | **ABBV** | AbbVie Inc. | Healthcare | **+7.8%** | 256.46 | 276.59 | 1.61 | ·DW· | 31 | 63 |
 | 44 | **GS** | The Goldman Sachs Group, Inc. | Financial Services | **+9.9%** | 1038.61 | 1141.65 | 1.55 | ·DW· | 25 | 59 |

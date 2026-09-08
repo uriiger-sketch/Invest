@@ -17,7 +17,7 @@
 | 15 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+26.3%** | 228.41 | 288.43 | 2.63 | H·WM | 23 | 57 |
 | 16 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+4.8%** | 204.73 | 214.62 | 2.59 | ·DWM | 22 | 50 |
 | 17 | **SHEL** | Shell plc | Energy | **+7.4%** | 92.95 | 99.81 | 2.56 | HDW· | 16 | 44 |
-| 18 | **BP** | BP p.l.c. | Energy | **+9.9%** | 43.81 | 48.15 | 2.51 | HDW· | 19 | 46 |
+| 18 | **BP** | BP p.l.c. | Energy | **+9.9%** | 43.81 | 48.15 | 2.50 | HDW· | 19 | 46 |
 | 19 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+7.2%** | 159.47 | 170.91 | 2.45 | HDW· | 25 | 26 |
 | 20 | **CRM** | Salesforce, Inc. | Technology | **+5.0%** | 259.23 | 272.13 | 1.99 | ·DW· | 56 | 93 |
 | 21 | **AVGO** | Broadcom Inc. | Technology | **+49.0%** | 357.90 | 533.41 | 1.97 | HD·· | 49 | 91 |
@@ -30,7 +30,7 @@
 | 28 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+46.5%** | 24.01 | 35.17 | 1.91 | ··WM | 37 | 70 |
 | 29 | **TATT** | TAT Technologies Ltd. | Industrials | **+51.9%** | 39.97 | 60.71 | 1.88 | HD·· | 6 | 26 |
 | 30 | **F** | Ford Motor Company | Consumer Cyclical | **+8.4%** | 14.62 | 15.85 | 1.86 | HD·· | 21 | 53 |
-| 31 | **CRH** | CRH plc | Basic Materials | **+46.7%** | 94.26 | 138.32 | 1.84 | ··WM | 22 | 57 |
+| 31 | **CRH** | CRH plc | Basic Materials | **+46.7%** | 94.26 | 138.32 | 1.85 | ··WM | 22 | 57 |
 | 32 | **WFC** | Wells Fargo & Company | Financial Services | **+11.4%** | 89.97 | 100.24 | 1.83 | HD·· | 26 | 60 |
 | 33 | **C** | Citigroup Inc. | Financial Services | **+12.2%** | 137.72 | 154.50 | 1.82 | HD·· | 21 | 54 |
 | 34 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+23.8%** | 45.83 | 56.72 | 1.75 | ··WM | 17 | 44 |

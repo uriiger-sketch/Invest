@@ -28,9 +28,9 @@
 | 26 | **ZS** | Zscaler, Inc. | Technology | **+26.7%** | 163.48 | 207.06 | 1.94 | ··WM | 46 | 80 |
 | 27 | **DOCN** | DigitalOcean Holdings, Inc. | Technology | **+33.7%** | 131.05 | 175.20 | 1.92 | HD·· | 17 | 50 |
 | 28 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+29.1%** | 428.03 | 552.38 | 1.92 | ·DW· | 20 | 67 |
-| 29 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+74.6%** | 35.29 | 61.64 | 1.89 | ··WM | 18 | 18 |
+| 29 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+72.5%** | 35.74 | 61.64 | 1.88 | ··WM | 18 | 18 |
 | 30 | **ORA** | Ormat Technologies, Inc. | Utilities | **+37.0%** | 96.65 | 132.42 | 1.88 | HD·· | 13 | 43 |
-| 31 | **CRH** | CRH plc | Basic Materials | **+57.2%** | 87.66 | 137.80 | 1.85 | ··WM | 22 | 57 |
+| 31 | **CRH** | CRH plc | Basic Materials | **+57.2%** | 87.66 | 137.80 | 1.86 | ··WM | 22 | 57 |
 | 32 | **BP** | BP p.l.c. | Energy | **+4.5%** | 46.08 | 48.15 | 1.85 | HD·· | 19 | 46 |
 | 33 | **TEM** | Tempus AI, Inc. | Healthcare | **+14.9%** | 58.74 | 67.47 | 1.85 | ··WM | 17 | 40 |
 | 34 | **SPGI** | S&P Global Inc. | Financial Services | **+26.8%** | 410.42 | 520.30 | 1.82 | ··WM | 24 | 58 |
@@ -42,8 +42,8 @@
 | 40 | **GS** | The Goldman Sachs Group, Inc. | Financial Services | **+12.0%** | 1019.77 | 1141.65 | 1.73 | HD·· | 25 | 59 |
 | 41 | **GLBE** | Global-E Online Ltd. | Consumer Cyclical | **+38.7%** | 36.50 | 50.62 | 1.69 | ··WM | 13 | 17 |
 | 42 | **BLK** | BlackRock, Inc. | Financial Services | **+24.3%** | 1062.40 | 1320.81 | 1.69 | ··WM | 17 | 50 |
-| 43 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+14.3%** | 408.64 | 466.92 | 1.64 | HD·· | 14 | 41 |
-| 44 | **TATT** | TAT Technologies Ltd. | Industrials | **+60.4%** | 37.85 | 60.71 | 1.64 | H··M | 6 | 26 |
+| 43 | **TATT** | TAT Technologies Ltd. | Industrials | **+60.4%** | 37.85 | 60.71 | 1.64 | H··M | 6 | 26 |
+| 44 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+14.2%** | 408.64 | 466.70 | 1.64 | HD·· | 14 | 41 |
 | 45 | **CVX** | Chevron Corporation | Energy | **+4.0%** | 212.76 | 221.21 | 1.63 | HD·· | 25 | 64 |
 | 46 | **COST** | Costco Wholesale Corporation | Consumer Defensive | **+18.8%** | 902.38 | 1072.20 | 1.59 | HD·· | 39 | 71 |
 | 47 | **NEE** | NextEra Energy, Inc. | Utilities | **+19.3%** | 82.44 | 98.39 | 1.57 | HD·· | 20 | 55 |

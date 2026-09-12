@@ -14,7 +14,7 @@
 | 12 | **ABNB** | Airbnb, Inc. | Consumer Cyclical | **+7.0%** | 170.19 | 182.12 | 2.73 | HDW· | 45 | 83 |
 | 13 | **ELV** | Elevance Health, Inc. | Healthcare | **+7.5%** | 418.72 | 450.05 | 2.68 | HDW· | 22 | 58 |
 | 14 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+29.6%** | 222.54 | 288.43 | 2.54 | H·WM | 23 | 57 |
-| 15 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+12.9%** | 413.78 | 467.23 | 2.50 | HDW· | 14 | 41 |
+| 15 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+12.9%** | 413.78 | 467.17 | 2.50 | HDW· | 14 | 41 |
 | 16 | **T** | AT&T Inc. | Communication Servic | **+10.2%** | 26.06 | 28.71 | 2.44 | HDW· | 25 | 56 |
 | 17 | **GS** | The Goldman Sachs Group, Inc. | Financial Services | **+10.9%** | 1029.18 | 1141.65 | 2.42 | HDW· | 25 | 59 |
 | 18 | **UNP** | Union Pacific Corporation | Industrials | **+15.8%** | 284.40 | 329.25 | 2.29 | HD·M | 25 | 63 |

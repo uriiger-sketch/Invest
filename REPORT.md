@@ -38,7 +38,7 @@
 | 36 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+31.5%** | 43.22 | 56.84 | 1.76 | ··WM | 17 | 44 |
 | 37 | **C** | Citigroup Inc. | Financial Services | **+11.8%** | 138.82 | 155.20 | 1.73 | HD·· | 21 | 54 |
 | 38 | **BLK** | BlackRock, Inc. | Financial Services | **+22.6%** | 1079.65 | 1323.31 | 1.72 | ··WM | 17 | 50 |
-| 39 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+12.9%** | 413.78 | 467.17 | 1.71 | HD·· | 14 | 41 |
+| 39 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+12.8%** | 413.78 | 466.90 | 1.71 | HD·· | 14 | 41 |
 | 40 | **COST** | Costco Wholesale Corporation | Consumer Defensive | **+18.5%** | 904.77 | 1072.20 | 1.67 | HD·· | 39 | 71 |
 | 41 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+7.3%** | 200.36 | 214.89 | 1.65 | ··WM | 22 | 50 |
 | 42 | **DIS** | The Walt Disney Company | Communication Servic | **+20.5%** | 106.55 | 128.34 | 1.62 | HD·· | 32 | 70 |

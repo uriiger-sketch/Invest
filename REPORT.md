@@ -3,7 +3,7 @@
 | 1 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+42.3%** | 24.74 | 35.20 | 3.72 | HDWM | 37 | 69 |
 | 2 | **MDT** | Medtronic plc | Healthcare | **+15.2%** | 90.96 | 104.76 | 3.70 | HDWM | 29 | 63 |
 | 3 | **BP** | BP p.l.c. | Energy | **+5.4%** | 46.10 | 48.59 | 3.59 | HDWM | 19 | 46 |
-| 4 | **PM** | Philip Morris International Inc. | Consumer Defensive | **+8.5%** | 191.06 | 207.27 | 3.47 | HDWM | 16 | 48 |
+| 4 | **PM** | Philip Morris International Inc. | Consumer Defensive | **+8.5%** | 191.06 | 207.27 | 3.46 | HDWM | 16 | 48 |
 | 5 | **SNY** | Sanofi | Healthcare | **+25.6%** | 42.77 | 53.72 | 3.43 | HDWM | 10 | 35 |
 | 6 | **PFE** | Pfizer Inc. | Healthcare | **+4.2%** | 27.72 | 28.88 | 3.41 | HDWM | 28 | 64 |
 | 7 | **BAC** | Bank of America Corporation | Financial Services | **+10.1%** | 62.69 | 69.00 | 3.27 | HDWM | 24 | 60 |
@@ -37,7 +37,7 @@
 | 35 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+39.1%** | 71.44 | 99.39 | 1.76 | ··WM | 35 | 71 |
 | 36 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+31.5%** | 43.22 | 56.84 | 1.76 | ··WM | 17 | 44 |
 | 37 | **C** | Citigroup Inc. | Financial Services | **+11.8%** | 138.82 | 155.20 | 1.73 | HD·· | 21 | 54 |
-| 38 | **BLK** | BlackRock, Inc. | Financial Services | **+22.6%** | 1079.65 | 1323.31 | 1.71 | ··WM | 17 | 50 |
+| 38 | **BLK** | BlackRock, Inc. | Financial Services | **+22.6%** | 1079.65 | 1323.31 | 1.72 | ··WM | 17 | 50 |
 | 39 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+12.9%** | 413.78 | 467.17 | 1.71 | HD·· | 14 | 41 |
 | 40 | **COST** | Costco Wholesale Corporation | Consumer Defensive | **+18.5%** | 904.77 | 1072.20 | 1.67 | HD·· | 39 | 71 |
 | 41 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+7.3%** | 200.36 | 214.89 | 1.65 | ··WM | 22 | 50 |

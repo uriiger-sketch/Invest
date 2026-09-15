@@ -7,7 +7,7 @@
 | 5 | **BP** | BP p.l.c. | Energy | **+5.8%** | 45.93 | 48.59 | 3.65 | HDWM | 19 | 46 |
 | 6 | **SHEL** | Shell plc | Energy | **+3.7%** | 96.77 | 100.35 | 3.65 | HDWM | 16 | 44 |
 | 7 | **PM** | Philip Morris International Inc. | Consumer Defensive | **+6.4%** | 194.86 | 207.27 | 3.60 | HDWM | 16 | 48 |
-| 8 | **SNY** | Sanofi | Healthcare | **+24.0%** | 43.33 | 53.72 | 3.57 | HDWM | 10 | 35 |
+| 8 | **SNY** | Sanofi | Healthcare | **+24.0%** | 43.33 | 53.72 | 3.56 | HDWM | 10 | 35 |
 | 9 | **PFE** | Pfizer Inc. | Healthcare | **+4.2%** | 27.72 | 28.88 | 3.54 | HDWM | 28 | 64 |
 | 10 | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | **+21.6%** | 79.82 | 97.03 | 3.23 | HDWM | 11 | 35 |
 | 11 | **GTLB** | GitLab Inc. | Technology | **+11.9%** | 49.25 | 55.09 | 2.94 | ·DWM | 27 | 60 |
@@ -25,15 +25,15 @@
 | 23 | **BSX** | Boston Scientific Corporation | Healthcare | **+38.5%** | 45.05 | 62.41 | 1.95 | ··WM | 31 | 69 |
 | 24 | **META** | Meta Platforms, Inc. | Communication Servic | **+13.9%** | 665.60 | 758.28 | 1.89 | HD·· | 62 | 114 |
 | 25 | **QUBT** | Quantum Computing Inc. | Technology | **+134.2%** | 7.97 | 18.67 | 1.89 | ··WM | 6 | 34 |
-| 26 | **ETN** | Eaton Corporation plc | Industrials | **+21.6%** | 393.16 | 478.17 | 1.88 | HD·· | 27 | 61 |
-| 27 | **S** | SentinelOne, Inc. | Technology | **+7.3%** | 22.61 | 24.25 | 1.88 | HD·· | 34 | 66 |
+| 26 | **S** | SentinelOne, Inc. | Technology | **+7.3%** | 22.61 | 24.25 | 1.88 | HD·· | 34 | 66 |
+| 27 | **ETN** | Eaton Corporation plc | Industrials | **+21.6%** | 393.16 | 478.17 | 1.88 | HD·· | 27 | 61 |
 | 28 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+71.4%** | 35.62 | 61.05 | 1.86 | ··WM | 18 | 18 |
 | 29 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+111.6%** | 3.41 | 7.22 | 1.86 | ··WM | 7 | 39 |
 | 30 | **SPGI** | S&P Global Inc. | Financial Services | **+24.3%** | 418.54 | 520.30 | 1.85 | ··WM | 24 | 58 |
 | 31 | **TEVA** | Teva Pharmaceutical Industries Lim | Healthcare | **+8.2%** | 38.72 | 41.91 | 1.85 | HD·· | 13 | 50 |
 | 32 | **CRH** | CRH plc | Basic Materials | **+53.7%** | 88.98 | 136.81 | 1.85 | ··WM | 23 | 58 |
 | 33 | **DIS** | The Walt Disney Company | Communication Servic | **+18.2%** | 108.59 | 128.34 | 1.85 | HD·· | 32 | 70 |
-| 34 | **ADI** | Analog Devices, Inc. | Technology | **+30.4%** | 361.02 | 470.72 | 1.85 | ·DW· | 34 | 70 |
+| 34 | **ADI** | Analog Devices, Inc. | Technology | **+30.4%** | 361.02 | 470.72 | 1.84 | ·DW· | 34 | 70 |
 | 35 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+9.6%** | 519.51 | 569.19 | 1.81 | ··WM | 31 | 63 |
 | 36 | **COST** | Costco Wholesale Corporation | Consumer Defensive | **+16.7%** | 918.91 | 1072.20 | 1.81 | HD·· | 39 | 71 |
 | 37 | **QCOM** | QUALCOMM Incorporated | Technology | **+7.9%** | 180.15 | 194.43 | 1.78 | HD·· | 37 | 75 |

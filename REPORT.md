@@ -8,14 +8,14 @@
 | 6 | **UNP** | Union Pacific Corporation | Industrials | **+17.2%** | 280.92 | 329.25 | 3.79 | HDWM | 25 | 63 |
 | 7 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+44.7%** | 24.33 | 35.20 | 3.73 | HDWM | 37 | 69 |
 | 8 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+27.5%** | 44.58 | 56.84 | 3.64 | HDWM | 17 | 44 |
-| 9 | **CRM** | Salesforce, Inc. | Technology | **+10.0%** | 250.54 | 275.60 | 2.93 | ·DWM | 56 | 93 |
-| 10 | **SNPS** | Synopsys, Inc. | Technology | **+44.2%** | 378.47 | 545.93 | 2.87 | HDW· | 25 | 63 |
-| 11 | **ETSY** | Etsy, Inc. | Consumer Cyclical | **+20.2%** | 73.46 | 88.27 | 2.76 | HDW· | 30 | 71 |
-| 12 | **PM** | Philip Morris International Inc. | Consumer Defensive | **+8.1%** | 191.71 | 207.27 | 2.75 | HDW· | 16 | 48 |
-| 13 | **ELV** | Elevance Health, Inc. | Healthcare | **+9.1%** | 412.56 | 450.05 | 2.75 | HDW· | 22 | 58 |
-| 14 | **PFE** | Pfizer Inc. | Healthcare | **+5.2%** | 27.46 | 28.88 | 2.74 | ·DWM | 28 | 64 |
-| 15 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+71.7%** | 35.56 | 61.05 | 2.73 | H·WM | 18 | 18 |
-| 16 | **SNY** | Sanofi | Healthcare | **+26.1%** | 42.59 | 53.72 | 2.73 | ·DWM | 10 | 35 |
+| 9 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+67.5%** | 36.44 | 61.05 | 3.59 | HDWM | 18 | 18 |
+| 10 | **CRM** | Salesforce, Inc. | Technology | **+10.0%** | 250.54 | 275.60 | 2.93 | ·DWM | 56 | 93 |
+| 11 | **SNPS** | Synopsys, Inc. | Technology | **+44.2%** | 378.47 | 545.93 | 2.87 | HDW· | 25 | 63 |
+| 12 | **ETSY** | Etsy, Inc. | Consumer Cyclical | **+20.2%** | 73.46 | 88.27 | 2.76 | HDW· | 30 | 71 |
+| 13 | **PM** | Philip Morris International Inc. | Consumer Defensive | **+8.1%** | 191.71 | 207.27 | 2.75 | HDW· | 16 | 48 |
+| 14 | **ELV** | Elevance Health, Inc. | Healthcare | **+9.1%** | 412.56 | 450.05 | 2.75 | HDW· | 22 | 58 |
+| 15 | **PFE** | Pfizer Inc. | Healthcare | **+5.2%** | 27.46 | 28.88 | 2.74 | ·DWM | 28 | 64 |
+| 16 | **SNY** | Sanofi | Healthcare | **+26.1%** | 42.59 | 53.72 | 2.72 | ·DWM | 10 | 35 |
 | 17 | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | **+21.4%** | 79.90 | 97.03 | 2.70 | HDW· | 11 | 35 |
 | 18 | **SHEL** | Shell plc | Energy | **+4.9%** | 95.70 | 100.35 | 2.61 | ·DWM | 16 | 44 |
 | 19 | **BP** | BP p.l.c. | Energy | **+7.1%** | 45.38 | 48.59 | 2.60 | ·DWM | 19 | 46 |
@@ -34,14 +34,14 @@
 | 32 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+10.9%** | 513.26 | 569.19 | 1.83 | ··WM | 31 | 63 |
 | 33 | **GSK** | GSK plc | Healthcare | **+18.0%** | 50.29 | 59.33 | 1.82 | HD·· | 8 | 37 |
 | 34 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+126.2%** | 3.19 | 7.22 | 1.81 | ··WM | 7 | 39 |
-| 35 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+12.0%** | 412.34 | 461.69 | 1.79 | HD·· | 14 | 41 |
+| 35 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+12.0%** | 412.34 | 462.01 | 1.79 | HD·· | 14 | 41 |
 | 36 | **TEVA** | Teva Pharmaceutical Industries Lim | Healthcare | **+10.2%** | 38.53 | 42.45 | 1.79 | HD·· | 13 | 50 |
 | 37 | **BLK** | BlackRock, Inc. | Financial Services | **+27.6%** | 1037.24 | 1323.31 | 1.74 | ··WM | 17 | 50 |
 | 38 | **DIS** | The Walt Disney Company | Communication Servic | **+18.9%** | 106.99 | 127.22 | 1.74 | HD·· | 32 | 70 |
-| 39 | **PG** | The Procter & Gamble Company | Consumer Defensive | **+9.2%** | 147.02 | 160.61 | 1.74 | HD·· | 25 | 60 |
+| 39 | **PG** | The Procter & Gamble Company | Consumer Defensive | **+9.2%** | 147.02 | 160.61 | 1.73 | HD·· | 25 | 60 |
 | 40 | **META** | Meta Platforms, Inc. | Communication Servic | **+12.6%** | 673.31 | 758.28 | 1.71 | HD·· | 62 | 114 |
 | 41 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+34.1%** | 214.35 | 287.48 | 1.70 | ··WM | 22 | 56 |
-| 42 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+10.6%** | 547.43 | 605.55 | 1.68 | HD·· | 40 | 78 |
+| 42 | **SPOT** | Spotify Technology S.A. | Communication Servic | **+10.7%** | 547.43 | 605.97 | 1.68 | HD·· | 40 | 78 |
 | 43 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+4.6%** | 163.32 | 170.91 | 1.65 | ·DW· | 25 | 26 |
 | 44 | **TMUS** | T-Mobile US, Inc. | Communication Servic | **+38.1%** | 176.26 | 243.38 | 1.62 | ··WM | 27 | 62 |
 | 45 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+39.3%** | 171.40 | 238.78 | 0.97 | ···M | 39 | 76 |

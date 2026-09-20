@@ -38,7 +38,7 @@
 | 36 | **ORA** | Ormat Technologies, Inc. | Utilities | **+37.1%** | 97.34 | 133.50 | 1.71 | HD·· | 13 | 43 |
 | 37 | **GOOGL** | Alphabet Inc. | Communication Servic | **+22.5%** | 349.54 | 428.16 | 1.66 | HD·· | 61 | 112 |
 | 38 | **TMUS** | T-Mobile US, Inc. | Communication Servic | **+44.7%** | 168.18 | 243.38 | 1.64 | ··WM | 27 | 62 |
-| 39 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+80.0%** | 10.62 | 19.11 | 1.62 | H··M | 26 | 45 |
+| 39 | **XPEV** | XPeng Inc. | Consumer Cyclical | **+80.2%** | 10.62 | 19.14 | 1.62 | H··M | 26 | 45 |
 | 40 | **PG** | The Procter & Gamble Company | Consumer Defensive | **+9.7%** | 146.39 | 160.61 | 1.61 | HD·· | 25 | 60 |
 | 41 | **GOOG** | Alphabet Inc. | Communication Servic | **+22.6%** | 344.41 | 422.34 | 1.60 | HD·· | 60 | 64 |
 | 42 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+42.2%** | 167.90 | 238.78 | 0.99 | ···M | 39 | 76 |

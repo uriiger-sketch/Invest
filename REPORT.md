@@ -39,10 +39,10 @@
 | 37 | **GLBE** | Global-E Online Ltd. | Consumer Cyclical | **+24.2%** | 40.88 | 50.77 | 1.67 | HD·· | 13 | 18 |
 | 38 | **WCC** | WESCO International, Inc. | Industrials | **+10.5%** | 361.33 | 399.18 | 1.64 | HD·· | 11 | 46 |
 | 39 | **C** | Citigroup Inc. | Financial Services | **+17.1%** | 132.10 | 154.70 | 1.58 | ·DW· | 22 | 55 |
-| 40 | **TJX** | The TJX Companies, Inc. | Consumer Cyclical | **+29.0%** | 131.63 | 169.80 | 1.56 | HD·· | 22 | 23 |
+| 40 | **TJX** | The TJX Companies, Inc. | Consumer Cyclical | **+29.0%** | 131.63 | 169.80 | 1.57 | HD·· | 22 | 23 |
 | 41 | **MAR** | Marriott International, Inc. | Consumer Cyclical | **+8.3%** | 351.51 | 380.80 | 1.56 | HD·· | 28 | 58 |
 | 42 | **LIN** | Linde plc | Basic Materials | **+15.9%** | 468.14 | 542.60 | 1.47 | HD·· | 28 | 63 |
-| 43 | **DAL** | Delta Air Lines, Inc. | Industrials | **+25.3%** | 82.76 | 103.69 | 1.45 | HD·· | 25 | 64 |
+| 43 | **DAL** | Delta Air Lines, Inc. | Industrials | **+25.3%** | 82.76 | 103.69 | 1.46 | HD·· | 25 | 64 |
 | 44 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+51.7%** | 157.41 | 238.78 | 0.99 | ···M | 39 | 76 |
 | 45 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+22.4%** | 451.15 | 552.26 | 0.96 | ·D·· | 21 | 68 |
 | 46 | **MPWR** | Monolithic Power Systems, Inc. | Technology | **+37.8%** | 1335.55 | 1839.80 | 0.96 | H··· | 17 | 52 |

@@ -10,7 +10,7 @@
 | 8 | **SNPS** | Synopsys, Inc. | Technology | **+30.1%** | 425.76 | 553.77 | 2.97 | HDW· | 24 | 63 |
 | 9 | **GRAB** | Grab Holdings Limited | Technology | **+84.2%** | 3.13 | 5.76 | 2.96 | H·WM | 25 | 61 |
 | 10 | **CRWV** | CoreWeave, Inc. | Technology | **+61.6%** | 87.59 | 141.58 | 2.94 | HDW· | 41 | 73 |
-| 11 | **MSFT** | Microsoft Corporation | Technology | **+11.8%** | 516.17 | 577.26 | 2.93 | HDW· | 55 | 100 |
+| 11 | **MSFT** | Microsoft Corporation | Technology | **+11.8%** | 516.17 | 577.26 | 2.94 | HDW· | 55 | 100 |
 | 12 | **META** | Meta Platforms, Inc. | Communication Servic | **+5.1%** | 751.66 | 790.27 | 2.90 | HDW· | 62 | 114 |
 | 13 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+59.5%** | 22.02 | 35.12 | 2.67 | H·WM | 37 | 69 |
 | 14 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+69.2%** | 36.09 | 61.05 | 2.67 | H·WM | 18 | 18 |

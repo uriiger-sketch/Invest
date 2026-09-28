@@ -16,9 +16,9 @@
 | 14 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+69.2%** | 36.09 | 61.05 | 2.67 | H·WM | 18 | 18 |
 | 15 | **MDT** | Medtronic plc | Healthcare | **+18.3%** | 88.64 | 104.83 | 2.65 | ·DWM | 28 | 63 |
 | 16 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+29.1%** | 222.74 | 287.48 | 2.45 | HD·M | 22 | 56 |
-| 17 | **C** | Citigroup Inc. | Financial Services | **+15.2%** | 134.28 | 154.75 | 2.42 | HDW· | 22 | 55 |
-| 18 | **PM** | Philip Morris International Inc. | Consumer Defensive | **+9.3%** | 190.48 | 208.13 | 2.36 | HDW· | 16 | 48 |
-| 19 | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | **+24.5%** | 78.00 | 97.13 | 2.34 | HDW· | 11 | 35 |
+| 17 | **C** | Citigroup Inc. | Financial Services | **+15.2%** | 134.28 | 154.75 | 2.41 | HDW· | 22 | 55 |
+| 18 | **PM** | Philip Morris International Inc. | Consumer Defensive | **+9.3%** | 190.48 | 208.13 | 2.37 | HDW· | 16 | 48 |
+| 19 | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | **+24.5%** | 78.00 | 97.13 | 2.35 | HDW· | 11 | 35 |
 | 20 | **UNH** | UnitedHealth Group Incorporated | Healthcare | **+27.9%** | 376.59 | 481.72 | 2.28 | HDW· | 26 | 63 |
 | 21 | **CRM** | Salesforce, Inc. | Technology | **+20.1%** | 234.02 | 281.08 | 1.98 | ··WM | 54 | 92 |
 | 22 | **AKAM** | Akamai Technologies, Inc. | Technology | **+39.4%** | 113.94 | 158.79 | 1.97 | ··WM | 25 | 56 |
@@ -29,9 +29,9 @@
 | 27 | **IONQ** | IonQ, Inc. | Technology | **+47.6%** | 45.48 | 67.14 | 1.94 | HD·· | 13 | 44 |
 | 28 | **DDOG** | Datadog, Inc. | Technology | **+6.8%** | 268.13 | 286.26 | 1.91 | HD·· | 46 | 91 |
 | 29 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+93.0%** | 3.74 | 7.22 | 1.86 | ··WM | 7 | 39 |
-| 30 | **SPGI** | S&P Global Inc. | Financial Services | **+29.0%** | 403.30 | 520.30 | 1.82 | ··WM | 24 | 58 |
+| 30 | **SPGI** | S&P Global Inc. | Financial Services | **+29.0%** | 403.30 | 520.30 | 1.83 | ··WM | 24 | 58 |
 | 31 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+38.6%** | 71.52 | 99.09 | 1.81 | ··WM | 34 | 70 |
-| 32 | **SNY** | Sanofi | Healthcare | **+30.7%** | 41.11 | 53.72 | 1.77 | ··WM | 10 | 35 |
+| 32 | **SNY** | Sanofi | Healthcare | **+30.7%** | 41.11 | 53.72 | 1.78 | ··WM | 10 | 35 |
 | 33 | **BSX** | Boston Scientific Corporation | Healthcare | **+38.9%** | 43.92 | 61.00 | 1.72 | H··M | 31 | 69 |
 | 34 | **WCC** | WESCO International, Inc. | Industrials | **+8.6%** | 367.44 | 399.18 | 1.72 | HD·· | 11 | 46 |
 | 35 | **UNP** | Union Pacific Corporation | Industrials | **+20.3%** | 273.79 | 329.33 | 1.68 | ··WM | 25 | 63 |
@@ -45,7 +45,7 @@
 | 43 | **AZN** | AstraZeneca PLC | Healthcare | **+27.4%** | 166.58 | 212.17 | 1.54 | ·DW· | 11 | 37 |
 | 44 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+7.4%** | 160.59 | 172.55 | 1.52 | ·DW· | 25 | 26 |
 | 45 | **DIS** | The Walt Disney Company | Communication Servic | **+19.4%** | 106.15 | 126.74 | 1.48 | HD·· | 33 | 71 |
-| 46 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+11.4%** | 411.33 | 458.38 | 1.48 | HD·· | 14 | 41 |
+| 46 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+11.5%** | 411.33 | 458.59 | 1.48 | HD·· | 14 | 41 |
 | 47 | **ESTC** | Elastic N.V. | Technology | **+25.6%** | 88.12 | 110.69 | 0.97 | ···M | 30 | 63 |
 | 48 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+45.6%** | 163.95 | 238.78 | 0.96 | ···M | 39 | 76 |
 | 49 | **OKTA** | Okta, Inc. | Technology | **+6.4%** | 195.19 | 207.60 | 0.96 | ·D·· | 44 | 78 |

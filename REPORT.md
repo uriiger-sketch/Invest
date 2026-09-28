@@ -45,7 +45,7 @@
 | 43 | **AZN** | AstraZeneca PLC | Healthcare | **+27.4%** | 166.58 | 212.17 | 1.54 | ·DW· | 11 | 37 |
 | 44 | **XOM** | ExxonMobil Holdings Corporation | Energy | **+7.4%** | 160.59 | 172.55 | 1.52 | ·DW· | 25 | 26 |
 | 45 | **DIS** | The Walt Disney Company | Communication Servic | **+19.4%** | 106.15 | 126.74 | 1.48 | HD·· | 33 | 71 |
-| 46 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+11.5%** | 411.33 | 458.59 | 1.48 | HD·· | 14 | 41 |
+| 46 | **RACE** | Ferrari N.V. | Consumer Cyclical | **+11.5%** | 411.33 | 458.75 | 1.48 | HD·· | 14 | 41 |
 | 47 | **ESTC** | Elastic N.V. | Technology | **+25.6%** | 88.12 | 110.69 | 0.97 | ···M | 30 | 63 |
 | 48 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+45.6%** | 163.95 | 238.78 | 0.96 | ···M | 39 | 76 |
 | 49 | **OKTA** | Okta, Inc. | Technology | **+6.4%** | 195.19 | 207.60 | 0.96 | ·D·· | 44 | 78 |

@@ -31,11 +31,11 @@
 | 29 | **NICE** | NICE Ltd. | Technology | **+23.0%** | 106.81 | 131.33 | 1.91 | ··WM | 14 | 38 |
 | 30 | **QUBT** | Quantum Computing Inc. | Technology | **+120.6%** | 8.46 | 18.67 | 1.88 | ··WM | 6 | 34 |
 | 31 | **MAR** | Marriott International, Inc. | Consumer Cyclical | **+5.3%** | 361.62 | 380.80 | 1.84 | HD·· | 28 | 58 |
-| 32 | **SPGI** | S&P Global Inc. | Financial Services | **+32.6%** | 392.45 | 520.30 | 1.82 | ··WM | 24 | 58 |
+| 32 | **SPGI** | S&P Global Inc. | Financial Services | **+32.6%** | 392.45 | 520.30 | 1.83 | ··WM | 24 | 58 |
 | 33 | **SNY** | Sanofi | Healthcare | **+31.9%** | 40.74 | 53.72 | 1.81 | ··WM | 10 | 35 |
 | 34 | **COST** | Costco Wholesale Corporation | Consumer Defensive | **+14.4%** | 924.59 | 1057.94 | 1.80 | HD·· | 39 | 70 |
 | 35 | **LIN** | Linde plc | Basic Materials | **+14.6%** | 473.37 | 542.60 | 1.78 | HD·· | 28 | 63 |
-| 36 | **NFLX** | Netflix, Inc. | Communication Servic | **+32.0%** | 70.30 | 92.82 | 1.75 | HD·· | 51 | 91 |
+| 36 | **NFLX** | Netflix, Inc. | Communication Servic | **+32.0%** | 70.30 | 92.82 | 1.76 | HD·· | 51 | 91 |
 | 37 | **NVS** | Novartis AG | Healthcare | **+7.3%** | 145.71 | 156.29 | 1.70 | HD·· | 12 | 39 |
 | 38 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+28.2%** | 44.38 | 56.91 | 1.69 | ··WM | 17 | 44 |
 | 39 | **TEVA** | Teva Pharmaceutical Industries Lim | Healthcare | **+9.7%** | 39.81 | 43.67 | 1.68 | HD·· | 7 | 45 |

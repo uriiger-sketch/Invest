@@ -3,7 +3,7 @@
 | 1 | **BP** | BP p.l.c. | Energy | **+14.5%** | 44.79 | 51.27 | 3.97 | HDWM | 19 | 46 |
 | 2 | **NICE** | NICE Ltd. | Technology | **+16.6%** | 113.90 | 132.77 | 3.96 | HDWM | 14 | 38 |
 | 3 | **TJX** | The TJX Companies, Inc. | Consumer Cyclical | **+28.0%** | 132.68 | 169.80 | 3.71 | HDWM | 22 | 23 |
-| 4 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+87.3%** | 18.59 | 34.81 | 3.42 | HDWM | 37 | 69 |
+| 4 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+87.3%** | 18.59 | 34.81 | 3.44 | HDWM | 37 | 69 |
 | 5 | **SNY** | Sanofi | Healthcare | **+34.6%** | 39.92 | 53.72 | 3.39 | HDWM | 10 | 35 |
 | 6 | **UNP** | Union Pacific Corporation | Industrials | **+18.4%** | 278.28 | 329.42 | 3.33 | HDWM | 25 | 63 |
 | 7 | **CRM** | Salesforce, Inc. | Technology | **+20.7%** | 234.69 | 283.36 | 2.95 | H·WM | 56 | 94 |
@@ -12,8 +12,8 @@
 | 10 | **ABNB** | Airbnb, Inc. | Consumer Cyclical | **+13.0%** | 162.43 | 183.62 | 2.83 | HDW· | 44 | 82 |
 | 11 | **COIN** | Coinbase Global, Inc. | Financial Services | **+13.2%** | 183.00 | 207.12 | 2.73 | HDW· | 38 | 74 |
 | 12 | **T** | AT&T Inc. | Communication Servic | **+18.7%** | 24.30 | 28.84 | 2.65 | ·DWM | 26 | 57 |
-| 13 | **SHEL** | Shell plc | Energy | **+7.9%** | 96.23 | 103.81 | 2.64 | ·DWM | 16 | 44 |
-| 14 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+17.6%** | 183.69 | 215.96 | 2.63 | ·DWM | 22 | 50 |
+| 13 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+17.6%** | 183.69 | 215.96 | 2.63 | ·DWM | 22 | 50 |
+| 14 | **SHEL** | Shell plc | Energy | **+7.9%** | 96.23 | 103.81 | 2.63 | ·DWM | 16 | 44 |
 | 15 | **SPGI** | S&P Global Inc. | Financial Services | **+34.7%** | 386.27 | 520.30 | 2.50 | HD·M | 24 | 58 |
 | 16 | **UNH** | UnitedHealth Group Incorporated | Healthcare | **+29.5%** | 371.90 | 481.72 | 2.34 | H·WM | 26 | 63 |
 | 17 | **AKAM** | Akamai Technologies, Inc. | Technology | **+45.9%** | 108.92 | 158.87 | 1.97 | ·D·M | 24 | 57 |
@@ -37,7 +37,7 @@
 | 35 | **TSLA** | Tesla, Inc. | Consumer Cyclical | **+6.7%** | 370.59 | 395.57 | 1.63 | H·W· | 43 | 81 |
 | 36 | **LMT** | Lockheed Martin Corporation | Industrials | **+26.0%** | 505.41 | 636.74 | 1.62 | ·DW· | 21 | 56 |
 | 37 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+28.7%** | 223.33 | 287.48 | 1.58 | ··WM | 22 | 56 |
-| 38 | **TDOC** | Teladoc Health, Inc. | Healthcare | **+39.1%** | 5.52 | 7.68 | 1.57 | HD·· | 23 | 55 |
+| 38 | **TDOC** | Teladoc Health, Inc. | Healthcare | **+39.1%** | 5.52 | 7.68 | 1.58 | HD·· | 23 | 55 |
 | 39 | **GRAB** | Grab Holdings Limited | Technology | **+87.2%** | 3.08 | 5.76 | 1.00 | ···M | 25 | 61 |
 | 40 | **PYPL** | PayPal Holdings, Inc. | Financial Services | **+7.8%** | 52.80 | 56.92 | 0.98 | H··· | 42 | 77 |
 | 41 | **ACN** | Accenture plc | Technology | **+11.3%** | 198.90 | 221.36 | 0.97 | H··· | 27 | 60 |

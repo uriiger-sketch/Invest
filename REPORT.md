@@ -5,17 +5,17 @@
 | 3 | **TJX** | The TJX Companies, Inc. | Consumer Cyclical | **+28.0%** | 132.68 | 169.80 | 3.71 | HDWM | 22 | 23 |
 | 4 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+87.3%** | 18.59 | 34.81 | 3.46 | HDWM | 37 | 69 |
 | 5 | **SNY** | Sanofi | Healthcare | **+34.6%** | 39.92 | 53.72 | 3.41 | HDWM | 10 | 35 |
-| 6 | **UNP** | Union Pacific Corporation | Industrials | **+18.4%** | 278.28 | 329.42 | 3.32 | HDWM | 25 | 63 |
+| 6 | **UNP** | Union Pacific Corporation | Industrials | **+18.4%** | 278.28 | 329.42 | 3.33 | HDWM | 25 | 63 |
 | 7 | **CRM** | Salesforce, Inc. | Technology | **+20.7%** | 234.69 | 283.36 | 2.95 | H·WM | 56 | 94 |
 | 8 | **SNPS** | Synopsys, Inc. | Technology | **+16.3%** | 489.90 | 569.78 | 2.92 | HDW· | 25 | 64 |
-| 9 | **HOOD** | Robinhood Markets, Inc. | Financial Services | **+17.0%** | 112.74 | 131.90 | 2.85 | HDW· | 30 | 71 |
-| 10 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+75.2%** | 4.12 | 7.22 | 2.84 | H·WM | 7 | 39 |
+| 9 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+75.2%** | 4.12 | 7.22 | 2.84 | H·WM | 7 | 39 |
+| 10 | **HOOD** | Robinhood Markets, Inc. | Financial Services | **+17.0%** | 112.74 | 131.90 | 2.84 | HDW· | 30 | 71 |
 | 11 | **ABNB** | Airbnb, Inc. | Consumer Cyclical | **+13.0%** | 162.43 | 183.62 | 2.84 | HDW· | 44 | 82 |
 | 12 | **COIN** | Coinbase Global, Inc. | Financial Services | **+13.2%** | 183.00 | 207.12 | 2.73 | HDW· | 38 | 74 |
 | 13 | **T** | AT&T Inc. | Communication Servic | **+18.7%** | 24.30 | 28.84 | 2.67 | ·DWM | 26 | 57 |
 | 14 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+17.6%** | 183.69 | 215.96 | 2.63 | ·DWM | 22 | 50 |
-| 15 | **SHEL** | Shell plc | Energy | **+7.9%** | 96.23 | 103.81 | 2.62 | ·DWM | 16 | 44 |
-| 16 | **SPGI** | S&P Global Inc. | Financial Services | **+34.7%** | 386.27 | 520.30 | 2.52 | HD·M | 24 | 58 |
+| 15 | **SHEL** | Shell plc | Energy | **+7.9%** | 96.23 | 103.81 | 2.63 | ·DWM | 16 | 44 |
+| 16 | **SPGI** | S&P Global Inc. | Financial Services | **+34.7%** | 386.27 | 520.30 | 2.51 | HD·M | 24 | 58 |
 | 17 | **UNH** | UnitedHealth Group Incorporated | Healthcare | **+29.5%** | 371.90 | 481.72 | 2.38 | H·WM | 26 | 63 |
 | 18 | **AKAM** | Akamai Technologies, Inc. | Technology | **+45.9%** | 108.92 | 158.87 | 1.97 | ·D·M | 24 | 57 |
 | 19 | **KRNT** | Kornit Digital Ltd. | Industrials | **+42.9%** | 17.49 | 25.00 | 1.94 | H··M | 5 | 28 |
@@ -34,7 +34,7 @@
 | 32 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+49.7%** | 159.02 | 238.03 | 1.75 | H··M | 38 | 75 |
 | 33 | **AON** | Aon plc | Financial Services | **+40.0%** | 269.45 | 377.11 | 1.74 | H·W· | 21 | 57 |
 | 34 | **TSLA** | Tesla, Inc. | Consumer Cyclical | **+6.7%** | 370.59 | 395.57 | 1.63 | H·W· | 43 | 81 |
-| 35 | **LMT** | Lockheed Martin Corporation | Industrials | **+26.0%** | 505.41 | 636.74 | 1.61 | ·DW· | 21 | 56 |
+| 35 | **LMT** | Lockheed Martin Corporation | Industrials | **+26.0%** | 505.41 | 636.74 | 1.62 | ·DW· | 21 | 56 |
 | 36 | **FERG** | Ferguson Enterprises Inc. | Industrials | **+28.7%** | 223.33 | 287.48 | 1.60 | ··WM | 22 | 56 |
 | 37 | **TDOC** | Teladoc Health, Inc. | Healthcare | **+39.1%** | 5.52 | 7.68 | 1.57 | HD·· | 23 | 55 |
 | 38 | **GRAB** | Grab Holdings Limited | Technology | **+87.2%** | 3.08 | 5.76 | 1.00 | ···M | 25 | 61 |
@@ -49,4 +49,4 @@
 | 47 | **DASH** | DoorDash, Inc. | Consumer Cyclical | **+36.2%** | 189.15 | 257.60 | 0.95 | ···M | 44 | 88 |
 | 48 | **RMBS** | Rambus Inc. | Technology | **+32.1%** | 111.97 | 147.86 | 0.95 | ·D·· | 8 | 39 |
 | 49 | **TSM** | Taiwan Semiconductor Manufacturing | Technology | **+16.8%** | 472.78 | 552.26 | 0.94 | ·D·· | 21 | 67 |
-| 50 | **REGN** | Regeneron Pharmaceuticals, Inc. | Healthcare | **+16.0%** | 735.20 | 853.19 | 0.92 | ·D·· | 27 | 63 |
+| 50 | **BSX** | Boston Scientific Corporation | Healthcare | **+42.7%** | 42.60 | 60.79 | 0.91 | ···M | 31 | 69 |

@@ -1,52 +1,52 @@
 | # | Ticker | Name | Sector | Upside | Price | Target | Score | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **BP** | BP p.l.c. | Energy | **+15.5%** | 44.51 | 51.42 | 3.96 | HDWM | 19 | 46 |
-| 2 | **TJX** | The TJX Companies, Inc. | Consumer Cyclical | **+22.3%** | 138.80 | 169.80 | 3.70 | HDWM | 22 | 23 |
-| 3 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+80.8%** | 19.15 | 34.62 | 3.66 | HDWM | 37 | 69 |
-| 4 | **SPGI** | S&P Global Inc. | Financial Services | **+31.2%** | 395.18 | 518.52 | 3.39 | HDWM | 24 | 58 |
-| 5 | **SNY** | Sanofi | Healthcare | **+33.4%** | 40.20 | 53.61 | 3.33 | HDWM | 10 | 35 |
-| 6 | **BLK** | BlackRock, Inc. | Financial Services | **+22.9%** | 1069.63 | 1314.35 | 3.28 | HDWM | 18 | 51 |
-| 7 | **MRVL** | Marvell Technology, Inc. | Technology | **+18.7%** | 284.68 | 337.99 | 2.95 | ·DWM | 46 | 82 |
-| 8 | **ABNB** | Airbnb, Inc. | Consumer Cyclical | **+14.3%** | 160.63 | 183.56 | 2.92 | HDW· | 43 | 81 |
-| 9 | **WFC** | Wells Fargo & Company | Financial Services | **+23.4%** | 80.26 | 99.02 | 2.90 | HDW· | 27 | 61 |
-| 10 | **CRM** | Salesforce, Inc. | Technology | **+26.2%** | 224.56 | 283.36 | 2.90 | ·DWM | 56 | 94 |
-| 11 | **PG** | The Procter & Gamble Company | Consumer Defensive | **+8.8%** | 147.82 | 160.78 | 2.81 | HDW· | 25 | 63 |
-| 12 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+69.0%** | 4.27 | 7.22 | 2.75 | H·WM | 7 | 40 |
-| 13 | **HOOD** | Robinhood Markets, Inc. | Financial Services | **+22.7%** | 109.51 | 134.33 | 2.68 | HDW· | 30 | 71 |
-| 14 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+73.0%** | 35.28 | 61.05 | 2.60 | ·DWM | 18 | 18 |
-| 15 | **UPST** | Upstart Holdings, Inc. | Financial Services | **+66.5%** | 24.02 | 40.00 | 2.60 | HDW· | 15 | 47 |
-| 16 | **T** | AT&T Inc. | Communication Servic | **+17.6%** | 24.47 | 28.77 | 2.60 | ·DWM | 26 | 57 |
-| 17 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+20.5%** | 180.39 | 217.39 | 2.58 | ·DWM | 22 | 50 |
-| 18 | **SHEL** | Shell plc | Energy | **+7.7%** | 96.85 | 104.29 | 2.49 | ·DWM | 16 | 44 |
-| 19 | **ZTS** | Zoetis Inc. | Healthcare | **+34.2%** | 71.55 | 96.00 | 2.44 | H·WM | 17 | 51 |
-| 20 | **UNP** | Union Pacific Corporation | Industrials | **+19.5%** | 274.68 | 328.17 | 2.38 | HDW· | 25 | 63 |
-| 21 | **RGTI** | Rigetti Computing, Inc. | Technology | **+95.5%** | 14.59 | 28.52 | 1.98 | HD·· | 13 | 45 |
-| 22 | **SNPS** | Synopsys, Inc. | Technology | **+13.5%** | 502.67 | 570.57 | 1.96 | H·W· | 25 | 66 |
-| 23 | **INTC** | Intel Corporation | Technology | **+4.4%** | 113.12 | 118.05 | 1.92 | ·DW· | 49 | 87 |
-| 24 | **ACN** | Accenture plc | Technology | **+13.7%** | 196.64 | 223.65 | 1.92 | H··M | 27 | 60 |
-| 25 | **NICE** | NICE Ltd. | Technology | **+14.0%** | 116.42 | 132.77 | 1.92 | ··WM | 14 | 38 |
-| 26 | **TEAM** | Atlassian Corporation | Technology | **+4.9%** | 195.79 | 205.39 | 1.92 | HD·· | 33 | 68 |
-| 27 | **KRNT** | Kornit Digital Ltd. | Industrials | **+39.4%** | 17.93 | 25.00 | 1.87 | H··M | 5 | 29 |
-| 28 | **COIN** | Coinbase Global, Inc. | Financial Services | **+18.9%** | 178.45 | 212.12 | 1.86 | ·DW· | 38 | 74 |
-| 29 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+37.4%** | 41.29 | 56.72 | 1.80 | ··WM | 17 | 44 |
-| 30 | **TEVA** | Teva Pharmaceutical Industries Lim | Healthcare | **+15.6%** | 39.18 | 45.30 | 1.80 | ··WM | 11 | 49 |
-| 31 | **META** | Meta Platforms, Inc. | Communication Servic | **+10.8%** | 721.31 | 799.34 | 1.75 | ·DW· | 63 | 116 |
-| 32 | **TDOC** | Teladoc Health, Inc. | Healthcare | **+36.5%** | 5.56 | 7.59 | 1.70 | HD·· | 23 | 56 |
-| 33 | **SNAP** | Snap Inc. | Communication Servic | **+27.4%** | 5.81 | 7.40 | 1.66 | HD·· | 42 | 78 |
-| 34 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+31.0%** | 75.31 | 98.66 | 1.62 | H·W· | 34 | 70 |
-| 35 | **STLD** | Steel Dynamics, Inc. | Basic Materials | **+15.8%** | 234.09 | 270.96 | 1.62 | HD·· | 14 | 45 |
-| 36 | **REGN** | Regeneron Pharmaceuticals, Inc. | Healthcare | **+15.4%** | 742.12 | 856.23 | 1.59 | HD·· | 27 | 63 |
-| 37 | **QBTS** | D-Wave Quantum Inc. | Technology | **+127.6%** | 15.22 | 34.65 | 1.00 | H··· | 17 | 46 |
-| 38 | **GRAB** | Grab Holdings Limited | Technology | **+87.2%** | 3.08 | 5.76 | 1.00 | ···M | 25 | 61 |
-| 39 | **MU** | Micron Technology, Inc. | Technology | **+42.9%** | 1088.00 | 1555.13 | 0.99 | ··W· | 49 | 88 |
-| 40 | **AKAM** | Akamai Technologies, Inc. | Technology | **+51.9%** | 104.61 | 158.87 | 0.99 | ···M | 24 | 57 |
-| 41 | **CLBT** | Cellebrite DI Ltd. | Technology | **+36.8%** | 11.23 | 15.36 | 0.97 | H··· | 8 | 34 |
-| 42 | **BKNG** | Booking Holdings Inc. | Consumer Cyclical | **+50.9%** | 155.87 | 235.26 | 0.96 | ···M | 37 | 74 |
-| 43 | **U** | Unity Software Inc. | Technology | **+8.7%** | 45.44 | 49.39 | 0.96 | H··· | 26 | 61 |
-| 44 | **GFS** | GLOBALFOUNDRIES Inc. | Technology | **+55.4%** | 48.07 | 74.68 | 0.96 | ··W· | 22 | 54 |
-| 45 | **ORCL** | Oracle Corporation | Technology | **+65.8%** | 143.56 | 237.97 | 0.95 | ···M | 43 | 79 |
-| 46 | **IONQ** | IonQ, Inc. | Technology | **+61.2%** | 41.34 | 66.63 | 0.95 | H··· | 14 | 45 |
-| 47 | **MCHP** | Microchip Technology Incorporated | Technology | **+38.2%** | 78.02 | 107.84 | 0.95 | ··W· | 26 | 61 |
-| 48 | **FORM** | FormFactor, Inc. | Technology | **+10.1%** | 139.80 | 153.89 | 0.95 | ·D·· | 11 | 44 |
-| 49 | **QUBT** | Quantum Computing Inc. | Technology | **+145.0%** | 7.62 | 18.67 | 0.94 | ···M | 6 | 34 |
-| 50 | **COHR** | Coherent Corp. | Technology | **+23.3%** | 334.56 | 412.52 | 0.94 | ·D·· | 24 | 63 |
+| 1 | **BP** | BP p.l.c. | Energy | **+11.5%** | 46.13 | 51.42 | 3.97 | HDWM | 19 | 46 |
+| 2 | **MRVL** | Marvell Technology, Inc. | Technology | **+22.5%** | 276.00 | 337.99 | 3.94 | HDWM | 46 | 82 |
+| 3 | **CRM** | Salesforce, Inc. | Technology | **+27.3%** | 222.60 | 283.36 | 3.92 | HDWM | 56 | 94 |
+| 4 | **TJX** | The TJX Companies, Inc. | Consumer Cyclical | **+23.2%** | 137.87 | 169.80 | 3.65 | HDWM | 22 | 23 |
+| 5 | **DKNG** | DraftKings Inc. | Consumer Cyclical | **+79.6%** | 19.27 | 34.62 | 3.59 | HDWM | 37 | 69 |
+| 6 | **T** | AT&T Inc. | Communication Servic | **+16.9%** | 24.60 | 28.77 | 3.43 | HDWM | 26 | 57 |
+| 7 | **SPGI** | S&P Global Inc. | Financial Services | **+30.5%** | 397.23 | 518.52 | 3.39 | HDWM | 24 | 58 |
+| 8 | **SHEL** | Shell plc | Energy | **+4.7%** | 99.58 | 104.29 | 3.28 | HDWM | 16 | 44 |
+| 9 | **BLK** | BlackRock, Inc. | Financial Services | **+23.6%** | 1063.70 | 1314.35 | 3.21 | HDWM | 18 | 51 |
+| 10 | **UNP** | Union Pacific Corporation | Industrials | **+19.1%** | 275.43 | 328.17 | 3.21 | HDWM | 25 | 63 |
+| 11 | **AKAM** | Akamai Technologies, Inc. | Technology | **+56.2%** | 101.70 | 158.87 | 2.88 | H·WM | 24 | 57 |
+| 12 | **WFC** | Wells Fargo & Company | Financial Services | **+22.9%** | 80.55 | 99.02 | 2.86 | HDW· | 27 | 61 |
+| 13 | **RXRX** | Recursion Pharmaceuticals, Inc. | Healthcare | **+89.2%** | 3.82 | 7.22 | 2.86 | H·WM | 7 | 40 |
+| 14 | **ABNB** | Airbnb, Inc. | Consumer Cyclical | **+12.6%** | 162.99 | 183.56 | 2.85 | HDW· | 43 | 81 |
+| 15 | **TEM** | Tempus AI, Inc. | Healthcare | **+4.3%** | 67.72 | 70.61 | 2.85 | HDW· | 20 | 43 |
+| 16 | **PG** | The Procter & Gamble Company | Consumer Defensive | **+7.9%** | 149.01 | 160.78 | 2.80 | HDW· | 25 | 63 |
+| 17 | **AEM** | Agnico Eagle Mines Limited | Basic Materials | **+18.7%** | 183.21 | 217.39 | 2.60 | ·DWM | 22 | 50 |
+| 18 | **ZTS** | Zoetis Inc. | Healthcare | **+32.0%** | 72.70 | 96.00 | 2.58 | HD·M | 17 | 51 |
+| 19 | **SNY** | Sanofi | Healthcare | **+35.0%** | 39.71 | 53.61 | 2.56 | H·WM | 10 | 35 |
+| 20 | **RGTI** | Rigetti Computing, Inc. | Technology | **+103.9%** | 13.99 | 28.52 | 1.94 | HD·· | 13 | 45 |
+| 21 | **U** | Unity Software Inc. | Technology | **+7.3%** | 46.03 | 49.39 | 1.94 | HD·· | 26 | 61 |
+| 22 | **NICE** | NICE Ltd. | Technology | **+14.6%** | 115.82 | 132.77 | 1.93 | ··WM | 14 | 38 |
+| 23 | **SNPS** | Synopsys, Inc. | Technology | **+12.2%** | 508.42 | 570.57 | 1.93 | H·W· | 25 | 66 |
+| 24 | **INTC** | Intel Corporation | Technology | **+8.0%** | 109.27 | 118.05 | 1.92 | ·DW· | 49 | 87 |
+| 25 | **COIN** | Coinbase Global, Inc. | Financial Services | **+21.7%** | 174.28 | 212.12 | 1.89 | ·DW· | 38 | 74 |
+| 26 | **PRX.AS** | Prosus N.V. | Consumer Cyclical | **+75.2%** | 34.85 | 61.05 | 1.87 | ·D·M | 18 | 18 |
+| 27 | **HOOD** | Robinhood Markets, Inc. | Financial Services | **+24.4%** | 107.95 | 134.33 | 1.85 | ·DW· | 30 | 71 |
+| 28 | **KRNT** | Kornit Digital Ltd. | Industrials | **+38.0%** | 18.12 | 25.00 | 1.85 | H··M | 5 | 29 |
+| 29 | **SW** | Smurfit Westrock Plc | Consumer Cyclical | **+38.5%** | 40.95 | 56.72 | 1.80 | ··WM | 17 | 44 |
+| 30 | **UPST** | Upstart Holdings, Inc. | Financial Services | **+68.6%** | 23.72 | 40.00 | 1.79 | HD·· | 15 | 47 |
+| 31 | **TEVA** | Teva Pharmaceutical Industries Lim | Healthcare | **+16.5%** | 38.88 | 45.30 | 1.78 | ··WM | 11 | 49 |
+| 32 | **PFE** | Pfizer Inc. | Healthcare | **+5.5%** | 27.51 | 29.03 | 1.76 | ··WM | 28 | 64 |
+| 33 | **ABT** | Abbott Laboratories | Healthcare | **+23.6%** | 97.66 | 120.72 | 1.70 | HD·· | 28 | 65 |
+| 34 | **WMT** | Walmart Inc. | Consumer Defensive | **+14.8%** | 110.46 | 126.78 | 1.67 | HD·· | 43 | 81 |
+| 35 | **META** | Meta Platforms, Inc. | Communication Servic | **+11.2%** | 718.89 | 799.34 | 1.66 | ·DW· | 63 | 116 |
+| 36 | **BUD** | Anheuser-Busch InBev SA/NV | Consumer Defensive | **+24.5%** | 76.81 | 95.62 | 1.65 | HD·· | 12 | 36 |
+| 37 | **VRTX** | Vertex Pharmaceuticals Incorporate | Healthcare | **+14.2%** | 500.41 | 571.39 | 1.64 | ··WM | 32 | 64 |
+| 38 | **AFRM** | Affirm Holdings, Inc. | Financial Services | **+30.7%** | 75.49 | 98.66 | 1.59 | H·W· | 34 | 70 |
+| 39 | **GLBE** | Global-E Online Ltd. | Consumer Cyclical | **+26.9%** | 40.02 | 50.77 | 1.54 | ·DW· | 13 | 18 |
+| 40 | **GRAB** | Grab Holdings Limited | Technology | **+88.5%** | 3.06 | 5.76 | 1.00 | ···M | 25 | 61 |
+| 41 | **MU** | Micron Technology, Inc. | Technology | **+45.5%** | 1068.89 | 1555.13 | 0.99 | ··W· | 49 | 88 |
+| 42 | **CRWV** | CoreWeave, Inc. | Technology | **+70.1%** | 83.19 | 141.47 | 0.98 | ·D·· | 42 | 74 |
+| 43 | **MBLY** | Mobileye Global Inc. | Consumer Cyclical | **+61.7%** | 7.03 | 11.36 | 0.97 | H··· | 23 | 48 |
+| 44 | **TEAM** | Atlassian Corporation | Technology | **+2.8%** | 199.73 | 205.39 | 0.97 | ·D·· | 33 | 68 |
+| 45 | **ORCL** | Oracle Corporation | Technology | **+73.2%** | 137.37 | 237.97 | 0.96 | ···M | 43 | 79 |
+| 46 | **ZS** | Zscaler, Inc. | Technology | **+6.6%** | 217.58 | 232.04 | 0.96 | H··· | 45 | 81 |
+| 47 | **MCHP** | Microchip Technology Incorporated | Technology | **+40.8%** | 76.58 | 107.84 | 0.96 | ··W· | 26 | 61 |
+| 48 | **ONTO** | Onto Innovation Inc. | Technology | **+29.0%** | 300.33 | 387.50 | 0.96 | ·D·· | 12 | 44 |
+| 49 | **ACN** | Accenture plc | Technology | **+10.8%** | 201.86 | 223.65 | 0.96 | ···M | 27 | 60 |
+| 50 | **QBTS** | D-Wave Quantum Inc. | Technology | **+139.2%** | 14.48 | 34.65 | 0.96 | H··· | 17 | 46 |

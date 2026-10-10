@@ -141,7 +141,7 @@ class Settings(BaseSettings):
     # over 100 MB. These keep it bounded (see `invest maintain`).
     feature_retention_days: int = 365
     score_retention_days: int = 365
-    daily_history_days: int = 45     # older daily history is thinned to weekly
+    daily_history_days: int = 60     # older daily history is thinned to weekly
     news_retention_days: int = 14
     run_log_retention_days: int = 45
     filing_retention_days: int = 400

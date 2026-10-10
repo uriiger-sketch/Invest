@@ -32,7 +32,12 @@ from ..config import FEATURE_NAMES, FORWARD_WINDOW_DAYS, HORIZONS, PROJECT_ROOT,
 
 logger = logging.getLogger(__name__)
 
-COLD_START_MIN_DAYS = 60
+# Minimum distinct snapshot dates before training is attempted. Kept below
+# `daily_history_days`: maintenance thins older daily snapshots to weekly, so
+# a 60-date gate would have kept the ranker off for months (a live deep run
+# found 50 dates). Whether the model gets any WEIGHT is decided separately,
+# by its purged out-of-sample IC (pipeline.grade.ml_blend).
+COLD_START_MIN_DAYS = 30
 MIN_LABELLED_ROWS = 500
 MIN_VALIDATION_DATES = 5
 MODEL_DIR = PROJECT_ROOT / "data" / "models"

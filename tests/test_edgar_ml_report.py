@@ -176,3 +176,39 @@ def test_filing_upsert_survives_a_recrawl(monkeypatch):
         f = s.query(SecFiling).one()
         assert f.items == "2.02,9.01"
         assert s.get(IntelSnapshot, ("ACME", "sec")) is not None
+
+
+_INFOTABLE = b"""<?xml version="1.0" encoding="UTF-8"?>
+<informationTable xmlns="http://www.sec.gov/edgar/document/thirteenf/informationtable">
+  <infoTable><nameOfIssuer>APPLE INC</nameOfIssuer><cusip>037833100</cusip><value>500000000</value>
+    <shrsOrPrnAmt><sshPrnamt>2000000</sshPrnamt><sshPrnamtType>SH</sshPrnamtType></shrsOrPrnAmt></infoTable>
+  <infoTable><nameOfIssuer>APPLE INC</nameOfIssuer><cusip>037833100</cusip><value>250000000</value>
+    <shrsOrPrnAmt><sshPrnamt>1000000</sshPrnamt><sshPrnamtType>SH</sshPrnamtType></shrsOrPrnAmt></infoTable>
+  <infoTable><nameOfIssuer>APPLE INC</nameOfIssuer><cusip>037833100</cusip><value>75000</value>
+    <shrsOrPrnAmt><sshPrnamt>3000</sshPrnamt><sshPrnamtType>SH</sshPrnamtType></shrsOrPrnAmt></infoTable>
+  <infoTable><nameOfIssuer>APPLE INC</nameOfIssuer><cusip>037833100</cusip><value>90000000</value>
+    <shrsOrPrnAmt><sshPrnamt>400000</sshPrnamt><sshPrnamtType>SH</sshPrnamtType></shrsOrPrnAmt>
+    <putCall>Put</putCall></infoTable>
+  <infoTable><nameOfIssuer>APPLE INC</nameOfIssuer><cusip>037833AB6</cusip><value>10000000</value>
+    <shrsOrPrnAmt><sshPrnamt>10000000</sshPrnamt><sshPrnamtType>PRN</sshPrnamtType></shrsOrPrnAmt></infoTable>
+</informationTable>"""
+
+
+def test_13f_sums_sub_manager_rows_and_excludes_options_and_bonds(monkeypatch):
+    """Live: JPMorgan's AAPL position read as 3,000 shares because each
+    sub-manager row overwrote the previous one on (filer, ticker, quarter).
+    Rows must be summed; PUT/CALL and PRN rows are not share positions."""
+    from invest.models import Holding13F, Stock
+
+    with session_scope() as s:
+        s.add(Stock(ticker="AAPL", name="Apple Inc.", cusip="037833100", in_universe=True))
+    src = EdgarSource()
+    monkeypatch.setattr("invest.sources.edgar_src.TOP_FILERS", (("Big Bank", "0000000007"),))
+    monkeypatch.setattr(src, "_recent_13f_filings",
+                        lambda cik: [("ACC", date(2026, 8, 12), date(2026, 6, 30))])
+    monkeypatch.setattr(src, "_download_13f_infotable", lambda cik, acc: _INFOTABLE)
+    src.ingest_13f(["AAPL"])
+    with session_scope() as s:
+        h = s.query(Holding13F).one()
+    assert h.shares == 3_003_000, "all three share rows summed; the put and the bond excluded"
+    assert h.value_usd == 750_075_000, "post-2023 <value> is whole dollars"

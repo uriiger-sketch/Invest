@@ -428,6 +428,7 @@ class EdgarSource(BaseSource):
             value = _local(el, "value")  # thousands of USD
             shrs_wrap = el.find("n:shrsOrPrnAmt", ns) if ns else el.find("shrsOrPrnAmt")
             shares = None
+            amount_type = None
             if shrs_wrap is not None:
                 sh = shrs_wrap.find("n:sshPrnamt", ns) if ns else shrs_wrap.find("sshPrnamt")
                 if sh is not None and sh.text:
@@ -435,17 +436,25 @@ class EdgarSource(BaseSource):
                         shares = float(sh.text)
                     except ValueError:
                         shares = None
+                typ = shrs_wrap.find("n:sshPrnamtType", ns) if ns else shrs_wrap.find("sshPrnamtType")
+                if typ is not None and typ.text:
+                    amount_type = typ.text.strip().upper()
             try:
                 value_usd = float(value) * 1000.0 if value else None
             except ValueError:
                 value_usd = None
             name = _local(el, "nameOfIssuer")
+            put_call = (_local(el, "putCall") or "").strip().upper() or None
             out.append(
                 {
                     "cusip": cusip,
                     "name_of_issuer": name,
                     "shares": shares,
                     "value_usd": value_usd,
+                    # "SH" = shares, "PRN" = principal amount (bonds/converts);
+                    # put_call set = an options position on the underlying.
+                    "amount_type": amount_type,
+                    "put_call": put_call,
                 }
             )
         return out
@@ -627,24 +636,31 @@ class EdgarSource(BaseSource):
             # portfolio filed in August is Q2 (migration 0005 relabelled the
             # rows stored under the old filing-date convention).
             quarter = self._quarter_label(period)
-            batch: list[dict] = []
+            # Large filers report one information-table row per security PER
+            # sub-manager / investment-discretion bucket. Those rows must be
+            # SUMMED: upserting them one by one on (filer, ticker, quarter)
+            # kept only the last row (live: JPMorgan's AAPL position read as
+            # 3,000 shares — one sub-manager's slice of millions), which
+            # turned into a fake -95 % "institutional flow". Option rows
+            # (PUT/CALL on the underlying) and principal amounts (PRN: bonds,
+            # converts) are not share positions and are excluded.
+            agg: dict[str, dict] = {}
             for r in rows:
+                if r.get("put_call") or (r.get("amount_type") or "SH") != "SH":
+                    continue
                 t = self._cusip_to_ticker(r.get("cusip"), cusip_lookup) or (
                     self._issuer_to_ticker(r.get("name_of_issuer") or "", lookup)
                 )
                 if not t or t not in universe:
                     continue
-                batch.append(
-                    {
-                        "filer_cik": cik,
-                        "filer_name": name,
-                        "ticker": t,
-                        "shares": r.get("shares"),
-                        "value_usd": r.get("value_usd"),
-                        "quarter": quarter,
-                        "filing_date": filing_date,
-                    }
-                )
+                row = agg.setdefault(t, {
+                    "filer_cik": cik, "filer_name": name, "ticker": t,
+                    "shares": 0.0, "value_usd": 0.0,
+                    "quarter": quarter, "filing_date": filing_date,
+                })
+                row["shares"] += r.get("shares") or 0.0
+                row["value_usd"] += r.get("value_usd") or 0.0
+            batch = list(agg.values())
             if batch:
                 written += self._upsert_holdings(batch)
                 filers_with_data.add(cik)

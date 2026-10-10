@@ -112,3 +112,23 @@ def test_google_rss_strips_publisher_suffix_and_dedupes_with_yahoo():
 def test_garbage_rss_is_harmless():
     assert parse_google_news_rss("ACME", b"<not xml", "Acme") == []
     assert parse_google_news_rss("ACME", b"", "Acme") == []
+
+
+def test_yahoo_search_news_schema_uses_related_tickers_for_relevance():
+    """Yahoo's search endpoint (used since the per-ticker news stream broke)
+    returns flat items with `type` and `relatedTickers`."""
+    ts = int(datetime.now(UTC).timestamp()) - 3600
+    items = [
+        {"uuid": "1", "title": "Chipmakers rally as demand improves", "publisher": "Reuters",
+         "link": "https://example.com/1", "providerPublishTime": ts, "type": "STORY",
+         "relatedTickers": ["ACME", "NVDA"]},
+        {"uuid": "2", "title": "Market wrap: stocks drift higher today", "publisher": "AP",
+         "link": "https://example.com/2", "providerPublishTime": ts, "type": "STORY",
+         "relatedTickers": ["SPY"]},
+        {"uuid": "3", "title": "Video: CEO interview about the quarter", "publisher": "Yahoo",
+         "providerPublishTime": ts, "type": "VIDEO", "relatedTickers": ["ACME"]},
+    ]
+    rows = {r["title"]: r for r in parse_yahoo_news("ACME", items, "Acme Corp.")}
+    assert set(rows) == {"Chipmakers rally as demand improves", "Market wrap: stocks drift higher today"}
+    assert rows["Chipmakers rally as demand improves"]["relevance"] == 1.0
+    assert rows["Market wrap: stocks drift higher today"]["relevance"] == 0.5

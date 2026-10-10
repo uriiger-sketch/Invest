@@ -153,3 +153,26 @@ def test_drawer_escapes_headlines_and_drops_unsafe_urls():
     assert "<img src=x" not in html and "&lt;img" in html
     assert "javascript:" not in html
     assert "<b>x</b>" not in html
+
+
+def test_filing_upsert_survives_a_recrawl(monkeypatch):
+    """Live CI failure: the ON CONFLICT update used `excluded.items`, which is
+    ColumnCollection.items() (a method), so every re-crawl of an issuer whose
+    filings were already stored failed to bind."""
+    from invest.models import IntelSnapshot, SecFiling
+
+    d = (TODAY - timedelta(days=5)).isoformat()
+    subs = {"filings": {"recent": {
+        "form": ["8-K"], "filingDate": [d], "accessionNumber": ["0001-26-9"],
+        "reportDate": [d], "items": ["2.02"], "primaryDocDescription": ["8-K"],
+    }}}
+    src = EdgarSource()
+    monkeypatch.setattr(src, "_issuer_ciks", lambda tickers: {"ACME": "0000000042"})
+    monkeypatch.setattr(src, "_get_json", lambda url: subs)
+    assert src.ingest_filings(["ACME"]) == 1
+    subs["filings"]["recent"]["items"] = ["2.02,9.01"]
+    assert src.ingest_filings(["ACME"]) == 1  # conflict path
+    with session_scope() as s:
+        f = s.query(SecFiling).one()
+        assert f.items == "2.02,9.01"
+        assert s.get(IntelSnapshot, ("ACME", "sec")) is not None

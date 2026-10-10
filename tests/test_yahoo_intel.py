@@ -216,3 +216,34 @@ def test_quote_summary_request_paths(monkeypatch):
     monkeypatch.setattr(YFinanceSource, "_quote_summary_fallback", lambda self, t: {"fallback": t})
     assert src._quote_summary("ACME") == {"fallback": "ACME"}
     assert src._internal_api_broken
+
+
+def test_news_comes_from_the_search_endpoint(monkeypatch):
+    from yfinance.data import YfData
+
+    seen = {}
+
+    def fake(self, url, params=None, timeout=30):
+        seen["url"], seen["q"] = url, params.get("q")
+        return {"news": [{"uuid": "x", "title": "Acme beats estimates again today"}]}
+
+    monkeypatch.setattr(YfData, "get_raw_json", fake)
+    news = YFinanceSource()._news("ACME")
+    assert seen["url"].endswith("/v1/finance/search") and seen["q"] == "ACME"
+    assert news and news[0]["title"].startswith("Acme")
+
+    monkeypatch.setattr(YfData, "get_raw_json", lambda self, url, params=None, timeout=30: 1 / 0)
+    assert YFinanceSource()._news("ACME") == [], "news failures are best-effort, never fatal"
+
+
+def test_action_parser_treats_nan_as_missing():
+    """The property-API fallback builds records via DataFrame.to_dict, where a
+    missing text field is NaN — it must not become the string 'nan'."""
+    nan = float("nan")
+    rows = actions_from_history("ACME", [{
+        "epochGradeDate": _epoch(TODAY), "firm": "UBS", "action": "main",
+        "priceTargetAction": nan, "fromGrade": nan, "toGrade": "Buy",
+        "currentPriceTarget": nan, "priorPriceTarget": nan,
+    }], TODAY - timedelta(days=30))
+    assert rows[0]["target_action"] is None and rows[0]["from_grade"] is None
+    assert rows[0]["target_price"] is None and rows[0]["to_grade"] == "Buy"

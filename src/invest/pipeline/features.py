@@ -293,10 +293,13 @@ def _firm_target_changes(df: pd.DataFrame) -> pd.DataFrame:
     raises: dict[str, int] = {}
     cuts: dict[str, int] = {}
     for r in df.itertuples(index=False):
-        tp, pp = r.target_price, r.prior_target
-        act = (r.target_action or "").lower()
+        tp, pp = _f(r.target_price), _f(r.prior_target)
+        # pandas >= 3 infers a `str` dtype for text columns and stores missing
+        # values as NaN (a truthy float), so `x or ""` is not a safe default.
+        act = r.target_action.lower() if isinstance(r.target_action, str) else ""
+        firm = r.firm if isinstance(r.firm, str) else None
         val = None
-        if tp and pp and tp > 0 and pp > 0:
+        if tp > 0 and pp > 0:  # NaN compares False
             val = float(np.clip(math.log(tp / pp), -1.0, 1.0))
         elif act.startswith("rais"):
             val = 0.05
@@ -304,7 +307,7 @@ def _firm_target_changes(df: pd.DataFrame) -> pd.DataFrame:
             val = -0.05
         if val is None:
             continue
-        recs.setdefault(r.ticker, []).append((val, firm_weight(r.firm)))
+        recs.setdefault(r.ticker, []).append((val, firm_weight(firm)))
         if val > 0:
             raises[r.ticker] = raises.get(r.ticker, 0) + 1
         elif val < 0:

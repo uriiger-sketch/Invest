@@ -181,3 +181,21 @@ def test_snapshot_round_trip_and_legacy_decoding():
     assert d["consensus_z"] == pytest.approx(float(df["consensus_z"].iloc[0]), rel=1e-4)
     legacy = decode_snapshot(json.dumps({"consensus_z": 0.4, "insider_net_buy_90d": -5e6}))
     assert legacy == {"consensus_z": 0.4}, "raw-$ legacy insider value is not comparable"
+
+
+def test_mixed_missing_target_actions_do_not_crash():
+    """Live CI crash: pandas >= 3 stores missing values of a text column as
+    NaN (a truthy float), so `(target_action or "").lower()` raised once the
+    first real target actions were crawled next to rows without one."""
+    _seed("MIX")
+    with session_scope() as s:
+        s.add(AnalystAction(ticker="MIX", firm="UBS", firm_key="ubs", action="reiterate",
+                            target_action="raises", target_price=130.0, prior_target=120.0,
+                            date=TODAY - timedelta(days=2), source="yfinance"))
+        s.add(AnalystAction(ticker="MIX", firm="Citi", firm_key="citi", action="upgrade",
+                            target_action=None, date=TODAY - timedelta(days=3), source="yfinance"))
+        s.add(AnalystAction(ticker="MIX", firm="Jefferies", firm_key="jefferies", action="reiterate",
+                            target_action="lowers", date=TODAY - timedelta(days=4), source="yfinance"))
+    r = build_features(["MIX"]).set_index("ticker").loc["MIX"]
+    assert r["target_raises_30d"] == 1 and r["target_cuts_30d"] == 1
+    assert r["firm_target_revision"] == pytest.approx((np.log(130 / 120) - 0.05) / 2)

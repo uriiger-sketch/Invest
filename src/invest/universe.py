@@ -494,14 +494,34 @@ def _read_wiki_tables(url: str) -> list[pd.DataFrame]:
 
 
 def _symbols_from(tables: list[pd.DataFrame]) -> list[str]:
+    """First table with >= 50 plausible symbols in a "Symbol"/"Ticker" column.
+
+    Header matching is lenient — multi-level headers are flattened and
+    footnote markers stripped ("Ticker[3]") — because the NASDAQ-100 page's
+    header did not match the exact names (0 constituents parsed live).
+    """
+    import re
+
     for t in tables:
-        col = next((c for c in ("Symbol", "Ticker", "Ticker symbol") if c in t.columns), None)
+        names = [
+            " ".join(str(x) for x in c) if isinstance(c, tuple) else str(c) for c in t.columns
+        ]
+        col = None
+        for raw, name in zip(t.columns, names):
+            key = re.sub(r"\[.*?\]", "", name).strip().lower()
+            if key.startswith(("symbol", "ticker")) or key.endswith(("symbol", "ticker")):
+                col = raw
+                break
         if col is None:
             continue
         syms = [str(s).strip().replace(".", "-") for s in t[col].dropna().tolist()]
         syms = [s for s in syms if s and len(s) <= 6 and s.replace("-", "").isalnum()]
         if len(syms) >= 50:
             return syms
+    logger.warning(
+        "universe: no symbol column found; table headers were %s",
+        [[str(c) for c in t.columns][:6] for t in tables[:8]],
+    )
     return []
 
 

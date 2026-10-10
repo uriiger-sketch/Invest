@@ -51,6 +51,7 @@ logger = logging.getLogger(__name__)
 
 _BATCH_SIZE = 40
 _QS_URL = "https://query2.finance.yahoo.com/v10/finance/quoteSummary/{symbol}"
+_SEARCH_URL = "https://query2.finance.yahoo.com/v1/finance/search"
 QS_MODULES: tuple[str, ...] = (
     "recommendationTrend",
     "financialData",
@@ -223,12 +224,31 @@ class YFinanceSource(BaseSource):
         return out
 
     def _news(self, ticker: str) -> list[dict]:
+        """Recent headlines from Yahoo's search endpoint.
+
+        yfinance's `get_news()` (the per-ticker news stream) started failing
+        for EVERY symbol ("received faulty response", seen on the first live
+        run of this crawler, ~700 error lines per run). The search endpoint
+        returns the same stories with `relatedTickers`, through the same
+        cookie/crumb session. Best effort: any failure yields no headlines.
+        """
+        if self._internal_api_broken:
+            return []
         self.throttle()
         try:
-            return yf.Ticker(ticker).get_news(count=20, tab="news") or []
+            from yfinance.data import YfData
+
+            js = YfData().get_raw_json(
+                _SEARCH_URL,
+                params={"q": ticker, "quotesCount": 0, "newsCount": 20,
+                        "enableFuzzyQuery": False, "enableNavLinks": False},
+                timeout=15,
+            )
         except Exception as e:  # noqa: BLE001 — news is best-effort
             logger.debug("news %s failed: %s", ticker, e)
             return []
+        news = js.get("news") if isinstance(js, dict) else None
+        return news if isinstance(news, list) else []
 
     # ------------------------- worker -------------------------
 
@@ -654,6 +674,12 @@ _ACTION_MAP = {
 }
 
 
+def _text(x: Any) -> str:
+    """str for real text; "" for None and NaN (DataFrame-sourced records on
+    the fallback path carry NaN, which is truthy and str()s to "nan")."""
+    return x.strip() if isinstance(x, str) else ""
+
+
 def actions_from_history(ticker: str, history: list[dict], cutoff: date) -> list[dict]:
     """upgradeDowngradeHistory entries -> AnalystAction rows, INCLUDING the
     firm's current and prior price target and what it did to it."""
@@ -662,9 +688,9 @@ def actions_from_history(ticker: str, history: list[dict], cutoff: date) -> list
         d = _epoch_to_date(item.get("epochGradeDate"))
         if d is None or d < cutoff:
             continue
-        firm = str(item.get("firm") or "").strip()[:128] or None
-        action_raw = str(item.get("action") or "").strip().lower()
-        tgt_action = str(item.get("priceTargetAction") or "").strip().lower()[:16] or None
+        firm = _text(item.get("firm"))[:128] or None
+        action_raw = _text(item.get("action")).lower()
+        tgt_action = _text(item.get("priceTargetAction")).lower()[:16] or None
         rows.append(
             {
                 "ticker": ticker,
@@ -672,8 +698,8 @@ def actions_from_history(ticker: str, history: list[dict], cutoff: date) -> list
                 "firm_key": canonical_firm_key(firm),
                 "analyst": None,
                 "action": _ACTION_MAP.get(action_raw, action_raw or None),
-                "from_grade": (str(item.get("fromGrade") or "")[:64] or None),
-                "to_grade": (str(item.get("toGrade") or "")[:64] or None),
+                "from_grade": _text(item.get("fromGrade"))[:64] or None,
+                "to_grade": _text(item.get("toGrade"))[:64] or None,
                 "target_price": _pos(item.get("currentPriceTarget")),
                 "prior_target": _pos(item.get("priorPriceTarget")),
                 "target_action": tgt_action,

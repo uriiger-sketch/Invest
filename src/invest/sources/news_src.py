@@ -98,7 +98,8 @@ def parse_yahoo_news(
         if not isinstance(it, dict):
             continue
         c = it.get("content") if isinstance(it.get("content"), dict) else it
-        if (c.get("contentType") or "").upper() == "VIDEO":
+        kind = str(c.get("contentType") or it.get("type") or "").upper()
+        if kind == "VIDEO":
             continue
         title = c.get("title") or ""
         pub = c.get("pubDate") or c.get("displayTime") or it.get("providerPublishTime")
@@ -123,6 +124,9 @@ def parse_yahoo_news(
         url = url or it.get("link")
         row = make_news_row(ticker, title, dt, publisher, url, "yahoo", company_name)
         if row:
+            related = {str(x).upper() for x in (it.get("relatedTickers") or [])}
+            if ticker.upper() in related:
+                row["relevance"] = 1.0  # Yahoo tagged the story with this symbol
             out.append(row)
     return out
 

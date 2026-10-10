@@ -1140,8 +1140,11 @@ class EdgarSource(BaseSource):
                     stmt = sqlite_insert(SecFiling).values(rows)
                     stmt = stmt.on_conflict_do_update(
                         index_elements=["ticker", "accession"],
-                        set_={"items": stmt.excluded.items,
-                              "description": stmt.excluded.description},
+                        # excluded["items"], not excluded.items: the latter is
+                        # ColumnCollection.items(), a METHOD, which SQLite was
+                        # then asked to bind as a value (caught live in CI).
+                        set_={"items": stmt.excluded["items"],
+                              "description": stmt.excluded["description"]},
                     )
                     s.execute(stmt)
                 written += len(rows)

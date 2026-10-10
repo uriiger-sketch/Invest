@@ -349,29 +349,39 @@ elif page == "Methodology":
     st.title("Methodology")
     st.markdown(
         """
-**Composite score.** Each feature is z-scored across the universe (clipped to ±5)
-then combined with the horizon-specific weights below. The final **blended
-score** mixes the composite with an ML ranker (LightGBM) that learns from the
-historical relationship between today's features and realised forward returns:
+**Signals.** Every feature is rank-normalised to N(0,1) across the universe
+(valuation, profitability, short interest and target upside are partially
+sector-neutralised). Unobserved data counts as neutral (z = 0).
 
-```
-blended = blend_composite_weight · z(composite)  +  blend_ml_weight · z(ml)
-```
+**Weights.** Each feature has a literature prior information coefficient (IC)
+per horizon, updated by the IC measured on this system's own history
+(precision-weighted Bayes); weights are Σ⁻¹·IC so correlated signals share
+weight. The ML ranker is blended in proportion to its purged out-of-sample IC
+(capped), and the final grade combines the four horizons weighted by their
+estimated skill:  G = Σ a_h S_h / √(aᵀRa),  α = IC·σ·z,  P(beat) = Φ(IC·z).
 
-Until enough feature snapshots exist (~60 daily rows), the ML component falls
-back to the composite score so the blended number is meaningful from day one.
-
-**Weights (current):**
+**Weights (latest calibration; priors before the first calibrated run):**
 """
     )
-    w = pd.DataFrame(WEIGHTS).reindex(FEATURE_NAMES)
+    import json as _json
+
+    from invest.models import Calibration
+
+    with session_scope() as s:
+        cal_date = s.execute(select(Calibration.as_of).order_by(desc(Calibration.as_of)).limit(1)).scalar()
+        cal = s.query(Calibration).filter(Calibration.as_of == cal_date).all() if cal_date else []
+    live = {}
+    for c in cal:
+        try:
+            factors = _json.loads(c.payload).get("factors", {})
+        except ValueError:
+            continue
+        live[c.horizon] = {f: v.get("weight") for f, v in factors.items()}
+    w = pd.DataFrame(live or WEIGHTS).reindex(FEATURE_NAMES)
     st.dataframe(w, use_container_width=True)
 
     st.markdown(
         f"""
-**Blend.** `{settings.blend_composite_weight}` composite +
-`{settings.blend_ml_weight}` ML.
-
 **Liquidity gate.** Excludes any stock whose 20-day average dollar volume is
 below **${settings.liquidity_min_dollar_volume:,.0f}**.
 

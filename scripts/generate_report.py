@@ -1,149 +1,42 @@
-"""Render top-20 per horizon to REPORT.md and docs/index.html.
+"""Render the integrated ranking to REPORT.md and docs/index.html.
 
-Reads the latest persisted scores from SQLite and writes a human-readable
-report that GitHub can render directly, plus a self-contained HTML page
-that GitHub Pages serves without needing any runtime fetch.
+Reads the latest persisted scores, integrated grades and calibration from
+SQLite and writes a GitHub-renderable Markdown table plus a self-contained
+HTML page (served by GitHub Pages without any runtime fetch). Each HTML row
+opens a drawer with the evidence behind the grade: its main drivers, recent
+analyst rating AND price-target changes, the latest headlines with their
+tone, estimate revisions, earnings and SEC events.
 """
 from __future__ import annotations
 
 import hashlib
 import json
-from datetime import date, datetime, timedelta
+import math
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
-from sqlalchemy import desc, select
+from sqlalchemy import desc, func, select
 
 from invest.config import HORIZONS, get_settings
 from invest.db import session_scope
-from invest.models import AnalystAction, Consensus, Holding13F, Price, RunLog, Score, Stock
+from invest.models import (
+    AnalystAction,
+    Calibration,
+    Consensus,
+    Grade,
+    IntelSnapshot,
+    NewsItem,
+    Price,
+    RunLog,
+    Score,
+    SecFiling,
+    Stock,
+)
 
 HERE = Path(__file__).resolve().parent.parent
 REPORT_MD = HERE / "REPORT.md"
 REPORT_HTML = HERE / "docs" / "index.html"
 HISTORY_PATH = HERE / "docs" / "history.jsonl"
-
-
-# Pretty display names per horizon (the keys are short for storage / config).
-HORIZON_TITLE: dict[str, str] = {
-    "hours": "Next few hours",
-    "daily": "Daily (~5 trading days)",
-    "weekly": "Weekly (~1 month)",
-    "monthly": "Month and above (~90 days)",
-}
-
-
-# Per-horizon plain-English explainer shown in the report header.
-HORIZON_BLURB: dict[str, str] = {
-    "hours": (
-        "Next few hours / next session. Fastest signal — leans almost entirely "
-        "on short-term price momentum and very-recent rating changes. Heaviest "
-        "risk penalty (intraday noise is large)."
-    ),
-    "daily": (
-        "About a week of holding (5 trading days). Same flavour as 'hours' but "
-        "with more weight on 30-day rating momentum and the consensus snapshot."
-    ),
-    "weekly": (
-        "About a month of holding (20 trading days). Balanced mix of consensus, "
-        "price-target upside, rating momentum and price trend."
-    ),
-    "monthly": (
-        "A quarter or more (90+ trading days). Leans on analyst consensus, "
-        "price-target upside, and institutional (13F) flow; actively de-weights "
-        "short-term price chase."
-    ),
-}
-
-
-# Column definitions. Order matches the tables.
-HORIZON_COLUMN_DOCS: list[tuple[str, str]] = [
-    ("#", "Rank (1 = highest blended score in this horizon)."),
-    (
-        "★★ / ★★★ / ★★★★",
-        "Cross-horizon highlight. ★★ = this ticker ranks in two of the four "
-        "top lists; ★★★ = three of four; ★★★★ = all four horizons agree. "
-        "High-conviction names.",
-    ),
-    ("Ticker", "Stock symbol as used on US exchanges."),
-    ("Name", "Company name from Yahoo Finance."),
-    ("Sector", "GICS sector classification."),
-    (
-        "Blended",
-        "Final score = 0.6 · z(composite) + 0.4 · z(ml). Z-scored across the "
-        "universe for this horizon, so 0 is average. +1 ≈ 1 std-dev above the "
-        "pack. Higher = more attractive.",
-    ),
-    (
-        "Composite",
-        "Rule-based score from the weighted sum of nine transparent features "
-        "(analyst consensus, price-target upside, tier-weighted rating "
-        "momentum, target revision, 13F institutional flow, insider net buy, "
-        "price momentum, realised-volatility risk penalty).",
-    ),
-    (
-        "ML",
-        "LightGBM regressor's predicted forward return for this horizon. "
-        "Cold-start fallback = composite until ≥ 60 daily snapshots exist.",
-    ),
-    (
-        "Pctile",
-        "Percentile of the blended score inside this horizon (100 % = top).",
-    ),
-]
-
-
-SNAPSHOT_COLUMN_DOCS: list[tuple[str, str]] = [
-    ("Ticker / Sector", "Stock symbol + GICS sector."),
-    (
-        "Upside",
-        "Analyst consensus mean target / last close − 1. Only stocks with "
-        "≥ 4 % upside survive the quality gate, so every row here is bullish.",
-    ),
-    (
-        "Buy / Hold / Sell",
-        "Aggregated analyst rating counts (most recent consensus snapshot). "
-        "Strong Buy + Buy → 'Buy'; Strong Sell + Sell → 'Sell'. By "
-        "construction Buy + Hold + Sell == Analysts.",
-    ),
-    (
-        "Analysts",
-        "Total number of sell-side analyst firms covering the stock — "
-        "sourced from yfinance's recommendations_summary plus Finnhub / FMP "
-        "when API keys are configured.",
-    ),
-    (
-        "Tier-1 firms",
-        "Distinct count of tier-1 firms (Goldman, Morgan Stanley, JPM, BofA, "
-        "Citi, Barclays, UBS, Jefferies, Evercore, Wells Fargo, RBC, BMO, "
-        "Cowen, Wedbush, Stifel, Truist, Mizuho, …) that have issued an "
-        "action on this ticker in the last 90 days. Higher = better-pedigree "
-        "coverage.",
-    ),
-    (
-        "Insts",
-        "Count of tracked institutional 13F filers (Berkshire, BlackRock, "
-        "Bridgewater, Renaissance, Citadel, Tiger, ARK …) currently holding "
-        "the stock in their most recent 13F-HR.",
-    ),
-    (
-        "Sources",
-        "Distinct named contributors backing this stock's signal: "
-        "sell-side firms with a rating action in the last 90 d ∪ tracked "
-        "13F filers (latest stored quarter) ∪ insider filers (Form-4) in "
-        "the last 90 d. Every top-listed stock is required to have at "
-        "least 50 distinct sources — this is the floor that proves the "
-        "ranking isn't driven by any single feed.",
-    ),
-    (
-        "Horizons",
-        "Which of {hours, daily, weekly, monthly} top lists the ticker "
-        "appears in.",
-    ),
-]
-
-
-# Kept for backwards-compatibility with the HTML <details> dl block.
-COLUMN_DOCS: list[tuple[str, str]] = HORIZON_COLUMN_DOCS
 
 
 # Stable sector → colour palette (deterministic by hash, so order-insensitive).
@@ -186,14 +79,7 @@ def _top_rows(horizon: str, as_of: date, n: int) -> list[dict]:
         )
     # Same per-sector diversification cap the CLI's top_n applies, so the
     # report and terminal output can never disagree on the top list.
-    candidates = [
-        {
-            "ticker": r.ticker,
-            "sector": r.sector,
-            "_row": r,
-        }
-        for r in raw
-    ]
+    candidates = [{"ticker": r.ticker, "sector": r.sector, "_row": r} for r in raw]
     rows = [c["_row"] for c in select_diversified(candidates, n)]
     tickers = [r.ticker for r in rows]
     extras = _enrichment_for(tickers)
@@ -213,20 +99,27 @@ def _top_rows(horizon: str, as_of: date, n: int) -> list[dict]:
     ]
 
 
+def _load_payload(raw: str | None) -> dict:
+    try:
+        d = json.loads(raw or "")
+        return d if isinstance(d, dict) else {}
+    except (TypeError, ValueError):
+        return {}
+
+
 def _enrichment_for(tickers: list[str]) -> dict[str, dict]:
-    """Per-ticker extras for the top-20: last close, consensus bar, firm count,
-    institutional holder count, list of recent analyst actions."""
+    """Per-ticker evidence for the table and drawer: last close, consensus,
+    rating and target changes, headlines, estimates, events, filings."""
     if not tickers:
         return {}
+    from invest.pipeline.features import current_13f_filers
+
     out: dict[str, dict] = {t: {} for t in tickers}
+    now = datetime.now(UTC).replace(tzinfo=None)
+    today = date.today()
 
     with session_scope() as s:
-        # Last close per ticker. Excludes NULL-close rows (yfinance
-        # occasionally has a date with no real close for a given ticker,
-        # observed live for PRX.AS) — without this, the report displayed
-        # "—" for Price/Upside on a stock that had a perfectly good score,
-        # target and gate-passing history, just because its single most
-        # recent price row happened to be a data gap.
+        # Last GOOD close (NULL-close rows are data gaps, seen live on PRX.AS).
         for t in tickers:
             row = (
                 s.query(Price.close, Price.date)
@@ -237,7 +130,6 @@ def _enrichment_for(tickers: list[str]) -> dict[str, dict]:
             if row:
                 out[t]["last_close"] = row.close
 
-        # Latest consensus per ticker (prefer finnhub over yfinance).
         for t in tickers:
             c = (
                 s.query(Consensus)
@@ -249,74 +141,131 @@ def _enrichment_for(tickers: list[str]) -> dict[str, dict]:
                 buy = (c.strong_buy or 0) + (c.buy or 0)
                 hold = c.hold or 0
                 sell = (c.sell or 0) + (c.strong_sell or 0)
-                # Total analysts = sum of every rating bucket = num_analysts.
-                # By construction `analysts == buy + hold + sell` so the row
-                # numbers tie out for the user — no more "more buy+hold+sell
-                # than firms" confusion.
-                out[t]["buy"] = buy
-                out[t]["hold"] = hold
-                out[t]["sell"] = sell
-                out[t]["strong_buy"] = c.strong_buy or 0
-                out[t]["strong_sell"] = c.strong_sell or 0
-                out[t]["analysts"] = buy + hold + sell
-                out[t]["mean_target"] = c.mean_target
+                # By construction analysts == buy + hold + sell.
+                out[t].update({
+                    "buy": buy, "hold": hold, "sell": sell,
+                    "strong_buy": c.strong_buy or 0, "strong_sell": c.strong_sell or 0,
+                    "analysts": buy + hold + sell, "mean_target": c.mean_target,
+                    "high_target": c.high_target, "low_target": c.low_target,
+                })
                 last = out[t].get("last_close")
                 if c.mean_target and last:
                     out[t]["upside_pct"] = c.mean_target / last - 1
 
-        # Recent analyst-firm activity (last 90 d) for the per-row drawer.
-        # NOTE: this is intentionally separate from `analysts` above — it
-        # measures how many distinct firms have CHANGED their rating
-        # recently, not total coverage.
+        # Rating / target changes, last 45 days, newest first.
+        cutoff = today - timedelta(days=45)
         for t in tickers:
             recent = (
                 s.query(AnalystAction)
-                .filter(AnalystAction.ticker == t)
+                .filter(AnalystAction.ticker == t, AnalystAction.date >= cutoff)
                 .order_by(AnalystAction.date.desc())
-                .limit(6)
+                .limit(10)
                 .all()
             )
-            out[t]["recent_actions"] = [
+            acts = [
                 {
-                    "date": a.date,
-                    "firm": a.firm,
-                    "action": a.action,
-                    "from": a.from_grade,
-                    "to": a.to_grade,
-                    "target": a.target_price,
-                    "source": a.source,
+                    "date": a.date, "firm": a.firm, "action": a.action,
+                    "from": a.from_grade, "to": a.to_grade,
+                    "target": a.target_price, "prior_target": a.prior_target,
+                    "target_action": a.target_action, "source": a.source,
                 }
                 for a in recent
             ]
+            out[t]["recent_actions"] = acts
+            m30 = [a for a in acts if a["date"] >= today - timedelta(days=30)]
+            out[t]["upgrades_30d"] = sum(1 for a in m30 if "up" in (a["action"] or ""))
+            out[t]["downgrades_30d"] = sum(1 for a in m30 if "down" in (a["action"] or ""))
+            out[t]["target_raises_30d"] = sum(
+                1 for a in m30 if a["target"] and a["prior_target"] and a["target"] > a["prior_target"]
+            )
+            out[t]["target_cuts_30d"] = sum(
+                1 for a in m30 if a["target"] and a["prior_target"] and a["target"] < a["prior_target"]
+            )
 
-        # Distinct 13F filer count (latest quarter in data).
+        # Headlines (7 days) and their tone.
+        since = now - timedelta(days=7)
         for t in tickers:
-            holders_q = (
-                s.query(Holding13F.filer_cik)
-                .filter(Holding13F.ticker == t)
-                .distinct()
+            items = (
+                s.query(NewsItem)
+                .filter(NewsItem.ticker == t, NewsItem.published_at >= since)
+                .order_by(NewsItem.published_at.desc())
+                .limit(40)
                 .all()
             )
-            out[t]["inst_count"] = len(holders_q)
+            out[t]["news"] = [
+                {"title": n.title, "publisher": n.publisher, "url": n.url,
+                 "at": n.published_at, "sentiment": n.sentiment}
+                for n in items[:6]
+            ]
+            out[t]["news_count_7d"] = len(items)
+            if items:
+                w = [(n.relevance or 0.5) for n in items]
+                out[t]["news_tone"] = sum(
+                    wi * (n.sentiment or 0.0) for wi, n in zip(w, items)
+                ) / (sum(w) + 1.0)
+
+        intel = {
+            t: _load_payload(p)
+            for t, p in s.query(IntelSnapshot.ticker, IntelSnapshot.payload).filter(
+                IntelSnapshot.ticker.in_(tickers), IntelSnapshot.kind == "quote"
+            )
+        }
+        for t, p in intel.items():
+            eps = (p.get("eps") or {}).get("0y") or {}
+            st = p.get("stats") or {}
+            sur = (p.get("surprises") or [None])[0]
+            out[t]["intel"] = {
+                "eps_now": eps.get("cur"), "eps_30d": eps.get("d30"),
+                "eps_up30": eps.get("up30"), "eps_dn30": eps.get("dn30"),
+                "surprise": sur, "next_earnings": p.get("next_earnings"),
+                "fwd_pe": st.get("fpe"), "short_float": st.get("short_float"),
+                "target_median": (p.get("targets") or {}).get("median"),
+                "rec_trend": p.get("rec_trend") or {},
+            }
+
+        filings = (
+            s.query(SecFiling)
+            .filter(SecFiling.ticker.in_(tickers),
+                    SecFiling.filing_date >= today - timedelta(days=90))
+            .order_by(SecFiling.filing_date.desc())
+            .all()
+        )
+        for f in filings:
+            lst = out[f.ticker].setdefault("filings", [])
+            if len(lst) < 6 and not f.form.startswith(("10-", "20-F", "40-F", "SC 13G", "SCHEDULE 13G")):
+                lst.append({"date": f.filing_date, "form": f.form, "items": f.items,
+                            "desc": f.description})
+
+    holders = current_13f_filers(tickers)
+    for t in tickers:
+        out[t]["inst_count"] = len(holders.get(t, ()))
     return out
 
 
-# ------------------------------- Markdown --------------------------------
-
-
-
-
-
-
-
-
+def _grades_for(tickers: list[str], as_of: date | None = None) -> dict[str, dict]:
+    """Latest integrated grade per ticker (pipeline/grade.py)."""
+    if not tickers:
+        return {}
+    with session_scope() as s:
+        if as_of is None:
+            as_of = s.execute(select(func.max(Grade.as_of))).scalar()
+        if as_of is None:
+            return {}
+        rows = s.query(Grade).filter(Grade.as_of == as_of, Grade.ticker.in_(tickers)).all()
+    return {
+        g.ticker: {
+            "grade_score": g.grade_score, "letter": g.letter, "grade_pct": g.percentile,
+            "confidence": g.confidence, "alpha_1m": g.alpha_1m, "alpha_3m": g.alpha_3m,
+            "p_outperform_1m": g.p_outperform_1m, "detail": _load_payload(g.detail_json),
+        }
+        for g in rows
+    }
 
 
 def _collect_top_by_horizon(as_of: date, n: int) -> dict[str, list[dict]]:
     """Pull top-N rows once per horizon, then annotate every row with the count
     AND labels of horizons in which that ticker also appears."""
     by_h = {h: _top_rows(h, as_of, n) for h in HORIZONS}
-    # Map ticker -> ordered horizon labels it appears in.
     horizons_for: dict[str, list[str]] = {}
     for h in HORIZONS:
         for r in by_h[h]:
@@ -329,64 +278,30 @@ def _collect_top_by_horizon(as_of: date, n: int) -> dict[str, list[dict]]:
 
 
 def _firm_identity(firm: str | None, firm_key: str | None) -> str:
-    """Canonical identity for a (firm, firm_key) row pair. Prefer the stored
-    firm_key (set at insert time); fall back to computing it on the fly for
-    rows written before the firm_key column existed."""
+    """Canonical identity for a (firm, firm_key) row pair."""
     from invest.firms import canonical_firm_key
 
     return firm_key or canonical_firm_key(firm)
 
 
-def _tier1_count_per_ticker(tickers: list[str], lookback_days: int = 90) -> dict[str, int]:
-    """Distinct tier-1 firms with an action on the ticker in the lookback
-    window. Deduped by canonical identity — "Goldman Sachs" and "Goldman
-    Sachs & Co." must count as ONE firm, not two."""
-    if not tickers:
-        return {}
-    from invest.firms import firm_tier
-
-    cutoff = date.today() - timedelta(days=lookback_days)
-    seen: dict[str, set[str]] = {}
-    with session_scope() as s:
-        rows = s.execute(
-            select(AnalystAction.ticker, AnalystAction.firm, AnalystAction.firm_key).where(
-                AnalystAction.ticker.in_(tickers),
-                AnalystAction.date >= cutoff,
-                AnalystAction.firm.isnot(None),
-            )
-        ).all()
-    for t, firm, firm_key in rows:
-        if firm_tier(firm) != 1:
-            continue
-        key = _firm_identity(firm, firm_key)
-        if key:
-            seen.setdefault(t, set()).add(key)
-    return {t: len(keys) for t, keys in seen.items()}
-
-
 def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
-    """Distinct contributors per ticker, matching `features.build_features`.
+    """Distinct contributors per ticker — IDENTICAL to features.build_features:
 
         max(covering analysts, named rating-changers in 90 d)
-        + tracked 13F filers + insider filers in 90 d
+        + tracked 13F filers holding it in a current period
+        + insider filers in 90 d
 
-    The sell-side bucket takes the MAX, not the sum: the firms that published
-    a rating change are a subset of the firms covering the stock — we just
-    only learn the names of the former. Summing would double-count them.
-
-    This must stay identical to the feature computation, otherwise the column
-    the reader sees disagrees with the gate that selected the row. It did
-    disagree once: the report showed `Sources = 0` next to picks that had
-    supposedly cleared a 12-source floor, because this counted only named
-    rating-changers while the ranking ran on a different definition.
+    Any divergence makes the Sources column contradict the gate that
+    selected the row (it did once: `Sources = 0` next to picks that had
+    cleared a 12-source floor).
     """
     if not tickers:
         return {}
-    from invest.models import Holding13F, InsiderTrade
+    from invest.models import InsiderTrade
+    from invest.pipeline.features import current_13f_filers
 
     cutoff = date.today() - timedelta(days=90)
     named: dict[str, set[str]] = {}
-    insts: dict[str, set[str]] = {}
     insiders: dict[str, set[str]] = {}
     with session_scope() as s:
         for t, firm, firm_key in s.execute(
@@ -399,13 +314,6 @@ def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
             key = _firm_identity(firm, firm_key)
             if key:
                 named.setdefault(t, set()).add(key)
-        for t, cik in s.execute(
-            select(Holding13F.ticker, Holding13F.filer_cik).where(
-                Holding13F.ticker.in_(tickers),
-                Holding13F.filer_cik.isnot(None),
-            )
-        ).all():
-            insts.setdefault(t, set()).add(cik)
         for t, ifiler in s.execute(
             select(InsiderTrade.ticker, InsiderTrade.filer).where(
                 InsiderTrade.ticker.in_(tickers),
@@ -414,7 +322,7 @@ def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
             )
         ).all():
             insiders.setdefault(t, set()).add(ifiler.lower().strip())
-
+    insts = current_13f_filers(tickers)
     covering = _covering_analysts_per_ticker(tickers)
     return {
         t: max(covering.get(t, 0), len(named.get(t, ())))
@@ -425,12 +333,8 @@ def _total_sources_per_ticker(tickers: list[str]) -> dict[str, int]:
 
 
 def _covering_analysts_per_ticker(tickers: list[str]) -> dict[str, int]:
-    """Covering-analyst count from the freshest consensus snapshot per ticker.
-
-    Uses the larger of the rating-bucket sum and the feed's own
-    `num_analysts`, since a name can carry price targets without a published
-    buy/hold/sell breakdown.
-    """
+    """Covering-analyst count from the freshest consensus snapshot per ticker:
+    the larger of the rating-bucket sum and the feed's own `num_analysts`."""
     if not tickers:
         return {}
     cutoff = date.today() - timedelta(days=get_settings().consensus_max_age_days)
@@ -443,9 +347,7 @@ def _covering_analysts_per_ticker(tickers: list[str]) -> dict[str, int]:
             )
         ).scalars().all()
     for r in rows:
-        buckets = sum(
-            v or 0 for v in (r.strong_buy, r.buy, r.hold, r.sell, r.strong_sell)
-        )
+        buckets = sum(v or 0 for v in (r.strong_buy, r.buy, r.hold, r.sell, r.strong_sell))
         n = max(buckets, r.num_analysts or 0)
         prev = best.get(r.ticker)
         if prev is None or r.as_of_date > prev[0]:
@@ -455,135 +357,34 @@ def _covering_analysts_per_ticker(tickers: list[str]) -> dict[str, int]:
     return {t: n for t, (_, n) in best.items()}
 
 
-
-
-
-
-def _named_firms_for_tickers(tickers: list[str], lookback_days: int = 90) -> dict[str, list[tuple[str, int]]]:
-    """For each ticker, return the distinct named sell-side firms seen in
-    the last `lookback_days` along with each firm's tier (0..3). Deduped by
-    canonical identity — the same real firm shows once, using the
-    alphabetically-first raw spelling seen, not once per spelling variant.
-    Sorted by tier ASC (tier-1 first) then by firm name."""
-    if not tickers:
-        return {}
-    from invest.firms import firm_tier
-
-    cutoff = date.today() - timedelta(days=lookback_days)
-    out: dict[str, dict[str, str]] = {}  # ticker -> {canonical key: representative name}
-    with session_scope() as s:
-        for t, firm, firm_key in s.execute(
-            select(AnalystAction.ticker, AnalystAction.firm, AnalystAction.firm_key).where(
-                AnalystAction.ticker.in_(tickers),
-                AnalystAction.date >= cutoff,
-                AnalystAction.firm.isnot(None),
-            )
-        ).all():
-            key = _firm_identity(firm, firm_key)
-            if not key:
-                continue
-            bucket = out.setdefault(t, {})
-            if key not in bucket or firm.lower() < bucket[key].lower():
-                bucket[key] = firm
-    return {
-        t: sorted(((f, firm_tier(f)) for f in reps.values()), key=lambda x: (x[1] or 99, x[0].lower()))
-        for t, reps in out.items()
-    }
-
-
-
-
-
-
-
-
 # ------------------------- history persistence -------------------------
 
 
-def _append_history(by_h: dict[str, list[dict]], generated_at: datetime) -> None:
-    """Append one JSON line per ranked row to docs/history.jsonl.
-
-    The file is small (~20 lines per run × 12 runs/day ≈ 240 lines/day,
-    well under a MB per year) and is committed alongside REPORT.md so the
-    history survives even if the GitHub Actions SQLite cache is evicted.
-    """
+def _append_history(by_h: dict[str, list[dict]], generated_at: datetime,
+                    grades: dict[str, dict] | None = None) -> None:
+    """Append one JSON line per ranked row to docs/history.jsonl (committed
+    alongside the report, so ranking history survives any DB loss)."""
     HISTORY_PATH.parent.mkdir(parents=True, exist_ok=True)
     iso = generated_at.replace(microsecond=0).isoformat()
+    grades = grades or {}
     lines: list[str] = []
     for h, rows in by_h.items():
         for r in rows:
-            lines.append(
-                json.dumps(
-                    {
-                        "ts": iso,
-                        "h": h,
-                        "rank": r["rank"],
-                        "ticker": r["ticker"],
-                        "score": round(float(r.get("blended", r.get("blended_score") or 0)), 4),
-                        "hc": int(r.get("horizon_count") or 1),
-                    },
-                    separators=(",", ":"),
-                )
-            )
+            rec = {
+                "ts": iso,
+                "h": h,
+                "rank": r["rank"],
+                "ticker": r["ticker"],
+                "score": round(float(r.get("blended", r.get("blended_score") or 0)), 4),
+                "hc": int(r.get("horizon_count") or 1),
+            }
+            g = grades.get(r["ticker"])
+            if g and g.get("letter"):
+                rec["g"] = g["letter"]
+            lines.append(json.dumps(rec, separators=(",", ":")))
     if lines:
         with HISTORY_PATH.open("a") as f:
             f.write("\n".join(lines) + "\n")
-
-
-def _load_history(days: int) -> list[dict]:
-    """Read recent history rows from docs/history.jsonl."""
-    if not HISTORY_PATH.exists():
-        return []
-    cutoff = datetime.utcnow() - timedelta(days=days)
-    out: list[dict] = []
-    with HISTORY_PATH.open() as f:
-        for raw in f:
-            raw = raw.strip()
-            if not raw:
-                continue
-            try:
-                rec = json.loads(raw)
-                ts = datetime.fromisoformat(rec["ts"])
-            except (json.JSONDecodeError, KeyError, ValueError):
-                continue
-            if ts < cutoff:
-                continue
-            rec["_ts"] = ts
-            out.append(rec)
-    return out
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# -------------------------- international picks --------------------------
-
-
-_REGION_LABEL = {"IL": "🇮🇱 Israel", "EU": "🇪🇺 Europe"}
-
-
-def _ticker_region_map() -> dict[str, str]:
-    """{ticker: 'IL' | 'EU'} for every non-US name in the static universe.
-    US-L / US-S tickers are omitted since this map only exists to flag
-    international names in the report."""
-    from invest.universe import static_universe_entries
-
-    return {t: region for t, _name, _sector, region in static_universe_entries() if region in ("IL", "EU")}
-
-
-
-
-
-
 
 
 # --------------------------- main table ---------------------------
@@ -595,35 +396,19 @@ _HORIZON_LETTER = {"hours": "H", "daily": "D", "weekly": "W", "monthly": "M"}
 def main_table_rows(by_h: dict[str, list[dict]]) -> list[dict]:
     """Collapse the four per-horizon lists into ONE ranked table.
 
-    A ticker's strength is how many horizons rank it and how well: we sum
-    its per-horizon percentile so a name that only tops the 'hours' list
-    can't outrank one that every horizon likes. Ties break on upside.
-    Returns rows sorted best-first, capped to `settings.main_table_size`.
-
-    Unioning four independently-diversified horizon lists produces however
-    many DISTINCT tickers that union happens to contain, not a fixed
-    number — observed 27 on one live run. The cap makes the row count
-    predictable regardless of how much the four lists overlap.
+    Candidates are the union of the horizons' diversified top lists. They
+    are ordered by the INTEGRATED GRADE (pipeline/grade.py) — the
+    correlation- and skill-weighted combination of all four horizon scores —
+    instead of the old sum of top-list percentiles, which was discontinuous:
+    a name ranked 36th on a horizon (just outside its top-35) got zero
+    credit for it. Rows without a grade (fresh database) fall back to that
+    legacy percentile sum. Capped to `settings.main_table_size`.
     """
     agg: dict[str, dict] = {}
     for h in HORIZONS:
         for r in by_h.get(h, []):
             t = r["ticker"]
-            row = agg.setdefault(
-                t,
-                {
-                    "ticker": t,
-                    "name": r.get("name") or "",
-                    "sector": r.get("sector") or "",
-                    "upside_pct": r.get("upside_pct"),
-                    "last_close": r.get("last_close"),
-                    "mean_target": r.get("mean_target"),
-                    "analysts": r.get("analysts") or 0,
-                    "horizons": [],
-                    "score": 0.0,
-                    "best_rank": 99,
-                },
-            )
+            row = agg.setdefault(t, {**r, "horizons": [], "score": 0.0, "best_rank": 99})
             row["horizons"].append(h)
             row["score"] += float(r.get("percentile") or 0.0)
             row["best_rank"] = min(row["best_rank"], int(r.get("rank") or 99))
@@ -631,11 +416,19 @@ def main_table_rows(by_h: dict[str, list[dict]]) -> list[dict]:
     rows = list(agg.values())
     tickers = [r["ticker"] for r in rows]
     sources = _total_sources_per_ticker(tickers)
+    grades = _grades_for(tickers)
     for r in rows:
         r["sources"] = sources.get(r["ticker"], 0)
-    rows.sort(
-        key=lambda r: (-(r["score"]), -(r.get("upside_pct") or 0.0), r["best_rank"])
-    )
+        r["analysts"] = r.get("analysts") or 0
+        r.update(grades.get(r["ticker"], {}))
+
+    def key(r: dict) -> tuple:
+        g = r.get("grade_score")
+        has = g is not None and math.isfinite(g)
+        return (0 if has else 1, -(g if has else 0.0), -(r["score"]),
+                -(r.get("upside_pct") or 0.0), r["best_rank"])
+
+    rows.sort(key=key)
     rows = rows[: get_settings().main_table_size]
     for i, r in enumerate(rows, start=1):
         r["rank"] = i
@@ -644,26 +437,53 @@ def main_table_rows(by_h: dict[str, list[dict]]) -> list[dict]:
 
 def _timeframe_marks(horizons: list[str]) -> str:
     """Compact H/D/W/M markers — replaces four near-duplicate tables."""
-    present = {h for h in horizons}
-    return "".join(
-        _HORIZON_LETTER[h] if h in present else "·" for h in HORIZONS
-    )
+    present = set(horizons)
+    return "".join(_HORIZON_LETTER[h] if h in present else "·" for h in HORIZONS)
+
+
+def _pct(x: float | None, digits: int = 1, signed: bool = True) -> str:
+    if x is None or (isinstance(x, float) and not math.isfinite(x)):
+        return "—"
+    return f"{x * 100:+.{digits}f}%" if signed else f"{x * 100:.{digits}f}%"
+
+
+def _grade_cell(r: dict) -> str:
+    if not r.get("letter"):
+        return "—"
+    return f"{r['letter']} ({r['grade_score']:+.2f})"
+
+
+def _opinion_cell(r: dict) -> str:
+    """Net 30-day opinion change: ↑ upgrades / ↓ downgrades, ▲ target raises / ▼ cuts."""
+    parts = []
+    up, dn = r.get("upgrades_30d") or 0, r.get("downgrades_30d") or 0
+    tr, tc = r.get("target_raises_30d") or 0, r.get("target_cuts_30d") or 0
+    if up or dn:
+        parts.append(f"↑{up}/↓{dn}")
+    if tr or tc:
+        parts.append(f"▲{tr}/▼{tc}")
+    return " ".join(parts) or "—"
+
+
+def _news_cell(r: dict) -> str:
+    n = r.get("news_count_7d") or 0
+    if not n:
+        return "—"
+    tone = r.get("news_tone") or 0.0
+    mark = "+" if tone > 0.05 else "−" if tone < -0.05 else "0"
+    return f"{mark} ({n})"
 
 
 def _main_table_md(rows: list[dict]) -> str:
     if not rows:
         return "_(no picks cleared the quality gates this run)_\n"
     headers = [
-        "#", "Ticker", "Name", "Sector", "Upside",
-        "Price", "Target", "Score", "H/D/W/M", "Analysts", "Sources",
+        "#", "Ticker", "Name", "Sector", "Grade", "Upside", "Price", "Target",
+        "α 1M", "P(beat) 1M", "Conf", "News 7d", "Δ Opinion 30d", "H/D/W/M", "Analysts", "Sources",
     ]
     lines = ["| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
     for r in rows:
-        upside = (
-            f"**{(r.get('upside_pct') or 0) * 100:+.1f}%**"
-            if r.get("upside_pct") is not None
-            else "—"
-        )
+        upside = f"**{_pct(r.get('upside_pct'))}**" if r.get("upside_pct") is not None else "—"
         price = f"{r['last_close']:.2f}" if r.get("last_close") else "—"
         target = f"{r['mean_target']:.2f}" if r.get("mean_target") else "—"
         lines.append(
@@ -672,15 +492,20 @@ def _main_table_md(rows: list[dict]) -> str:
                 [
                     str(r["rank"]),
                     f"**{r['ticker']}**",
-                    (r["name"] or "")[:34],
-                    (r["sector"] or "")[:20],
+                    (r.get("name") or "")[:28],
+                    (r.get("sector") or "")[:18],
+                    _grade_cell(r),
                     upside,
                     price,
                     target,
-                    f"{r['score']:.2f}",
+                    _pct(r.get("alpha_1m"), 2),
+                    _pct(r.get("p_outperform_1m"), 1, signed=False),
+                    _pct(r.get("confidence"), 0, signed=False),
+                    _news_cell(r),
+                    _opinion_cell(r),
                     _timeframe_marks(r["horizons"]),
-                    str(r["analysts"]),
-                    str(r["sources"]),
+                    str(r.get("analysts") or 0),
+                    str(r.get("sources") or 0),
                 ]
             )
             + " |"
@@ -688,12 +513,18 @@ def _main_table_md(rows: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _staleness_banner_md(as_of: date) -> str | None:
-    """Loud warning when the newest scores are old.
+_MD_LEGEND = (
+    "\n_Grade: integrated cross-horizon score G (≈N(0,1) over gated stocks; letter by percentile). "
+    "α 1M: expected excess return vs the universe over ~20 trading days (IC·σ·z). "
+    "P(beat): calibrated probability of beating the universe median over that window. "
+    "Conf: share of the model's weight backed by observed data. "
+    "Δ Opinion: ↑upgrades/↓downgrades, ▲target raises/▼cuts (30 d). "
+    "Methodology and data health: see the live page._\n"
+)
 
-    Without this the page happily presented a five-week-old ranking as if it
-    were current, because the enrichment columns were recomputed live.
-    """
+
+def _staleness_banner_md(as_of: date) -> str | None:
+    """Loud warning when the newest scores are old."""
     age = (date.today() - as_of).days
     if age <= get_settings().max_score_age_days:
         return None
@@ -708,26 +539,18 @@ def _staleness_banner_md(as_of: date) -> str | None:
 
 
 def _build_markdown(as_of: date, n: int) -> str:
-    """ONE ranked main table, Upside first. Nothing else.
-
-    Previously this emitted four near-duplicate per-timeframe tables plus a
-    wall of ~64 firm names, a per-pick firm table, a 14-day history matrix,
-    sustained picks and a separate IL/EU section — burying the single number
-    that actually drives a decision. Those are all gone: the four timeframes
-    are collapsed into one H/D/W/M column, and international names now
-    compete in the main table on merit.
-    """
+    """ONE ranked main table plus a one-paragraph legend."""
     by_h = _collect_top_by_horizon(as_of, n)
-    # Persist this run's top-N into the history file (still used by the
-    # HTML view and for auditing), before rendering.
-    _append_history(by_h, datetime.utcnow())
+    rows = main_table_rows(by_h)
+    _append_history(by_h, datetime.now(UTC).replace(tzinfo=None), {r["ticker"]: r for r in rows})
 
     parts: list[str] = []
     banner = _staleness_banner_md(as_of)
     if banner:
         parts.append(banner)
         parts.append("")
-    parts.append(_main_table_md(main_table_rows(by_h)))
+    parts.append(_main_table_md(rows))
+    parts.append(_MD_LEGEND)
     return "\n".join(parts).rstrip() + "\n"
 
 
@@ -736,118 +559,318 @@ def _build_markdown(as_of: date, n: int) -> str:
 
 def _html_escape(s: str) -> str:
     return (
-        s.replace("&", "&amp;")
+        str(s).replace("&", "&amp;")
         .replace("<", "&lt;")
         .replace(">", "&gt;")
         .replace('"', "&quot;")
+        .replace("'", "&#39;")
     )
 
 
+def _safe_url(url: str | None) -> str | None:
+    if url and url.startswith(("https://", "http://")):
+        return _html_escape(url)
+    return None
+
+
+def _tone_dot(s: float | None) -> str:
+    s = s or 0.0
+    if s > 0.15:
+        return "<span class='tone pos' title='positive tone'>●</span>"
+    if s < -0.15:
+        return "<span class='tone neg' title='negative tone'>●</span>"
+    return "<span class='tone neu' title='neutral tone'>●</span>"
+
+
+def _drawer_html(r: dict, actions: list[dict]) -> str:
+    from invest.firms import firm_tier
+    from invest.pipeline.grade import FEATURE_LABELS
+
+    blocks: list[str] = []
+    det = r.get("detail") or {}
+    if det:
+        pos = ", ".join(_html_escape(FEATURE_LABELS.get(f, f)) for f, _ in det.get("drivers_pos", []))
+        neg = ", ".join(_html_escape(FEATURE_LABELS.get(f, f)) for f, _ in det.get("drivers_neg", []))
+        s_h = det.get("S") or {}
+        per_h = " · ".join(f"{_HORIZON_LETTER.get(h, h)} {v:+.2f}" for h, v in s_h.items())
+        blocks.append(
+            "<div class='why'><strong>Why this grade.</strong> "
+            + (f"Supported by {pos}. " if pos else "")
+            + (f"Held back by {neg}. " if neg else "")
+            + (f"Horizon scores (z): {per_h}. " if per_h else "")
+            + (f"Expected excess return: 1M {_pct(r.get('alpha_1m'), 2)}, "
+               f"3M {_pct(r.get('alpha_3m'), 2)}; "
+               f"P(beat 1M) {_pct(r.get('p_outperform_1m'), 1, signed=False)}; "
+               f"data confidence {_pct(r.get('confidence'), 0, signed=False)}."
+               if r.get("letter") else "")
+            + "</div>"
+        )
+
+    if actions:
+        def _tgt(a: dict) -> str:
+            tp, pp = a.get("target"), a.get("prior_target")
+            if tp and pp:
+                arrow = "▲" if tp > pp else "▼" if tp < pp else "="
+                return f"{pp:g} → {tp:g} {arrow}"
+            return f"{tp:g}" if tp else ""
+
+        def _tier(firm: str | None) -> str:
+            t = firm_tier(firm)
+            return {1: "<td class='tier1'><strong>T1</strong></td>", 2: "<td class='tier2'>T2</td>",
+                    3: "<td class='tier3'>T3</td>"}.get(t, "<td class='src'>—</td>")
+
+        trs = "".join(
+            "<tr>"
+            f"<td>{a['date'].isoformat() if a.get('date') else ''}</td>"
+            + _tier(a.get("firm"))
+            + f"<td>{_html_escape(a.get('firm') or '')}</td>"
+            f"<td>{_html_escape((a.get('action') or '').title())}</td>"
+            f"<td>{_html_escape((a.get('from') or '') + ' → ' + (a.get('to') or ''))}</td>"
+            f"<td class='num'>{_html_escape(_tgt(a))}</td>"
+            "</tr>"
+            for a in actions
+        )
+        blocks.append(
+            "<strong>Analyst rating &amp; target changes (45 d)</strong>"
+            "<table class='inner'><thead><tr><th>Date</th><th>Tier</th><th>Firm</th>"
+            "<th>Action</th><th>Rating</th><th>Target</th></tr></thead>"
+            f"<tbody>{trs}</tbody></table>"
+        )
+
+    news = r.get("news") or []
+    if news:
+        items = []
+        for n in news:
+            when = n["at"].strftime("%b %d") if n.get("at") else ""
+            title = _html_escape(n.get("title") or "")
+            url = _safe_url(n.get("url"))
+            link = f"<a href='{url}' target='_blank' rel='noopener noreferrer'>{title}</a>" if url else title
+            pub = _html_escape(n.get("publisher") or "")
+            items.append(f"<li>{_tone_dot(n.get('sentiment'))} {link} <span class='src'>{pub} · {when}</span></li>")
+        blocks.append("<strong>Latest headlines</strong><ul class='news'>" + "".join(items) + "</ul>")
+
+    intel = r.get("intel") or {}
+    facts = []
+    if intel.get("eps_now") is not None and intel.get("eps_30d") is not None:
+        facts.append(f"FY EPS estimate {intel['eps_30d']:.2f} → {intel['eps_now']:.2f} (30 d)")
+    if intel.get("eps_up30") is not None or intel.get("eps_dn30") is not None:
+        facts.append(f"EPS revisions 30 d: {int(intel.get('eps_up30') or 0)} up / "
+                     f"{int(intel.get('eps_dn30') or 0)} down")
+    sur = intel.get("surprise")
+    if sur and sur.get("est") not in (None, 0):
+        facts.append(f"last quarter EPS {sur['act']:.2f} vs {sur['est']:.2f} est.")
+    if intel.get("next_earnings"):
+        facts.append(f"next earnings {intel['next_earnings']}")
+    if intel.get("fwd_pe"):
+        facts.append(f"forward P/E {intel['fwd_pe']:.1f}")
+    if intel.get("short_float") is not None:
+        facts.append(f"short interest {intel['short_float'] * 100:.1f}% of float")
+    if facts:
+        blocks.append("<strong>Estimates &amp; events.</strong> " + _html_escape("; ".join(facts)) + ".")
+
+    filings = r.get("filings") or []
+    if filings:
+        li = "".join(
+            f"<li>{f['date'].isoformat()} <strong>{_html_escape(f['form'])}</strong>"
+            + (f" items {_html_escape(f['items'])}" if f.get("items") else "")
+            + (f" — {_html_escape(f['desc'])}" if f.get("desc") else "")
+            + "</li>"
+            for f in filings
+        )
+        blocks.append(f"<strong>SEC filings (90 d)</strong><ul class='news'>{li}</ul>")
+    return "".join(f"<div class='blk'>{b}</div>" for b in blocks)
 
 
 def _main_table_html(rows: list[dict], by_h: dict[str, list[dict]]) -> str:
-    """The single main table, Upside first, with a click-to-expand drawer
-    per row showing that stock's recent named analyst actions."""
+    """The main table; each row opens a drawer with the evidence behind it."""
     if not rows:
         return "<p><em>(no picks cleared the quality gates this run)</em></p>"
 
-    # Recent-actions payload lives on the per-horizon rows; index it once.
     actions_by_ticker: dict[str, list[dict]] = {}
     for h in HORIZONS:
         for r in by_h.get(h, []):
             actions_by_ticker.setdefault(r["ticker"], r.get("recent_actions") or [])
 
-    from invest.firms import firm_tier
-
     head = (
         "<thead><tr>"
         "<th>#</th><th>Ticker</th><th>Name</th><th>Sector</th>"
+        "<th title='Integrated cross-horizon grade (letter by percentile; G ≈ N(0,1) over gated stocks).'>Grade</th>"
         "<th title='Consensus price target vs current price.'>Upside</th>"
         "<th>Price</th><th>Target</th>"
-        "<th title='Sum of per-timeframe percentiles — higher means more timeframes rank it highly.'>Score</th>"
+        "<th title='Expected excess return vs the universe over ~20 trading days: IC · σ · z.'>α 1M</th>"
+        "<th title='Calibrated probability of beating the universe median over ~1 month.'>P(beat)</th>"
+        "<th title='Share of the model weight backed by observed data for this stock.'>Conf</th>"
+        "<th title='Headline tone (+/0/−) and number of headlines in the last 7 days.'>News</th>"
+        "<th title='Last 30 days: ↑upgrades/↓downgrades, ▲target raises/▼cuts.'>Δ Opinion</th>"
         "<th title='Which timeframes rank this name: Hours / Daily / Weekly / Monthly.'>H/D/W/M</th>"
         "<th>Analysts</th>"
-        "<th title='Distinct named contributors: sell-side firms, 13F filers, insider filers.'>Sources</th>"
+        "<th title='Distinct named contributors: sell-side firms, current 13F filers, insider filers.'>Sources</th>"
         "</tr></thead>"
     )
-
-    def _tier_cell(firm: str | None) -> str:
-        t = firm_tier(firm)
-        if t == 1:
-            return "<td class='tier1'><strong>T1</strong></td>"
-        if t == 2:
-            return "<td class='tier2'>T2</td>"
-        if t == 3:
-            return "<td class='tier3'>T3</td>"
-        return "<td class='src'>—</td>"
-
+    ncols = 16
     body: list[str] = []
     for i, r in enumerate(rows):
-        upside = (
-            f"{(r.get('upside_pct') or 0) * 100:+.1f}%"
-            if r.get("upside_pct") is not None
-            else "—"
-        )
+        upside = _pct(r.get("upside_pct")) if r.get("upside_pct") is not None else "—"
         up_cls = "num up-pos" if (r.get("upside_pct") or 0) > 0 else "num"
         price = f"{r['last_close']:.2f}" if r.get("last_close") else "—"
         target = f"{r['mean_target']:.2f}" if r.get("mean_target") else "—"
-        sector = r["sector"] or ""
+        sector = r.get("sector") or ""
         sector_html = (
             f"<span class='sector' style='background:{_sector_colour(sector)}'>"
             f"{_html_escape(sector[:22])}</span>"
             if sector
             else ""
         )
-        actions = actions_by_ticker.get(r["ticker"], [])
-        drawer_rows = "".join(
-            "<tr>"
-            f"<td>{a['date'].isoformat() if a.get('date') else ''}</td>"
-            + _tier_cell(a.get("firm"))
-            + f"<td>{_html_escape(a.get('firm') or '')}</td>"
-            f"<td>{_html_escape((a.get('action') or '').title())}</td>"
-            f"<td>{_html_escape((a.get('from') or '') + ' → ' + (a.get('to') or ''))}</td>"
-            f"<td class='num'>{a.get('target') or ''}</td>"
-            f"<td class='src'>{_html_escape(a.get('source') or '')}</td>"
-            "</tr>"
-            for a in actions
+        letter = r.get("letter") or ""
+        grade_html = (
+            f"<span class='grade g{_html_escape(letter[0])}'>{_html_escape(letter)}</span> "
+            f"<span class='src'>{r['grade_score']:+.2f}</span>" if letter else "—"
         )
+        drawer_html = _drawer_html(r, actions_by_ticker.get(r["ticker"], []))
         drawer = (
-            f"<tr class='drawer' id='d-{r['ticker']}-{i}' style='display:none'>"
-            "<td colspan='11'><strong>Recent analyst actions</strong>"
-            "<table class='inner'><thead><tr><th>Date</th><th>Tier</th><th>Firm</th>"
-            "<th>Action</th><th>From → To</th><th>Target</th><th>Source</th></tr></thead>"
-            f"<tbody>{drawer_rows}</tbody></table></td></tr>"
-            if drawer_rows
+            f"<tr class='drawer' id='d-{_html_escape(r['ticker'])}-{i}' style='display:none'>"
+            f"<td colspan='{ncols}'>{drawer_html}</td></tr>"
+            if drawer_html
             else ""
         )
         toggle = (
-            f" onclick=\"var d=document.getElementById('d-{r['ticker']}-{i}');"
+            f" onclick=\"var d=document.getElementById('d-{_html_escape(r['ticker'])}-{i}');"
             "if(d){d.style.display=d.style.display==='none'?'table-row':'none'}\""
-            if drawer_rows
+            if drawer_html
             else ""
         )
-        # data-ticker / data-name drive the find-a-stock box. Matching against
-        # explicit attributes rather than scraping cell text keeps the search
-        # working regardless of markup inside the cells (the name column is
-        # truncated to 40 chars for display, so the full name lives here).
+        # data-ticker / data-name drive the find-a-stock box (full name here;
+        # the visible name is truncated).
         body.append(
             f"<tr class='row-main'{toggle} style='cursor:pointer'"
             f" data-ticker='{_html_escape(r['ticker']).lower()}'"
-            f" data-name='{_html_escape(r['name'] or '').lower()}'>"
+            f" data-name='{_html_escape(r.get('name') or '').lower()}'>"
             f"<td>{r['rank']}</td>"
             f"<td><strong>{_html_escape(r['ticker'])}</strong></td>"
-            f"<td>{_html_escape((r['name'] or '')[:40])}</td>"
+            f"<td>{_html_escape((r.get('name') or '')[:40])}</td>"
             f"<td>{sector_html}</td>"
+            f"<td class='num'>{grade_html}</td>"
             f"<td class='{up_cls}'><strong>{upside}</strong></td>"
             f"<td class='num'>{price}</td>"
             f"<td class='num'>{target}</td>"
-            f"<td class='num'>{r['score']:.2f}</td>"
+            f"<td class='num'>{_pct(r.get('alpha_1m'), 2)}</td>"
+            f"<td class='num'>{_pct(r.get('p_outperform_1m'), 1, signed=False)}</td>"
+            f"<td class='num'>{_pct(r.get('confidence'), 0, signed=False)}</td>"
+            f"<td class='num'>{_html_escape(_news_cell(r))}</td>"
+            f"<td class='num'>{_html_escape(_opinion_cell(r))}</td>"
             f"<td class='tf'>{_html_escape(_timeframe_marks(r['horizons']))}</td>"
-            f"<td class='num'>{r['analysts']}</td>"
-            f"<td class='num'>{r['sources']}</td>"
+            f"<td class='num'>{r.get('analysts') or 0}</td>"
+            f"<td class='num'>{r.get('sources') or 0}</td>"
             "</tr>" + drawer
         )
     return f"<table class='top'>{head}<tbody>{''.join(body)}</tbody></table>"
+
+
+def _data_health_html() -> str:
+    """Crawl coverage, dormant symbols, recent failures and model calibration."""
+    now = datetime.now(UTC).replace(tzinfo=None)
+    today = date.today()
+    with session_scope() as s:
+        universe = s.query(func.count(Stock.ticker)).filter(Stock.in_universe.is_(True)).scalar() or 0
+        intel_fresh = s.query(func.count(IntelSnapshot.ticker)).filter(
+            IntelSnapshot.kind == "quote", IntelSnapshot.as_of >= now - timedelta(hours=36)
+        ).scalar() or 0
+        news_7d = s.query(func.count(NewsItem.id)).filter(
+            NewsItem.published_at >= now - timedelta(days=7)
+        ).scalar() or 0
+        news_names = s.query(func.count(func.distinct(NewsItem.ticker))).filter(
+            NewsItem.published_at >= now - timedelta(days=7)
+        ).scalar() or 0
+        sec_names = s.query(func.count(IntelSnapshot.ticker)).filter(
+            IntelSnapshot.kind == "sec"
+        ).scalar() or 0
+        tgt_changes = s.query(func.count(AnalystAction.id)).filter(
+            AnalystAction.date >= today - timedelta(days=30), AnalystAction.prior_target.isnot(None)
+        ).scalar() or 0
+        dormant = (
+            s.query(RunLog).filter(RunLog.job == "universe.dormant").order_by(RunLog.id.desc()).first()
+        )
+        errors = (
+            s.query(RunLog).filter(RunLog.status == "error",
+                                   RunLog.started_at >= now - timedelta(hours=24))
+            .order_by(RunLog.id.desc()).limit(8).all()
+        )
+        cal_date = s.execute(select(func.max(Calibration.as_of))).scalar()
+        cal_rows = (
+            s.query(Calibration).filter(Calibration.as_of == cal_date).all() if cal_date else []
+        )
+    items = [
+        f"Yahoo intel refreshed in the last 36 h: <strong>{intel_fresh}</strong> of {universe} tickers",
+        f"Headlines in the last 7 days: <strong>{news_7d}</strong> across {news_names} tickers",
+        f"SEC filing stream covered: <strong>{sec_names}</strong> tickers",
+        f"Analyst price-target changes captured (30 d): <strong>{tgt_changes}</strong>",
+    ]
+    if dormant is not None and dormant.error:
+        items.append("Dormant symbols (no price ≥ 10 d — delisted/renamed, skipped by the crawl): "
+                     + _html_escape(dormant.error.replace("dormant: ", "")))
+    if errors:
+        items.append("Crawl stages that failed in the last 24 h: " + ", ".join(
+            _html_escape(f"{e.job} ({(e.error or '')[:80]})") for e in errors))
+    else:
+        items.append("No crawl stage failed in the last 24 h.")
+
+    cal_html = ""
+    if cal_rows:
+        trs = []
+        for c in sorted(cal_rows, key=lambda c: list(HORIZONS).index(c.horizon)
+                        if c.horizon in HORIZONS else 9):
+            p = _load_payload(c.payload)
+            hic, ml = p.get("horizon_ic") or {}, p.get("ml") or {}
+            fac = p.get("factors") or {}
+            top = sorted(fac.items(), key=lambda kv: -abs(kv[1].get("weight", 0)))[:4]
+            top_s = ", ".join(f"{f} {v.get('weight', 0):+.2f}" for f, v in top)
+            real = hic.get("realised")
+            real_s = (
+                "—" if real is None
+                else f"{real:+.3f} ± {hic.get('realised_se') or 0:.3f} (n={hic.get('n_dates', 0)})"
+            )
+            trs.append(
+                f"<tr><td>{_html_escape(c.horizon)}</td>"
+                f"<td class='num'>{hic.get('exante', 0):.3f}</td>"
+                f"<td class='num'>{real_s}</td>"
+                f"<td class='num'>{hic.get('posterior', 0):.3f}</td>"
+                f"<td class='num'>{_pct(ml.get('weight', 0.0), 0, signed=False)}</td>"
+                f"<td class='src'>{_html_escape(top_s)}</td></tr>"
+            )
+        cal_html = (
+            "<table class='inner'><thead><tr><th>Horizon</th><th>Ex-ante IC</th>"
+            "<th>Realised IC (this model)</th><th>Posterior IC</th><th>ML weight</th>"
+            "<th>Largest factor weights</th></tr></thead><tbody>" + "".join(trs) + "</tbody></table>"
+        )
+    return (
+        "<section><details><summary>Data health &amp; model calibration</summary>"
+        "<ul class='health'>" + "".join(f"<li>{i}</li>" for i in items) + "</ul>"
+        + cal_html + "</details></section>"
+    )
+
+
+_METHOD_HTML = """
+<section><details><summary>Methodology</summary>
+<p>Every crawl gathers, per company: analyst consensus and its 1–3-month trend, price targets
+(mean, median, dispersion), each firm's rating <em>and</em> price-target changes, EPS estimate
+revisions and their breadth, the latest earnings surprise and next report date, valuation,
+profitability and short interest, headlines from Yahoo Finance and Google News (scored with a
+finance-specific lexicon), SEC filings (8-K red-flag items, late-filing notices, 13D activist
+stakes, offerings), Form 4 insider trades and 13F institutional positions.</p>
+<p>Each signal is rank-normalised to N(0,1) across the universe (partially sector-neutralised for
+valuation, profitability, short interest and target upside). Each carries a literature prior for
+its information coefficient (IC) per horizon, updated by the IC measured on this system's own
+history (precision-weighted Bayes). Weights are Σ⁻¹·IC, so correlated signals share weight
+instead of double-counting. A LightGBM ranker joins only in proportion to its purged
+out-of-sample IC. The grade combines the four horizon scores weighted by their estimated skill
+and correlation; α = IC·σ·z (Grinold) and P(beat) = Φ(IC·z) follow from the same model.
+Missing data counts as neutral, never as a fabricated value; the confidence column shows how
+much of the model each grade actually rests on.</p>
+<p>Honest scale: realistic ICs are 0.02–0.08, so even an A+ carries a probability of beating the
+universe of only slightly above 50 % per month. This is a research shortlist, not investment
+advice.</p>
+</details></section>
+"""
 
 
 def _heartbeat_badge() -> str:
@@ -904,7 +927,7 @@ _REPO_ACTIONS_URL = f"https://github.com/{_REPO_OWNER}/{_REPO_NAME}/actions/work
 
 
 def _build_html(as_of: date, n: int) -> str:
-    now = datetime.utcnow()
+    now = datetime.now(UTC).replace(tzinfo=None)
     generated = now.strftime("%Y-%m-%d %H:%M UTC")
     generated_iso = now.replace(microsecond=0).isoformat() + "Z"
     heartbeat = _heartbeat_badge()
@@ -921,12 +944,18 @@ def _build_html(as_of: date, n: int) -> str:
         )
     sections.append(
         "<section><h2>Top picks</h2>"
-        "<p class='blurb'>One ranked table across all four timeframes. "
-        "Upside is the consensus price target vs the current price; H/D/W/M "
-        "shows which timeframes rank the name. Click a row for that stock's "
-        "recent analyst actions.</p>"
+        "<p class='blurb'>One table across all four timeframes, ordered by the integrated grade. "
+        "Upside is the consensus target vs the current price; α and P(beat) are the model's "
+        "calibrated 1-month expectations; H/D/W/M shows which timeframes rank the name. "
+        "Click a row for the evidence: drivers, analyst rating and target changes, headlines, "
+        "estimates, events and filings.</p>"
         f"{_main_table_html(rows, by_h)}</section>"
     )
+    try:
+        sections.append(_data_health_html())
+    except Exception as e:  # noqa: BLE001 — diagnostics must never break the page
+        sections.append(f"<section><p class='src'>data health unavailable: {_html_escape(str(e))}</p></section>")
+    sections.append(_METHOD_HTML)
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -1001,6 +1030,23 @@ def _build_html(as_of: date, n: int) -> str:
      in both light and dark colour schemes, and outranks the .star row tint. */
   tr.row-main.hit td {{ background: rgba(43,108,176,0.18) !important; }}
   tr.row-main.hit td:first-child {{ box-shadow: inset 3px 0 0 var(--accent); }}
+  .grade {{ display: inline-block; min-width: 1.9rem; text-align: center; padding: 0.05rem 0.35rem;
+            border-radius: 4px; font-weight: 700; color: #fff; }}
+  .grade.gA {{ background: #2f855a; }}
+  .grade.gB {{ background: #2b6cb0; }}
+  .grade.gC {{ background: #b7791f; }}
+  .grade.gD {{ background: #9b2c2c; }}
+  .tone.pos {{ color: #2f855a; }}
+  .tone.neg {{ color: #c53030; }}
+  .tone.neu {{ color: #a0aec0; }}
+  ul.news {{ margin: 0.3rem 0 0.2rem 0; padding-left: 1.1rem; }}
+  ul.news li {{ margin: 0.15rem 0; }}
+  ul.health {{ padding-left: 1.2rem; }}
+  div.blk {{ margin: 0.35rem 0 0.6rem 0; }}
+  div.why {{ line-height: 1.55; }}
+  @media (max-width: 760px) {{
+    table.top {{ display: block; overflow-x: auto; white-space: nowrap; }}
+  }}
 </style>
 </head>
 <body>
@@ -1179,7 +1225,7 @@ def _build_html(as_of: date, n: int) -> str:
 
 
 def _placeholder() -> tuple[str, str]:
-    generated = datetime.utcnow().strftime("%Y-%m-%d %H:%M UTC")
+    generated = datetime.now(UTC).replace(tzinfo=None).strftime("%Y-%m-%d %H:%M UTC")
     md = "_(awaiting first crawl)_\n"
     _ = generated  # used only in the HTML placeholder below
     html = f"""<!doctype html><html><head><meta charset="utf-8"><title>Invest — awaiting first crawl</title>

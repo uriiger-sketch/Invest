@@ -21,7 +21,7 @@ from __future__ import annotations
 import contextlib
 import json
 import logging
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import numpy as np
@@ -137,7 +137,7 @@ def train(horizon: Horizon) -> Path | None:
         "val_dates": n_dates,
         "train_rows": int(len(tr)),
         "embargo_dates": int(h),
-        "trained_at": datetime.utcnow().isoformat(timespec="seconds"),
+        "trained_at": datetime.now(UTC).replace(tzinfo=None).isoformat(timespec="seconds"),
         "target": "gaussian cross-sectional rank of forward return",
     }
     path.with_suffix(".json").write_text(json.dumps(meta, indent=1))

@@ -1,4 +1,4 @@
-.PHONY: install migrate ingest rank dashboard serve test fmt lint clean docker-build docker-up docker-down
+.PHONY: install migrate ingest ingest-fast rank train maintain dashboard serve test fmt lint clean docker-build docker-up docker-down
 
 install:
 	pip install -e ".[dev]"
@@ -9,11 +9,17 @@ migrate:
 ingest:
 	python -m invest.cli ingest
 
+ingest-fast:
+	python -m invest.cli ingest-fast
+
 rank:
 	python -m invest.cli rank
 
 train:
 	python -m invest.cli train
+
+maintain:
+	python -m invest.cli maintain
 
 dashboard:
 	streamlit run src/invest/dashboard.py --server.port $${STREAMLIT_PORT:-8501}

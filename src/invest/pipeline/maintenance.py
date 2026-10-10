@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import logging
 import os
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 from sqlalchemy import text
 
@@ -23,7 +23,7 @@ logger = logging.getLogger(__name__)
 def prune_and_vacuum() -> dict[str, int]:
     settings = get_settings()
     today = date.today()
-    now = datetime.utcnow()
+    now = datetime.now(UTC).replace(tzinfo=None)
     plan = [
         ("features", "as_of < :cut", today - timedelta(days=settings.feature_retention_days)),
         ("scores", "as_of < :cut", today - timedelta(days=settings.score_retention_days)),
@@ -38,6 +38,19 @@ def prune_and_vacuum() -> dict[str, int]:
         # Insider rows outside the 90-day feature window + slack.
         ("insider_trades", "date < :cut", today - timedelta(days=200)),
     ]
+    plan += [
+        ("prices", "date < :cut", today - timedelta(days=420)),
+        ("holdings_13f", "filing_date < :cut", today - timedelta(days=550)),
+    ]
+    # Weekly thinning: daily granularity only matters for recent weeks.
+    # Older daily rows are thinned to one per week (Mondays) — IC measurement
+    # and ML training over 20-90-day horizons lose almost nothing (adjacent
+    # days' overlapping forward windows are ~95 % redundant), while the
+    # committed database stays far below GitHub's 100 MB file limit even with
+    # the full S&P 500 ∪ NASDAQ-100 universe.
+    thin_cut = today - timedelta(days=settings.daily_history_days)
+    thin = [("features", "as_of"), ("scores", "as_of"), ("grades", "as_of"),
+            ("consensus", "as_of_date")]
     deleted: dict[str, int] = {}
     engine = get_engine()
     with engine.begin() as conn:
@@ -47,6 +60,14 @@ def prune_and_vacuum() -> dict[str, int]:
                 continue
             res = conn.execute(text(f"DELETE FROM {table} WHERE {where}"), {"cut": cut})
             deleted[table] = int(res.rowcount or 0)
+        for table, col in thin:
+            if table not in tables:
+                continue
+            res = conn.execute(
+                text(f"DELETE FROM {table} WHERE {col} < :cut AND strftime('%w', {col}) != '1'"),
+                {"cut": thin_cut},
+            )
+            deleted[f"{table}.thinned"] = int(res.rowcount or 0)
     if engine.url.get_backend_name() == "sqlite":
         with engine.connect() as conn:
             conn.execution_options(isolation_level="AUTOCOMMIT").execute(text("VACUUM"))

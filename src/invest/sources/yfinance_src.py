@@ -80,6 +80,7 @@ class YFinanceSource(BaseSource):
     def __init__(self) -> None:
         super().__init__()
         self.governor = RateGovernor()
+        self._internal_api_broken = False
 
     # --------------------------- prices ---------------------------
 
@@ -143,10 +144,13 @@ class YFinanceSource(BaseSource):
         TransientSourceError / RateLimitedError for retryable failures.
         """
         self.throttle()
+        if self._internal_api_broken:
+            return self._quote_summary_fallback(ticker)
         try:
             from yfinance.data import YfData
             from yfinance.exceptions import YFRateLimitError
         except Exception:  # noqa: BLE001 — internal API moved: use the property API
+            self._internal_api_broken = True
             return self._quote_summary_fallback(ticker)
         params = {
             "modules": ",".join(QS_MODULES),
@@ -158,6 +162,12 @@ class YFinanceSource(BaseSource):
             js = YfData().get_raw_json(_QS_URL.format(symbol=ticker), params=params, timeout=20)
         except YFRateLimitError as e:
             raise RateLimitedError(str(e)) from e
+        except (TypeError, AttributeError) as e:
+            # yfinance's internal fetch changed shape: switch this run to the
+            # public-property fallback instead of retrying every ticker.
+            logger.warning("yfinance internal API changed (%s); using property fallback", e)
+            self._internal_api_broken = True
+            return self._quote_summary_fallback(ticker)
         except Exception as e:  # noqa: BLE001
             status = getattr(getattr(e, "response", None), "status_code", None)
             if status == 404:
@@ -372,7 +382,7 @@ class YFinanceSource(BaseSource):
 
         live = active_tickers(tickers)
         with log_run("yfinance.coverage_deep") as c:
-            rows, _ = self.ingest_coverage(live, budget_seconds=settings.coverage_budget_seconds * 2)
+            rows, _ = self.ingest_coverage(live, budget_seconds=settings.coverage_budget_seconds)
             c["rows"] = rows
             total += rows
         return total

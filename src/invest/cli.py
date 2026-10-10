@@ -48,7 +48,7 @@ def ingest() -> None:
 
 @app.command("ingest-fast")
 def ingest_fast() -> None:
-    """Quick refresh: yfinance prices + consensus only. Used by the 20-min loop."""
+    """Scheduled refresh: prices + full company-intel sweep + focus-list news/filings."""
     _ensure_schema()
     from .pipeline.ingest import ingest_fast as _ingest_fast
 

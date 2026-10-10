@@ -21,7 +21,7 @@ import contextlib
 import json
 import logging
 import math
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 
 import numpy as np
 import pandas as pd
@@ -566,7 +566,7 @@ def _news_features(tickers: list[str]) -> pd.DataFrame:
     most of its average (Tetlock 2007; news tone is short-lived).
     """
     settings = get_settings()
-    now = datetime.utcnow()
+    now = datetime.now(UTC).replace(tzinfo=None)
     since = now - timedelta(days=settings.news_lookback_days)
     with session_scope() as s:
         rows = s.execute(

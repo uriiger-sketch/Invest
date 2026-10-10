@@ -105,7 +105,7 @@ class Settings(BaseSettings):
     news_budget_seconds: float = 180.0
     sec_budget_seconds: float = 150.0
     stooq_budget_seconds: float = 45.0
-    form4_budget_seconds: float = 900.0
+    form4_budget_seconds: float = 720.0
     # "Focus list": the names currently on (or just below) the published
     # table get the expensive per-company intel (Google News, SEC filing
     # stream) on EVERY run, not just the nightly deep run.
@@ -139,9 +139,10 @@ class Settings(BaseSettings):
     # ------------------------- retention -------------------------
     # The SQLite file is committed to git on every run; GitHub rejects files
     # over 100 MB. These keep it bounded (see `invest maintain`).
-    feature_retention_days: int = 150
-    score_retention_days: int = 150
-    news_retention_days: int = 30
+    feature_retention_days: int = 365
+    score_retention_days: int = 365
+    daily_history_days: int = 45     # older daily history is thinned to weekly
+    news_retention_days: int = 14
     run_log_retention_days: int = 45
     filing_retention_days: int = 400
     db_size_warn_mb: float = 70.0
@@ -210,7 +211,10 @@ class Settings(BaseSettings):
     # it runs out of time, and because it is ordered stalest-first the leftover
     # names are simply first in line next run.
     coverage_sweep_max: int = 0
-    coverage_budget_seconds: float = 900.0
+    # Worst-case stage budgets on the fast path sum to ~19 min (prices ~1,
+    # stooq ≤0.75, sweep ≤12, Google News ≤3, SEC ≤2.5) inside the 30-minute
+    # step limit; a healthy sweep of ~600 names takes ~4 min with 4 workers.
+    coverage_budget_seconds: float = 720.0
 
     # Report staleness: if the newest persisted Score is older than this many
     # days, the report shows a loud warning instead of presenting old

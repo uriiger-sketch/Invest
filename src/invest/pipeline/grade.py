@@ -61,6 +61,12 @@ _MIN_IC_SD = 0.06
 _HORIZON_IC_SD = 0.03
 # Prior on the ML model's skill: zero, i.e. skeptical until shown otherwise.
 _ML_PRIOR_IC, _ML_PRIOR_SD = 0.0, 0.02
+# Bump when the scoring model changes materially. The realised track record
+# used to calibrate each horizon's skill only counts scores published by the
+# CURRENT model version: the previous model's record (e.g. its negative
+# 1-day IC, which came from loading +0.30 on 5-day momentum) is evidence
+# about different weights, not about this model.
+GRADING_MODEL_VERSION = 2
 
 FEATURE_LABELS: dict[str, str] = {
     "consensus_z": "analyst consensus",
@@ -199,8 +205,22 @@ def measure_factor_ics(lookback_days: int = 200) -> dict[str, dict[str, tuple]]:
     return result
 
 
-def measure_score_ics(lookback_days: int = 200) -> dict[str, tuple]:
-    """Realised IC of this pipeline's own persisted blended scores."""
+def _model_dates(version: int) -> set[date]:
+    with session_scope() as s:
+        rows = s.execute(select(Calibration.as_of, Calibration.payload)).all()
+    out = set()
+    for d, payload in rows:
+        try:
+            if json.loads(payload).get("model_version") == version:
+                out.add(d)
+        except (TypeError, ValueError):
+            continue
+    return out
+
+
+def measure_score_ics(lookback_days: int = 200, version: int | None = GRADING_MODEL_VERSION) -> dict[str, tuple]:
+    """Realised IC of this pipeline's own published blended scores
+    (restricted to dates scored by model `version`; None = all dates)."""
     since = date.today() - timedelta(days=lookback_days)
     with session_scope() as s:
         rows = s.execute(
@@ -208,6 +228,9 @@ def measure_score_ics(lookback_days: int = 200) -> dict[str, tuple]:
                 Score.as_of >= since
             )
         ).all()
+    if version is not None:
+        dates = _model_dates(version)
+        rows = [r for r in rows if r[2] in dates]
     out: dict[str, tuple] = {}
     if not rows:
         return out
@@ -240,7 +263,8 @@ def _shrunk_corr(z: pd.DataFrame, delta: float) -> np.ndarray:
     k = z.shape[1]
     if len(z) < 3:
         return np.eye(k)
-    c = np.corrcoef(z.to_numpy(dtype=float), rowvar=False)
+    with np.errstate(invalid="ignore", divide="ignore"):  # constant columns -> NaN -> 0
+        c = np.corrcoef(z.to_numpy(dtype=float), rowvar=False)
     c = np.nan_to_num(c, nan=0.0)
     np.fill_diagonal(c, 1.0)
     return (1 - delta) * c + delta * np.eye(k)
@@ -356,7 +380,8 @@ def integrated_grades(merged: pd.DataFrame, features: pd.DataFrame, calib: Calib
     a = np.array([max(calib.horizon_ic.get(h, {}).get("posterior", 0.0), 1e-3) for h in hs])
     S = wide.to_numpy(dtype=float)
     if len(wide) >= 3:
-        R = np.nan_to_num(np.corrcoef(S, rowvar=False), nan=0.0)
+        with np.errstate(invalid="ignore", divide="ignore"):
+            R = np.nan_to_num(np.corrcoef(S, rowvar=False), nan=0.0)
         np.fill_diagonal(R, 1.0)
     else:
         R = np.eye(len(hs))
@@ -445,6 +470,7 @@ def persist_grades(grades: pd.DataFrame, calib: Calibrated, as_of: date | None =
     with session_scope() as s:
         for h in HORIZONS:
             payload = json.dumps({
+                "model_version": GRADING_MODEL_VERSION,
                 "horizon_ic": calib.horizon_ic.get(h, {}),
                 "ml": calib.ml.get(h, {}),
                 "factors": calib.factor_ic.get(h, {}),

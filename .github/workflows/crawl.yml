@@ -240,6 +240,10 @@ jobs:
 
   deploy-pages:
     needs: crawl
+    # The github-pages environment only accepts the default branch; a feature
+    # branch run would fail here with no runner assigned. Scheduled runs
+    # always execute on the default branch.
+    if: ${{ github.event_name == 'schedule' || github.ref_name == github.event.repository.default_branch }}
     runs-on: ubuntu-latest
     permissions:
       pages: write

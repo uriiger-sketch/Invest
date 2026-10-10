@@ -9,6 +9,7 @@ from __future__ import annotations
 import csv
 import io
 import logging
+import time
 from datetime import date, datetime, timedelta
 
 import requests
@@ -16,14 +17,21 @@ from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
 from ..db import session_scope
 from ..models import Price
-from .base import BaseSource, TransientSourceError, log_run, with_retries
+from .base import BaseSource, TransientSourceError, log_run
 
 logger = logging.getLogger(__name__)
 
 
-def _to_stooq_symbol(ticker: str) -> str:
-    """AAPL -> aapl.us, BRK-B -> brk-b.us."""
-    return ticker.lower().replace(".", "-") + ".us"
+def _to_stooq_symbol(ticker: str) -> str | None:
+    """AAPL -> aapl.us, BRK-B -> brk-b.us; None for non-US listings.
+
+    Exchange-suffixed tickers (DELT.TA, PRX.AS) used to be mangled into
+    "delt-ta.us" — a symbol stooq has never heard of — so the fallback could
+    never succeed for exactly the names it was being asked about.
+    """
+    if "." in ticker:
+        return None
+    return ticker.lower() + ".us"
 
 
 class StooqSource(BaseSource):
@@ -35,13 +43,23 @@ class StooqSource(BaseSource):
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": "Invest/0.1 (research)"})
 
-    @with_retries
     def _fetch_one(self, ticker: str, days: int) -> list[dict]:
+        """One attempt, short timeouts, no retries.
+
+        This is a best-effort fallback. It used to retry every failure 4x
+        with a 15 s connect timeout; when stooq.com stopped accepting
+        connections from GitHub runners, each missing ticker cost ~130 s and
+        twelve delisted tickers pushed the fast ingest past its 25-minute
+        step limit — killing the whole run (observed on runs 2006, 2015).
+        """
+        symbol = _to_stooq_symbol(ticker)
+        if symbol is None:
+            return []
         self.throttle()
         cutoff = date.today() - timedelta(days=days)
-        url = f"https://stooq.com/q/d/l/?s={_to_stooq_symbol(ticker)}&i=d"
+        url = f"https://stooq.com/q/d/l/?s={symbol}&i=d"
         try:
-            resp = self.session.get(url, timeout=15)
+            resp = self.session.get(url, timeout=(5, 10))
         except requests.RequestException as e:
             raise TransientSourceError(str(e)) from e
         if resp.status_code == 429 or resp.status_code >= 500:
@@ -77,13 +95,26 @@ class StooqSource(BaseSource):
                 continue
         return rows
 
-    def ingest_prices(self, tickers: list[str], days: int = 90) -> int:
+    def ingest_prices(
+        self, tickers: list[str], days: int = 90, budget_seconds: float = 45.0
+    ) -> int:
         written = 0
+        started = time.monotonic()
+        consecutive_fail = 0
         for t in tickers:
+            if time.monotonic() - started > budget_seconds:
+                logger.warning("stooq: %.0fs budget exhausted; skipping remaining tickers",
+                               budget_seconds)
+                break
             try:
                 rows = self._fetch_one(t, days)
+                consecutive_fail = 0
             except TransientSourceError as e:
+                consecutive_fail += 1
                 logger.warning("stooq %s failed: %s", t, e)
+                if consecutive_fail >= 3:
+                    logger.warning("stooq: 3 consecutive failures — host unreachable, giving up this run")
+                    break
                 continue
             if not rows:
                 continue
@@ -105,6 +136,10 @@ class StooqSource(BaseSource):
         return written
 
     def run(self, tickers: list[str]) -> int:
+        from ..config import get_settings
+
         with log_run("stooq.prices") as c:
-            c["rows"] = self.ingest_prices(tickers)
+            c["rows"] = self.ingest_prices(
+                tickers, budget_seconds=get_settings().stooq_budget_seconds
+            )
             return c["rows"]

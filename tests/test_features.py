@@ -31,15 +31,27 @@ def _seed_prices(ticker: str, days: int = 120) -> None:
             )
 
 
-def test_build_features_emits_one_row_per_ticker_with_zero_fill():
+def test_build_features_keeps_unobserved_features_nan():
+    """Every feature column exists; observed ones are numeric, UNOBSERVED ones
+    stay NaN (the scorer maps NaN to z = 0, the prior mean). A fabricated raw
+    0 is not neutral after standardisation — e.g. with most insiders net
+    sellers, a raw 0 for "no Form 4 data" ranked like net insider buying.
+    Only rating momentum is zero-filled: "no rating changes" is a real
+    observation."""
+    from invest.config import FEATURE_NAMES
+
     _seed_prices("AAA")
     _seed_prices("BBB")
     df = build_features(["AAA", "BBB"])
     assert len(df) == 2
-    # Every feature column must exist and be numeric.
-    for col in ("consensus_z", "upside_z", "rating_mom_7d", "risk_penalty", "price_mom_21d"):
+    for col in FEATURE_NAMES:
         assert col in df.columns
-        assert df[col].notna().all()
+    for col in ("risk_penalty", "price_mom_21d", "price_mom_63d", "rating_mom_7d"):
+        assert df[col].notna().all(), col
+    assert (df["rating_mom_7d"] == 0).all()
+    # No consensus / intel / news was seeded: those features are unobserved.
+    for col in ("consensus_z", "upside_z", "eps_revision", "news_sentiment", "insider_signal"):
+        assert df[col].isna().all(), col
     # Volatility should be positive magnitude -> risk_penalty negative.
     assert (df["risk_penalty"] <= 0).all()
 

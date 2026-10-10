@@ -107,9 +107,13 @@ jobs:
           mkdir -p data docs
           alembic upgrade head
 
-      - name: Ingest (fast — prices + rolling consensus refresh)
+      # Every stage inside is time-budgeted (see config.py: coverage, news,
+      # SEC, stooq budgets ≈ 19 min worst case); dormant tickers are skipped
+      # instead of retried. The old unbounded stooq fallback alone burned
+      # ~130 s per dead ticker and killed runs 2006 and 2015 at 25 min.
+      - name: Ingest (fast — prices + company intel sweep + focus news/filings)
         if: ${{ env.DEEP_RUN == 'false' }}
-        timeout-minutes: 25
+        timeout-minutes: 30
         run: python -m invest.cli ingest-fast
 
       - name: Ingest (deep — fundamentals + Finnhub + EDGAR 13F + Form 4)
@@ -142,6 +146,12 @@ jobs:
         if: ${{ env.DEEP_RUN == 'true' }}
         timeout-minutes: 10
         run: python -m invest.cli train
+
+      # Prune expired history + VACUUM: data/invest.db is committed every
+      # run and GitHub rejects files over 100 MB (it had reached 87 MB).
+      - name: Maintain database
+        timeout-minutes: 5
+        run: python -m invest.cli maintain
 
       - name: Generate report
         run: python scripts/generate_report.py
@@ -230,6 +240,10 @@ jobs:
 
   deploy-pages:
     needs: crawl
+    # The github-pages environment only accepts the default branch; a feature
+    # branch run would fail here with no runner assigned. Scheduled runs
+    # always execute on the default branch.
+    if: ${{ github.event_name == 'schedule' || github.ref_name == github.event.repository.default_branch }}
     runs-on: ubuntu-latest
     permissions:
       pages: write

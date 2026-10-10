@@ -1,35 +1,35 @@
-"""Turn a per-ticker feature frame into a composite score per horizon."""
+"""Turn a per-ticker feature frame into a composite score per horizon.
+
+Standardisation is a NaN-aware RANK-GAUSSIAN transform: each value's
+empirical CDF position inside the reference pool is mapped through the
+inverse normal, z = Φ⁻¹(p). This is the conventional cross-sectional
+normalisation for combining heterogeneous signals: every feature becomes
+N(0, 1) regardless of its units or tails, a single broken value can never
+dominate (a +900 % "upside" is just the top rank), and nothing needs ad-hoc
+clipping. Unobserved values stay NaN through the transform and contribute
+z = 0 — the prior mean — to the composite.
+
+Selected features are then partially sector-neutralised
+(`config.SECTOR_NEUTRAL`), because valuation, profitability, short interest
+and sell-side optimism are only comparable within an industry.
+"""
 from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+from scipy.stats import norm
 
-from ..config import FEATURE_NAMES, HORIZONS, WEIGHTS, Horizon, get_settings
+from ..config import FEATURE_NAMES, HORIZONS, SECTOR_NEUTRAL, WEIGHTS, Horizon, get_settings
 
 
 def _zscore(s: pd.Series, pool_mask: pd.Series | None = None) -> pd.Series:
     """Robust z-score using median / MAD instead of mean / std.
 
-    Mean/std z-scores are hostage to outliers: one ticker with a broken
-    +900 % "upside" inflates the std and squashes every legitimate value
-    toward zero. Median/MAD ignores tails entirely — 1.4826 · MAD equals
-    the std for normal data, so scale is comparable to a classic z.
-
-    Also hardened against float drift on constant inputs (a constant
-    column's std is ~1e-17, not exactly 0) and falls back to mean/std
-    when MAD is 0 but the column still varies (e.g. >50 % identical
-    values with a few distinct ones).
-
-    `pool_mask` restricts which rows the median/MAD are COMPUTED from,
-    while the transform is still applied to every row. Without it, tickers
-    that failed the liquidity/data-quality gates (and so carry a `fillna(0)`
-    placeholder for columns they have no real data for) still count toward
-    the population statistics — e.g. ~100 gated-out tickers contributing a
-    fabricated `risk_penalty = 0` (the best possible value) drags the median
-    for the ~200 survivors that DO have real volatility data, understating
-    how good the genuinely low-risk survivors look. Pass a mask of tickers
-    with trustworthy data (liquid + not data-quality-excluded) to keep the
-    reference population honest.
+    Still used to standardise the per-horizon composite and ML scores
+    (rank.py), where magnitudes — not just ranks — carry information.
+    `pool_mask` restricts which rows the median/MAD are COMPUTED from while
+    the transform applies to every row. Falls back to mean/std when MAD is 0
+    but the column still varies.
     """
     x = pd.to_numeric(s, errors="coerce")
     pool = x if pool_mask is None else x[pool_mask.to_numpy()]
@@ -39,12 +39,69 @@ def _zscore(s: pd.Series, pool_mask: pd.Series | None = None) -> pd.Series:
     mad = (pool - med).abs().median(skipna=True)
     if mad and not np.isnan(mad) and mad > 1e-12:
         return (x - med) / (1.4826 * mad)
-    # MAD == 0 but the column varies: fall back to classic z-score.
     mu = pool.mean(skipna=True)
     sd = pool.std(skipna=True)
     if not sd or np.isnan(sd) or sd < 1e-12:
         return pd.Series(np.zeros(len(s)), index=s.index)
     return (x - mu) / sd
+
+
+def rank_gauss(s: pd.Series, pool_mask: pd.Series | None = None) -> pd.Series:
+    """z = Φ⁻¹(mid-rank CDF position within the pool); NaN stays NaN.
+
+    Ties share the mid-rank (so equal raw values get identical z), and the
+    CDF is clamped to [0.5/n, 1 − 0.5/n] so extremes stay finite. A column
+    with fewer than two distinct observed values carries no cross-sectional
+    information and maps to 0.
+    """
+    x = pd.to_numeric(s, errors="coerce").astype(float)
+    pool = x if pool_mask is None else x[pool_mask.to_numpy()]
+    pool = pool.dropna().to_numpy()
+    out = pd.Series(np.nan, index=s.index, dtype=float)
+    obs = x.notna().to_numpy()
+    if len(pool) < 2 or np.unique(pool).size < 2:
+        out[obs] = 0.0
+        return out
+    srt = np.sort(pool)
+    n = len(srt)
+    vals = x.to_numpy()[obs]
+    lo = np.searchsorted(srt, vals, side="left")
+    hi = np.searchsorted(srt, vals, side="right")
+    p = (lo + hi) / 2.0 / n
+    p = np.clip(p, 0.5 / n, 1 - 0.5 / n)
+    out[obs] = norm.ppf(p)
+    return out
+
+
+def standardize(features: pd.DataFrame, pool_mask: pd.Series | None = None) -> pd.DataFrame:
+    """[ticker, <feature z>…] — rank-gaussian, sector-neutralised, NaN kept.
+
+    Upside is capped at `upside_cap` before ranking so stale/outlier
+    targets tie at the cap rather than outranking real opportunities.
+    """
+    settings = get_settings()
+    z = pd.DataFrame({"ticker": features["ticker"]}, index=features.index)
+    has_sector = "sector" in features.columns
+    for col in FEATURE_NAMES:
+        if col not in features.columns:
+            z[col] = np.nan
+            continue
+        raw = pd.to_numeric(features[col], errors="coerce")
+        if col == "upside_z":
+            raw = raw.clip(upper=settings.upside_cap)
+        zc = rank_gauss(raw, pool_mask)
+        lam = SECTOR_NEUTRAL.get(col, 0.0)
+        if lam and has_sector:
+            sec = features["sector"].fillna("").astype(str)
+            pool = pool_mask if pool_mask is not None else pd.Series(True, index=features.index)
+            ref = zc.where(pool.to_numpy())
+            means = ref.groupby(sec).mean()
+            counts = ref.groupby(sec).count()
+            # Only demean within sectors large enough to estimate a mean.
+            means = means.where(counts >= 5, 0.0)
+            zc = zc - lam * sec.map(means).fillna(0.0).to_numpy()
+        z[col] = zc
+    return z
 
 
 def liquidity_mask(features: pd.DataFrame) -> pd.Series:
@@ -58,55 +115,32 @@ def liquidity_mask(features: pd.DataFrame) -> pd.Series:
 def outlook_mask(features: pd.DataFrame) -> pd.Series:
     """Drop tickers with explicitly negative or insufficiently bullish outlook.
 
-    A stock is excluded from the ranking if ANY of:
-      - consensus is not strictly net-bullish  (consensus_z <= min_consensus_z)
-      - upside to consensus mean target is below the floor  (upside_z < min_upside)
-      - too few analyst firms cover it       (num_analysts < min_firms)
-
-    With the default thresholds (``min_consensus_z = 0`` and
-    ``min_upside = 0.04``), stocks with no analyst coverage have
-    ``consensus_z = 0`` and ``upside_z = 0`` and so are excluded by design —
-    only names that are *demonstrably* positive (covered + bullish + ≥ 4 %
-    upside) survive.
+    Excluded if ANY of: consensus not strictly net-bullish; upside below the
+    floor (a discarded/suspect target counts as no upside); fewer than
+    `min_firms` covering analysts; fewer than `min_total_sources` distinct
+    contributors.
     """
     settings = get_settings()
     mask = pd.Series(True, index=features.index)
     if "consensus_z" in features.columns:
         cz = pd.to_numeric(features["consensus_z"], errors="coerce").fillna(0.0)
-        # Strict: require net-bullish (> 0), not just non-negative.
         mask &= cz > settings.min_consensus_z
     if "upside_z" in features.columns:
         up = pd.to_numeric(features["upside_z"], errors="coerce").fillna(0.0)
         mask &= up >= settings.min_upside
     if "num_analysts" in features.columns:
-        # Require at least `min_firms` covering firms. The strict consensus
-        # gate above already removes thinly-covered names; this is a hard
-        # backstop for cases where we have stale or partial consensus rows.
         na = pd.to_numeric(features["num_analysts"], errors="coerce").fillna(0.0)
         mask &= na >= settings.min_firms
     if "total_sources_count" in features.columns:
-        # Headline coverage floor: every top stock must be backed by at least
-        # `min_total_sources` distinct contributors — covering sell-side desks
-        # (or, if larger, the desks that published a rating change in the last
-        # 90 d) plus tracked 13F filers plus insider filers.
         ts = pd.to_numeric(features["total_sources_count"], errors="coerce").fillna(0.0)
         mask &= ts >= settings.min_total_sources
     return mask
 
 
 def data_quality_mask(features: pd.DataFrame) -> pd.Series:
-    """Exclude tickers whose underlying market data can't be trusted.
-
-    Independent of how bullish the analyst signal looks:
-      - stale price: last close older than ``stale_price_max_days``
-        (a wrong denominator makes "upside" meaningless)
-      - short history: fewer than ``min_price_history_days`` closes
-        (volatility / momentum on 10 data points is noise)
-      - absurd upside: > ``max_upside_sane`` (200 %) almost always means
-        stale or mis-scaled target data, not a real opportunity
-    Each check only applies when its column is present, so unit tests and
-    partial frames aren't forced to fabricate every column.
-    """
+    """Exclude tickers whose underlying market data can't be trusted:
+    stale last close, too little history, absurd (> max_upside_sane) upside.
+    Each check applies only when its column is present."""
     settings = get_settings()
     mask = pd.Series(True, index=features.index)
     if "last_price_age_days" in features.columns:
@@ -122,13 +156,7 @@ def data_quality_mask(features: pd.DataFrame) -> pd.Series:
 
 
 def gate_survivors(features: pd.DataFrame) -> dict[str, int]:
-    """Per-gate survivor counts, for diagnosing a total wipeout.
-
-    Returns how many tickers survive each gate INDIVIDUALLY plus the
-    combined total. When the combined total is 0 this immediately tells
-    you which threshold is responsible instead of leaving you guessing —
-    the failure mode that silently froze the rankings for five weeks.
-    """
+    """Per-gate survivor counts, for diagnosing a total wipeout."""
     total = len(features)
     liq = liquidity_mask(features)
     out = outlook_mask(features)
@@ -140,8 +168,6 @@ def gate_survivors(features: pd.DataFrame) -> dict[str, int]:
         "data_quality": int(dq.sum()),
         "combined": int((liq & out & dq).sum()),
     }
-    # Break the outlook gate down further — it has four sub-conditions and is
-    # the one most likely to be mis-calibrated.
     settings = get_settings()
     if "consensus_z" in features.columns:
         cz = pd.to_numeric(features["consensus_z"], errors="coerce").fillna(0.0)
@@ -155,6 +181,8 @@ def gate_survivors(features: pd.DataFrame) -> dict[str, int]:
     if "total_sources_count" in features.columns:
         ts = pd.to_numeric(features["total_sources_count"], errors="coerce").fillna(0.0)
         counts["outlook.total_sources"] = int((ts >= settings.min_total_sources).sum())
+    if "target_suspect" in features.columns:
+        counts["data_quality.target_suspect"] = int(features["target_suspect"].fillna(False).sum())
     return counts
 
 
@@ -163,78 +191,60 @@ def quality_mask(features: pd.DataFrame) -> pd.Series:
     return liquidity_mask(features) & outlook_mask(features) & data_quality_mask(features)
 
 
-def _stats_pool_mask(features: pd.DataFrame) -> pd.Series:
-    """Tickers whose data is trustworthy enough to anchor z-score statistics.
-
-    Liquidity + data-quality survivors only — NOT the outlook gate, since
-    outlook itself is evaluated on these same raw (pre-z-score) columns, so
-    excluding on outlook first would be circular. This still excludes stale
-    prices, absurd upside and illiquid names, which is what keeps fabricated
-    `fillna(0)` placeholders for those tickers out of the reference
-    population used to compute every other ticker's z-score.
-    """
+def stats_pool_mask(features: pd.DataFrame) -> pd.Series:
+    """Tickers trustworthy enough to anchor the standardisation: liquidity +
+    data-quality survivors (NOT the outlook gate, which is evaluated on these
+    same raw columns — excluding on it first would be circular)."""
     return liquidity_mask(features) & data_quality_mask(features)
 
 
-def composite_scores(features: pd.DataFrame) -> pd.DataFrame:
-    """Return DataFrame[ticker, horizon, composite_score] covering all horizons."""
-    settings = get_settings()
-    pool_mask = _stats_pool_mask(features)
-    z = pd.DataFrame({"ticker": features["ticker"]})
-    for col in FEATURE_NAMES:
-        if col in features.columns:
-            raw = features[col]
-            if col == "upside_z":
-                # Cap the raw upside used for scoring so one 90 % outlier
-                # (often stale target data) can't dominate the whole rank.
-                raw = pd.to_numeric(raw, errors="coerce").clip(upper=settings.upside_cap)
-            z[col] = _zscore(raw, pool_mask).clip(-5, 5)
-        else:
-            z[col] = 0.0
+_stats_pool_mask = stats_pool_mask  # backwards-compatible name
 
-    mask = quality_mask(features).reset_index(drop=True)
+
+def composite_scores(
+    features: pd.DataFrame, weights: dict[str, dict[str, float]] | None = None
+) -> pd.DataFrame:
+    """DataFrame[ticker, horizon, composite_score] for tickers passing every gate.
+
+    `weights` maps horizon -> {feature: weight}; defaults to the normalised
+    literature priors (`config.WEIGHTS`). rank_all passes the calibrated,
+    correlation-aware weights from `pipeline.grade.calibrated_weights`.
+    """
+    weights = weights or WEIGHTS
+    z = standardize(features, stats_pool_mask(features)).fillna(0.0)
+    mask = quality_mask(features).to_numpy()
     out_rows: list[dict] = []
     for h in HORIZONS:
-        w = WEIGHTS[h]
+        w = weights[h]
         score = np.zeros(len(z))
         for col, coef in w.items():
-            score = score + coef * z[col].to_numpy()
+            if col in z.columns and coef:
+                score = score + coef * z[col].to_numpy()
         for i, ticker in enumerate(z["ticker"]):
-            if not bool(mask.iloc[i]):
-                continue
-            out_rows.append(
-                {"ticker": ticker, "horizon": h, "composite_score": float(score[i])}
-            )
-    return pd.DataFrame(out_rows)
+            if mask[i]:
+                out_rows.append({"ticker": ticker, "horizon": h, "composite_score": float(score[i])})
+    return pd.DataFrame(out_rows, columns=["ticker", "horizon", "composite_score"])
 
 
-def per_feature_contributions(features: pd.DataFrame, horizon: Horizon) -> pd.DataFrame:
-    """Return DataFrame[ticker, feature, z, weight, contribution] for explainability.
-
-    Must mirror `composite_scores` exactly (same upside cap, same z-score
-    stats pool) or the per-feature breakdown can't be summed to reproduce the
-    composite score it's supposed to explain.
-    """
-    settings = get_settings()
-    pool_mask = _stats_pool_mask(features)
-    w = WEIGHTS[horizon]
+def per_feature_contributions(
+    features: pd.DataFrame, horizon: Horizon, weights: dict[str, dict[str, float]] | None = None
+) -> pd.DataFrame:
+    """DataFrame[ticker, feature, z, weight, contribution] — mirrors
+    `composite_scores` exactly, so contributions sum to the composite."""
+    weights = weights or WEIGHTS
+    z = standardize(features, stats_pool_mask(features))
+    w = weights[horizon]
     out: list[dict] = []
     for col in FEATURE_NAMES:
-        if col not in features.columns:
-            zs = pd.Series(0.0, index=features.index)
-        else:
-            raw = features[col]
-            if col == "upside_z":
-                raw = pd.to_numeric(raw, errors="coerce").clip(upper=settings.upside_cap)
-            zs = _zscore(raw, pool_mask).clip(-5, 5)
-        for ticker, z in zip(features["ticker"], zs):
-            out.append(
-                {
-                    "ticker": ticker,
-                    "feature": col,
-                    "z": float(z),
-                    "weight": w[col],
-                    "contribution": float(z * w[col]),
-                }
-            )
+        zs = z[col]
+        for ticker, zv in zip(features["ticker"], zs):
+            zf = 0.0 if pd.isna(zv) else float(zv)
+            out.append({
+                "ticker": ticker,
+                "feature": col,
+                "z": zf,
+                "observed": not pd.isna(zv),
+                "weight": w.get(col, 0.0),
+                "contribution": zf * w.get(col, 0.0),
+            })
     return pd.DataFrame(out)

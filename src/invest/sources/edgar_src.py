@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import logging
 import re
+import time
 from datetime import date, datetime, timedelta
 from typing import Any
 
@@ -16,7 +17,7 @@ from lxml import etree
 
 from ..config import get_settings
 from ..db import session_scope
-from ..models import Holding13F
+from ..models import Holding13F, SecFiling, Stock
 from .base import BaseSource, TransientSourceError, log_run, with_retries
 
 logger = logging.getLogger(__name__)
@@ -166,6 +167,26 @@ TOP_FILERS: tuple[tuple[str, str], ...] = (
 )
 
 
+_13F_DOLLAR_UNITS_FROM = date(2023, 1, 3)
+
+# Issuer filing stream: forms worth knowing about, and 8-K items that are
+# red flags in the accounting / event-study literature.
+_FILING_FORMS: frozenset[str] = frozenset({
+    "8-K", "8-K/A", "6-K", "10-Q", "10-K", "20-F", "40-F",
+    "SC 13D", "SC 13D/A", "SCHEDULE 13D", "SCHEDULE 13D/A",
+    "SC 13G", "SC 13G/A", "SCHEDULE 13G", "SCHEDULE 13G/A",
+    "S-1", "S-1/A", "F-1", "S-3", "F-3", "424B4", "424B5",
+    "NT 10-K", "NT 10-Q", "NT 20-F",
+})
+# 1.03 bankruptcy · 2.04 triggering events accelerating debt · 2.06 material
+# impairment · 3.01 delisting notice · 4.01 auditor change · 4.02 non-reliance
+# on previously issued financials (restatement).
+RED_FLAG_ITEMS: frozenset[str] = frozenset({"1.03", "2.04", "2.06", "3.01", "4.01", "4.02"})
+LATE_FILING_FORMS: frozenset[str] = frozenset({"NT 10-K", "NT 10-Q", "NT 20-F"})
+ACTIVIST_FORMS: frozenset[str] = frozenset({"SC 13D", "SCHEDULE 13D"})
+OFFERING_FORMS: frozenset[str] = frozenset({"S-1", "S-1/A", "F-1", "S-3", "F-3", "424B4", "424B5"})
+
+
 class EdgarSource(BaseSource):
     name = "edgar"
     rate_per_minute = 480.0  # SEC allows < 10 req/s (600/min); stay comfortably under
@@ -273,6 +294,71 @@ class EdgarSource(BaseSource):
                 return found
         return None
 
+    def _recent_13f_filings(self, cik: str, n_periods: int = 2) -> list[tuple[str, date, date]]:
+        """The filer's latest `n_periods` 13F report periods.
+
+        Returns [(accession_no_dash, filing_date, period_of_report), ...],
+        newest period first. Per period the ORIGINAL 13F-HR is preferred over
+        13F-HR/A amendments (an amendment is often a partial "new holdings"
+        add-on, not a full restatement); an amendment is used only when no
+        original exists for that period.
+
+        Two periods (not one) are fetched so quarter-over-quarter flow is
+        computable from a single run — previously only the newest filing was
+        read, so a flow needed two crawls in two different quarters and a
+        filer first seen this quarter contributed nothing.
+        """
+        subs = self._filer_submissions(cik)
+        if not subs:
+            return []
+        pages = [subs.get("filings", {}).get("recent", {})]
+        by_period: dict[date, tuple[str, date, bool]] = {}
+
+        def scan(page: dict) -> None:
+            forms = page.get("form", [])
+            fdates = page.get("filingDate", [])
+            accs = page.get("accessionNumber", [])
+            rdates = page.get("reportDate", [""] * len(forms))
+            for form, fd, acc, rd in zip(forms, fdates, accs, rdates):
+                if form not in self._13F_FORMS:
+                    continue
+                try:
+                    fdate = datetime.strptime(fd, "%Y-%m-%d").date()
+                except (TypeError, ValueError):
+                    continue
+                try:
+                    period = datetime.strptime(rd, "%Y-%m-%d").date() if rd else None
+                except (TypeError, ValueError):
+                    period = None
+                period = period or self._period_before(fdate)
+                original = form == "13F-HR"
+                prev = by_period.get(period)
+                if prev is None or (original and not prev[2]) or (
+                    original == prev[2] and fdate > prev[1]
+                ):
+                    by_period[period] = (acc.replace("-", ""), fdate, original)
+
+        scan(pages[0])
+        if len(by_period) < n_periods:
+            for page in subs.get("filings", {}).get("files", [])[: self._MAX_SUBMISSION_PAGES]:
+                name = page.get("name")
+                if not name:
+                    continue
+                page_json = self._get_json(f"https://data.sec.gov/submissions/{name}")
+                if page_json:
+                    scan(page_json)
+                if len(by_period) >= n_periods:
+                    break
+        newest = sorted(by_period.items(), key=lambda kv: kv[0], reverse=True)[:n_periods]
+        return [(acc, fdate, period) for period, (acc, fdate, _orig) in newest]
+
+    @staticmethod
+    def _period_before(filing_date: date) -> date:
+        """Quarter-end preceding a filing date (13Fs are due 45 days after it)."""
+        q_start_month = ((filing_date.month - 1) // 3) * 3 + 1
+        q_start = date(filing_date.year, q_start_month, 1)
+        return q_start - timedelta(days=1)
+
     def _download_13f_infotable(self, cik: str, accession_no_dash: str) -> bytes | None:
         """Fetch the information-table XML inside a 13F-HR filing.
 
@@ -342,6 +428,7 @@ class EdgarSource(BaseSource):
             value = _local(el, "value")  # thousands of USD
             shrs_wrap = el.find("n:shrsOrPrnAmt", ns) if ns else el.find("shrsOrPrnAmt")
             shares = None
+            amount_type = None
             if shrs_wrap is not None:
                 sh = shrs_wrap.find("n:sshPrnamt", ns) if ns else shrs_wrap.find("sshPrnamt")
                 if sh is not None and sh.text:
@@ -349,17 +436,25 @@ class EdgarSource(BaseSource):
                         shares = float(sh.text)
                     except ValueError:
                         shares = None
+                typ = shrs_wrap.find("n:sshPrnamtType", ns) if ns else shrs_wrap.find("sshPrnamtType")
+                if typ is not None and typ.text:
+                    amount_type = typ.text.strip().upper()
             try:
                 value_usd = float(value) * 1000.0 if value else None
             except ValueError:
                 value_usd = None
             name = _local(el, "nameOfIssuer")
+            put_call = (_local(el, "putCall") or "").strip().upper() or None
             out.append(
                 {
                     "cusip": cusip,
                     "name_of_issuer": name,
                     "shares": shares,
                     "value_usd": value_usd,
+                    # "SH" = shares, "PRN" = principal amount (bonds/converts);
+                    # put_call set = an options position on the underlying.
+                    "amount_type": amount_type,
+                    "put_call": put_call,
                 }
             )
         return out
@@ -479,34 +574,42 @@ class EdgarSource(BaseSource):
         def bump(k: str) -> None:
             diag[k] = diag.get(k, 0) + 1
 
-        # Pass 1 — fetch every filer once, keep the parsed rows in memory.
-        fetched: list[tuple[str, str, str, date, list[dict]]] = []
+        # Pass 1 — fetch each filer's two latest report periods, keep the
+        # parsed rows in memory.
+        fetched: list[tuple[str, str, str, date, date, list[dict]]] = []
         for name, cik in TOP_FILERS:
             try:
-                latest = self._latest_13f_for(cik)
-                if not latest:
+                filings = self._recent_13f_filings(cik)
+                if not filings:
                     bump("no_13f_filing_found")
                     logger.info("edgar 13F: no 13F-HR filing found for %s (CIK %s)", name, cik)
                     continue
-                acc, filing_date = latest
-                xml = self._download_13f_infotable(cik, acc)
-                if not xml:
-                    bump("infotable_missing")
-                    logger.info("edgar 13F: no infotable in %s filing %s", name, acc)
-                    continue
-                rows = self._parse_infotable(xml)
-                if not rows:
-                    bump("infotable_parsed_zero")
-                    continue
-                bump("fetched_ok")
-                fetched.append((name, cik, acc, filing_date, rows))
+                for acc, filing_date, period in filings:
+                    xml = self._download_13f_infotable(cik, acc)
+                    if not xml:
+                        bump("infotable_missing")
+                        logger.info("edgar 13F: no infotable in %s filing %s", name, acc)
+                        continue
+                    rows = self._parse_infotable(xml)
+                    if not rows:
+                        bump("infotable_parsed_zero")
+                        continue
+                    # Since 2023-01-03 the infotable <value> is reported in
+                    # whole dollars, no longer thousands; the parser's x1000
+                    # applies only to filings before that change.
+                    if filing_date >= _13F_DOLLAR_UNITS_FROM:
+                        for r in rows:
+                            if r.get("value_usd") is not None:
+                                r["value_usd"] = r["value_usd"] / 1000.0
+                    bump("fetched_ok")
+                    fetched.append((name, cik, acc, filing_date, period, rows))
             except TransientSourceError as e:
                 bump("transient_error")
                 logger.warning("edgar 13F %s failed: %s", name, e)
 
         # Learn {cusip: ticker} from every name match we can make.
         learned: dict[str, str] = {}
-        for _name, _cik, _acc, _fd, rows in fetched:
+        for _name, _cik, _acc, _fd, _period, rows in fetched:
             for r in rows:
                 cusip = (r.get("cusip") or "").strip().upper()
                 if not cusip or cusip in cusip_lookup or cusip in learned:
@@ -527,30 +630,40 @@ class EdgarSource(BaseSource):
 
         # Pass 2 — match everything with the enriched CUSIP map.
         written = 0
-        filers_with_data = 0
-        for name, cik, _acc, filing_date, rows in fetched:
-            quarter = self._quarter_label(filing_date)
-            batch: list[dict] = []
+        filers_with_data: set[str] = set()
+        for name, cik, _acc, filing_date, period, rows in fetched:
+            # Label by the PERIOD OF REPORT, not the filing date: a Q2
+            # portfolio filed in August is Q2 (migration 0005 relabelled the
+            # rows stored under the old filing-date convention).
+            quarter = self._quarter_label(period)
+            # Large filers report one information-table row per security PER
+            # sub-manager / investment-discretion bucket. Those rows must be
+            # SUMMED: upserting them one by one on (filer, ticker, quarter)
+            # kept only the last row (live: JPMorgan's AAPL position read as
+            # 3,000 shares — one sub-manager's slice of millions), which
+            # turned into a fake -95 % "institutional flow". Option rows
+            # (PUT/CALL on the underlying) and principal amounts (PRN: bonds,
+            # converts) are not share positions and are excluded.
+            agg: dict[str, dict] = {}
             for r in rows:
+                if r.get("put_call") or (r.get("amount_type") or "SH") != "SH":
+                    continue
                 t = self._cusip_to_ticker(r.get("cusip"), cusip_lookup) or (
                     self._issuer_to_ticker(r.get("name_of_issuer") or "", lookup)
                 )
                 if not t or t not in universe:
                     continue
-                batch.append(
-                    {
-                        "filer_cik": cik,
-                        "filer_name": name,
-                        "ticker": t,
-                        "shares": r.get("shares"),
-                        "value_usd": r.get("value_usd"),
-                        "quarter": quarter,
-                        "filing_date": filing_date,
-                    }
-                )
+                row = agg.setdefault(t, {
+                    "filer_cik": cik, "filer_name": name, "ticker": t,
+                    "shares": 0.0, "value_usd": 0.0,
+                    "quarter": quarter, "filing_date": filing_date,
+                })
+                row["shares"] += r.get("shares") or 0.0
+                row["value_usd"] += r.get("value_usd") or 0.0
+            batch = list(agg.values())
             if batch:
                 written += self._upsert_holdings(batch)
-                filers_with_data += 1
+                filers_with_data.add(cik)
             else:
                 bump("matched_zero_of_universe")
                 logger.info(
@@ -562,7 +675,7 @@ class EdgarSource(BaseSource):
             "edgar 13F summary: tracked=%d fetched_ok=%d with_universe_holdings=%d | "
             "no_13f_filing_found=%d infotable_missing=%d infotable_parsed_zero=%d "
             "matched_zero_of_universe=%d transient_error=%d learned_cusips=%d",
-            len(TOP_FILERS), diag.get("fetched_ok", 0), filers_with_data,
+            len(TOP_FILERS), diag.get("fetched_ok", 0), len(filers_with_data),
             diag.get("no_13f_filing_found", 0), diag.get("infotable_missing", 0),
             diag.get("infotable_parsed_zero", 0), diag.get("matched_zero_of_universe", 0),
             diag.get("transient_error", 0), len(learned),
@@ -831,7 +944,9 @@ class EdgarSource(BaseSource):
             )
         return out
 
-    def ingest_insider(self, tickers: list[str], lookback_days: int = 120) -> int:
+    def ingest_insider(
+        self, tickers: list[str], lookback_days: int = 120, budget_seconds: float = 0.0
+    ) -> int:
         """Pull recent Form 4 filings per ticker and parse real per-transaction
         detail (insider name, buy/sell, shares, price) for the most recent
         `_FORM4_MAX_DETAILED_PER_TICKER` filings.
@@ -853,7 +968,16 @@ class EdgarSource(BaseSource):
         # shipped and left no trace to debug from.
         diag: dict[str, Any] = {}
         xml_dumped = 0
-        for t in tickers:
+        started = time.monotonic()
+        for i, t in enumerate(tickers):
+            # Budgeted: across ~600 tickers the detailed Form 4 parse alone
+            # can exceed the deep run's step timeout. Callers order tickers
+            # focus-first, then by a daily rotation, so a truncated run still
+            # covers the names that matter and the rest within a few days.
+            if budget_seconds and time.monotonic() - started > budget_seconds:
+                logger.info("edgar form4: %.0fs budget reached after %d/%d tickers",
+                            budget_seconds, i, len(tickers))
+                break
             try:
                 feed = self._insider_feed(t)
             except TransientSourceError as e:
@@ -897,7 +1021,7 @@ class EdgarSource(BaseSource):
                     rows.append(
                         {
                             "ticker": t, "filer": "(aggregated form-4 activity)",
-                            "action": "activity", "shares": None, "price": None,
+                            "action": "activity", "shares": 0.0, "price": 0.0,
                             "date": entry["date"],
                         }
                     )
@@ -905,7 +1029,7 @@ class EdgarSource(BaseSource):
                 rows.append(
                     {
                         "ticker": t, "filer": "(aggregated form-4 activity)",
-                        "action": "activity", "shares": None, "price": None,
+                        "action": "activity", "shares": 0.0, "price": 0.0,
                         "date": entry["date"],
                     }
                 )
@@ -920,14 +1044,157 @@ class EdgarSource(BaseSource):
         )
         return written
 
+    # ------------------------ issuer filing stream ------------------------
+
+    def _issuer_ciks(self, tickers: list[str]) -> dict[str, str]:
+        """{ticker: 10-digit CIK}. Uses Stock.cik when known; otherwise one
+        request to SEC's company_tickers.json resolves (and persists) all."""
+        with session_scope() as s:
+            known = {
+                t: c for t, c in s.query(Stock.ticker, Stock.cik).filter(Stock.ticker.in_(tickers))
+                if c
+            }
+        missing = [t for t in tickers if t not in known]
+        if not missing:
+            return known
+        try:
+            data = self._get_json("https://www.sec.gov/files/company_tickers.json")
+        except TransientSourceError as e:
+            logger.warning("edgar: company_tickers.json failed: %s", e)
+            return known
+        if not isinstance(data, dict):
+            return known
+        sec_map: dict[str, str] = {}
+        for row in data.values():
+            try:
+                sec_map[str(row["ticker"]).upper().replace(".", "-")] = f"{int(row['cik_str']):010d}"
+            except (KeyError, TypeError, ValueError):
+                continue
+        learned = {t: sec_map[t.upper()] for t in missing if t.upper() in sec_map}
+        if learned:
+            with session_scope() as s:
+                for t, cik in learned.items():
+                    st = s.get(Stock, t)
+                    if st is not None:
+                        st.cik = cik
+        return {**known, **learned}
+
+    @staticmethod
+    def parse_issuer_filings(
+        ticker: str, subs: dict[str, Any], since: date, limit: int = 80
+    ) -> list[dict[str, Any]]:
+        """submissions JSON -> SecFiling rows for forms of interest since `since`."""
+        recent = (subs or {}).get("filings", {}).get("recent", {}) or {}
+        forms = recent.get("form", []) or []
+        n = len(forms)
+
+        def col(key: str) -> list:
+            v = recent.get(key) or []
+            return list(v) + [None] * (n - len(v))
+
+        out: list[dict[str, Any]] = []
+        for form, fd, acc, rd, items, desc in zip(
+            forms, col("filingDate"), col("accessionNumber"), col("reportDate"),
+            col("items"), col("primaryDocDescription"),
+        ):
+            if form not in _FILING_FORMS or not acc or not fd:
+                continue
+            try:
+                fdate = datetime.strptime(fd, "%Y-%m-%d").date()
+            except (TypeError, ValueError):
+                continue
+            if fdate < since:
+                continue
+            try:
+                rdate = datetime.strptime(rd, "%Y-%m-%d").date() if rd else None
+            except (TypeError, ValueError):
+                rdate = None
+            out.append({
+                "ticker": ticker,
+                "accession": str(acc)[:24],
+                "form": str(form)[:24],
+                "filing_date": fdate,
+                "report_date": rdate,
+                "items": (str(items)[:64] or None) if items else None,
+                "description": (str(desc)[:160] or None) if desc else None,
+            })
+            if len(out) >= limit:
+                break
+        return out
+
+    def ingest_filings(
+        self, tickers: list[str], lookback_days: int = 200, budget_seconds: float = 0.0
+    ) -> int:
+        """Material-event filings per issuer (8-K items, 13D stakes, offerings,
+        late-filing notices). Writes an intel marker per ticker crawled so the
+        feature builder can tell "no red flags" from "never looked"."""
+        from sqlalchemy.dialects.sqlite import insert as sqlite_insert
+
+        from .yfinance_src import upsert_intel
+
+        ciks = self._issuer_ciks(tickers)
+        since = date.today() - timedelta(days=lookback_days)
+        started = time.monotonic()
+        written = processed = 0
+        for t in tickers:
+            if budget_seconds and time.monotonic() - started > budget_seconds:
+                logger.info("edgar filings: budget reached after %d tickers", processed)
+                break
+            cik = ciks.get(t)
+            if not cik:
+                continue
+            try:
+                subs = self._get_json(f"https://data.sec.gov/submissions/CIK{cik}.json")
+            except TransientSourceError as e:
+                logger.warning("edgar filings %s failed: %s", t, e)
+                continue
+            if not subs:
+                continue
+            rows = self.parse_issuer_filings(t, subs, since)
+            if rows:
+                with session_scope() as s:
+                    stmt = sqlite_insert(SecFiling).values(rows)
+                    stmt = stmt.on_conflict_do_update(
+                        index_elements=["ticker", "accession"],
+                        # excluded["items"], not excluded.items: the latter is
+                        # ColumnCollection.items(), a METHOD, which SQLite was
+                        # then asked to bind as a value (caught live in CI).
+                        set_={"items": stmt.excluded["items"],
+                              "description": stmt.excluded["description"]},
+                    )
+                    s.execute(stmt)
+                written += len(rows)
+            upsert_intel(t, "sec", {"cik": cik, "filings_seen": len(rows)})
+            processed += 1
+        logger.info("edgar filings: %d tickers crawled, %d filings stored (%d without CIK)",
+                    processed, written, sum(1 for t in tickers if t not in ciks))
+        return written
+
     # ------------------------------ run ------------------------------
 
     def run(self, tickers: list[str]) -> int:
+        from ..config import get_settings
+        from ..pipeline.ingest import active_tickers, focus_tickers
+
+        settings = get_settings()
+        live = active_tickers(tickers)
+        focus = [t for t in focus_tickers(settings.focus_size) if t in set(live)]
+        # Focus names first, then a daily rotation of the rest, so a
+        # budget-truncated run still covers what matters and the remainder
+        # cycles within days instead of always starving the alphabet's tail.
+        rest = [t for t in live if t not in set(focus)]
+        if rest:
+            k = date.today().toordinal() % len(rest)
+            rest = rest[k:] + rest[:k]
+        ordered = focus + rest
         total = 0
         with log_run("edgar.13f") as c:
             c["rows"] = self.ingest_13f(tickers)
             total += c["rows"]
+        with log_run("edgar.filings") as c:
+            c["rows"] = self.ingest_filings(ordered, budget_seconds=settings.sec_budget_seconds * 3)
+            total += c["rows"]
         with log_run("edgar.form4") as c:
-            c["rows"] = self.ingest_insider(tickers)
+            c["rows"] = self.ingest_insider(ordered, budget_seconds=settings.form4_budget_seconds)
             total += c["rows"]
         return total

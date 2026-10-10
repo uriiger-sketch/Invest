@@ -21,28 +21,35 @@ transparent, testable score and an optional ML re-ranker layered on top.
 
 ## What it does
 
-1. **Crawls free data sources** on a schedule:
-   - `yfinance` — OHLCV prices, fundamentals, analyst consensus, price targets,
-     rating actions.
-   - Finnhub (free tier, 60 req/min — optional key) — same signals with firm +
-     analyst names on rating actions.
-   - SEC EDGAR — 13F-HR holdings from ~20 tracked institutional filers
-     (Berkshire, BlackRock, Vanguard, Bridgewater, Renaissance, Citadel,
-     Point72, Tiger Global, ARK, …) and Form 4 insider-trade activity.
-2. **Stores** everything in a local SQLite DB (`data/invest.db`), idempotently.
-3. **Engineers features** per ticker: consensus score, upside to target, rating
-   momentum (7 d / 30 d), target revision, institutional flow, insider flow,
-   price momentum, realised-volatility risk penalty, liquidity filter.
-4. **Scores** each ticker with a horizon-specific weighted composite, and
-   blends that with an **ML ranker** (LightGBM regressor trained on realised
-   forward returns). Cold-start safe — until enough snapshots exist, the ML
-   score falls back to the composite so the blended number is always defined.
-5. **Serves** a **Streamlit dashboard** on `http://localhost:8501` with:
-   - Top 20 per horizon
-   - Ticker drill-down (price, consensus over time, rating actions, 13F flow,
-     insider trades)
-   - Sources & freshness (last successful run per job, error log)
-   - Methodology (live weight matrix and blend ratio from `config.py`)
+1. **Crawls free data sources** on a schedule (every stage time-budgeted,
+   rate-limit-governed, and skipping dormant/delisted symbols):
+   - **Yahoo Finance** — one quoteSummary request per ticker returns:
+     recommendation counts *and their 1–3-month trend*, price targets (mean,
+     median, high/low), every firm's rating **and price-target change**, EPS
+     estimate trend and up/down revisions, earnings surprises and the next
+     report date, valuation, profitability, short interest, 52-week range.
+     Plus OHLCV prices (a full year on the nightly deep run).
+   - **News** — Yahoo Finance's stream for every ticker, Google News RSS for
+     the names on (or near) the published table; each headline is scored
+     with a finance-specific lexicon and deduplicated across feeds.
+   - **SEC EDGAR** — 13F holdings of ~110 institutional filers (two report
+     periods, so quarter-over-quarter flow is always computable), Form 4
+     insider trades, and each issuer's filing stream (8-K red-flag items,
+     late-filing notices, 13D activist stakes, offerings).
+   - Finnhub / FMP when API keys are configured; stooq as a fail-fast price
+     fallback for recently-live US names.
+2. **Stores** everything in SQLite (`data/invest.db`, committed so state
+   survives between runs; `invest maintain` prunes and VACUUMs it).
+3. **Engineers ~25 features** per ticker across sell-side opinion, earnings
+   revisions, news tone, smart money, events, fundamentals and price — with
+   sanity checks (one-day price spikes dropped, mis-scaled targets discarded).
+4. **Grades** every stock with a calibrated model (below) and blends in a
+   LightGBM ranker only in proportion to its out-of-sample skill.
+5. **Publishes** one table ordered by the integrated grade, with expected
+   1-month excess return, probability of beating the universe, data
+   confidence, news tone and 30-day opinion change, plus a per-row drawer
+   with the evidence (drivers, analyst actions with target changes,
+   headlines, estimates, SEC filings).
 
 ---
 
@@ -76,8 +83,13 @@ make docker-up         # runs `serve` inside the container
 
 All knobs live in [`src/invest/config.py`](src/invest/config.py):
 
-- `WEIGHTS` — per-horizon weights for each of the 9 scoring features. Editable.
-- `blend_composite_weight` / `blend_ml_weight` — mix of composite and ML.
+- `PRIOR_IC` — per-horizon prior information coefficient of every feature
+  (the calibrated weights are derived from these plus measured history).
+- `prior_ic_sd`, `corr_shrinkage`, `ic_haircut` — calibration strength.
+- `blend_ml_weight` — cap on the ML ranker's share of the blend.
+- `crawl_workers`, `coverage_budget_seconds`, `news_budget_seconds`,
+  `sec_budget_seconds`, `focus_size`, `dormant_after_days` — crawl tuning.
+- `*_retention_days` — history kept in the committed database.
 - `top_n` — number of stocks shown per horizon (default **20**).
 - `liquidity_min_dollar_volume` — stocks below this 20-day dollar volume are
   excluded from the ranking.
@@ -97,31 +109,54 @@ Env vars (in `.env`):
 
 ---
 
-## How the score is built
+## How the grade is built
 
-Each feature is z-scored across the universe (clipped to ±5) and combined with
-weights that depend on the horizon:
+The model follows standard cross-sectional alpha construction
+(Grinold & Kahn):
 
-| Feature | Days | Weeks | Months |
-|---|---:|---:|---:|
-| consensus_z (weighted buy/hold/sell) | 0.10 | 0.20 | 0.30 |
-| upside_z (mean target / last close − 1) | 0.05 | 0.20 | 0.25 |
-| rating_mom_7d | 0.25 | 0.10 | 0.00 |
-| rating_mom_30d | 0.10 | 0.15 | 0.05 |
-| target_revision_30d | 0.05 | 0.10 | 0.10 |
-| inst_flow_13f | 0.00 | 0.05 | 0.15 |
-| insider_net_buy_90d | 0.05 | 0.10 | 0.10 |
-| price_mom_21d | 0.25 | 0.10 | −0.05 |
-| risk_penalty (−60 d realised vol) | 0.15 | 0.10 | 0.10 |
+1. **Standardise.** Each feature is rank-normalised to N(0,1) across the
+   universe (robust to outliers by construction). Valuation, profitability,
+   short interest and target upside are partially sector-neutralised.
+   Unobserved data stays missing and contributes z = 0 — the prior mean —
+   instead of a fabricated value.
+2. **Prior information coefficients.** Each feature carries a literature
+   prior IC per horizon (`PRIOR_IC` in `config.py`, with references): e.g.
+   EPS revisions, consensus *changes* and target revisions positive; short
+   interest, analyst disagreement and 1-week moves (short-term reversal)
+   negative; value, profitability and 12-1 momentum mainly at long horizons.
+3. **Bayesian calibration.** Daily cross-sectional Spearman ICs measured on
+   our own stored feature snapshots vs realised forward returns update the
+   priors by precision weighting (standard errors corrected for overlapping
+   windows). Signals that do not work in this universe lose weight.
+4. **Correlation-aware weights:** `w = C⁻¹ · IC` with C the (shrunk)
+   cross-sectional correlation of the features, so correlated signals share
+   weight instead of double-counting.
+5. **ML blend.** The LightGBM ranker (target: cross-sectional rank of the
+   forward return; purged walk-forward validation with an embargo) is
+   weighted by its out-of-sample IC, capped at `blend_ml_weight`; zero until
+   it has proven skill.
+6. **Integrated grade.** The four horizon scores S_h are combined with
+   weights equal to each horizon's estimated skill and their correlation R:
 
-Blended score:
-```
-blended = 0.6 · z(composite) + 0.4 · z(ml)
-```
+   ```
+   G = Σ_h a_h S_h / √(aᵀ R a)        a_h = posterior IC of horizon h
+   α_h = IC_h · σ_h · S_h             expected excess return (Grinold)
+   P(beat) = Φ(IC_h · S_h)
+   ```
 
-The ML component is a LightGBM regressor per horizon trained on your own stored
-feature snapshots against realised 5-day / 20-day / 90-day forward returns.
-Until ≥ 60 daily snapshots exist, `ml_score := composite_score`.
+   G is ≈ N(0,1) across the gated universe; the letter grade is its
+   percentile (A+ ≥ 97th … D < 15th). Confidence = share of the model's
+   weight backed by observed data for that stock.
+
+Hard gates still apply first: liquidity, data quality (stale price, short
+history, absurd or mis-scaled targets), net-bullish consensus, ≥ 4 % upside
+and coverage floors. A small, explicit technology tilt remains as a
+tiebreaker (`theme_tilt_*`).
+
+Honest scale: realistic ICs are 0.02–0.08, so even an A+ implies only a
+modestly-above-50 % chance of beating the universe over a month. The page
+shows the calibration (ex-ante vs realised IC per horizon) under *Data
+health & model calibration*.
 
 ---
 
@@ -145,7 +180,8 @@ in the dashboard surfaces last-success time, row counts, and recent errors.
 ## Verification
 
 ```bash
-make test            # unit tests: scoring, features, run-log, universe, rate-limiter
+make test            # unit tests: crawl reliability, intel parsing, features, grading model, report
+make maintain        # prune expired history + VACUUM the database
 make ingest          # end-to-end: populates SQLite
 make rank            # produces top-20 per horizon in the terminal + DB
 make dashboard       # opens http://localhost:8501
@@ -173,17 +209,22 @@ Invest/
 │   ├── db.py                # engine + session helper
 │   ├── models.py            # SQLAlchemy ORM
 │   ├── universe.py          # S&P500 ∪ NDX100 with static fallback
+│   ├── sentiment.py         # finance-lexicon headline tone
 │   ├── sources/
-│   │   ├── base.py          # retries, token bucket, run_log
-│   │   ├── yfinance_src.py  # primary free source
-│   │   ├── finnhub_src.py   # optional free-tier rating feed
-│   │   └── edgar_src.py     # 13F + Form 4 from SEC
+│   │   ├── base.py          # retries, token bucket, rate governor, run_log
+│   │   ├── yfinance_src.py  # prices + single-request company intel sweep
+│   │   ├── news_src.py      # Yahoo + Google News headlines, dedupe
+│   │   ├── edgar_src.py     # 13F, Form 4, issuer filing stream (SEC)
+│   │   ├── stooq_src.py     # fail-fast price fallback
+│   │   └── finnhub_src.py / fmp_src.py   # optional keyed feeds
 │   ├── pipeline/
-│   │   ├── ingest.py        # orchestrator
-│   │   ├── features.py      # per-ticker feature engineering
-│   │   ├── score.py         # composite scoring
-│   │   ├── ml_rank.py       # LightGBM + cold-start fallback
-│   │   └── rank.py          # blend + persist + top-N
+│   │   ├── ingest.py        # orchestrator: budgets, dormant skip, focus list
+│   │   ├── features.py      # ~25 features + sanity filters + snapshots
+│   │   ├── score.py         # rank-Gaussian standardisation, gates, composite
+│   │   ├── grade.py         # IC calibration, weights, blend, integrated grade
+│   │   ├── ml_rank.py       # LightGBM ranker, purged validation
+│   │   ├── rank.py          # end-to-end ranking + persistence
+│   │   └── maintenance.py   # retention pruning + VACUUM
 │   ├── scheduler.py         # APScheduler cadences
 │   ├── dashboard.py         # Streamlit (4 pages)
 │   └── cli.py               # `invest ingest | rank | train | serve`

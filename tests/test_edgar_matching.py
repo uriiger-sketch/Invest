@@ -125,12 +125,15 @@ def test_two_pass_cusip_learning_rescues_unmatchable_issuer_names(monkeypatch):
         "invest.sources.edgar_src.TOP_FILERS",
         (("Filer One", "0000000001"), ("Filer Two", "0000000002")),
     )
-    monkeypatch.setattr(src, "_latest_13f_for", lambda cik: ("ACC" + cik, date.today()))
+    monkeypatch.setattr(
+        src, "_recent_13f_filings",
+        lambda cik: [("ACC" + cik, date.today(), src._period_before(date.today()))],
+    )
     monkeypatch.setattr(src, "_download_13f_infotable", lambda cik, acc: b"<x/>")
     # _parse_infotable is a plain method; return rows keyed off the accession.
     monkeypatch.setattr(
         src, "_parse_infotable",
-        lambda xml: per_filer[src._current_cik],  # set below via _latest_13f_for shim
+        lambda xml: per_filer[src._current_cik],  # set below via the download shim
     )
 
     # Simpler + less fragile than threading state: drive the download shim to

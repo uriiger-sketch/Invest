@@ -1,0 +1,81 @@
+"""Keep the committed SQLite database bounded.
+
+`data/invest.db` is committed to git by every crawl (it is the pipeline's
+state between runs), and GitHub hard-rejects files over 100 MB. It had
+reached 87 MB — 57 MB of it duplicate insider placeholder rows (fixed in
+migration 0005) — so the history tables that only feed rolling-window
+calculations are pruned to their useful windows and the file is VACUUMed.
+"""
+from __future__ import annotations
+
+import logging
+import os
+from datetime import UTC, date, datetime, timedelta
+
+from sqlalchemy import text
+
+from ..config import get_settings
+from ..db import get_engine
+
+logger = logging.getLogger(__name__)
+
+
+def prune_and_vacuum() -> dict[str, int]:
+    settings = get_settings()
+    today = date.today()
+    now = datetime.now(UTC).replace(tzinfo=None)
+    plan = [
+        ("features", "as_of < :cut", today - timedelta(days=settings.feature_retention_days)),
+        ("scores", "as_of < :cut", today - timedelta(days=settings.score_retention_days)),
+        ("grades", "as_of < :cut", today - timedelta(days=settings.score_retention_days)),
+        ("calibration", "as_of < :cut", today - timedelta(days=settings.score_retention_days)),
+        ("news_items", "published_at < :cut", now - timedelta(days=settings.news_retention_days)),
+        ("run_log", "started_at < :cut", now - timedelta(days=settings.run_log_retention_days)),
+        ("sec_filings", "filing_date < :cut", today - timedelta(days=settings.filing_retention_days)),
+        # Consensus snapshots older than a year are never read (the longest
+        # look-back is the 30-day target revision); keep a year for audit.
+        ("consensus", "as_of_date < :cut", today - timedelta(days=400)),
+        # Insider rows outside the 90-day feature window + slack.
+        ("insider_trades", "date < :cut", today - timedelta(days=200)),
+    ]
+    plan += [
+        ("prices", "date < :cut", today - timedelta(days=420)),
+        ("holdings_13f", "filing_date < :cut", today - timedelta(days=550)),
+    ]
+    # Weekly thinning: daily granularity only matters for recent weeks.
+    # Older daily rows are thinned to one per week (Mondays) — IC measurement
+    # and ML training over 20-90-day horizons lose almost nothing (adjacent
+    # days' overlapping forward windows are ~95 % redundant), while the
+    # committed database stays far below GitHub's 100 MB file limit even with
+    # the full S&P 500 ∪ NASDAQ-100 universe.
+    thin_cut = today - timedelta(days=settings.daily_history_days)
+    thin = [("features", "as_of"), ("scores", "as_of"), ("grades", "as_of"),
+            ("consensus", "as_of_date")]
+    deleted: dict[str, int] = {}
+    engine = get_engine()
+    with engine.begin() as conn:
+        tables = {r[0] for r in conn.execute(text("SELECT name FROM sqlite_master WHERE type='table'"))}
+        for table, where, cut in plan:
+            if table not in tables:
+                continue
+            res = conn.execute(text(f"DELETE FROM {table} WHERE {where}"), {"cut": cut})
+            deleted[table] = int(res.rowcount or 0)
+        for table, col in thin:
+            if table not in tables:
+                continue
+            res = conn.execute(
+                text(f"DELETE FROM {table} WHERE {col} < :cut AND strftime('%w', {col}) != '1'"),
+                {"cut": thin_cut},
+            )
+            deleted[f"{table}.thinned"] = int(res.rowcount or 0)
+    if engine.url.get_backend_name() == "sqlite":
+        with engine.connect() as conn:
+            conn.execution_options(isolation_level="AUTOCOMMIT").execute(text("VACUUM"))
+        path = engine.url.database
+        if path and path != ":memory:" and os.path.exists(path):
+            mb = os.path.getsize(path) / 1e6
+            log = logger.warning if mb > settings.db_size_warn_mb else logger.info
+            log("database size after maintenance: %.1f MB (warn above %.0f MB)",
+                mb, settings.db_size_warn_mb)
+    logger.info("maintenance pruned: %s", deleted)
+    return deleted

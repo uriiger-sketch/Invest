@@ -195,10 +195,12 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("TWLO", "Twilio Inc.", "Technology", "US-S"),
     ("ZM", "Zoom Video Communications", "Technology", "US-S"),
     ("DOCU", "DocuSign Inc.", "Technology", "US-S"),
-    ("SQ", "Block Inc.", "Financials", "US-S"),
+    # Block changed its ticker SQ -> XYZ in January 2025; the old symbol
+    # returns no data at all.
+    ("XYZ", "Block Inc.", "Financials", "US-S"),
     ("UPST", "Upstart Holdings", "Financials", "US-S"),
     ("OPEN", "Opendoor Technologies", "Real Estate", "US-S"),
-    ("SGFY", "Signify Health", "Health Care", "US-S"),
+    # (SGFY / Signify Health removed: acquired by CVS in 2023, delisted.)
     ("HIMS", "Hims & Hers Health", "Health Care", "US-S"),
     # --- AI & Quantum specialists -------------------------------------------
     # Pure-play quantum computing — small/micro cap, highly volatile.
@@ -284,7 +286,7 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("VRNT", "Verint Systems", "Technology", "IL"),
     ("CGNT", "Cognyte Software", "Technology", "IL"),
     ("ITRN", "Ituran Location and Control", "Technology", "IL"),
-    ("TARO", "Taro Pharmaceutical Industries", "Health Care", "IL"),
+    # (TARO removed: taken private by Sun Pharma in 2024, delisted.)
     ("NNOX", "Nano-X Imaging", "Health Care", "IL"),
     ("ALLT", "Allot Ltd.", "Technology", "IL"),
     ("MGIC", "Magic Software Enterprises", "Technology", "IL"),
@@ -471,31 +473,92 @@ def static_sector_map() -> dict[str, str]:
     return {t: sector for t, _, sector, _ in _CORE}
 
 
-def _fetch_sp500() -> list[str]:
-    tables = pd.read_html("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies")
-    df = tables[0]
-    return [t.replace(".", "-") for t in df["Symbol"].astype(str).tolist()]
+_WIKI_HEADERS = {
+    # Wikipedia rejects the default urllib User-Agent that `pd.read_html(url)`
+    # sends with HTTP 403 — which silently reduced the universe to the static
+    # list on every single run (visible in every crawl log as
+    # "wikipedia fetch failed (HTTP Error 403: Forbidden)").
+    "User-Agent": "Invest research crawler/0.2 (https://github.com/uriiger-sketch/Invest)",
+    "Accept": "text/html",
+}
 
 
-def _fetch_ndx() -> list[str]:
-    tables = pd.read_html("https://en.wikipedia.org/wiki/Nasdaq-100")
+def _read_wiki_tables(url: str) -> list[pd.DataFrame]:
+    import io
+
+    import requests
+
+    resp = requests.get(url, headers=_WIKI_HEADERS, timeout=20)
+    resp.raise_for_status()
+    return pd.read_html(io.StringIO(resp.text))
+
+
+def _symbols_from(tables: list[pd.DataFrame]) -> list[str]:
+    """First table with >= 50 plausible symbols in a "Symbol"/"Ticker" column.
+
+    Header matching is lenient — multi-level headers are flattened and
+    footnote markers stripped ("Ticker[3]") — because the NASDAQ-100 page's
+    header did not match the exact names (0 constituents parsed live).
+    """
+    import re
+
     for t in tables:
-        if "Ticker" in t.columns or "Symbol" in t.columns:
-            col = "Ticker" if "Ticker" in t.columns else "Symbol"
-            return [s.replace(".", "-") for s in t[col].astype(str).tolist()]
+        names = [
+            " ".join(str(x) for x in c) if isinstance(c, tuple) else str(c) for c in t.columns
+        ]
+        col = None
+        for raw, name in zip(t.columns, names):
+            key = re.sub(r"\[.*?\]", "", name).strip().lower()
+            if key.startswith(("symbol", "ticker")) or key.endswith(("symbol", "ticker")):
+                col = raw
+                break
+        if col is None:
+            continue
+        syms = [str(s).strip().replace(".", "-") for s in t[col].dropna().tolist()]
+        syms = [s for s in syms if s and len(s) <= 6 and s.replace("-", "").isalnum()]
+        if len(syms) >= 50:
+            return syms
+    logger.warning(
+        "universe: no symbol column found; table headers were %s",
+        [[str(c) for c in t.columns][:6] for t in tables[:8]],
+    )
     return []
 
 
-def refresh_universe() -> list[str]:
-    """Return current S&P500 ∪ NDX100 ∪ static (with intl + small cap)."""
+def _fetch_sp500() -> list[str]:
+    return _symbols_from(_read_wiki_tables("https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"))
+
+
+def _fetch_ndx() -> list[str]:
+    return _symbols_from(_read_wiki_tables("https://en.wikipedia.org/wiki/Nasdaq-100"))
+
+
+_UNIVERSE_CACHE: list[str] | None = None
+
+
+def refresh_universe(force: bool = False) -> list[str]:
+    """Return current S&P500 ∪ NDX100 ∪ static (with intl + small cap).
+
+    Cached per process: `current_universe()` is called by ingest, rank and
+    the report, and each uncached call cost two Wikipedia round-trips.
+    Each index is fetched independently, so one failing page doesn't
+    discard the other.
+    """
+    global _UNIVERSE_CACHE
+    if _UNIVERSE_CACHE is not None and not force:
+        return list(_UNIVERSE_CACHE)
     tickers = set(static_universe())
-    try:
-        tickers |= set(_fetch_sp500())
-        tickers |= set(_fetch_ndx())
-        logger.info("universe refreshed: %d tickers", len(tickers))
-    except Exception as e:  # noqa: BLE001
-        logger.warning("wikipedia fetch failed (%s); using static-only", e)
-    return sorted(tickers)
+    if get_settings().include_index_constituents:
+        for label, fetch in (("S&P 500", _fetch_sp500), ("NASDAQ-100", _fetch_ndx)):
+            try:
+                got = fetch()
+                tickers |= set(got)
+                logger.info("universe: %d %s constituents", len(got), label)
+            except Exception as e:  # noqa: BLE001
+                logger.warning("universe: %s fetch failed (%s); continuing without it", label, e)
+    logger.info("universe size: %d tickers", len(tickers))
+    _UNIVERSE_CACHE = sorted(tickers)
+    return list(_UNIVERSE_CACHE)
 
 
 def current_universe() -> list[str]:

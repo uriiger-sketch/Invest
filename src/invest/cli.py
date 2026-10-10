@@ -48,7 +48,7 @@ def ingest() -> None:
 
 @app.command("ingest-fast")
 def ingest_fast() -> None:
-    """Quick refresh: yfinance prices + consensus only. Used by the 20-min loop."""
+    """Scheduled refresh: prices + full company-intel sweep + focus-list news/filings."""
     _ensure_schema()
     from .pipeline.ingest import ingest_fast as _ingest_fast
 
@@ -146,6 +146,16 @@ def serve() -> None:
     ]
     console.print(f"[green]starting dashboard[/] on :{settings.streamlit_port}")
     subprocess.run(cmd, check=False)
+
+
+@app.command()
+def maintain() -> None:
+    """Prune expired history and VACUUM the database (keeps the committed DB small)."""
+    _ensure_schema()
+    from .pipeline.maintenance import prune_and_vacuum
+
+    deleted = prune_and_vacuum()
+    console.print(f"[green]maintenance done[/] — pruned {sum(deleted.values())} rows")
 
 
 @app.command("refresh-universe")

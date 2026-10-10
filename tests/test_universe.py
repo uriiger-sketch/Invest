@@ -61,3 +61,18 @@ def test_frontier_tech_members_are_in_the_universe():
     u = set(static_universe())
     missing = sorted(FRONTIER_TECH - u)
     assert not missing, f"FRONTIER_TECH tickers absent from universe: {missing}"
+
+
+def test_index_table_header_matching_is_lenient():
+    """Live: the NASDAQ-100 page parsed to 0 constituents with exact-name
+    header matching. Footnote markers and multi-level headers must match."""
+    import pandas as pd
+
+    from invest.universe import _symbols_from
+
+    syms = [f"T{i:03d}" for i in range(60)]
+    footnoted = pd.DataFrame({"Company": syms, "Ticker[3]": syms})
+    assert _symbols_from([footnoted]) == syms
+    multi = pd.DataFrame({("Constituents", "Symbol"): syms, ("Constituents", "Name"): syms})
+    assert _symbols_from([pd.DataFrame({"x": [1]}), multi]) == syms
+    assert _symbols_from([pd.DataFrame({"Ticker": ["A", "B"]})]) == []  # too few rows

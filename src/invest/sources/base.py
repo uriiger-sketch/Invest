@@ -59,6 +59,67 @@ class TransientSourceError(Exception):
     """Raised for retryable errors (rate-limit, 5xx, timeout)."""
 
 
+class RateLimitedError(TransientSourceError):
+    """The provider answered HTTP 429 / "Too Many Requests"."""
+
+
+class CrawlAborted(Exception):
+    """Raised by RateGovernor once a provider keeps rate-limiting us."""
+
+
+class RateGovernor:
+    """Shared, thread-safe back-off for one provider across worker threads.
+
+    Per-request retries (``with_retries``) absorb an isolated 429. What they
+    cannot handle is a provider-wide block: every worker would keep burning
+    its own retry budget against a wall. After ``threshold`` consecutive
+    rate-limited tickers the governor pauses ALL workers for ``cooldown``
+    seconds; after ``max_cooldowns`` pauses it aborts the stage so the run
+    moves on (the stalest-first ordering means skipped names go first next
+    run) instead of timing out the whole workflow.
+    """
+
+    def __init__(self, threshold: int = 6, cooldown: float = 45.0, max_cooldowns: int = 3) -> None:
+        self.threshold = threshold
+        self.cooldown = cooldown
+        self.max_cooldowns = max_cooldowns
+        self._lock = threading.Lock()
+        self._consecutive = 0
+        self._cooldowns = 0
+        self._resume_at = 0.0
+        self.aborted = False
+        self.rate_limited = 0
+
+    def before_request(self) -> None:
+        with self._lock:
+            if self.aborted:
+                raise CrawlAborted("provider rate-limit abort")
+            wait = self._resume_at - time.monotonic()
+        if wait > 0:
+            time.sleep(wait)
+
+    def on_success(self) -> None:
+        with self._lock:
+            self._consecutive = 0
+
+    def on_rate_limit(self) -> None:
+        with self._lock:
+            self.rate_limited += 1
+            self._consecutive += 1
+            if self._consecutive < self.threshold:
+                return
+            self._consecutive = 0
+            self._cooldowns += 1
+            if self._cooldowns > self.max_cooldowns:
+                self.aborted = True
+                logger.error("rate governor: provider still throttling after %d cool-downs; aborting stage",
+                             self.max_cooldowns)
+                return
+            self._resume_at = time.monotonic() + self.cooldown
+            logger.warning("rate governor: %d consecutive 429s — pausing all workers %.0fs (cool-down %d/%d)",
+                           self.threshold, self.cooldown, self._cooldowns, self.max_cooldowns)
+
+
 def with_retries(fn):
     """Decorator: retry transient errors with jittered exponential backoff."""
     return retry(
@@ -120,7 +181,11 @@ def upsert_analyst_actions(rows: list[dict]) -> int:
     """
     from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
-    usable = [r for r in rows if r.get("firm_key")]
+    # Every row must carry the same keys for a multi-row VALUES insert;
+    # sources that predate the target-change columns simply leave them None.
+    usable = [
+        {"prior_target": None, "target_action": None, **r} for r in rows if r.get("firm_key")
+    ]
     if not usable:
         return 0
     with session_scope() as s:
@@ -133,6 +198,8 @@ def upsert_analyst_actions(rows: list[dict]) -> int:
                 "from_grade": stmt.excluded.from_grade,
                 "to_grade": stmt.excluded.to_grade,
                 "target_price": stmt.excluded.target_price,
+                "prior_target": stmt.excluded.prior_target,
+                "target_action": stmt.excluded.target_action,
             },
         )
         s.execute(stmt)
@@ -153,6 +220,13 @@ def upsert_insider_trades(rows: list[dict]) -> int:
 
     if not rows:
         return 0
+    # Placeholder rows ("a filing happened, detail unparsed") must carry
+    # 0, not NULL, for shares/price: SQLite never treats two NULLs as equal,
+    # so NULL placeholders bypassed the unique index and were re-inserted on
+    # every crawl (341k duplicate rows / ~57 MB before migration 0005).
+    rows = [
+        {**r, "shares": r.get("shares") or 0.0, "price": r.get("price") or 0.0} for r in rows
+    ]
     with session_scope() as s:
         stmt = sqlite_insert(InsiderTrade).values(rows)
         stmt = stmt.on_conflict_do_nothing(

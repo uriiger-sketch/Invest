@@ -148,6 +148,16 @@ def serve() -> None:
     subprocess.run(cmd, check=False)
 
 
+@app.command()
+def maintain() -> None:
+    """Prune expired history and VACUUM the database (keeps the committed DB small)."""
+    _ensure_schema()
+    from .pipeline.maintenance import prune_and_vacuum
+
+    deleted = prune_and_vacuum()
+    console.print(f"[green]maintenance done[/] — pruned {sum(deleted.values())} rows")
+
+
 @app.command("refresh-universe")
 def refresh_universe_cmd() -> None:
     """Pull current S&P500 + NDX100 tickers and print the list size."""

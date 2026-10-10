@@ -35,6 +35,10 @@ class Stock(Base):
     # ("AMAZON COM INC") rarely equal the vendor names we store
     # ("Amazon.com, Inc."), so name matching dropped nearly every holding.
     cusip: Mapped[str | None] = mapped_column(String(12), index=True)
+    # SEC Central Index Key of the ISSUER (not a 13F filer), resolved from
+    # sec.gov/files/company_tickers.json. Needed to read the company's own
+    # filing stream (8-K events, 13D activist stakes, offerings).
+    cik: Mapped[str | None] = mapped_column(String(10))
     in_universe: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     updated_at: Mapped[datetime | None] = mapped_column(DateTime)
 
@@ -71,6 +75,12 @@ class AnalystAction(Base):
     from_grade: Mapped[str | None] = mapped_column(String(64))
     to_grade: Mapped[str | None] = mapped_column(String(64))
     target_price: Mapped[float | None] = mapped_column(Float)
+    # The firm's PREVIOUS price target and what it did to it ("raises" /
+    # "lowers" / "maintains" / "announces"). Most sell-side notes leave the
+    # rating unchanged but move the target, so without these an analyst
+    # cutting a target from 200 to 150 was stored as a neutral "reiterate".
+    prior_target: Mapped[float | None] = mapped_column(Float)
+    target_action: Mapped[str | None] = mapped_column(String(16))
     date: Mapped[date] = mapped_column(Date, index=True)
     source: Mapped[str] = mapped_column(String(32))
 
@@ -173,6 +183,87 @@ class Score(Base):
     ml_score: Mapped[float | None] = mapped_column(Float)
     blended_score: Mapped[float | None] = mapped_column(Float)
     percentile: Mapped[float | None] = mapped_column(Float)
+
+
+class NewsItem(Base):
+    """One headline about one ticker, deduplicated across feeds.
+
+    `id` is a hash of (ticker, normalised title) so the same story syndicated
+    by Yahoo and Google News is stored — and counted in the sentiment
+    average — once.
+    """
+
+    __tablename__ = "news_items"
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True)
+    ticker: Mapped[str] = mapped_column(String(16), index=True)
+    published_at: Mapped[datetime] = mapped_column(DateTime, index=True)
+    title: Mapped[str] = mapped_column(String(300))
+    publisher: Mapped[str | None] = mapped_column(String(80))
+    url: Mapped[str | None] = mapped_column(String(400))
+    source: Mapped[str] = mapped_column(String(16))
+    # Finance-lexicon headline tone in [-1, 1] and how clearly the headline is
+    # about THIS company (1 = names it, 0.5 = query hit only).
+    sentiment: Mapped[float | None] = mapped_column(Float)
+    relevance: Mapped[float | None] = mapped_column(Float)
+
+
+class SecFiling(Base):
+    """Issuer-level SEC filings of interest (8-K events, 13D stakes, offerings)."""
+
+    __tablename__ = "sec_filings"
+
+    ticker: Mapped[str] = mapped_column(String(16), primary_key=True)
+    accession: Mapped[str] = mapped_column(String(24), primary_key=True)
+    form: Mapped[str] = mapped_column(String(24))
+    filing_date: Mapped[date] = mapped_column(Date, index=True)
+    report_date: Mapped[date | None] = mapped_column(Date)
+    items: Mapped[str | None] = mapped_column(String(64))
+    description: Mapped[str | None] = mapped_column(String(160))
+
+
+class IntelSnapshot(Base):
+    """Latest parsed company intel per (ticker, kind) — overwritten each crawl.
+
+    Only the LATEST payload is kept: Yahoo already reports the history we
+    need inside each payload (EPS estimates now vs 7/30/60/90 days ago,
+    recommendation counts now vs 1-3 months ago), so storing every crawl
+    would only bloat the committed database.
+    """
+
+    __tablename__ = "intel_snapshots"
+
+    ticker: Mapped[str] = mapped_column(String(16), primary_key=True)
+    kind: Mapped[str] = mapped_column(String(24), primary_key=True)
+    as_of: Mapped[datetime] = mapped_column(DateTime, index=True)
+    payload: Mapped[str] = mapped_column(Text)
+
+
+class Grade(Base):
+    """Integrated cross-horizon grade per ticker per day (see pipeline/grade.py)."""
+
+    __tablename__ = "grades"
+
+    ticker: Mapped[str] = mapped_column(String(16), primary_key=True)
+    as_of: Mapped[date] = mapped_column(Date, primary_key=True)
+    grade_score: Mapped[float | None] = mapped_column(Float)
+    letter: Mapped[str | None] = mapped_column(String(3))
+    percentile: Mapped[float | None] = mapped_column(Float)
+    confidence: Mapped[float | None] = mapped_column(Float)
+    alpha_1m: Mapped[float | None] = mapped_column(Float)
+    p_outperform_1m: Mapped[float | None] = mapped_column(Float)
+    alpha_3m: Mapped[float | None] = mapped_column(Float)
+    detail_json: Mapped[str | None] = mapped_column(Text)
+
+
+class Calibration(Base):
+    """Per-horizon model calibration (posterior factor ICs, blend weights)."""
+
+    __tablename__ = "calibration"
+
+    as_of: Mapped[date] = mapped_column(Date, primary_key=True)
+    horizon: Mapped[str] = mapped_column(String(8), primary_key=True)
+    payload: Mapped[str] = mapped_column(Text)
 
 
 class RunLog(Base):

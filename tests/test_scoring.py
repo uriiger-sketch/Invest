@@ -253,37 +253,39 @@ def test_select_diversified_backfill_preserves_rank_monotonicity():
     assert len(picked) == 9
 
 
-def test_weights_sum_to_one():
-    """Every horizon's WEIGHTS row must sum to 1.0 so composite_score is on a
-    comparable scale across horizons. Previously hours=0.95 and
-    weekly=1.10 — harmless within a horizon (re-z-scored downstream) but the
-    persisted, displayed composite_score was on an incomparable per-horizon
-    scale."""
-    from invest.config import WEIGHTS
+def test_prior_weights_are_normalised_and_cover_every_feature():
+    """Every horizon carries a prior IC for EVERY feature, and the derived
+    display weights are L1-normalised (Σ|w| = 1) so composite scores are on
+    a comparable scale across horizons. (Signed weights no longer sum to 1:
+    some priors are deliberately negative — short interest, analyst
+    disagreement, short-term reversal.)"""
+    from invest.config import FEATURE_NAMES, PRIOR_IC, WEIGHTS
 
-    for horizon, weights in WEIGHTS.items():
-        total = sum(weights.values())
-        assert abs(total - 1.0) < 1e-9, f"{horizon} weights sum to {total}, expected 1.0"
+    for horizon in HORIZONS:
+        assert set(PRIOR_IC[horizon]) == set(FEATURE_NAMES)
+        total = sum(abs(v) for v in WEIGHTS[horizon].values())
+        assert abs(total - 1.0) < 1e-9, f"{horizon} |weights| sum to {total}, expected 1.0"
 
 
-def test_horizons_use_distinct_dominant_momentum_windows():
-    """Each horizon must have a nonzero weight on a momentum window some
-    OTHER horizon zeroes out — otherwise every horizon is just a linear
-    recombination of the same signals and rankings collapse together
-    (measured on live data: hours vs daily Spearman rho = 0.958, 11/13
-    top-13 overlap, because both leaned on the same single 21-day window)."""
-    from invest.config import WEIGHTS
+def test_horizons_lean_on_different_timescales():
+    """The four horizons must not collapse into one ranking (measured once
+    on live data: hours vs daily Spearman rho = 0.958 when both leaned on
+    the same 21-day window). Short windows must matter most at short
+    horizons, long windows most at long horizons, and the hours vs monthly
+    prior vectors must be far from collinear."""
+    import math
 
-    assert WEIGHTS["hours"]["price_mom_5d"] > 0
-    assert WEIGHTS["hours"]["price_mom_63d"] == 0
-    assert WEIGHTS["monthly"]["price_mom_63d"] > 0
-    assert WEIGHTS["monthly"]["price_mom_5d"] == 0
-    # hours and monthly must not share a nonzero momentum window at all.
-    hours_mom = {k for k in ("price_mom_5d", "price_mom_21d", "price_mom_63d") if WEIGHTS["hours"][k] > 0}
-    monthly_mom = {k for k in ("price_mom_5d", "price_mom_21d", "price_mom_63d") if WEIGHTS["monthly"][k] > 0}
-    assert not (hours_mom & monthly_mom), (
-        f"hours and monthly share a momentum window: {hours_mom & monthly_mom}"
-    )
+    from invest.config import PRIOR_IC
+
+    hrs, mon = PRIOR_IC["hours"], PRIOR_IC["monthly"]
+    assert abs(hrs["price_mom_5d"]) > abs(mon["price_mom_5d"])
+    assert abs(hrs["rating_mom_7d"]) > abs(mon["rating_mom_7d"])
+    assert abs(hrs["news_sentiment"]) > abs(mon["news_sentiment"])
+    assert mon["mom_12_1"] > hrs["mom_12_1"]
+    assert mon["value"] > hrs["value"] and mon["quality"] > hrs["quality"]
+    dot = sum(hrs[f] * mon[f] for f in hrs)
+    cos = dot / math.sqrt(sum(v * v for v in hrs.values()) * sum(v * v for v in mon.values()))
+    assert cos < 0.6, f"hours and monthly priors nearly collinear (cos={cos:.2f})"
 
 
 def test_zscore_pool_mask_ignores_excluded_rows():

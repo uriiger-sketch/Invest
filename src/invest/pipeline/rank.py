@@ -7,7 +7,7 @@ from datetime import date
 import pandas as pd
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
-from ..config import HORIZONS, get_settings
+from ..config import HORIZONS, get_settings, normalize_sector
 from ..db import session_scope
 from ..models import Score
 from . import ml_rank, score
@@ -111,18 +111,17 @@ def _theme_tilts(tickers: list[str]) -> dict[str, float]:
 
 
 def rank_all(tickers: list[str]) -> pd.DataFrame:
-    """End-to-end: build features, score (composite + ML), blend, persist, return frame."""
-    settings = get_settings()
+    """End-to-end: features -> calibrated composite -> ML blend -> per-horizon
+    scores -> integrated grade. Persists Score, Grade and Calibration rows."""
+    from . import grade
+
     features = build_features(tickers)
     if features.empty:
         logger.warning("no features built; nothing to rank")
         return pd.DataFrame()
 
-    # Persist today's feature snapshot for future ML training. This was
-    # previously dead code (nothing called it), so the `features` table
-    # stayed empty forever, `ml_rank.train()` never cleared its cold-start
-    # check, and `ml_score` was silently identical to `composite_score` for
-    # every row ever persisted — the composite+ML blend was composite-only.
+    # Persist today's feature snapshot: the history that calibrates the
+    # factor ICs and trains the ML ranker.
     try:
         persist_feature_snapshot(features)
     except Exception:  # noqa: BLE001
@@ -130,13 +129,11 @@ def rank_all(tickers: list[str]) -> pd.DataFrame:
 
     _assert_analyst_data_present(features)
 
-    comp = score.composite_scores(features)
+    calib = grade.calibrate(features)
+    comp = score.composite_scores(features, calib.weights)
     if comp.empty:
-        # A gate rejected the ENTIRE universe. This used to be a bland warning
-        # that blamed the wrong gate and returned quietly, so the workflow
-        # stayed green while nothing was ever persisted again. Now we report
-        # exactly which gate is responsible and raise, so the run fails
-        # visibly and the last good report is left untouched.
+        # A gate rejected the ENTIRE universe: report which gate and fail
+        # loudly so the last good report stays published.
         counts = score.gate_survivors(features)
         detail = ", ".join(f"{k}={v}" for k, v in counts.items())
         logger.error(
@@ -148,20 +145,34 @@ def rank_all(tickers: list[str]) -> pd.DataFrame:
         raise RankingProducedNothingError(
             f"all {counts['universe']} tickers rejected by quality gates ({detail})"
         )
+    logger.info("gate survivors: %s", score.gate_survivors(features))
 
     ml = ml_rank.score_horizons(features, comp)
     merged = comp.merge(ml, on=["ticker", "horizon"], how="left")
     merged["ml_score"] = merged["ml_score"].fillna(merged["composite_score"])
-
     merged["composite_z"] = _zscore_group(merged, "composite_score").fillna(0.0)
     merged["ml_z"] = _zscore_group(merged, "ml_score").fillna(0.0)
-    merged["blended_score"] = (
-        settings.blend_composite_weight * merged["composite_z"]
-        + settings.blend_ml_weight * merged["ml_z"]
-    )
-    # fillna(0.0) is load-bearing: `_theme_tilts` returns {} when the tilt is
-    # switched off in config, and `.map({})` yields all-NaN — without the
-    # fill, disabling the tilt would silently NaN out every blended_score.
+
+    # IC-optimal composite/ML blend per horizon (ML weight 0 until its
+    # purged out-of-sample IC is credibly positive; capped).
+    blended = []
+    for h in HORIZONS:
+        sub = merged[merged["horizon"] == h].copy()
+        if sub.empty:
+            continue
+        w_c, w_m, info = grade.ml_blend(
+            sub["composite_z"], sub["ml_z"], ml_rank.model_meta(h),
+            calib.horizon_ic.get(h, {}).get("posterior", 0.0),
+        )
+        info["composite_weight"] = round(w_c, 4)
+        calib.ml[h] = info
+        sub["blended_score"] = score._zscore(w_c * sub["composite_z"] + w_m * sub["ml_z"]).fillna(0.0)
+        blended.append(sub)
+    merged = pd.concat(blended, ignore_index=True)
+
+    # Theme tilt — a small, explicit tiebreaker in z units. fillna(0.0) is
+    # load-bearing: `_theme_tilts` returns {} when the tilt is switched off,
+    # and `.map({})` yields all-NaN.
     merged["theme_tilt"] = (
         merged["ticker"].map(_theme_tilts(merged["ticker"].tolist())).fillna(0.0)
     )
@@ -171,6 +182,15 @@ def rank_all(tickers: list[str]) -> pd.DataFrame:
     merged["as_of"] = date.today()
 
     _persist(merged)
+    try:
+        grades = grade.integrated_grades(merged, features, calib)
+        grade.persist_grades(grades, calib)
+        logger.info(
+            "graded %d tickers; horizon skill (posterior IC): %s",
+            len(grades), {h: v.get("posterior") for h, v in calib.horizon_ic.items()},
+        )
+    except Exception:  # noqa: BLE001 — the per-horizon ranking stands on its own
+        logger.exception("integrated grading failed; per-horizon scores were still persisted")
     return merged
 
 
@@ -181,6 +201,10 @@ def _persist(df: pd.DataFrame) -> None:
     if not rows:
         return
     with session_scope() as s:
+        # Several runs a day write the same as_of. A ticker that passed the
+        # gates in the morning but fails them in the evening must not keep its
+        # stale morning score in today's ranking.
+        s.query(Score).filter(Score.as_of == rows[0]["as_of"]).delete()
         stmt = sqlite_insert(Score).values(rows)
         stmt = stmt.on_conflict_do_update(
             index_elements=["ticker", "horizon", "as_of"],
@@ -212,7 +236,7 @@ def select_diversified(rows: list[dict], n: int, max_per_sector: int | None = No
     for r in rows:
         if len(picked) >= n:
             break
-        sector = (r.get("sector") or "?").strip() or "?"
+        sector = normalize_sector(r.get("sector")) or "?"
         if sector_counts.get(sector, 0) >= cap:
             continue
         picked.append(r)

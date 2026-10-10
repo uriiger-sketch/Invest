@@ -122,10 +122,15 @@ def parse_yahoo_news(
                 url = v["url"]
                 break
         url = url or it.get("link")
+        related = {str(x).upper() for x in (it.get("relatedTickers") or [])}
+        if related and ticker.upper() not in related:
+            # Yahoo's search endpoint returns loosely related stories; one it
+            # explicitly tags with OTHER symbols only (live example: a
+            # Take-Two article under NVDA) is not about this company.
+            continue
         row = make_news_row(ticker, title, dt, publisher, url, "yahoo", company_name)
         if row:
-            related = {str(x).upper() for x in (it.get("relatedTickers") or [])}
-            if ticker.upper() in related:
+            if related:
                 row["relevance"] = 1.0  # Yahoo tagged the story with this symbol
             out.append(row)
     return out

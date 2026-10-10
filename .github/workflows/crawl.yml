@@ -11,9 +11,11 @@ name: crawl
 # 30-minute window with margin to spare.
 #
 # Notes on reliability:
-# - GitHub's scheduled workflows are best-effort. 5–15 min jitter is normal,
-#   and ticks CAN be skipped under load, so treat "every 30 min" as "about
-#   every 30 min"; the report banner exposes the real last-ran time.
+# - GitHub's scheduled workflows are best-effort and ticks ARE dropped under
+#   load. With the old "*/30" (:00/:30, the busiest slots GitHub has) only
+#   ~5 of 48 daily ticks ran, hours late. The crons now sit on off-peak
+#   minutes, as GitHub's docs recommend; the report banner exposes the real
+#   last-ran time.
 # - Fast and deep runs use separate concurrency groups so the daily deep
 #   ingest cannot starve the 30-min fast heartbeat.
 # - Auto-commit messages end with "[skip ci]" so the workflow does not
@@ -22,9 +24,10 @@ name: crawl
 on:
   schedule:
     # Fast refresh every 30 minutes (prices + full coverage sweep).
-    - cron: "*/30 * * * *"
-    # Deep refresh once a day at 23:30 UTC (fundamentals + EDGAR 13F + Form 4 + ML training).
-    - cron: "30 23 * * *"
+    - cron: "11,41 * * * *"
+    # Deep refresh once a day at 23:26 UTC (fundamentals + EDGAR 13F + Form 4 + ML training).
+    # This exact string is matched in the concurrency group and DEEP_RUN below.
+    - cron: "26 23 * * *"
   workflow_dispatch:
     inputs:
       universe_max:
@@ -53,13 +56,15 @@ jobs:
   crawl:
     if: ${{ !contains(github.event.head_commit.message, '[skip ci]') }}
     runs-on: ubuntu-latest
+    outputs:
+      published: ${{ steps.commit.outputs.published }}
     # Separate concurrency groups per run type so the nightly deep run cannot
     # block the every-20-min fast heartbeat. cancel-in-progress=true ensures
     # a new cron tick always gets attention even if the previous is slow.
     concurrency:
       group: >-
         crawl-${{ github.ref }}-${{
-          (inputs.deep == true || github.event.schedule == '30 23 * * *')
+          (inputs.deep == true || github.event.schedule == '26 23 * * *')
           && 'deep' || 'fast'
         }}
       cancel-in-progress: true
@@ -78,7 +83,7 @@ jobs:
       RUN_SCHEDULER: "false"
       PIP_DISABLE_PIP_VERSION_CHECK: "1"
       DEEP_RUN: >-
-        ${{ (inputs.deep == true || github.event.schedule == '30 23 * * *')
+        ${{ (inputs.deep == true || github.event.schedule == '26 23 * * *')
            && 'true' || 'false' }}
     steps:
       - uses: actions/checkout@v4
@@ -157,6 +162,7 @@ jobs:
         run: python scripts/generate_report.py
 
       - name: Commit report back
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -212,6 +218,18 @@ jobs:
                 pushed=true
                 break
               fi
+              if [ "${DEEP_RUN}" != "true" ]; then
+                # A FAST run that loses the push race must not win the
+                # rebase. Fast runs cannot overlap each other
+                # (cancel-in-progress), so whoever published meanwhile is
+                # the deep run (or a code push), and its database holds
+                # 13F / Form 4 / SEC work this run never saw; `-X theirs`
+                # would silently replace it. Dropping this run's refresh
+                # costs one tick.
+                echo "::notice::a concurrent run published first; this fast run's data is not pushed so it cannot overwrite newer data"
+                echo "published=false" >> "$GITHUB_OUTPUT"
+                exit 0
+              fi
               git fetch origin "${GITHUB_REF_NAME}" || true
               if ! git rebase -X theirs "origin/${GITHUB_REF_NAME}"; then
                 git rebase --abort
@@ -225,7 +243,10 @@ jobs:
             fi
           fi
 
+      # A superseded fast run's report predates the run that beat it; don't
+      # deploy it over the newer one.
       - name: Upload Pages artifact
+        if: ${{ steps.commit.outputs.published != 'false' }}
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs
@@ -242,8 +263,12 @@ jobs:
     needs: crawl
     # The github-pages environment only accepts the default branch; a feature
     # branch run would fail here with no runner assigned. Scheduled runs
-    # always execute on the default branch.
-    if: ${{ github.event_name == 'schedule' || github.ref_name == github.event.repository.default_branch }}
+    # always execute on the default branch. A superseded fast run (see
+    # "Commit report back") deploys nothing.
+    if: >-
+      ${{ needs.crawl.outputs.published != 'false'
+          && (github.event_name == 'schedule'
+              || github.ref_name == github.event.repository.default_branch) }}
     runs-on: ubuntu-latest
     permissions:
       pages: write

@@ -1,55 +1,55 @@
 | # | Ticker | Name | Sector | Grade | Upside | Price | Target | α 1M | P(beat) 1M | Conf | News 7d | Δ Opinion 30d | H/D/W/M | Analysts | Sources |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 1 | **MRVL** | Marvell Technology, Inc. | Technology | A+ (+3.87) | **+22.8%** | 275.28 | 337.99 | +2.22% | 54.3% | 100% | + (40) | ↑1/↓0 ▲10/▼0 | HDW· | 46 | 80 |
-| 2 | **MU** | Micron Technology, Inc. | Technology | A+ (+3.59) | **+51.1%** | 1029.00 | 1555.13 | +1.96% | 53.9% | 100% | + (40) | ▲5/▼0 | HDWM | 49 | 85 |
-| 3 | **CRM** | Salesforce, Inc. | Technology | A+ (+3.33) | **+23.7%** | 229.13 | 283.36 | +1.69% | 54.2% | 100% | + (40) | ▲6/▼0 | HDWM | 56 | 91 |
-| 4 | **NVDA** | NVIDIA Corporation | Technology | A+ (+2.87) | **+43.4%** | 229.28 | 328.72 | +0.79% | 53.1% | 100% | + (40) | — | HDWM | 62 | 101 |
-| 5 | **DVN** | Devon Energy Corporation | Energy | A+ (+2.81) | **+26.3%** | 48.26 | 60.96 | +0.82% | 53.5% | 94% | + (40) | ▲5/▼2 | ·DWM | 28 | 58 |
-| 6 | **WDC** | Western Digital Corporation | Technology | A+ (+2.70) | **+68.8%** | 397.28 | 670.79 | +1.65% | 53.0% | 87% | + (40) | — | H·WM | 26 | 57 |
-| 7 | **REGN** | Regeneron Pharmaceuticals, I | Healthcare | A+ (+2.67) | **+15.1%** | 746.54 | 859.04 | +0.75% | 53.5% | 100% | + (36) | ↑1/↓0 ▲5/▼0 | HDWM | 27 | 60 |
-| 8 | **BP** | BP p.l.c. | Energy | A+ (+2.55) | **+11.6%** | 46.25 | 51.61 | +0.82% | 53.9% | 100% | + (40) | ↑3/↓0 ▲4/▼0 | ·DWM | 19 | 44 |
-| 9 | **EXE** | Expand Energy Corporation | Energy | A+ (+2.47) | **+39.7%** | 88.22 | 123.22 | +0.57% | 52.8% | 91% | + (40) | ▲1/▼6 | HDWM | 28 | 55 |
-| 10 | **TSM** | Taiwan Semiconductor Manufac | Technology | A+ (+2.45) | **+22.4%** | 453.31 | 555.01 | +0.59% | 52.5% | 100% | + (40) | ▲1/▼0 | ·D·M | 21 | 64 |
-| 11 | **SNDK** | Sandisk Corporation | Technology | A+ (+2.34) | **+37.4%** | 1581.82 | 2173.00 | +1.64% | 52.2% | 91% | 0 (40) | ▲1/▼0 | H··M | 25 | 55 |
-| 12 | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | A+ (+2.19) | **+26.3%** | 262.43 | 331.53 | +0.72% | 52.5% | 100% | + (40) | ▲2/▼0 | HDWM | 60 | 105 |
-| 13 | **JBL** | Jabil Inc. | Technology | A+ (+2.14) | **+38.8%** | 306.28 | 425.00 | +0.90% | 52.5% | 94% | + (40) | ▲1/▼1 | ···M | 10 | 41 |
-| 14 | **JKHY** | Jack Henry & Associates, Inc | Technology | A+ (+2.13) | **+27.1%** | 149.31 | 189.72 | +0.65% | 52.9% | 94% | + (26) | ↑1/↓0 ▲2/▼1 | ··W· | 20 | 40 |
-| 15 | **CVS** | CVS Health Corporation | Healthcare | A+ (+2.09) | **+34.4%** | 86.16 | 115.76 | +0.48% | 52.5% | 84% | 0 (40) | — | HDWM | 27 | 59 |
-| 16 | **STX** | Seagate Technology Holdings  | Technology | A+ (+2.09) | **+46.1%** | 783.00 | 1144.35 | +1.34% | 52.6% | 87% | 0 (40) | — | ··WM | 25 | 59 |
-| 17 | **MSI** | Motorola Solutions, Inc. | Technology | A (+1.99) | **+18.6%** | 444.18 | 526.91 | +0.43% | 52.4% | 94% | + (35) | ▲1/▼0 | ·D·· | 14 | 43 |
-| 18 | **OXY** | Occidental Petroleum Corpora | Energy | A (+1.95) | **+13.8%** | 60.11 | 68.40 | +0.67% | 52.9% | 94% | + (40) | ↑1/↓0 ▲4/▼0 | ·DWM | 26 | 55 |
-| 19 | **ORCL** | Oracle Corporation | Technology | A (+1.94) | **+68.3%** | 141.40 | 237.97 | +0.96% | 52.6% | 100% | 0 (40) | ▲1/▼4 | ··W· | 43 | 76 |
-| 20 | **QUBT** | Quantum Computing Inc. | Technology | A (+1.87) | **+150.9%** | 7.44 | 18.67 | +0.99% | 52.4% | 93% | + (40) | — | ·D·· | 6 | 32 |
-| 21 | **TGT** | Target Corporation | Consumer Defensive | A (+1.77) | **+6.4%** | 153.64 | 163.50 | +0.51% | 52.6% | 94% | 0 (40) | ↑1/↓0 ▲1/▼0 | ·DWM | 38 | 70 |
-| 22 | **USB** | U.S. Bancorp | Financial Services | A (+1.74) | **+20.9%** | 57.08 | 69.00 | +0.30% | 52.3% | 94% | 0 (40) | ▲1/▼5 | ·DWM | 24 | 52 |
-| 23 | **AIZ** | Assurant, Inc. | Financial Services | A (+1.71) | **+22.6%** | 266.49 | 326.67 | +0.37% | 52.3% | 94% | + (37) | ▲0/▼1 | ··WM | 7 | 34 |
-| 24 | **GOOGL** | Alphabet Inc. | Communication Serv | A (+1.69) | **+22.1%** | 351.66 | 429.47 | +0.46% | 52.0% | 100% | 0 (40) | ▲4/▼0 | ··WM | 62 | 110 |
-| 25 | **CHRW** | C.H. Robinson Worldwide, Inc | Industrials | A (+1.69) | **+38.8%** | 142.31 | 197.48 | +0.69% | 51.7% | 90% | 0 (40) | ▲0/▼3 | HDW· | 23 | 24 |
-| 26 | **INVH** | Invitation Homes Inc. | Real Estate | A (+1.64) | **+25.1%** | 26.79 | 33.52 | +0.27% | 52.4% | 94% | + (14) | ↑1/↓0 ▲1/▼2 | ·DWM | 25 | 55 |
-| 27 | **WFC** | Wells Fargo & Company | Financial Services | A (+1.62) | **+18.2%** | 83.55 | 98.73 | +0.37% | 52.3% | 100% | 0 (40) | ↑1/↓0 ▲1/▼4 | ·DWM | 27 | 58 |
-| 28 | **HUM** | Humana Inc. | Healthcare | A (+1.60) | **+4.9%** | 431.87 | 452.87 | +0.59% | 52.1% | 94% | + (40) | ↑3/↓0 ▲5/▼0 | HDW· | 26 | 59 |
-| 29 | **ABT** | Abbott Laboratories | Healthcare | A (+1.58) | **+21.2%** | 99.60 | 120.72 | +0.33% | 52.1% | 100% | 0 (40) | ↑1/↓0 ▲1/▼0 | HDW· | 28 | 62 |
-| 30 | **DXCM** | DexCom, Inc. | Healthcare | A (+1.58) | **+14.4%** | 84.11 | 96.23 | +0.48% | 51.9% | 94% | 0 (21) | ▲2/▼0 | ··WM | 29 | 62 |
-| 31 | **RCL** | Royal Caribbean Cruises Ltd. | Consumer Cyclical | A (+1.57) | **+24.4%** | 282.26 | 351.26 | +0.42% | 51.6% | 94% | + (34) | ↑2/↓0 ▲3/▼1 | HD·· | 29 | 57 |
-| 32 | **GM** | General Motors Company | Consumer Cyclical | A (+1.57) | **+26.5%** | 82.73 | 104.65 | +0.48% | 52.0% | 100% | 0 (40) | ▲2/▼1 | ··WM | 24 | 56 |
-| 33 | **GNRC** | Generac Holdings Inc. | Industrials | A (+1.55) | **+27.9%** | 224.94 | 287.78 | +0.67% | 51.7% | 94% | + (40) | ↑1/↓0 ▲3/▼2 | HDW· | 22 | 53 |
-| 34 | **BNY** | The Bank of New York Mellon  | Financial Services | A (+1.55) | **+14.5%** | 142.71 | 163.47 | +0.25% | 51.9% | 91% | + (40) | ▲1/▼3 | ·DW· | 17 | 45 |
-| 35 | **WELL** | Welltower Inc. | Real Estate | A (+1.53) | **+16.2%** | 225.47 | 262.05 | +0.20% | 51.5% | 87% | + (38) | — | HD·· | 22 | 50 |
-| 36 | **VRTX** | Vertex Pharmaceuticals Incor | Healthcare | A (+1.53) | **+12.1%** | 510.08 | 571.61 | +0.30% | 51.7% | 100% | + (38) | ▲2/▼0 | ···M | 32 | 61 |
-| 37 | **DE** | Deere & Company | Industrials | A (+1.45) | **+11.7%** | 620.93 | 693.57 | +0.45% | 51.9% | 100% | 0 (40) | ▲1/▼0 | HDW· | 25 | 56 |
-| 38 | **SJM** | The J. M. Smucker Company | Consumer Defensive | A (+1.41) | **+18.6%** | 119.83 | 142.12 | +0.34% | 51.9% | 83% | + (19) | — | ··WM | 19 | 20 |
-| 39 | **TEVA** | Teva Pharmaceutical Industri | Healthcare | A (+1.39) | **+10.2%** | 41.10 | 45.27 | +0.38% | 51.6% | 90% | + (37) | — | ·D·· | 12 | 46 |
-| 40 | **VRT** | Vertiv Holdings Co | Industrials | A (+1.38) | **+39.0%** | 242.78 | 337.43 | +0.56% | 51.2% | 100% | + (40) | — | HD·· | 30 | 62 |
-| 41 | **DEO** | Diageo plc | Consumer Defensive | A (+1.37) | **+24.0%** | 86.73 | 107.57 | +0.42% | 52.3% | 90% | + (40) | — | ··WM | 8 | 32 |
-| 42 | **EW** | Edwards Lifesciences Corpora | Healthcare | A (+1.37) | **+19.7%** | 85.21 | 101.96 | +0.20% | 51.3% | 94% | + (33) | — | HD·· | 29 | 58 |
-| 43 | **SAP** | SAP SE | Technology | A (+1.32) | **+19.8%** | 214.78 | 257.33 | +0.38% | 51.4% | 100% | + (40) | ▲1/▼0 | ·D·· | 16 | 41 |
-| 44 | **DG** | Dollar General Corporation | Consumer Defensive | A- (+1.32) | **+12.3%** | 127.23 | 142.83 | +0.50% | 52.2% | 90% | + (40) | ↑2/↓0 ▲1/▼0 | ·DW· | 31 | 32 |
-| 45 | **TRGP** | Targa Resources Corp. | Energy | A- (+1.32) | **+13.6%** | 286.70 | 325.71 | +0.37% | 51.7% | 94% | + (27) | ↑1/↓0 ▲5/▼0 | ···M | 22 | 52 |
-| 46 | **GOOG** | Alphabet Inc. | Communication Serv | A- (+1.30) | **+20.8%** | 347.86 | 420.36 | +0.23% | 51.0% | 94% | + (40) | ▲1/▼0 | H··· | 62 | 66 |
-| 47 | **EXR** | Extra Space Storage Inc. | Real Estate | A- (+1.30) | **+17.5%** | 134.65 | 158.25 | +0.22% | 51.7% | 94% | + (13) | ↑1/↓0 ▲0/▼3 | ··W· | 21 | 47 |
-| 48 | **COP** | ConocoPhillips | Energy | A- (+1.29) | **+10.2%** | 134.10 | 147.73 | +0.39% | 51.9% | 100% | + (40) | ▲3/▼0 | ··WM | 28 | 60 |
-| 49 | **SHEL** | Shell plc | Energy | A- (+1.27) | **+4.1%** | 100.18 | 104.29 | +0.29% | 51.9% | 100% | 0 (40) | ▲1/▼0 | ··WM | 16 | 43 |
-| 50 | **ELV** | Elevance Health, Inc. | Healthcare | A- (+1.27) | **+9.4%** | 412.70 | 451.48 | +0.30% | 51.7% | 100% | + (40) | ▲1/▼0 | ···M | 22 | 55 |
+| 1 | **MRVL** | Marvell Technology, Inc. | Technology | A+ (+3.94) | **+22.8%** | 275.28 | 337.99 | +2.21% | 54.3% | 100% | + (40) | ↑1/↓0 ▲10/▼0 | HDWM | 46 | 80 |
+| 2 | **MU** | Micron Technology, Inc. | Technology | A+ (+3.64) | **+51.1%** | 1029.00 | 1555.13 | +1.95% | 53.9% | 100% | + (40) | ▲5/▼0 | HDWM | 49 | 85 |
+| 3 | **CRM** | Salesforce, Inc. | Technology | A+ (+3.32) | **+23.7%** | 229.13 | 283.36 | +1.66% | 54.1% | 100% | + (40) | ▲6/▼0 | HDWM | 56 | 91 |
+| 4 | **NVDA** | NVIDIA Corporation | Technology | A+ (+2.89) | **+43.4%** | 229.28 | 328.72 | +0.79% | 53.1% | 100% | + (40) | — | HDWM | 61 | 100 |
+| 5 | **REGN** | Regeneron Pharmaceuticals, I | Healthcare | A+ (+2.63) | **+14.7%** | 746.54 | 856.23 | +0.72% | 53.4% | 100% | + (36) | ↑1/↓0 ▲5/▼0 | HDWM | 27 | 60 |
+| 6 | **TSM** | Taiwan Semiconductor Manufac | Technology | A+ (+2.57) | **+22.4%** | 453.31 | 555.01 | +0.61% | 52.6% | 100% | + (40) | ▲1/▼0 | HDWM | 21 | 64 |
+| 7 | **BP** | BP p.l.c. | Energy | A+ (+2.55) | **+11.2%** | 46.25 | 51.42 | +0.81% | 53.8% | 100% | + (40) | ↑3/↓0 ▲4/▼0 | ·DWM | 19 | 44 |
+| 8 | **WDC** | Western Digital Corporation | Technology | A+ (+2.50) | **+69.5%** | 397.28 | 673.50 | +1.46% | 52.7% | 87% | + (40) | — | ··WM | 26 | 57 |
+| 9 | **SNDK** | Sandisk Corporation | Technology | A+ (+2.25) | **+37.4%** | 1581.82 | 2173.00 | +1.51% | 52.1% | 91% | 0 (40) | ▲1/▼0 | H··M | 25 | 55 |
+| 10 | **JKHY** | Jack Henry & Associates, Inc | Technology | A+ (+2.20) | **+27.1%** | 149.31 | 189.72 | +0.65% | 52.9% | 94% | + (27) | ↑1/↓0 ▲2/▼1 | ··W· | 20 | 40 |
+| 11 | **DVN** | Devon Energy Corporation | Energy | A+ (+2.19) | **+25.5%** | 48.26 | 60.57 | +0.63% | 52.7% | 94% | + (40) | ▲5/▼2 | ··WM | 29 | 59 |
+| 12 | **FRT** | Federal Realty Investment Tr | Real Estate | A+ (+2.19) | **+23.2%** | 106.16 | 130.74 | +0.24% | 52.8% | 94% | + (12) | ▲0/▼6 | HDWM | 19 | 48 |
+| 13 | **CVS** | CVS Health Corporation | Healthcare | A+ (+2.17) | **+34.4%** | 86.16 | 115.76 | +0.49% | 52.6% | 84% | 0 (40) | — | HDWM | 27 | 59 |
+| 14 | **JBL** | Jabil Inc. | Technology | A+ (+2.12) | **+38.8%** | 306.28 | 425.00 | +0.87% | 52.4% | 94% | + (40) | ▲1/▼1 | ···M | 10 | 41 |
+| 15 | **AMZN** | Amazon.com, Inc. | Consumer Cyclical | A+ (+2.07) | **+26.3%** | 262.43 | 331.53 | +0.69% | 52.4% | 100% | + (40) | ▲2/▼0 | HDWM | 59 | 104 |
+| 16 | **MSI** | Motorola Solutions, Inc. | Technology | A+ (+1.97) | **+18.6%** | 444.18 | 526.91 | +0.42% | 52.3% | 94% | + (34) | ▲1/▼0 | ·D·· | 14 | 43 |
+| 17 | **OXY** | Occidental Petroleum Corpora | Energy | A (+1.93) | **+13.7%** | 60.11 | 68.36 | +0.65% | 52.8% | 94% | + (40) | ↑1/↓0 ▲4/▼0 | ·DWM | 26 | 55 |
+| 18 | **ORCL** | Oracle Corporation | Technology | A (+1.91) | **+68.3%** | 141.40 | 237.97 | +0.93% | 52.5% | 100% | 0 (40) | ▲1/▼4 | ··W· | 43 | 76 |
+| 19 | **QUBT** | Quantum Computing Inc. | Technology | A (+1.78) | **+150.9%** | 7.44 | 18.67 | +0.94% | 52.3% | 93% | + (40) | — | ·D·· | 6 | 32 |
+| 20 | **TGT** | Target Corporation | Consumer Defensive | A (+1.77) | **+7.2%** | 153.64 | 164.68 | +0.51% | 52.6% | 94% | 0 (40) | ↑1/↓0 ▲1/▼0 | ·DWM | 38 | 70 |
+| 21 | **GOOGL** | Alphabet Inc. | Communication Serv | A (+1.74) | **+22.1%** | 351.66 | 429.47 | +0.46% | 52.0% | 100% | 0 (40) | ▲4/▼0 | ··WM | 61 | 109 |
+| 22 | **USB** | U.S. Bancorp | Financial Services | A (+1.71) | **+20.9%** | 57.08 | 69.00 | +0.29% | 52.2% | 94% | 0 (40) | ▲1/▼5 | ·DWM | 24 | 52 |
+| 23 | **TEVA** | Teva Pharmaceutical Industri | Healthcare | A (+1.66) | **+10.2%** | 41.10 | 45.30 | +0.47% | 51.9% | 90% | + (37) | — | ·DWM | 11 | 45 |
+| 24 | **WFC** | Wells Fargo & Company | Financial Services | A (+1.66) | **+18.5%** | 83.55 | 99.02 | +0.37% | 52.3% | 100% | 0 (40) | ↑1/↓0 ▲1/▼4 | ·DWM | 27 | 58 |
+| 25 | **T** | AT&T Inc. | Communication Serv | A (+1.64) | **+29.7%** | 22.18 | 28.77 | +0.54% | 52.3% | 100% | − (40) | ↑1/↓0 ▲2/▼2 | ·DW· | 26 | 54 |
+| 26 | **AIZ** | Assurant, Inc. | Financial Services | A (+1.63) | **+22.6%** | 266.49 | 326.67 | +0.34% | 52.1% | 94% | + (37) | ▲0/▼1 | ··WM | 7 | 34 |
+| 27 | **GM** | General Motors Company | Consumer Cyclical | A (+1.61) | **+26.3%** | 82.73 | 104.52 | +0.49% | 52.0% | 100% | 0 (40) | ▲2/▼1 | ··WM | 24 | 56 |
+| 28 | **ABT** | Abbott Laboratories | Healthcare | A (+1.60) | **+21.2%** | 99.60 | 120.72 | +0.32% | 52.1% | 100% | 0 (40) | ↑1/↓0 ▲1/▼0 | HDW· | 28 | 62 |
+| 29 | **CHRW** | C.H. Robinson Worldwide, Inc | Industrials | A (+1.59) | **+39.3%** | 142.31 | 198.17 | +0.63% | 51.6% | 90% | 0 (40) | ▲0/▼3 | HD·· | 23 | 24 |
+| 30 | **INVH** | Invitation Homes Inc. | Real Estate | A (+1.57) | **+25.1%** | 26.79 | 33.52 | +0.26% | 52.2% | 94% | + (14) | ↑1/↓0 ▲1/▼2 | ·DW· | 25 | 55 |
+| 31 | **DXCM** | DexCom, Inc. | Healthcare | A (+1.55) | **+14.4%** | 84.11 | 96.23 | +0.46% | 51.8% | 94% | 0 (21) | ▲2/▼0 | ··WM | 29 | 62 |
+| 32 | **BNY** | The Bank of New York Mellon  | Financial Services | A (+1.53) | **+14.3%** | 142.71 | 163.13 | +0.24% | 51.9% | 91% | + (40) | ▲1/▼3 | HDW· | 17 | 45 |
+| 33 | **NEM** | Newmont Corporation | Basic Materials | A (+1.51) | **+16.9%** | 117.84 | 137.74 | +0.53% | 51.8% | 94% | + (40) | ▲1/▼0 | ··WM | 23 | 54 |
+| 34 | **TMUS** | T-Mobile US, Inc. | Communication Serv | A (+1.50) | **+62.4%** | 148.58 | 241.24 | +0.55% | 51.6% | 100% | − (40) | ▲0/▼4 | HD·· | 28 | 60 |
+| 35 | **WELL** | Welltower Inc. | Real Estate | A (+1.49) | **+16.2%** | 225.47 | 262.05 | +0.19% | 51.4% | 87% | + (39) | — | HD·· | 22 | 50 |
+| 36 | **AMT** | American Tower Corporation | Real Estate | A (+1.48) | **+18.4%** | 182.24 | 215.74 | +0.38% | 51.8% | 94% | + (40) | ▲1/▼0 | ··WM | 25 | 55 |
+| 37 | **EW** | Edwards Lifesciences Corpora | Healthcare | A (+1.38) | **+19.7%** | 85.21 | 101.96 | +0.20% | 51.3% | 94% | + (34) | — | HD·· | 29 | 58 |
+| 38 | **SJM** | The J. M. Smucker Company | Consumer Defensive | A (+1.35) | **+18.6%** | 119.83 | 142.12 | +0.32% | 51.8% | 83% | + (19) | — | ··WM | 19 | 20 |
+| 39 | **SHEL** | Shell plc | Energy | A (+1.35) | **+4.1%** | 100.18 | 104.29 | +0.30% | 52.0% | 100% | 0 (40) | ▲1/▼0 | ··WM | 16 | 43 |
+| 40 | **VRT** | Vertiv Holdings Co | Industrials | A (+1.32) | **+39.0%** | 242.78 | 337.43 | +0.53% | 51.1% | 100% | + (40) | — | HD·· | 30 | 62 |
+| 41 | **DG** | Dollar General Corporation | Consumer Defensive | A- (+1.31) | **+11.2%** | 127.23 | 141.45 | +0.50% | 52.2% | 90% | + (40) | ↑2/↓0 ▲1/▼0 | ·DW· | 30 | 31 |
+| 42 | **AXON** | Axon Enterprise, Inc. | Industrials | A- (+1.28) | **+66.5%** | 422.89 | 704.11 | +0.71% | 51.5% | 87% | + (40) | — | H··· | 21 | 48 |
+| 43 | **VTR** | Ventas, Inc. | Real Estate | A- (+1.27) | **+24.1%** | 82.04 | 101.82 | +0.25% | 51.4% | 94% | 0 (35) | ▲0/▼1 | H··· | 23 | 53 |
+| 44 | **TRGP** | Targa Resources Corp. | Energy | A- (+1.27) | **+13.7%** | 286.70 | 325.95 | +0.35% | 51.6% | 94% | + (27) | ↑1/↓0 ▲5/▼0 | ···M | 22 | 52 |
+| 45 | **COP** | ConocoPhillips | Energy | A- (+1.27) | **+9.5%** | 134.10 | 146.88 | +0.38% | 51.8% | 100% | + (40) | ▲3/▼0 | ··WM | 28 | 60 |
+| 46 | **ELV** | Elevance Health, Inc. | Healthcare | A- (+1.26) | **+9.4%** | 412.70 | 451.48 | +0.29% | 51.6% | 100% | + (40) | ▲1/▼0 | ···M | 22 | 55 |
+| 47 | **GOOG** | Alphabet Inc. | Communication Serv | A- (+1.25) | **+20.6%** | 347.86 | 419.65 | +0.21% | 50.9% | 94% | + (40) | ▲1/▼0 | H··· | 60 | 64 |
+| 48 | **LLY** | Eli Lilly and Company | Healthcare | A- (+1.25) | **+12.7%** | 1179.27 | 1329.21 | +0.33% | 51.6% | 100% | + (40) | ▲4/▼0 | ···M | 30 | 65 |
+| 49 | **RCL** | Royal Caribbean Cruises Ltd. | Consumer Cyclical | A- (+1.23) | **+24.1%** | 282.26 | 350.33 | +0.31% | 51.2% | 94% | + (34) | ↑2/↓0 ▲3/▼1 | HD·· | 29 | 57 |
+| 50 | **SAP** | SAP SE | Technology | A- (+1.22) | **+17.6%** | 214.78 | 252.50 | +0.34% | 51.3% | 100% | + (40) | ▲1/▼0 | ·D·· | 16 | 41 |
 
 
 _Grade: integrated cross-horizon score G (≈N(0,1) over gated stocks; letter by percentile). α 1M: expected excess return vs the universe over ~20 trading days (IC·σ·z). P(beat): calibrated probability of beating the universe median over that window. Conf: share of the model's weight backed by observed data. Δ Opinion: ↑upgrades/↓downgrades, ▲target raises/▼cuts (30 d). Methodology and data health: see the live page._

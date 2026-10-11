@@ -181,7 +181,7 @@ without a server:
 | Run | Cadence |
 |---|---|
 | fast crawl | every 30 min, weekdays 12:00–21:00 UTC: each run dispatches the next (`next-crawl` job, `scripts/crawl_chain.py`) |
-| fast crawl | cron `11,41 * * * *` otherwise; GitHub delivers only a few of these ticks a day, and the first inside the session restarts the chain |
+| fast crawl | cron `11,41 * * * *` otherwise; GitHub delivers only a few of these ticks a day. A run within 4 h of the 12:00 UTC open waits for it and starts the chain there |
 | deep crawl + ML training | cron `26 23 * * *` |
 
 Set the repository variable `CRAWL_CHAIN=off` to stop the 30-minute chain;

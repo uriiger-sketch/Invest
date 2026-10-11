@@ -267,8 +267,8 @@ jobs:
   # Keeps the 30-minute cadence the cron cannot deliver: waits for the next
   # slot, then dispatches the next crawl (workflow_dispatch is the one event
   # a GITHUB_TOKEN may trigger). scripts/crawl_chain.py stops the chain
-  # outside weekdays 12:00-21:00 UTC. Kill switch: repository variable
-  # CRAWL_CHAIN=off.
+  # outside weekdays 12:00-21:00 UTC, and lets a run within 4 h of the open
+  # wait for it. Kill switch: repository variable CRAWL_CHAIN=off.
   next-crawl:
     needs: crawl
     if: >-
@@ -281,7 +281,9 @@ jobs:
     concurrency:
       group: crawl-next-${{ github.ref }}
       cancel-in-progress: true
-    timeout-minutes: 40
+    # Up to 4 h when a morning run waits for the 12:00 UTC open (MAX_LEAD_S
+    # in crawl_chain.py); 30 min otherwise.
+    timeout-minutes: 250
     permissions:
       actions: write
       contents: read

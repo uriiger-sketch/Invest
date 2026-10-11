@@ -41,6 +41,21 @@ def test_chain_runs_only_inside_the_weekday_session_window():
     assert chain.next_delay(nightly_deep, nightly_deep - timedelta(minutes=27)) is None
 
 
+def test_a_morning_run_waits_for_the_open_but_never_more_than_four_hours():
+    """GitHub's sparse cron ticks mostly land 06:00-11:00 UTC, then not
+    until mid-afternoon; without the lead-in the chain would start late."""
+    morning = at(MON, 9, 47)
+    assert chain.next_delay(morning, morning - timedelta(minutes=7)) == (2 * 60 + 13) * 60
+    dawn = at(MON, 6, 9)  # 5 h 51 min before the open: too long to hold a runner
+    assert chain.next_delay(dawn, dawn - timedelta(minutes=7)) is None
+    edge = at(MON, 8, 0)
+    assert chain.next_delay(edge, edge - timedelta(minutes=7)) == chain.MAX_LEAD_S
+    saturday_morning = at(MON + timedelta(days=5), 10, 0)
+    assert chain.next_delay(saturday_morning, saturday_morning) is None
+    sunday_night = at(MON + timedelta(days=6), 23, 0)  # next open is Monday 12:00, 13 h away
+    assert chain.next_delay(sunday_night, sunday_night) is None
+
+
 def test_cli_prints_delay_or_nothing_and_tolerates_a_missing_start():
     def run(*args: str) -> str:
         return subprocess.run([sys.executable, str(SCRIPT), *args],

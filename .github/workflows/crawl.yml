@@ -273,8 +273,8 @@ jobs:
     needs: crawl
     if: >-
       ${{ !cancelled() && vars.CRAWL_CHAIN != 'off'
-          && (github.event_name == 'schedule'
-              || github.ref_name == github.event.repository.default_branch) }}
+          && github.event_name == 'push'
+          && github.ref_name == 'claude/crawl-data-grading-improvements-587qns' }}
     runs-on: ubuntu-latest
     # One waiting successor at a time: a newer run's chain replaces an older
     # one still waiting, so overlapping cron and chained runs never multiply.
@@ -296,7 +296,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           STARTED: ${{ needs.crawl.outputs.started }}
         run: |
-          delay=$(python3 scripts/crawl_chain.py --started "$STARTED")
+          echo "crawl_chain.py says: [$(python3 scripts/crawl_chain.py --started "$STARTED")]"
+          delay=60  # TEMP one-hop validation on the feature branch
           if [ -z "$delay" ]; then
             echo "Next slot is outside the trading-session window; the cron takes over."
             exit 0

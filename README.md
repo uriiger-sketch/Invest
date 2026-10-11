@@ -175,6 +175,18 @@ APScheduler runs inside the `serve` process (toggle via `RUN_SCHEDULER`):
 All jobs write a row to the `run_log` table. The **Sources & freshness** page
 in the dashboard surfaces last-success time, row counts, and recent errors.
 
+**GitHub Actions** (`.github/workflows/crawl.yml`) runs the same pipeline
+without a server:
+
+| Run | Cadence |
+|---|---|
+| fast crawl | every 30 min, weekdays 12:00–21:00 UTC: each run dispatches the next (`next-crawl` job, `scripts/crawl_chain.py`) |
+| fast crawl | cron `11,41 * * * *` otherwise; GitHub delivers only a few of these ticks a day, and the first inside the session restarts the chain |
+| deep crawl + ML training | cron `26 23 * * *` |
+
+Set the repository variable `CRAWL_CHAIN=off` to stop the 30-minute chain;
+the cron keeps running.
+
 ---
 
 ## Verification

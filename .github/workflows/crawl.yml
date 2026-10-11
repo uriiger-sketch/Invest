@@ -11,11 +11,11 @@ name: crawl
 # 30-minute window with margin to spare.
 #
 # Notes on reliability:
-# - GitHub's scheduled workflows are best-effort and ticks ARE dropped under
-#   load. With the old "*/30" (:00/:30, the busiest slots GitHub has) only
-#   ~5 of 48 daily ticks ran, hours late. The crons now sit on off-peak
-#   minutes, as GitHub's docs recommend; the report banner exposes the real
-#   last-ran time.
+# - GitHub's scheduled workflows are best-effort and ticks ARE dropped: only
+#   ~5 of 48 daily ticks ran, hours late, both on "*/30" and on the off-peak
+#   minutes below. During the US session each run therefore dispatches its
+#   successor (job "next-crawl"); the cron covers nights and weekends and
+#   restarts that chain. The report banner exposes the real last-ran time.
 # - Fast and deep runs use separate concurrency groups so the daily deep
 #   ingest cannot starve the 30-min fast heartbeat.
 # - Auto-commit messages end with "[skip ci]" so the workflow does not
@@ -58,6 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       published: ${{ steps.commit.outputs.published }}
+      started: ${{ steps.start.outputs.started }}
     # Separate concurrency groups per run type so the nightly deep run cannot
     # block the every-20-min fast heartbeat. cancel-in-progress=true ensures
     # a new cron tick always gets attention even if the previous is slow.
@@ -86,6 +87,10 @@ jobs:
         ${{ (inputs.deep == true || github.event.schedule == '26 23 * * *')
            && 'true' || 'false' }}
     steps:
+      - name: Record start time
+        id: start
+        run: echo "started=$(date -u +%s)" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
@@ -258,6 +263,47 @@ jobs:
           name: invest-db-${{ github.run_id }}
           path: data/invest.db
           retention-days: 7
+
+  # Keeps the 30-minute cadence the cron cannot deliver: waits for the next
+  # slot, then dispatches the next crawl (workflow_dispatch is the one event
+  # a GITHUB_TOKEN may trigger). scripts/crawl_chain.py stops the chain
+  # outside weekdays 12:00-21:00 UTC. Kill switch: repository variable
+  # CRAWL_CHAIN=off.
+  next-crawl:
+    needs: crawl
+    if: >-
+      ${{ !cancelled() && vars.CRAWL_CHAIN != 'off'
+          && (github.event_name == 'schedule'
+              || github.ref_name == github.event.repository.default_branch) }}
+    runs-on: ubuntu-latest
+    # One waiting successor at a time: a newer run's chain replaces an older
+    # one still waiting, so overlapping cron and chained runs never multiply.
+    concurrency:
+      group: crawl-next-${{ github.ref }}
+      cancel-in-progress: true
+    timeout-minutes: 40
+    permissions:
+      actions: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: scripts/crawl_chain.py
+          sparse-checkout-cone-mode: false
+
+      - name: Wait for the next slot, then dispatch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STARTED: ${{ needs.crawl.outputs.started }}
+        run: |
+          delay=$(python3 scripts/crawl_chain.py --started "$STARTED")
+          if [ -z "$delay" ]; then
+            echo "Next slot is outside the trading-session window; the cron takes over."
+            exit 0
+          fi
+          echo "Next crawl in ${delay}s."
+          sleep "$delay"
+          gh workflow run crawl.yml --repo "$GITHUB_REPOSITORY" --ref "$GITHUB_REF_NAME"
 
   deploy-pages:
     needs: crawl

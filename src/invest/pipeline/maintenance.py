@@ -68,6 +68,15 @@ def prune_and_vacuum() -> dict[str, int]:
                 {"cut": thin_cut},
             )
             deleted[f"{table}.thinned"] = int(res.rowcount or 0)
+    # Repairs 13F rows between deep runs too, so a bad filing never waits a
+    # day to be fixed (the same pass runs after every 13F ingest).
+    try:
+        from ..sources.edgar_src import sanitize_holdings
+
+        for k, v in sanitize_holdings().items():
+            deleted[f"holdings_13f.{k}"] = v
+    except Exception as e:  # noqa: BLE001 — maintenance must not fail the run
+        logger.warning("13F sanitize failed: %s", e)
     if engine.url.get_backend_name() == "sqlite":
         with engine.connect() as conn:
             conn.execution_options(isolation_level="AUTOCOMMIT").execute(text("VACUUM"))

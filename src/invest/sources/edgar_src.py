@@ -187,6 +187,99 @@ ACTIVIST_FORMS: frozenset[str] = frozenset({"SC 13D", "SCHEDULE 13D"})
 OFFERING_FORMS: frozenset[str] = frozenset({"S-1", "S-1/A", "F-1", "S-3", "F-3", "424B4", "424B5"})
 
 
+def is_13f_eligible(ticker: str) -> bool:
+    """13F covers US exchange-listed securities only. Yahoo marks foreign
+    listings with a ".XX" suffix (FIBI.TA, PRX.AS) while US share classes use
+    "-" (BRK-B). Name matching tied US issuers to Tel Aviv lines (First
+    Internet Bancorp -> FIBI.TA, priced in agorot), and the learned CUSIP
+    then pulled every filer's First Internet rows onto the Israeli bank."""
+    return "." not in ticker
+
+
+# 13F implied-price checks: value / shares against our latest close. The two
+# are months apart (quarter-end vs. today), hence the wide bands.
+_UNIT_RESCALE_BAND = (10 ** -3.5, 10 ** -2.5)  # ~1/1000: value reported in thousands
+_GROUP_MAX_RATIO = 30.0
+_ROW_MAX_RATIO = 100.0
+_MIN_GROUP_ROWS = 3
+
+
+def sanitize_holdings() -> dict[str, int]:
+    """Repair or drop 13F rows whose implied price contradicts the market.
+
+    Unit errors are systematic per filing, so they are judged per (filer,
+    quarter) on the MEDIAN of value / shares / close:
+
+    * ~1/1000: the filer still reports <value> in thousands after the 2023
+      switch to dollars (live: T. Rowe Price, Duquesne, Lone Pine) -> values
+      are multiplied by 1000. Share counts, which drive the flow signal,
+      are unaffected.
+    * beyond 30x either way: the group is unusable and deleted (live:
+      JPMorgan 2026Q1 rows left by the pre-fix parser, 1000x values and
+      unsummed shares). The next deep run re-fetches the latest two periods.
+
+    Rows still more than 100x off afterwards are mis-mapped securities
+    (another share class or a different issuer sharing a CUSIP prefix) and
+    are dropped. Foreign-listed tickers are never 13F securities: their rows
+    and their (learned, hence wrong) CUSIPs are removed. Idempotent; run after
+    every 13F ingest and by `invest maintain`.
+    """
+    from statistics import median
+
+    from sqlalchemy import text
+
+    from ..db import get_engine
+
+    stats = {"foreign_rows": 0, "foreign_cusips": 0, "groups_rescaled": 0,
+             "groups_deleted": 0, "rows_deleted": 0}
+    with get_engine().begin() as conn:
+        stats["foreign_rows"] = int(conn.execute(
+            text("DELETE FROM holdings_13f WHERE ticker LIKE '%.%'")).rowcount or 0)
+        stats["foreign_cusips"] = int(conn.execute(text(
+            "UPDATE stocks SET cusip = NULL WHERE ticker LIKE '%.%' AND cusip IS NOT NULL"
+        )).rowcount or 0)
+        close = dict(conn.execute(text(
+            "SELECT p.ticker, p.close FROM prices p JOIN (SELECT ticker, MAX(date) AS d "
+            "FROM prices WHERE close > 0 GROUP BY ticker) m "
+            "ON p.ticker = m.ticker AND p.date = m.d"
+        )).all())
+        groups: dict[tuple[str, str], list[tuple[int, float]]] = {}
+        for hid, cik, quarter, ticker, shares, value in conn.execute(text(
+            "SELECT id, filer_cik, quarter, ticker, shares, value_usd FROM holdings_13f"
+        )):
+            px = close.get(ticker)
+            if px and shares and value and shares > 0 and value > 0:
+                groups.setdefault((cik, quarter), []).append((hid, value / shares / px))
+
+        drop_ids: list[int] = []
+        for (cik, quarter), rows in groups.items():
+            if len(rows) >= _MIN_GROUP_ROWS:
+                med = median(r for _, r in rows)
+                lo, hi = _UNIT_RESCALE_BAND
+                if lo < med < hi:
+                    conn.execute(text(
+                        "UPDATE holdings_13f SET value_usd = value_usd * 1000 "
+                        "WHERE filer_cik = :c AND quarter = :q"), {"c": cik, "q": quarter})
+                    rows = [(hid, r * 1000.0) for hid, r in rows]
+                    stats["groups_rescaled"] += 1
+                elif med > _GROUP_MAX_RATIO or med < 1.0 / _GROUP_MAX_RATIO:
+                    conn.execute(text(
+                        "DELETE FROM holdings_13f WHERE filer_cik = :c AND quarter = :q"),
+                        {"c": cik, "q": quarter})
+                    stats["groups_deleted"] += 1
+                    continue
+            drop_ids += [hid for hid, r in rows
+                         if r > _ROW_MAX_RATIO or r < 1.0 / _ROW_MAX_RATIO]
+        for i in range(0, len(drop_ids), 500):
+            chunk = drop_ids[i:i + 500]
+            conn.execute(text(
+                f"DELETE FROM holdings_13f WHERE id IN ({','.join(str(int(x)) for x in chunk)})"))
+        stats["rows_deleted"] = len(drop_ids)
+    if any(stats.values()):
+        logger.info("13F sanitize: %s", stats)
+    return stats
+
+
 class EdgarSource(BaseSource):
     name = "edgar"
     rate_per_minute = 480.0  # SEC allows < 10 req/s (600/min); stay comfortably under
@@ -561,6 +654,7 @@ class EdgarSource(BaseSource):
             seed_stocks_table()
         except Exception as e:  # noqa: BLE001
             logger.warning("seed_stocks_table failed: %s", e)
+        tickers = [t for t in tickers if is_13f_eligible(t)]
         lookup = self._build_name_to_ticker(tickers)
         cusip_lookup = self._build_cusip_to_ticker(tickers)
         universe = set(tickers)
@@ -661,8 +755,8 @@ class EdgarSource(BaseSource):
                 row["shares"] += r.get("shares") or 0.0
                 row["value_usd"] += r.get("value_usd") or 0.0
             batch = list(agg.values())
+            written += self._replace_holdings(cik, quarter, batch)
             if batch:
-                written += self._upsert_holdings(batch)
                 filers_with_data.add(cik)
             else:
                 bump("matched_zero_of_universe")
@@ -690,6 +784,10 @@ class EdgarSource(BaseSource):
                 "SEC_USER_AGENT is set to a real contact address.",
                 len(TOP_FILERS),
             )
+        try:
+            sanitize_holdings()
+        except Exception as e:  # noqa: BLE001 — a repair pass must never fail the ingest
+            logger.warning("13F sanitize failed: %s", e)
         return written
 
     @staticmethod
@@ -705,6 +803,8 @@ class EdgarSource(BaseSource):
         written = 0
         with session_scope() as s:
             for cusip, ticker in learned.items():
+                if not is_13f_eligible(ticker):
+                    continue
                 stock = s.get(Stock, ticker)
                 if stock is not None and not stock.cusip:
                     stock.cusip = cusip[:12]
@@ -712,30 +812,23 @@ class EdgarSource(BaseSource):
         return written
 
     @staticmethod
-    def _upsert_holdings(batch: list[dict]) -> int:
-        """Idempotent write keyed on (filer_cik, ticker, quarter).
+    def _replace_holdings(cik: str, quarter: str, batch: list[dict]) -> int:
+        """Write one filing as a unit: the filer's rows for that quarter are
+        replaced, not upserted key by key.
 
-        The previous code called ``session.merge(Holding13F(...))`` with
-        ``id=None``. Because the PK is autoincrement, SQLAlchemy treats that
-        as a NEW object and INSERTs — colliding with the unique index on the
-        second run each quarter, raising IntegrityError, rolling back the
-        batch and aborting BOTH 13F and insider ingest. That is the main
-        reason holdings_13f stayed empty and Insts showed 0 everywhere.
+        Key-wise upserts kept every row a re-parse no longer produces — a
+        ticker since unmatched, or rows written by older parsing code (live:
+        JPMorgan's 2026Q1 kept 311 legacy rows with 1000x values and
+        unsummed share counts next to a correctly parsed 2026Q2, which read
+        as huge institutional inflows). An empty batch still clears the
+        quarter: the filing was read and holds nothing in our universe.
         """
-        from sqlalchemy.dialects.sqlite import insert as sqlite_insert
-
         with session_scope() as s:
-            stmt = sqlite_insert(Holding13F).values(batch)
-            stmt = stmt.on_conflict_do_update(
-                index_elements=["filer_cik", "ticker", "quarter"],
-                set_={
-                    "shares": stmt.excluded.shares,
-                    "value_usd": stmt.excluded.value_usd,
-                    "filing_date": stmt.excluded.filing_date,
-                    "filer_name": stmt.excluded.filer_name,
-                },
-            )
-            s.execute(stmt)
+            s.query(Holding13F).filter(
+                Holding13F.filer_cik == cik, Holding13F.quarter == quarter
+            ).delete(synchronize_session=False)
+            if batch:
+                s.add_all(Holding13F(**row) for row in batch)
         return len(batch)
 
     # --------------------------- Form 4 ---------------------------

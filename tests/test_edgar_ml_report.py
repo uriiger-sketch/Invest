@@ -212,3 +212,70 @@ def test_13f_sums_sub_manager_rows_and_excludes_options_and_bonds(monkeypatch):
         h = s.query(Holding13F).one()
     assert h.shares == 3_003_000, "all three share rows summed; the put and the bond excluded"
     assert h.value_usd == 750_075_000, "post-2023 <value> is whole dollars"
+
+
+def _holding(cik, ticker, quarter, shares, value):
+    from invest.models import Holding13F
+
+    return Holding13F(filer_cik=cik, filer_name=cik, ticker=ticker, quarter=quarter,
+                      shares=shares, value_usd=value, filing_date=date(2026, 8, 14))
+
+
+def test_sanitize_holdings_fixes_units_and_drops_legacy_foreign_and_mismapped_rows():
+    """Shapes from the production database (2026-10-11): T. Rowe Price still
+    reporting <value> in thousands, JPMorgan's 2026Q1 left by the pre-fix
+    parser (1000x values), US issuers name-matched onto Tel Aviv listings,
+    and a single row priced 500x off its ticker (another share class)."""
+    from invest.models import Holding13F, Price, Stock
+    from invest.sources.edgar_src import sanitize_holdings
+
+    px = {"AAA": 100.0, "BBB": 50.0, "CCC": 20.0}
+    with session_scope() as s:
+        for t, p in px.items():
+            s.add(Stock(ticker=t, name=t, in_universe=True))
+            s.add(Price(ticker=t, date=TODAY, close=p))
+        s.add(Stock(ticker="FIBI.TA", name="First International Bank of Israel",
+                    cusip="31846B108", in_universe=True))
+        s.flush()
+        for t, p in px.items():
+            s.add(_holding("GOOD", t, "2026Q2", 1000, 1100 * p))
+            s.add(_holding("THOUS", t, "2026Q2", 1000, 1000 * p / 1000))
+            s.add(_holding("LEGACY", t, "2026Q1", 10, 10 * p * 1000))
+        s.add(_holding("GOOD", "DDD", "2026Q2", 5, 5 * 100.0))  # no price: unverifiable, kept
+        s.add(_holding("MIX", "AAA", "2026Q2", 10, 10 * 100.0 * 500))
+        s.add(_holding("GOOD", "FIBI.TA", "2026Q2", 1000, 18_000))
+
+    stats = sanitize_holdings()
+    assert stats == {"foreign_rows": 1, "foreign_cusips": 1, "groups_rescaled": 1,
+                     "groups_deleted": 1, "rows_deleted": 1}
+    with session_scope() as s:
+        rows = {(h.filer_cik, h.ticker): h for h in s.query(Holding13F)}
+        assert s.get(Stock, "FIBI.TA").cusip is None
+    assert {k for k in rows if k[0] == "LEGACY"} == set()
+    assert ("MIX", "AAA") not in rows and ("GOOD", "FIBI.TA") not in rows
+    assert rows[("THOUS", "AAA")].value_usd == 100_000, "thousands -> dollars"
+    assert rows[("GOOD", "AAA")].value_usd == 110_000 and ("GOOD", "DDD") in rows
+    assert not any(sanitize_holdings().values()), "idempotent"
+
+
+def test_13f_reingest_replaces_the_filers_quarter(monkeypatch):
+    """Key-wise upserts kept rows a re-parse no longer produces; a filing is
+    now written as a unit, while the filer's other quarters stay."""
+    from invest.models import Holding13F, Stock
+
+    with session_scope() as s:
+        s.add(Stock(ticker="AAPL", name="Apple Inc.", cusip="037833100", in_universe=True))
+        s.add(Stock(ticker="OLD", name="Old Co", in_universe=True))
+        s.flush()
+        s.add(_holding("0000000007", "OLD", "2026Q2", 5, 500))
+        s.add(_holding("0000000007", "AAPL", "2026Q2", 3000, 1.0))
+        s.add(_holding("0000000007", "OLD", "2026Q1", 5, 500))
+    src = EdgarSource()
+    monkeypatch.setattr("invest.sources.edgar_src.TOP_FILERS", (("Big Bank", "0000000007"),))
+    monkeypatch.setattr(src, "_recent_13f_filings",
+                        lambda cik: [("ACC", date(2026, 8, 12), date(2026, 6, 30))])
+    monkeypatch.setattr(src, "_download_13f_infotable", lambda cik, acc: _INFOTABLE)
+    src.ingest_13f(["AAPL", "OLD"])
+    with session_scope() as s:
+        got = {(h.ticker, h.quarter): h.shares for h in s.query(Holding13F)}
+    assert got == {("AAPL", "2026Q2"): 3_003_000, ("OLD", "2026Q1"): 5}

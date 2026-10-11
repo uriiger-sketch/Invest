@@ -337,10 +337,10 @@ def test_13f_ingest_is_idempotent():
     with session_scope() as s:
         s.add(Stock(ticker="AAPL", name="Apple Inc.", sector="Technology", in_universe=True))
 
-    EdgarSource._upsert_holdings(batch)
+    EdgarSource._replace_holdings("0001067983", "2026Q3", batch)
     # Same quarter, refreshed numbers — must UPDATE, never duplicate or raise.
     batch[0]["shares"] = 2000.0
-    EdgarSource._upsert_holdings(batch)
+    EdgarSource._replace_holdings("0001067983", "2026Q3", batch)
 
     with session_scope() as s:
         rows = s.query(Holding13F).filter(Holding13F.ticker == "AAPL").all()

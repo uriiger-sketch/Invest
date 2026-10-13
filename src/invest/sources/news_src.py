@@ -184,15 +184,22 @@ class GoogleNewsSource(BaseSource):
 
     name = "gnews"
     rate_per_minute = 50.0
+    # Regional editions rank local outlets first: the Israeli edition
+    # surfaces Globes, Calcalist/CTech, TheMarker, Times of Israel.
+    EDITIONS = {"US": "hl=en-US&gl=US&ceid=US:en", "IL": "hl=en-IL&gl=IL&ceid=IL:en"}
 
-    def __init__(self) -> None:
+    def __init__(self, edition: str = "US", queries: dict[str, str] | None = None) -> None:
         super().__init__()
+        self.edition = self.EDITIONS[edition]
+        self.queries = queries or {}
         self.session = requests.Session()
         self.session.headers.update(
             {"User-Agent": "Mozilla/5.0 (compatible; InvestResearchBot/0.2)"}
         )
 
     def _query(self, ticker: str, company_name: str | None) -> str:
+        if ticker in self.queries:
+            return f"{self.queries[ticker]} when:7d"
         base = ticker.split(".")[0]
         name = company_query_name(company_name)
         if name and name.upper() != base:
@@ -206,7 +213,7 @@ class GoogleNewsSource(BaseSource):
         url = (
             "https://news.google.com/rss/search?q="
             + quote_plus(self._query(ticker, company_name))
-            + "&hl=en-US&gl=US&ceid=US:en"
+            + "&" + self.edition
         )
         try:
             r = self.session.get(url, timeout=(6, 12))
@@ -234,10 +241,25 @@ class GoogleNewsSource(BaseSource):
                     break
                 continue
             consecutive_fail = 0
-            written += upsert_news(parse_google_news_rss(t, xml, names.get(t)))
+            rows = parse_google_news_rss(t, xml, names.get(t))
+            terms = self.match_terms(t)
+            if terms:
+                rows = [dict(r, relevance=1.0) for r in rows if terms.search(r["title"])]
+            written += upsert_news(rows)
         return written
 
-    def run(self, tickers: list[str]) -> int:
+    def match_terms(self, ticker: str) -> re.Pattern | None:
+        """Strict mode for a curated query: a headline must name one of its
+        quoted phrases ("Leumi", not the registered "Bank Leumi le-Israel
+        B.M." that headlines never spell out); anything else is dropped."""
+        phrases = re.findall(r'"([^"]+)"', self.queries.get(ticker, ""))
+        if not phrases:
+            return None
+        alt = "|".join(re.escape(p) for p in phrases)
+        return re.compile(rf"(?<![A-Za-z0-9])(?:{alt})(?![A-Za-z0-9])", re.I)
+
+    def run(self, tickers: list[str], budget_seconds: float | None = None,
+            job: str = "gnews.headlines") -> int:
         from ..config import get_settings
         from ..models import Stock
 
@@ -246,6 +268,8 @@ class GoogleNewsSource(BaseSource):
                 t: n for t, n in s.query(Stock.ticker, Stock.name).filter(Stock.ticker.in_(tickers))
                 if n
             }
-        with log_run("gnews.headlines") as c:
-            c["rows"] = self.ingest(tickers, names, get_settings().news_budget_seconds)
+        if budget_seconds is None:
+            budget_seconds = get_settings().news_budget_seconds
+        with log_run(job) as c:
+            c["rows"] = self.ingest(tickers, names, budget_seconds)
             return c["rows"]

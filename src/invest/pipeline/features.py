@@ -27,6 +27,7 @@ import numpy as np
 import pandas as pd
 from sqlalchemy import select
 
+from .. import fx
 from ..config import FEATURE_NAMES, ZERO_IS_OBSERVATION, get_settings, normalize_sector
 from ..db import session_scope
 from ..models import (
@@ -656,6 +657,12 @@ def build_features(tickers: list[str]) -> pd.DataFrame:
     if prices.empty:
         logger.warning("no price data; features will be sparse")
     price_df = _price_features(prices)
+    if not price_df.empty:
+        # Liquidity is gated in dollars; Tel Aviv quotes are agorot, Amsterdam euros.
+        rates = fx.load_rates()
+        price_df["dollar_volume_20d"] = price_df["dollar_volume_20d"] * price_df["ticker"].map(
+            lambda t: fx.usd_per_quote_unit(t, rates)
+        )
     last_close = dict(zip(price_df.get("ticker", []), price_df.get("last_close", [])))
 
     cons = _latest_consensus(tickers)

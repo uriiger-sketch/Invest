@@ -4,6 +4,7 @@ from __future__ import annotations
 import logging
 from datetime import date
 
+import numpy as np
 import pandas as pd
 from sqlalchemy.dialects.sqlite import insert as sqlite_insert
 
@@ -41,11 +42,33 @@ def _zscore_group(df: pd.DataFrame, col: str) -> pd.Series:
     outlier inflates the std and squashes every legitimate value toward
     zero — the same argument applies here, since `composite_score` and
     `ml_score` both inherit whatever tails survive the upstream feature
-    clipping. Every row in `df` has already passed the quality gates (it
-    only exists here because `composite_scores` emitted it), so no
-    stats-pool restriction is needed — unlike `score._zscore`'s callers.
+    clipping. The median/MAD come from the gated (`main`) rows only, so
+    Israel-board rows are placed on the main distribution without moving it.
     """
-    return df.groupby("horizon")[col].transform(lambda s: score._zscore(s))
+    main = _main(df)
+    return df.groupby("horizon")[col].transform(lambda s: score._zscore(s, main.loc[s.index]))
+
+
+def _main(df: pd.DataFrame) -> pd.Series:
+    """Rows that passed every gate (the picks universe); see rank_all."""
+    if "main" in df.columns:
+        return df["main"].astype(bool)
+    return pd.Series(True, index=df.index)
+
+
+def _percentile_vs_main(df: pd.DataFrame, col: str = "blended_score") -> pd.Series:
+    """Per-horizon percentile. Gated rows rank among themselves, exactly as
+    before; every other row gets the share of gated rows at or below it."""
+    out = pd.Series(np.nan, index=df.index, dtype=float)
+    main = _main(df)
+    for _, sub in df.groupby("horizon"):
+        m = main.loc[sub.index]
+        out.loc[sub.index[m.to_numpy()]] = sub.loc[m, col].rank(pct=True)
+        ref = np.sort(sub.loc[m, col].to_numpy(dtype=float))
+        if (~m).any() and len(ref):
+            x = sub.loc[~m, col].to_numpy(dtype=float)
+            out.loc[sub.index[~m.to_numpy()]] = np.searchsorted(ref, x, side="right") / len(ref)
+    return out
 
 
 def _assert_analyst_data_present(features: pd.DataFrame, min_covered_pct: float = 0.10) -> None:
@@ -112,7 +135,9 @@ def _theme_tilts(tickers: list[str]) -> dict[str, float]:
 
 def rank_all(tickers: list[str]) -> pd.DataFrame:
     """End-to-end: features -> calibrated composite -> ML blend -> per-horizon
-    scores -> integrated grade. Persists Score, Grade and Calibration rows."""
+    scores -> integrated grade. Persists Score rows (gated names), Grade rows
+    (gated names plus the Israel board) and Calibration rows. The returned
+    frame carries both; `main` marks the gated rows."""
     from . import grade
 
     features = build_features(tickers)
@@ -147,6 +172,19 @@ def rank_all(tickers: list[str]) -> pd.DataFrame:
         )
     logger.info("gate survivors: %s", score.gate_survivors(features))
 
+    # Israel board: Israeli names outside the gated set are scored by the
+    # same model and placed on the gated set's distribution (every z, the
+    # ML blend weights and the grade correlation come from gated rows only),
+    # so the picks list is unchanged and their grades are comparable to it.
+    comp["main"] = True
+    if get_settings().israel_board:
+        extra = score.israel_mask(features) & ~score.quality_mask(features)
+        if extra.any():
+            board = score.composite_scores(features, calib.weights, mask=extra)
+            board["main"] = False
+            comp = pd.concat([comp, board], ignore_index=True)
+            logger.info("israel board: %d names outside the gated set", int(extra.sum()))
+
     ml = ml_rank.score_horizons(features, comp)
     merged = comp.merge(ml, on=["ticker", "horizon"], how="left")
     merged["ml_score"] = merged["ml_score"].fillna(merged["composite_score"])
@@ -160,13 +198,16 @@ def rank_all(tickers: list[str]) -> pd.DataFrame:
         sub = merged[merged["horizon"] == h].copy()
         if sub.empty:
             continue
+        ref = _main(sub)
         w_c, w_m, info = grade.ml_blend(
-            sub["composite_z"], sub["ml_z"], ml_rank.model_meta(h),
+            sub.loc[ref, "composite_z"], sub.loc[ref, "ml_z"], ml_rank.model_meta(h),
             calib.horizon_ic.get(h, {}).get("posterior", 0.0),
         )
         info["composite_weight"] = round(w_c, 4)
         calib.ml[h] = info
-        sub["blended_score"] = score._zscore(w_c * sub["composite_z"] + w_m * sub["ml_z"]).fillna(0.0)
+        sub["blended_score"] = score._zscore(
+            w_c * sub["composite_z"] + w_m * sub["ml_z"], ref
+        ).fillna(0.0)
         blended.append(sub)
     merged = pd.concat(blended, ignore_index=True)
 
@@ -178,10 +219,11 @@ def rank_all(tickers: list[str]) -> pd.DataFrame:
     )
     merged["blended_score"] = merged["blended_score"] + merged["theme_tilt"]
 
-    merged["percentile"] = merged.groupby("horizon")["blended_score"].rank(pct=True)
+    merged["percentile"] = _percentile_vs_main(merged)
     merged["as_of"] = date.today()
 
-    _persist(merged)
+    # Score rows are the picks universe: gated names only.
+    _persist(merged[_main(merged)])
     try:
         grades = grade.integrated_grades(merged, features, calib)
         grade.persist_grades(grades, calib)

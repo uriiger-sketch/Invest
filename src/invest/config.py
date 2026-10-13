@@ -70,6 +70,13 @@ class Settings(BaseSettings):
     max_upside_sane: float = 2.0       # upside > 200 % almost always means stale/wrong target data → excluded
     upside_cap: float = 0.75           # cap upside used in SCORING at 75 % so one outlier can't dominate
 
+    # Israel board: every Israeli company (US and Tel Aviv lines) is graded
+    # on the main model and placed on the main grade distribution, without
+    # the outlook gate and with a liquidity floor sized for the Tel Aviv
+    # market, so names the picks list cannot hold are still graded.
+    israel_board: bool = True
+    il_min_dollar_volume: float = 500_000.0
+
     # Analyst-reliability shrinkage: consensus_z is multiplied by n/(n+k) so a
     # 3-analyst unanimous "buy" doesn't outrank a 30-analyst 80 %-buy.
     consensus_shrinkage_k: float = 10.0
@@ -110,6 +117,8 @@ class Settings(BaseSettings):
     # table get the expensive per-company intel (Google News, SEC filing
     # stream) on EVERY run, not just the nightly deep run.
     focus_size: int = 90
+    # Google News (Israeli edition) for every Israeli name on every run.
+    israel_news_budget_seconds: float = 120.0
     # A ticker with no price for this many days is dormant (delisted,
     # acquired, renamed). Dormant names are skipped by the per-ticker sweeps
     # instead of costing retries on every run.

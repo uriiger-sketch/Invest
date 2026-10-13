@@ -499,30 +499,35 @@ def static_sector_map() -> dict[str, str]:
 
 # Google News queries for the Tel Aviv lines. Their registered names make
 # poor exact phrases ("Bank Leumi le-Israel B.M.", "Bezeq The Israel
-# Telecommunication Corp."), the bare TASE code is not a recognised stock
-# tag, and a few short names are ambiguous without "Israel".
+# Telecommunication Corp."), and the bare TASE code is not a stock tag.
+# The quoted phrases double as match terms: a headline is kept only if it
+# names one of them (GoogleNewsSource strict mode), because a thin result
+# set makes Google pad it with loosely related stories (first live run:
+# football fixtures under "El Al", Haifa pollution under Bazan). Unquoted
+# words narrow the search only; Google binds OR tighter than the implicit
+# AND, so '"El Al" airline OR flights' means "El Al" AND (airline OR flights).
 ISRAEL_NEWS_QUERIES: dict[str, str] = {
-    "POLI.TA": '"Bank Hapoalim"',
-    "LUMI.TA": '"Bank Leumi"',
-    "MZTF.TA": '"Mizrahi Tefahot"',
+    "POLI.TA": '"Hapoalim"',
+    "LUMI.TA": '"Leumi"',
+    "MZTF.TA": '"Mizrahi Tefahot" OR "Mizrahi-Tefahot"',
     "DSCT.TA": '"Israel Discount Bank" OR "Discount Bank"',
-    "FIBI.TA": '"First International Bank"',
-    "PHOE.TA": '"Phoenix Financial" OR "Phoenix Holdings"',
-    "HARL.TA": '"Harel Insurance"',
+    "FIBI.TA": '"First International Bank" OR "FIBI"',
+    "PHOE.TA": '"Phoenix Financial" OR "Phoenix Holdings" OR "The Phoenix stock"',
+    "HARL.TA": '"Harel Insurance" OR "Harel Investments" OR "Harel stock"',
     "MGDL.TA": '"Migdal Insurance" OR "Migdal Holdings"',
-    "CLIS.TA": '"Clal Insurance"',
-    "AZRG.TA": '"Azrieli Group"',
+    "CLIS.TA": '"Clal Insurance" OR "Clal Holdings"',
+    "AZRG.TA": '"Azrieli Group" OR "Azrieli stock"',
     "MLSR.TA": '"Melisron"',
     "ALHE.TA": '"Alony Hetz" OR "Alony-Hetz"',
     "ARPT.TA": '"Airport City" Israel',
     "BEZQ.TA": '"Bezeq"',
-    "PTNR.TA": '"Partner Communications"',
+    "PTNR.TA": '"Partner Communications" OR "Partner Israel"',
     "CEL.TA": '"Cellcom Israel"',
-    "ELAL.TA": '"El Al"',
-    "SPEN.TA": '"Shapir Engineering"',
-    "SKBN.TA": '"Shikun & Binui" OR "Shikun and Binui"',
-    "ELCO.TA": '"Elco" Israel',
-    "MTRX.TA": '"Matrix IT"',
+    "ELAL.TA": '"El Al" airline OR airlines OR flights OR Israel',
+    "SPEN.TA": '"Shapir"',
+    "SKBN.TA": '"Shikun & Binui" OR "Shikun and Binui" OR "Shikun Binui"',
+    "ELCO.TA": '"Elco" Israel OR TASE',
+    "MTRX.TA": '"Matrix IT" Israel OR TASE',
     "ONE.TA": '"One Technologies" OR "One Software Technologies"',
     "FORTY.TA": '"Formula Systems"',
     "STRS.TA": '"Strauss Group"',
@@ -530,8 +535,8 @@ ISRAEL_NEWS_QUERIES: dict[str, str] = {
     "DELG.TA": '"Delta Galil"',
     "FOX.TA": '"Fox-Wizel" OR "Fox Wizel"',
     "ORL.TA": '"Bazan" OR "Oil Refineries Ltd"',
-    "PAZ.TA": '"Paz Oil" OR "Paz Retail"',
-    "NWMD.TA": '"NewMed Energy"',
+    "PAZ.TA": '"Paz Oil" OR "Paz Retail" OR "Paz Group"',
+    "NWMD.TA": '"NewMed"',
     "ILCO.TA": '"Israel Corporation" OR "Israel Corp"',
     "DLEKG.TA": '"Delek Group"',
     "RATI.TA": '"Ratio Energies" OR "Ratio Oil"',
@@ -544,8 +549,8 @@ ISRAEL_NEWS_QUERIES: dict[str, str] = {
     "MVNE.TA": '"Mivne"',
     "AURA.TA": '"Aura Investments"',
     "ASHG.TA": '"Ashtrom"',
-    "ELTR.TA": '"Electra" Israel',
-    "NXSN.TA": '"Next Vision"',
+    "ELTR.TA": '"Electra" Israel OR TASE',
+    "NXSN.TA": '"Next Vision" OR "NextVision"',
     "BSEN.TA": '"Bet Shemesh Engines"',
     "FTAL.TA": '"Fattal"',
     "HLAN.TA": '"Hilan"',

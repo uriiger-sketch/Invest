@@ -5,7 +5,7 @@ shekel) and Euronext Amsterdam listings in euros; every other symbol in the
 universe trades in dollars. Prices and price targets share the listing's
 unit, so upside and momentum are unit-free, but the liquidity gate compares
 a 20-day DOLLAR volume against a dollar floor: an agorot-denominated volume
-overstates a Tel Aviv name's liquidity by ~370x.
+overstates a Tel Aviv name's liquidity by ~300x.
 
 Rates are Yahoo's `<CCY>=X` closes (units of currency per 1 USD), fetched
 once per crawl and stored as `IntelSnapshot(ticker="ILS=X", kind="fx")`.
@@ -27,7 +27,7 @@ _LISTINGS: dict[str, tuple[str, float]] = {
 }
 PAIRS: dict[str, str] = {"ILS": "ILS=X", "EUR": "EUR=X"}
 # Fallback units per USD and the band a fetched rate must fall inside.
-FALLBACK_PER_USD: dict[str, float] = {"ILS": 3.7, "EUR": 0.92}
+FALLBACK_PER_USD: dict[str, float] = {"ILS": 3.1, "EUR": 0.9}  # Oct 2026 closes
 _PLAUSIBLE: dict[str, tuple[float, float]] = {"ILS": (2.5, 6.0), "EUR": (0.6, 1.4)}
 FX_KIND = "fx"
 

@@ -241,15 +241,22 @@ class GoogleNewsSource(BaseSource):
                     break
                 continue
             consecutive_fail = 0
-            written += upsert_news(parse_google_news_rss(t, xml, self._match_name(t, names.get(t))))
+            rows = parse_google_news_rss(t, xml, names.get(t))
+            terms = self.match_terms(t)
+            if terms:
+                rows = [dict(r, relevance=1.0) for r in rows if terms.search(r["title"])]
+            written += upsert_news(rows)
         return written
 
-    def _match_name(self, ticker: str, company_name: str | None) -> str | None:
-        """Name a headline must contain to count as about the company: the
-        first phrase of a curated query ("Bank Leumi") beats the registered
-        name ("Bank Leumi le-Israel B.M."), which headlines never spell out."""
-        m = re.search(r'"([^"]+)"', self.queries.get(ticker, ""))
-        return m.group(1) if m else company_name
+    def match_terms(self, ticker: str) -> re.Pattern | None:
+        """Strict mode for a curated query: a headline must name one of its
+        quoted phrases ("Leumi", not the registered "Bank Leumi le-Israel
+        B.M." that headlines never spell out); anything else is dropped."""
+        phrases = re.findall(r'"([^"]+)"', self.queries.get(ticker, ""))
+        if not phrases:
+            return None
+        alt = "|".join(re.escape(p) for p in phrases)
+        return re.compile(rf"(?<![A-Za-z0-9])(?:{alt})(?![A-Za-z0-9])", re.I)
 
     def run(self, tickers: list[str], budget_seconds: float | None = None,
             job: str = "gnews.headlines") -> int:

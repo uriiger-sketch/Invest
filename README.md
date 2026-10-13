@@ -163,7 +163,7 @@ tiebreaker (`theme_tilt_*`).
 **Liquidity is in dollars.** Yahoo quotes Tel Aviv lines in agorot (1/100
 ₪) and Amsterdam in euros; the 20-day traded value is converted with the
 day's `ILS=X` / `EUR=X` rate (`invest/fx.py`) before the gate. Unconverted,
-a Tel Aviv name looked ~370× more liquid than it is.
+a Tel Aviv name looked ~300× more liquid than it is.
 
 **Israel board.** Most Tel Aviv lines carry 0–4 analysts, so the picks
 table's outlook gate (≥ 5 firms, ≥ 12 sources) excludes them by design.

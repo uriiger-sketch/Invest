@@ -41,7 +41,8 @@ def test_tel_aviv_quotes_are_agorot_and_convert_to_dollars():
     assert fx.usd_per_quote_unit("AAPL", rates) == 1.0
     assert fx.to_local_price("POLI.TA", 7319.0) == pytest.approx(73.19)
     # An implausible stored rate falls back to the constant, never to 1:1.
-    assert fx.usd_per_quote_unit("POLI.TA", {"ILS": 370.0}) == pytest.approx(1 / 370)
+    assert fx.usd_per_quote_unit("POLI.TA", {"ILS": 370.0}) == pytest.approx(
+        1 / (100 * fx.FALLBACK_PER_USD["ILS"]))
 
 
 def _fx_frame(ils: float, eur: float) -> pd.DataFrame:
@@ -225,12 +226,35 @@ def test_israeli_edition_uses_curated_queries_and_names():
 
     src = GoogleNewsSource(edition="IL", queries=ISRAEL_NEWS_QUERIES)
     assert src.edition.endswith("ceid=IL:en")
-    assert src._query("LUMI.TA", "Bank Leumi le-Israel B.M.") == '"Bank Leumi" when:7d'
-    assert src._match_name("LUMI.TA", "Bank Leumi le-Israel B.M.") == "Bank Leumi"
-    # US-listed Israeli names keep the generic query and registered name.
+    assert src._query("LUMI.TA", "Bank Leumi le-Israel B.M.") == '"Leumi" when:7d'
+    elal = src.match_terms("ELAL.TA")
+    assert elal.search("El Al posts record quarter") and elal.search("Israel's EL AL adds Tokyo")
+    assert not elal.search("How to watch Al Nassr vs. Neftchi")
+    assert not elal.search("Arkia cancels long-awaited direct route to Tokyo")
+    assert src.match_terms("SKBN.TA").search("Shikun & Binui wins tender")
+    assert not src.match_terms("LUMI.TA").search("Leumit health fund expands")
+    # US-listed Israeli names keep the generic query and no strict filter.
     assert src._query("TEVA", "Teva Pharmaceutical") == '"Teva Pharmaceutical" OR "TEVA stock" when:7d'
-    assert src._match_name("TEVA", "Teva Pharmaceutical") == "Teva Pharmaceutical"
+    assert src.match_terms("TEVA") is None
     assert GoogleNewsSource().edition.endswith("ceid=US:en")
+
+
+def test_strict_mode_keeps_only_headlines_naming_the_company(monkeypatch):
+    from invest.models import NewsItem
+    from invest.sources.news_src import GoogleNewsSource
+
+    now = pd.Timestamp.now(tz="UTC").strftime("%a, %d %b %Y %H:%M:%S GMT")
+    titles = ["El Al raises fares on Tokyo route - Globes",
+              "How to watch Al Nassr vs. Neftchi - Yahoo Sports"]
+    xml = ("<rss><channel>" + "".join(
+        f"<item><title>{t}</title><pubDate>{now}</pubDate><link>https://x/{i}</link></item>"
+        for i, t in enumerate(titles)) + "</channel></rss>").encode()
+    src = GoogleNewsSource(edition="IL", queries=ISRAEL_NEWS_QUERIES)
+    monkeypatch.setattr(src, "fetch", lambda t, n: xml)
+    src.ingest(["ELAL.TA"], {"ELAL.TA": "El Al Israel Airlines Ltd."}, budget_seconds=30)
+    with session_scope() as s:
+        got = s.execute(select(NewsItem.title, NewsItem.relevance)).all()
+    assert got == [("El Al raises fares on Tokyo route", 1.0)]
 
 
 def test_israel_news_runs_for_every_israeli_name_tel_aviv_first(monkeypatch):

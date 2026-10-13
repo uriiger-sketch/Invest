@@ -201,18 +201,38 @@ def stats_pool_mask(features: pd.DataFrame) -> pd.Series:
 _stats_pool_mask = stats_pool_mask  # backwards-compatible name
 
 
+def israel_mask(features: pd.DataFrame) -> pd.Series:
+    """Israel-board eligibility: an Israeli company with trustworthy market
+    data and at least `il_min_dollar_volume` of 20-day USD volume. No outlook
+    gate: the board grades every such name, it does not select picks."""
+    from ..universe import israeli_tickers
+
+    settings = get_settings()
+    il = features["ticker"].isin(israeli_tickers())
+    if "dollar_volume_20d" in features.columns:
+        dv = pd.to_numeric(features["dollar_volume_20d"], errors="coerce").fillna(0.0)
+        liquid = dv >= settings.il_min_dollar_volume
+    else:
+        liquid = pd.Series(True, index=features.index)
+    return il & liquid & data_quality_mask(features)
+
+
 def composite_scores(
-    features: pd.DataFrame, weights: dict[str, dict[str, float]] | None = None
+    features: pd.DataFrame, weights: dict[str, dict[str, float]] | None = None,
+    mask: pd.Series | None = None,
 ) -> pd.DataFrame:
-    """DataFrame[ticker, horizon, composite_score] for tickers passing every gate.
+    """DataFrame[ticker, horizon, composite_score] for tickers in `mask`
+    (default: passing every gate).
 
     `weights` maps horizon -> {feature: weight}; defaults to the normalised
     literature priors (`config.WEIGHTS`). rank_all passes the calibrated,
     correlation-aware weights from `pipeline.grade.calibrated_weights`.
+    The standardisation pool never depends on `mask`, so a ticker's score is
+    the same whichever set it is emitted in.
     """
     weights = weights or WEIGHTS
     z = standardize(features, stats_pool_mask(features)).fillna(0.0)
-    mask = quality_mask(features).to_numpy()
+    mask = (quality_mask(features) if mask is None else mask).to_numpy()
     out_rows: list[dict] = []
     for h in HORIZONS:
         w = weights[h]

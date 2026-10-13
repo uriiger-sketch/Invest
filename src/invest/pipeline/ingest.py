@@ -33,6 +33,7 @@ def _available_sources() -> list[Callable[[list[str]], int]]:
         from ..sources.yfinance_src import YFinanceSource
 
         runners.append(YFinanceSource().run)
+        runners.append(_run_fx)
     except Exception as e:  # noqa: BLE001
         logger.warning("yfinance source unavailable: %s", e)
 
@@ -46,6 +47,7 @@ def _available_sources() -> list[Callable[[list[str]], int]]:
         logger.warning("stooq source unavailable: %s", e)
 
     runners.append(_run_focus_news)
+    runners.append(lambda tickers: _run_israel_news(active_tickers(tickers)))
 
     # Finnhub + FMP both self-skip when their API keys are unset; we always
     # register them so adding a key later "just works" without code changes.
@@ -125,7 +127,7 @@ def _dormant_days() -> int:
 def focus_tickers(limit: int) -> list[str]:
     """Names on (or near) the published table: the latest grades first, then
     the top of each horizon's latest scores. Empty on a fresh database."""
-    from sqlalchemy import desc, select
+    from sqlalchemy import desc, or_, select
 
     from ..config import HORIZONS
     from ..db import session_scope
@@ -142,9 +144,14 @@ def focus_tickers(limit: int) -> list[str]:
     with session_scope() as s:
         latest_g = s.execute(select(Grade.as_of).order_by(desc(Grade.as_of)).limit(1)).scalar()
         if latest_g is not None:
+            # Israel-board grades are not candidates for the picks table
+            # (their news has its own stage, _run_israel_news).
             for (t,) in s.execute(
-                select(Grade.ticker).where(Grade.as_of == latest_g)
-                .order_by(desc(Grade.grade_score)).limit(limit)
+                select(Grade.ticker).where(
+                    Grade.as_of == latest_g,
+                    or_(Grade.detail_json.is_(None),
+                        Grade.detail_json.notlike('%"board":"israel"%')),
+                ).order_by(desc(Grade.grade_score)).limit(limit)
             ).all():
                 add(t)
         latest_s = s.execute(select(Score.as_of).order_by(desc(Score.as_of)).limit(1)).scalar()
@@ -196,6 +203,17 @@ def _run_stooq_backfill(tickers: list[str]) -> int:
     return StooqSource().run(missing)
 
 
+def _run_fx(tickers: list[str]) -> int:
+    """Refresh the USD rates of the non-dollar listings (see invest.fx)."""
+    from .. import fx
+
+    if all(fx.listing_currency(t)[0] == "USD" for t in tickers):
+        return 0
+    with log_run("yfinance.fx") as c:
+        c["rows"] = len(fx.refresh_rates())
+        return c["rows"]
+
+
 def _run_focus_news(tickers: list[str]) -> int:
     """Google News for the focus list (falls back to the first slice of the
     active universe on a fresh database)."""
@@ -207,6 +225,23 @@ def _run_focus_news(tickers: list[str]) -> int:
     if not focus:
         focus = active_tickers(tickers)[: settings.focus_size]
     return GoogleNewsSource().run(focus)
+
+
+def _run_israel_news(tickers: list[str]) -> int:
+    """Google News, Israeli edition, for every Israeli name on every run: the
+    Tel Aviv lines have no Yahoo stream at all, and Israeli outlets report
+    opinion changes on the US-listed ones first. Tel Aviv lines go first so a
+    truncated run still covers them; duplicates of the focus stage dedupe."""
+    from ..config import get_settings
+    from ..sources.news_src import GoogleNewsSource
+    from ..universe import ISRAEL_NEWS_QUERIES, is_tase, israeli_tickers
+
+    il = sorted((t for t in tickers if t in israeli_tickers()), key=lambda t: (not is_tase(t), t))
+    if not il:
+        return 0
+    src = GoogleNewsSource(edition="IL", queries=ISRAEL_NEWS_QUERIES)
+    return src.run(il, budget_seconds=get_settings().israel_news_budget_seconds,
+                   job="gnews.israel")
 
 
 def _run_focus_filings(tickers: list[str]) -> int:
@@ -353,7 +388,9 @@ def ingest_fast(tickers: list[str] | None = None) -> int:
     3. the Yahoo intel sweep over every ACTIVE ticker, stalest first, under
        a wall-clock budget — consensus, price targets, per-firm rating AND
        target changes, EPS revisions, earnings surprises, key stats, news;
-    4. Google News + the SEC filing stream for the focus list.
+    4. Google News + the SEC filing stream for the focus list;
+    5. Google News (Israeli edition) for every Israeli name.
+    FX rates for the non-dollar listings refresh right after the prices.
     """
     tickers = tickers or current_universe()
     from ..config import get_settings
@@ -365,10 +402,11 @@ def ingest_fast(tickers: list[str] | None = None) -> int:
     with log_run("yfinance.prices_fast") as c:
         c["rows"] = src.ingest_prices(tickers, period=settings.fast_price_period)
         total += c["rows"]
-    try:
-        total += _run_stooq_backfill(tickers)
-    except Exception:  # noqa: BLE001
-        logger.exception("stooq backfill failed")
+    for stage in (_run_fx, _run_stooq_backfill):
+        try:
+            total += stage(tickers)
+        except Exception:  # noqa: BLE001
+            logger.exception("%s failed", stage.__name__)
 
     live = active_tickers(tickers)
     batch = stalest_tickers(live, settings.coverage_sweep_max or len(live))
@@ -386,7 +424,7 @@ def ingest_fast(tickers: list[str] | None = None) -> int:
                 total += rows
         except Exception:  # noqa: BLE001
             logger.exception("coverage sweep failed")
-    for stage in (_run_focus_news, _run_focus_filings):
+    for stage in (_run_focus_news, _run_israel_news, _run_focus_filings):
         try:
             total += stage(live)
         except Exception:  # noqa: BLE001

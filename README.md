@@ -30,8 +30,10 @@ transparent, testable score and an optional ML re-ranker layered on top.
      report date, valuation, profitability, short interest, 52-week range.
      Plus OHLCV prices (a full year on the nightly deep run).
    - **News** — Yahoo Finance's stream for every ticker, Google News RSS for
-     the names on (or near) the published table; each headline is scored
-     with a finance-specific lexicon and deduplicated across feeds.
+     the names on (or near) the published table, and Google News' Israeli
+     edition (Globes, Calcalist, TheMarker, Times of Israel) for every
+     Israeli company on every run; each headline is scored with a
+     finance-specific lexicon and deduplicated across feeds.
    - **SEC EDGAR** — 13F holdings of ~110 institutional filers (two report
      periods, so quarter-over-quarter flow is always computable), Form 4
      insider trades, and each issuer's filing stream (8-K red-flag items,
@@ -50,6 +52,9 @@ transparent, testable score and an optional ML re-ranker layered on top.
    confidence, news tone and 30-day opinion change, plus a per-row drawer
    with the evidence (drivers, analyst actions with target changes,
    headlines, estimates, SEC filings).
+6. **Israel board.** Every Israeli company, its Nasdaq/NYSE line or its Tel
+   Aviv (TASE) line, ~95 names, is graded on the same scale and listed in its
+   own section (prices of Tel Aviv lines in ₪); see below.
 
 ---
 
@@ -93,6 +98,8 @@ All knobs live in [`src/invest/config.py`](src/invest/config.py):
 - `top_n` — number of stocks shown per horizon (default **20**).
 - `liquidity_min_dollar_volume` — stocks below this 20-day dollar volume are
   excluded from the ranking.
+- `israel_board`, `il_min_dollar_volume`, `israel_news_budget_seconds` —
+  the Israel board and its Israeli-edition news stage.
 - `universe_max` (env `UNIVERSE_MAX`) — cap the number of tickers ingested
   (0 = no cap; use the full S&P 500 ∪ NDX 100 union).
 
@@ -152,6 +159,22 @@ Hard gates still apply first: liquidity, data quality (stale price, short
 history, absurd or mis-scaled targets), net-bullish consensus, ≥ 4 % upside
 and coverage floors. A small, explicit technology tilt remains as a
 tiebreaker (`theme_tilt_*`).
+
+**Liquidity is in dollars.** Yahoo quotes Tel Aviv lines in agorot (1/100
+₪) and Amsterdam in euros; the 20-day traded value is converted with the
+day's `ILS=X` / `EUR=X` rate (`invest/fx.py`) before the gate. Unconverted,
+a Tel Aviv name looked ~370× more liquid than it is.
+
+**Israel board.** Most Tel Aviv lines carry 0–4 analysts, so the picks
+table's outlook gate (≥ 5 firms, ≥ 12 sources) excludes them by design.
+They are still graded: every Israeli name with clean market data and ≥
+$0.5M daily traded value (`il_min_dollar_volume`) is scored by the same
+calibrated model and *projected* onto the gated set's distribution. Every
+standardisation (median/MAD), the ML blend weights, the horizon correlation
+R and the grade percentiles come from gated names only, so the picks table
+is bit-for-bit unchanged (tested) and an A on the Israel board means what
+an A means in the picks table. The confidence column shows how much of the
+model a thinly covered name rests on. `israel_board=false` switches it off.
 
 Honest scale: realistic ICs are 0.02–0.08, so even an A+ implies only a
 modestly-above-50 % chance of beating the universe over a month. The page
@@ -220,7 +243,8 @@ Invest/
 │   ├── config.py            # weights, blend ratio, env
 │   ├── db.py                # engine + session helper
 │   ├── models.py            # SQLAlchemy ORM
-│   ├── universe.py          # S&P500 ∪ NDX100 with static fallback
+│   ├── universe.py          # S&P500 ∪ NDX100 with static fallback (+ Israel, Europe)
+│   ├── fx.py                # listing currency (agorot, EUR) -> USD
 │   ├── sentiment.py         # finance-lexicon headline tone
 │   ├── sources/
 │   │   ├── base.py          # retries, token bucket, rate governor, run_log

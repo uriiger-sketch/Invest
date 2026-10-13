@@ -9,7 +9,7 @@ Data is a list of (ticker, name, sector, region) tuples so we can:
 Regions:
   - US-L : US large cap (S&P 500 / NDX 100 core)
   - US-S : US small/mid cap (Russell 2000-adjacent)
-  - IL   : Israel (US-listed ADRs/common)
+  - IL   : Israel (US-listed ADRs/common, and Tel Aviv ".TA" lines)
   - EU   : Europe (US-listed ADRs or yfinance exchange suffixes)
 
 `refresh_universe()` pulls the current S&P 500 and NASDAQ-100 membership from
@@ -265,7 +265,10 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("NICE", "NICE Ltd.", "Technology", "IL"),
     ("WIX", "Wix.com Ltd.", "Technology", "IL"),
     ("MNDY", "Monday.com Ltd.", "Technology", "IL"),
-    ("CYBR", "CyberArk Software", "Technology", "IL"),
+    # (CYBR removed: CyberArk acquired by Palo Alto Networks, delisted;
+    # SPNS: Sapiens taken private by Advent; VRNT: Verint taken private by
+    # Thoma Bravo; MGIC: Magic Software merged into Formula Systems. None
+    # has priced since; the dormant list carried all four.)
     ("ESLT", "Elbit Systems", "Industrials", "IL"),
     ("SEDG", "SolarEdge Technologies", "Technology", "IL"),
     ("ICL", "ICL Group", "Materials", "IL"),
@@ -282,14 +285,11 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("GILT", "Gilat Satellite Networks", "Technology", "IL"),
     ("TSEM", "Tower Semiconductor", "Technology", "IL"),
     ("KRNT", "Kornit Digital", "Technology", "IL"),
-    ("SPNS", "Sapiens International", "Technology", "IL"),
-    ("VRNT", "Verint Systems", "Technology", "IL"),
     ("CGNT", "Cognyte Software", "Technology", "IL"),
     ("ITRN", "Ituran Location and Control", "Technology", "IL"),
     # (TARO removed: taken private by Sun Pharma in 2024, delisted.)
     ("NNOX", "Nano-X Imaging", "Health Care", "IL"),
     ("ALLT", "Allot Ltd.", "Technology", "IL"),
-    ("MGIC", "Magic Software Enterprises", "Technology", "IL"),
     ("ARBE", "Arbe Robotics", "Technology", "IL"),
     ("SMWB", "Similarweb", "Technology", "IL"),
     ("PAYO", "Payoneer Global", "Financials", "IL"),
@@ -313,6 +313,11 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("MDWD", "MediWound Ltd.", "Health Care", "IL"),
     ("TATT", "TAT Technologies Ltd.", "Industrials", "IL"),
     ("ENLV", "Enlivex Therapeutics Ltd.", "Health Care", "IL"),
+    # Enlight is dual-listed; the Nasdaq line carries the sell-side coverage
+    # (the .TA line returned no analyst counts at all).
+    ("ENLT", "Enlight Renewable Energy", "Utilities", "IL"),
+    ("TBLA", "Taboola.com Ltd.", "Communication Services", "IL"),
+    ("NYAX", "Nayax Ltd.", "Technology", "IL"),
     # --- Israel (Tel Aviv Stock Exchange, yfinance ".TA" suffix) -------------
     # TASE-ONLY names: every ticker here has no US listing, so none of them
     # duplicate an ADR already in the IL block above (a dual listing would
@@ -323,7 +328,8 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     # serves analyst consensus or price targets for them. Names without
     # coverage will be correctly excluded by the min_firms / min_total_sources
     # gates rather than ranked on thin data — these broaden real Israeli
-    # market coverage, they do not all become picks.
+    # market coverage, they do not all become picks. All Israeli names are
+    # also graded on the separate Israel board (see `israeli_tickers`).
     ("POLI.TA", "Bank Hapoalim", "Financials", "IL"),
     ("LUMI.TA", "Bank Leumi", "Financials", "IL"),
     ("MZTF.TA", "Mizrahi Tefahot Bank", "Financials", "IL"),
@@ -340,7 +346,6 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("BEZQ.TA", "Bezeq Israeli Telecommunication", "Communication Services", "IL"),
     ("PTNR.TA", "Partner Communications", "Communication Services", "IL"),
     ("CEL.TA", "Cellcom Israel", "Communication Services", "IL"),
-    ("ENLT.TA", "Enlight Renewable Energy", "Utilities", "IL"),
     ("ELAL.TA", "El Al Israel Airlines", "Industrials", "IL"),
     ("SPEN.TA", "Shapir Engineering and Industry", "Industrials", "IL"),
     ("SKBN.TA", "Shikun & Binui", "Industrials", "IL"),
@@ -350,12 +355,31 @@ _CORE: tuple[tuple[str, str, str, str], ...] = (
     ("FORTY.TA", "Formula Systems", "Technology", "IL"),
     ("STRS.TA", "Strauss Group", "Consumer Staples", "IL"),
     ("SAE.TA", "Shufersal Ltd.", "Consumer Staples", "IL"),
-    ("DELT.TA", "Delta Galil Industries", "Consumer Discretionary", "IL"),
+    # Delta Galil trades as DELG and Paz as PAZ; DELT.TA / PZOL.TA never
+    # returned a single price.
+    ("DELG.TA", "Delta Galil Industries", "Consumer Discretionary", "IL"),
     ("FOX.TA", "Fox Wizel Ltd.", "Consumer Discretionary", "IL"),
     ("ORL.TA", "Bazan Oil Refineries", "Energy", "IL"),
-    ("PZOL.TA", "Paz Retail and Energy", "Energy", "IL"),
+    ("PAZ.TA", "Paz Retail and Energy", "Energy", "IL"),
     ("NWMD.TA", "NewMed Energy", "Energy", "IL"),
     ("ILCO.TA", "Israel Corporation", "Materials", "IL"),
+    # Further TA-35 / TA-125 heavyweights without a US line.
+    ("DLEKG.TA", "Delek Group", "Energy", "IL"),
+    ("RATI.TA", "Ratio Energies", "Energy", "IL"),
+    ("ENRG.TA", "Energix Renewable Energies", "Utilities", "IL"),
+    ("OPCE.TA", "OPC Energy", "Utilities", "IL"),
+    ("ISCD.TA", "Isracard Ltd.", "Financials", "IL"),
+    ("MMHD.TA", "Menora Mivtachim Holdings", "Financials", "IL"),
+    ("BIG.TA", "Big Shopping Centers", "Real Estate", "IL"),
+    ("AMOT.TA", "Amot Investments", "Real Estate", "IL"),
+    ("MVNE.TA", "Mivne Real Estate", "Real Estate", "IL"),
+    ("AURA.TA", "Aura Investments", "Real Estate", "IL"),
+    ("ASHG.TA", "Ashtrom Group", "Industrials", "IL"),
+    ("ELTR.TA", "Electra Ltd.", "Industrials", "IL"),
+    ("NXSN.TA", "Next Vision Stabilized Systems", "Industrials", "IL"),
+    ("BSEN.TA", "Bet Shemesh Engines", "Industrials", "IL"),
+    ("FTAL.TA", "Fattal Holdings", "Consumer Discretionary", "IL"),
+    ("HLAN.TA", "Hilan Ltd.", "Technology", "IL"),
     # --- Europe (US ADRs where available; LSE/EU suffixes otherwise) ---------
     ("ASML", "ASML Holding", "Technology", "EU"),
     ("NVO", "Novo Nordisk", "Health Care", "EU"),
@@ -471,6 +495,70 @@ def static_name_map() -> dict[str, str]:
 
 def static_sector_map() -> dict[str, str]:
     return {t: sector for t, _, sector, _ in _CORE}
+
+
+# Google News queries for the Tel Aviv lines. Their registered names make
+# poor exact phrases ("Bank Leumi le-Israel B.M.", "Bezeq The Israel
+# Telecommunication Corp."), the bare TASE code is not a recognised stock
+# tag, and a few short names are ambiguous without "Israel".
+ISRAEL_NEWS_QUERIES: dict[str, str] = {
+    "POLI.TA": '"Bank Hapoalim"',
+    "LUMI.TA": '"Bank Leumi"',
+    "MZTF.TA": '"Mizrahi Tefahot"',
+    "DSCT.TA": '"Israel Discount Bank" OR "Discount Bank"',
+    "FIBI.TA": '"First International Bank"',
+    "PHOE.TA": '"Phoenix Financial" OR "Phoenix Holdings"',
+    "HARL.TA": '"Harel Insurance"',
+    "MGDL.TA": '"Migdal Insurance" OR "Migdal Holdings"',
+    "CLIS.TA": '"Clal Insurance"',
+    "AZRG.TA": '"Azrieli Group"',
+    "MLSR.TA": '"Melisron"',
+    "ALHE.TA": '"Alony Hetz" OR "Alony-Hetz"',
+    "ARPT.TA": '"Airport City" Israel',
+    "BEZQ.TA": '"Bezeq"',
+    "PTNR.TA": '"Partner Communications"',
+    "CEL.TA": '"Cellcom Israel"',
+    "ELAL.TA": '"El Al"',
+    "SPEN.TA": '"Shapir Engineering"',
+    "SKBN.TA": '"Shikun & Binui" OR "Shikun and Binui"',
+    "ELCO.TA": '"Elco" Israel',
+    "MTRX.TA": '"Matrix IT"',
+    "ONE.TA": '"One Technologies" OR "One Software Technologies"',
+    "FORTY.TA": '"Formula Systems"',
+    "STRS.TA": '"Strauss Group"',
+    "SAE.TA": '"Shufersal"',
+    "DELG.TA": '"Delta Galil"',
+    "FOX.TA": '"Fox-Wizel" OR "Fox Wizel"',
+    "ORL.TA": '"Bazan" OR "Oil Refineries Ltd"',
+    "PAZ.TA": '"Paz Oil" OR "Paz Retail"',
+    "NWMD.TA": '"NewMed Energy"',
+    "ILCO.TA": '"Israel Corporation" OR "Israel Corp"',
+    "DLEKG.TA": '"Delek Group"',
+    "RATI.TA": '"Ratio Energies" OR "Ratio Oil"',
+    "ENRG.TA": '"Energix"',
+    "OPCE.TA": '"OPC Energy"',
+    "ISCD.TA": '"Isracard"',
+    "MMHD.TA": '"Menora Mivtachim"',
+    "BIG.TA": '"BIG Shopping Centers"',
+    "AMOT.TA": '"Amot Investments"',
+    "MVNE.TA": '"Mivne"',
+    "AURA.TA": '"Aura Investments"',
+    "ASHG.TA": '"Ashtrom"',
+    "ELTR.TA": '"Electra" Israel',
+    "NXSN.TA": '"Next Vision"',
+    "BSEN.TA": '"Bet Shemesh Engines"',
+    "FTAL.TA": '"Fattal"',
+    "HLAN.TA": '"Hilan"',
+}
+
+
+def israeli_tickers() -> frozenset[str]:
+    """Every Israeli company in the universe: US lines and Tel Aviv lines."""
+    return frozenset(t for t, _, _, region in _CORE if region == "IL")
+
+
+def is_tase(ticker: str) -> bool:
+    return ticker.upper().endswith(".TA")
 
 
 _WIKI_HEADERS = {

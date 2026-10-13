@@ -368,8 +368,13 @@ def letter_for(pct: float) -> str:
 
 
 def integrated_grades(merged: pd.DataFrame, features: pd.DataFrame, calib: Calibrated) -> pd.DataFrame:
-    """One row per gated ticker: grade score G, letter, percentile,
-    confidence, expected 1M/3M excess return, P(outperform 1M), drivers."""
+    """One row per scored ticker: grade score G, letter, percentile,
+    confidence, expected 1M/3M excess return, P(outperform 1M), drivers.
+
+    Rows with `main` False (the Israel board, see rank.rank_all) are graded
+    against the gated rows: the horizon correlation R comes from gated rows
+    only, and their percentile is the share of gated grades at or below
+    theirs, so a letter means the same thing on both boards."""
     if merged.empty:
         return pd.DataFrame()
     wide = merged.pivot_table(index="ticker", columns="horizon", values="blended_score")
@@ -377,19 +382,31 @@ def integrated_grades(merged: pd.DataFrame, features: pd.DataFrame, calib: Calib
     wide = wide[hs].dropna()
     if wide.empty:
         return pd.DataFrame()
+    if "main" in merged.columns:
+        main_set = set(merged.loc[merged["main"].astype(bool), "ticker"])
+        is_main = wide.index.isin(main_set)
+    else:
+        is_main = np.ones(len(wide), dtype=bool)
     a = np.array([max(calib.horizon_ic.get(h, {}).get("posterior", 0.0), 1e-3) for h in hs])
     S = wide.to_numpy(dtype=float)
-    if len(wide) >= 3:
+    S_ref = S[is_main]
+    if len(S_ref) >= 3:
         with np.errstate(invalid="ignore", divide="ignore"):
-            R = np.nan_to_num(np.corrcoef(S, rowvar=False), nan=0.0)
+            R = np.nan_to_num(np.corrcoef(S_ref, rowvar=False), nan=0.0)
         np.fill_diagonal(R, 1.0)
     else:
         R = np.eye(len(hs))
     denom = math.sqrt(max(float(a @ R @ a), 1e-12))
     G = (S @ a) / denom
     out = pd.DataFrame({"ticker": wide.index, "grade_score": G})
-    out["percentile"] = out["grade_score"].rank(pct=True)
+    pct = np.full(len(G), np.nan)
+    ref = np.sort(G[is_main])
+    pct[is_main] = out.loc[is_main, "grade_score"].rank(pct=True).to_numpy()
+    if len(ref) and (~is_main).any():
+        pct[~is_main] = np.searchsorted(ref, G[~is_main], side="right") / len(ref)
+    out["percentile"] = pct
     out["letter"] = out["percentile"].map(letter_for)
+    board = dict(zip(wide.index, np.where(is_main, "main", "israel")))
 
     feats = features.set_index("ticker")
     pool = stats_pool_mask(features)
@@ -437,6 +454,7 @@ def integrated_grades(merged: pd.DataFrame, features: pd.DataFrame, calib: Calib
                 "drivers_neg": neg,
                 "conf_by_h": {h: round(c, 3) for h, c in zip(hs, conf_h)},
                 "vol": round(sig, 4),
+                "board": board[t],
             },
         })
     return out.merge(pd.DataFrame(rows), on="ticker", how="left")

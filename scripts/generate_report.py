@@ -523,6 +523,163 @@ _MD_LEGEND = (
 )
 
 
+# --------------------------- Israel board ---------------------------
+
+
+def israel_rows() -> tuple[list[dict], list[str]]:
+    """(graded rows best grade first, Israeli tickers not graded this run).
+
+    Every Israeli company in the universe, Nasdaq/NYSE and Tel Aviv lines,
+    on ONE scale: Israel-board grades are placed on the gated distribution
+    (pipeline/grade.py), so an A here means what an A means in the picks
+    table. `picks` marks names that also pass every gate of that table.
+    Tel Aviv prices and targets are shown in shekels (Yahoo quotes agorot).
+    """
+    from invest.fx import to_local_price
+    from invest.universe import is_tase, israeli_tickers
+
+    max_upside = get_settings().max_upside_sane
+    universe = sorted(israeli_tickers())
+    grades = _grades_for(universe)
+    tickers = sorted(grades, key=lambda t: -(grades[t].get("grade_score") or 0.0))
+    ungraded = [t for t in universe if t not in grades]
+    if not tickers:
+        return [], ungraded
+    extras = _enrichment_for(tickers)
+    sources = _total_sources_per_ticker(tickers)
+    with session_scope() as s:
+        meta = {
+            t: (name, sector) for t, name, sector in
+            s.query(Stock.ticker, Stock.name, Stock.sector).filter(Stock.ticker.in_(tickers))
+        }
+    rows: list[dict] = []
+    for i, t in enumerate(tickers, start=1):
+        name, sector = meta.get(t, ("", ""))
+        r = {"rank": i, "ticker": t, "name": name or "", "sector": sector or "",
+             **extras.get(t, {}), **grades[t]}
+        r["sources"] = sources.get(t, 0)
+        # The board has no outlook gate, so a stale or mis-scaled target can
+        # reach it (seen: ENLV $0.25 vs $80). The model already discards such
+        # upside (features.target_suspect); don't display it either.
+        if (r.get("upside_pct") or 0.0) > max_upside:
+            r["upside_pct"] = r["mean_target"] = None
+        r["market"] = "TASE" if is_tase(t) else "US"
+        r["picks"] = (r.get("detail") or {}).get("board", "main") == "main"
+        if is_tase(t):
+            for k in ("last_close", "mean_target", "high_target", "low_target"):
+                r[k] = to_local_price(t, r.get(k))
+            for a in r.get("recent_actions") or []:
+                a["target"] = to_local_price(t, a.get("target"))
+                a["prior_target"] = to_local_price(t, a.get("prior_target"))
+        rows.append(r)
+    return rows, ungraded
+
+
+def _money(r: dict, key: str) -> str:
+    v = r.get(key)
+    if not v:
+        return "—"
+    return f"{'₪' if r.get('market') == 'TASE' else '$'}{v:,.2f}"
+
+
+_IL_BLURB = (
+    "Every Israeli company in the universe, its Nasdaq/NYSE and Tel Aviv (TASE) lines "
+    "alike, graded by the same model and placed on the picks table's grade scale "
+    "(gates for the board: data quality and ≥ $0.5M daily traded value; no outlook gate). "
+    "✓ = also passes every gate of the picks table. Tel Aviv prices in ₪. "
+    "Coverage of Tel Aviv lines is thinner (few analysts, no SEC data), which the "
+    "confidence column shows."
+)
+
+
+def _israel_table_md(rows: list[dict], ungraded: list[str]) -> str:
+    if not rows:
+        return ""
+    headers = ["#", "Ticker", "Name", "Market", "Grade", "Upside", "Price", "Target",
+               "α 1M", "P(beat) 1M", "Conf", "News 7d", "Δ Opinion 30d", "Analysts", "Picks"]
+    lines = ["## Israel", "", f"_{_IL_BLURB}_", "",
+             "| " + " | ".join(headers) + " |", "|" + "|".join(["---"] * len(headers)) + "|"]
+    for r in rows:
+        lines.append("| " + " | ".join([
+            str(r["rank"]), f"**{r['ticker']}**", (r.get("name") or "")[:28], r["market"],
+            _grade_cell(r), _pct(r.get("upside_pct")), _money(r, "last_close"),
+            _money(r, "mean_target"), _pct(r.get("alpha_1m"), 2),
+            _pct(r.get("p_outperform_1m"), 1, signed=False),
+            _pct(r.get("confidence"), 0, signed=False), _news_cell(r), _opinion_cell(r),
+            str(r.get("analysts") or 0), "✓" if r["picks"] else "",
+        ]) + " |")
+    if ungraded:
+        lines += ["", "_Not graded this run (thin trading, stale or too-short price history): "
+                  + ", ".join(ungraded) + "._"]
+    return "\n".join(lines) + "\n"
+
+
+def _israel_table_html(rows: list[dict], ungraded: list[str]) -> str:
+    if not rows:
+        return ""
+    head = (
+        "<thead><tr><th>#</th><th>Ticker</th><th>Name</th>"
+        "<th title='TASE = Tel Aviv line (₪); US = Nasdaq/NYSE line ($).'>Market</th><th>Sector</th>"
+        "<th title='Same grade scale as the picks table.'>Grade</th><th>Upside</th>"
+        "<th>Price</th><th>Target</th><th>α 1M</th><th>P(beat)</th><th>Conf</th>"
+        "<th>News</th><th>Δ Opinion</th><th>Analysts</th>"
+        "<th title='Also passes every gate of the picks table.'>Picks</th></tr></thead>"
+    )
+    ncols = 16
+    body: list[str] = []
+    for i, r in enumerate(rows):
+        t = _html_escape(r["ticker"])
+        letter = r.get("letter") or ""
+        grade_html = (
+            f"<span class='grade g{_html_escape(letter[0])}'>{_html_escape(letter)}</span> "
+            f"<span class='src'>{r['grade_score']:+.2f}</span>" if letter else "—"
+        )
+        sector = r.get("sector") or ""
+        sector_html = (
+            f"<span class='sector' style='background:{_sector_colour(sector)}'>"
+            f"{_html_escape(sector[:22])}</span>" if sector else ""
+        )
+        drawer_html = _drawer_html(r, r.get("recent_actions") or [])
+        did = f"il-{t}-{i}"
+        drawer = (
+            f"<tr class='drawer' id='{did}' style='display:none'>"
+            f"<td colspan='{ncols}'>{drawer_html}</td></tr>" if drawer_html else ""
+        )
+        toggle = (
+            f" onclick=\"var d=document.getElementById('{did}');"
+            "if(d){d.style.display=d.style.display==='none'?'table-row':'none'}\""
+            if drawer_html else ""
+        )
+        up_cls = "num up-pos" if (r.get("upside_pct") or 0) > 0 else "num"
+        body.append(
+            f"<tr class='row-il'{toggle} style='cursor:pointer'"
+            f" data-ticker='{t.lower()}' data-name='{_html_escape(r.get('name') or '').lower()}'>"
+            f"<td>{r['rank']}</td><td><strong>{t}</strong></td>"
+            f"<td>{_html_escape((r.get('name') or '')[:40])}</td>"
+            f"<td>{r['market']}</td><td>{sector_html}</td>"
+            f"<td class='num'>{grade_html}</td>"
+            f"<td class='{up_cls}'>{_pct(r.get('upside_pct'))}</td>"
+            f"<td class='num'>{_money(r, 'last_close')}</td>"
+            f"<td class='num'>{_money(r, 'mean_target')}</td>"
+            f"<td class='num'>{_pct(r.get('alpha_1m'), 2)}</td>"
+            f"<td class='num'>{_pct(r.get('p_outperform_1m'), 1, signed=False)}</td>"
+            f"<td class='num'>{_pct(r.get('confidence'), 0, signed=False)}</td>"
+            f"<td class='num'>{_html_escape(_news_cell(r))}</td>"
+            f"<td class='num'>{_html_escape(_opinion_cell(r))}</td>"
+            f"<td class='num'>{r.get('analysts') or 0}</td>"
+            f"<td class='star'>{'✓' if r['picks'] else ''}</td>"
+            "</tr>" + drawer
+        )
+    missing = (
+        "<p class='src'>Not graded this run (thin trading, stale or too-short price history): "
+        + _html_escape(", ".join(ungraded)) + ".</p>" if ungraded else ""
+    )
+    return (
+        f"<section><h2>Israel</h2><p class='blurb'>{_html_escape(_IL_BLURB)}</p>"
+        f"<table class='top'>{head}<tbody>{''.join(body)}</tbody></table>{missing}</section>"
+    )
+
+
 def _staleness_banner_md(as_of: date) -> str | None:
     """Loud warning when the newest scores are old."""
     age = (date.today() - as_of).days
@@ -551,6 +708,9 @@ def _build_markdown(as_of: date, n: int) -> str:
         parts.append("")
     parts.append(_main_table_md(rows))
     parts.append(_MD_LEGEND)
+    il_md = _israel_table_md(*israel_rows())
+    if il_md:
+        parts.append(il_md)
     return "\n".join(parts).rstrip() + "\n"
 
 
@@ -866,6 +1026,11 @@ out-of-sample IC. The grade combines the four horizon scores weighted by their e
 and correlation; α = IC·σ·z (Grinold) and P(beat) = Φ(IC·z) follow from the same model.
 Missing data counts as neutral, never as a fabricated value; the confidence column shows how
 much of the model each grade actually rests on.</p>
+<p>Israel board: Tel Aviv lines rarely have the analyst coverage the picks table requires, so
+every Israeli company with clean prices and at least $0.5M daily traded value (converted from
+agorot at the day's exchange rate) is scored by the same model and placed on the picks table's
+distribution: all standardisation, blend weights and grade percentiles come from the gated
+names, which the board therefore cannot move.</p>
 <p>Honest scale: realistic ICs are 0.02–0.08, so even an A+ carries a probability of beating the
 universe of only slightly above 50 % per month. This is a research shortlist, not investment
 advice.</p>
@@ -952,6 +1117,10 @@ def _build_html(as_of: date, n: int) -> str:
         f"{_main_table_html(rows, by_h)}</section>"
     )
     try:
+        sections.append(_israel_table_html(*israel_rows()))
+    except Exception as e:  # noqa: BLE001 — the board must never break the page
+        sections.append(f"<section><p class='src'>Israel board unavailable: {_html_escape(str(e))}</p></section>")
+    try:
         sections.append(_data_health_html())
     except Exception as e:  # noqa: BLE001 — diagnostics must never break the page
         sections.append(f"<section><p class='src'>data health unavailable: {_html_escape(str(e))}</p></section>")
@@ -1028,8 +1197,8 @@ def _build_html(as_of: date, n: int) -> str:
   .finder-msg {{ margin-left: 0.6rem; font-size: 0.85rem; color: #666; }}
   /* Search hit. Uses a left border + tinted background so it stays legible
      in both light and dark colour schemes, and outranks the .star row tint. */
-  tr.row-main.hit td {{ background: rgba(43,108,176,0.18) !important; }}
-  tr.row-main.hit td:first-child {{ box-shadow: inset 3px 0 0 var(--accent); }}
+  tr.row-main.hit td, tr.row-il.hit td {{ background: rgba(43,108,176,0.18) !important; }}
+  tr.row-main.hit td:first-child, tr.row-il.hit td:first-child {{ box-shadow: inset 3px 0 0 var(--accent); }}
   .grade {{ display: inline-block; min-width: 1.9rem; text-align: center; padding: 0.05rem 0.35rem;
             border-radius: 4px; font-weight: 700; color: #fff; }}
   .grade.gA {{ background: #2f855a; }}
@@ -1074,12 +1243,12 @@ def _build_html(as_of: date, n: int) -> str:
 <script>
 (function () {{
   // Find-a-stock: highlight matching rows and scroll the first one into view.
-  // Searches the whole table (all {len(rows)} rows), matching ticker OR
+  // Searches the picks table and the Israel board, matching ticker OR
   // company name, case-insensitively, as a substring.
   var input = document.getElementById("finder-input");
   var msg = document.getElementById("finder-msg");
   if (!input || !msg) return;
-  var rows = [].slice.call(document.querySelectorAll("tr.row-main"));
+  var rows = [].slice.call(document.querySelectorAll("tr.row-main, tr.row-il"));
 
   function clear() {{
     for (var i = 0; i < rows.length; i++) rows[i].classList.remove("hit");
@@ -1094,12 +1263,13 @@ def _build_html(as_of: date, n: int) -> str:
           || (r.getAttribute("data-name") || "").indexOf(q) !== -1;
     }});
     if (!hits.length) {{
-      msg.textContent = "Not in the top " + rows.length + ".";
+      msg.textContent = "Not on this page.";
       return;
     }}
     for (var i = 0; i < hits.length; i++) hits[i].classList.add("hit");
     msg.textContent = hits.length === 1
-      ? "Rank " + (hits[0].cells[0] ? hits[0].cells[0].textContent.trim() : "?")
+      ? (hits[0].classList.contains("row-il") ? "Israel #" : "Rank ")
+        + (hits[0].cells[0] ? hits[0].cells[0].textContent.trim() : "?")
       : hits.length + " matches";
     // Only auto-scroll once the query is specific enough to be meaningful —
     // jumping the page on every single keystroke is disorienting.

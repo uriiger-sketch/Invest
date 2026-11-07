@@ -26,11 +26,11 @@
   "high_52w",
   "risk_penalty"
  ],
- "val_ic": 0.028321608201439318,
- "val_ic_se": 0.07252144986079527,
+ "val_ic": 0.019574277123300583,
+ "val_ic_se": 0.054665752336407775,
  "val_dates": 12,
- "train_rows": 9671,
+ "train_rows": 10030,
  "embargo_dates": 5,
- "trained_at": "2026-11-06T03:58:54",
+ "trained_at": "2026-11-07T03:14:15",
  "target": "gaussian cross-sectional rank of forward return"
 }
